@@ -1,16 +1,37 @@
 export default function Home() {
   return (
     <>
-      {/* hero placeholder */}
+      {/* heading above map */}
+      <div
+        style={{
+          maxWidth: "1400px",
+          margin: "0 auto",
+          padding: "48px 24px 40px",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "clamp(36px, 5vw, 64px)",
+            fontWeight: 300,
+            lineHeight: 1.1,
+            letterSpacing: "-0.02em",
+          }}
+        >
+          +1 museum by any other name
+        </h1>
+      </div>
+
+      {/* hero map placeholder */}
       <div
         style={{
           width: "100%",
-          height: "65vh",
-          minHeight: "400px",
+          height: "60vh",
+          minHeight: "380px",
           backgroundColor: "#f0f0f0",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          borderTop: "1px solid #e5e5e5",
           borderBottom: "1px solid #e5e5e5",
         }}
       >
@@ -25,7 +46,7 @@ export default function Home() {
         </p>
       </div>
 
-      {/* content below hero */}
+      {/* content below map */}
       <div
         style={{
           maxWidth: "1400px",
@@ -34,18 +55,6 @@ export default function Home() {
         }}
       >
         <div style={{ maxWidth: "640px" }}>
-          <h1
-            style={{
-              fontSize: "clamp(36px, 5vw, 64px)",
-              fontWeight: 300,
-              lineHeight: 1.1,
-              letterSpacing: "-0.02em",
-              marginBottom: "40px",
-            }}
-          >
-            +1 museum by any other name
-          </h1>
-
           <p
             style={{
               fontSize: "16px",
