@@ -58,7 +58,7 @@ export default function Footer() {
         </div>
 
         <p style={{ fontSize: "11px", color: "#cccccc" }}>
-          MoT+++ — 6/4 nguyễn đăng giai, thảo điền, thủ đức, tp. hồ chí minh
+          MoT+++, la astoria tower 2, 383 nguyễn duy trinh, hồ chí minh
         </p>
       </div>
     </footer>

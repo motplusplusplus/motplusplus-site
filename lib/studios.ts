@@ -24,32 +24,32 @@ export const studios: Studio[] = [
     slug: "le-phi-long",
     artistName: "Le Phi Long",
     tagline: "artist studio",
-    neighborhood: "to be confirmed",
+    neighborhood: "hồ chí minh city",
     collectiveMember: true,
   },
   {
     slug: "quoc-anh-le",
     artistName: "Quoc Anh Le",
     tagline: "artist studio",
-    neighborhood: "to be confirmed",
+    neighborhood: "hồ chí minh city",
   },
   {
     slug: "hoang-nam-viet",
     artistName: "Hoang Nam Viet",
     tagline: "artist studio",
-    neighborhood: "to be confirmed",
+    neighborhood: "hồ chí minh city",
   },
   {
     slug: "karlie-ho",
     artistName: "MoT+++ studio",
-    tagline: "hosted by Karlie Ho — posh residential space, art world connections",
+    tagline: "hosted by Karlie Ho",
     neighborhood: "thảo điền",
   },
   {
     slug: "thom-nguyen",
     artistName: "Thom Nguyen",
     tagline: "artist studio",
-    neighborhood: "to be confirmed",
+    neighborhood: "hồ chí minh city",
   },
 ];
 

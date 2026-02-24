@@ -1,4 +1,23 @@
 import Link from "next/link";
+import { studios, hotel } from "@/lib/studios";
+import StudioCarousel from "@/components/StudioCarousel";
+
+const carouselItems = [
+  ...studios.map((s) => ({
+    slug: s.slug,
+    name: s.artistName,
+    tagline: s.tagline,
+    neighborhood: s.neighborhood,
+    href: `/afarm/studios/${s.slug}`,
+  })),
+  {
+    slug: hotel.slug,
+    name: hotel.name,
+    tagline: hotel.tagline,
+    neighborhood: "thảo điền — hotel track",
+    href: "/afarm/hotel",
+  },
+];
 
 export default function AFarmPage() {
   return (
@@ -46,6 +65,37 @@ export default function AFarmPage() {
         >
           a new model for the artist residency — ho chi minh city
         </p>
+
+        {/* studio carousel */}
+        <div
+          style={{
+            borderTop: "1px solid #e5e5e5",
+            paddingTop: "48px",
+            marginBottom: "16px",
+          }}
+        >
+          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+            studios &amp; accommodation
+          </p>
+          <div style={{ maxWidth: "560px" }}>
+            <StudioCarousel items={carouselItems} />
+          </div>
+        </div>
+
+        {/* view studios link */}
+        <div style={{ marginBottom: "80px" }}>
+          <Link
+            href="/afarm/studios"
+            style={{
+              fontSize: "13px",
+              color: "#888888",
+              borderBottom: "1px solid #cccccc",
+              paddingBottom: "2px",
+            }}
+          >
+            view all studios →
+          </Link>
+        </div>
 
         {/* two tracks */}
         <div

@@ -31,6 +31,7 @@ const dropdownSections = [
     heading: "organization",
     items: [
       { label: "mot+++ collective", href: "/collective" },
+      { label: "previous residents", href: "/residents" },
       { label: "about", href: "/about" },
       { label: "contact", href: "/contact" },
     ],
@@ -114,10 +115,12 @@ export default function Header() {
                   href={item.href}
                   style={{
                     fontSize: "18px",
-                    fontWeight: pathname.startsWith(item.href) ? 700 : 400,
+                    fontWeight: 400,
                     letterSpacing: "0.01em",
-                    color: "#111111",
+                    color: "#888888",
                     whiteSpace: "nowrap",
+                    textDecoration: pathname.startsWith(item.href) ? "underline" : "none",
+                    textUnderlineOffset: "3px",
                   }}
                 >
                   {item.label}
@@ -376,9 +379,11 @@ export default function Header() {
               style={{
                 display: "inline-block",
                 fontSize: "16px",
-                fontWeight: pathname.startsWith(item.href) ? 700 : 400,
-                color: "#111111",
+                fontWeight: 400,
+                color: "#888888",
                 padding: "11px 16px 11px 0",
+                textDecoration: pathname.startsWith(item.href) ? "underline" : "none",
+                textUnderlineOffset: "3px",
                 marginRight: "16px",
                 whiteSpace: "nowrap",
               }}

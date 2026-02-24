@@ -13,6 +13,9 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "MoT+++",
   description: "independent contemporary art — ho chi minh city",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
