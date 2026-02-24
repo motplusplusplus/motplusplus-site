@@ -47,8 +47,9 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
       <div
         style={{
           position: "relative",
-          // extra bottom padding so peeking cards don't get clipped
-          paddingBottom: "20px",
+          // extra padding so peeking cards aren't clipped
+          paddingBottom: "36px",
+          paddingRight: "36px",
           marginBottom: "24px",
         }}
       >
@@ -56,12 +57,12 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
         <div
           style={{
             position: "absolute",
-            top: "16px",
-            left: "16px",
-            right: "-16px",
+            top: "28px",
+            left: "28px",
+            right: "-28px",
             aspectRatio: "3/2",
-            backgroundColor: "#e8e8e8",
-            border: "1px solid #ddd",
+            backgroundColor: "#e2e2e2",
+            border: "1px solid #d8d8d8",
           }}
         />
 
@@ -69,11 +70,11 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
         <div
           style={{
             position: "absolute",
-            top: "8px",
-            left: "8px",
-            right: "-8px",
+            top: "14px",
+            left: "14px",
+            right: "-14px",
             aspectRatio: "3/2",
-            backgroundColor: "#ececec",
+            backgroundColor: "#ebebeb",
             border: "1px solid #e0e0e0",
           }}
         />
@@ -104,8 +105,8 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
         <div
           style={{
             position: "absolute",
-            bottom: "28px",
-            right: "-12px",
+            bottom: "40px",
+            right: "-24px",
             fontSize: "10px",
             color: "#bbbbbb",
             letterSpacing: "0.05em",

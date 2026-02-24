@@ -23,7 +23,7 @@ const dropdownSections = [
       { label: "+1 nice place for experimentation", href: "/afarm" },
       { label: "+1 art advisory", href: "/advisory" },
       { label: "+1 residency", href: "/afarm" },
-      { label: "+1 motsound", href: "/sound" },
+      { label: "+1 MoTsound", href: "/sound" },
       { label: "+1 Performance", href: "/performance" },
     ],
   },
@@ -114,13 +114,13 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   style={{
-                    fontSize: "18px",
+                    fontSize: "21px",
                     fontWeight: 400,
                     letterSpacing: "0.01em",
                     color: "#888888",
                     whiteSpace: "nowrap",
                     textDecoration: pathname.startsWith(item.href) ? "underline" : "none",
-                    textUnderlineOffset: "3px",
+                    textUnderlineOffset: "4px",
                   }}
                 >
                   {item.label}
@@ -378,12 +378,12 @@ export default function Header() {
               href={item.href}
               style={{
                 display: "inline-block",
-                fontSize: "16px",
+                fontSize: "18px",
                 fontWeight: 400,
                 color: "#888888",
                 padding: "11px 16px 11px 0",
                 textDecoration: pathname.startsWith(item.href) ? "underline" : "none",
-                textUnderlineOffset: "3px",
+                textUnderlineOffset: "4px",
                 marginRight: "16px",
                 whiteSpace: "nowrap",
               }}
