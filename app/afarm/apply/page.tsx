@@ -57,7 +57,7 @@ function ApplyForm() {
       durationOptions.find((o) => o.value === duration)?.label || duration;
 
     const subject = encodeURIComponent(
-      `A. Farm Residency Inquiry — ${name} — ${studioLabel} — ${monthLabel}`
+      `a.farm residency inquiry — ${name} — ${studioLabel} — ${monthLabel}`
     );
 
     const body = encodeURIComponent(

@@ -7,7 +7,7 @@ import Image from "next/image";
 
 const primaryNav = [
   { label: "+1 museum", href: "/museum" },
-  { label: "+a. farm", href: "/afarm" },
+  { label: "+a.farm", href: "/afarm" },
   { label: "+1 trash", href: "/trash" },
   { label: "events", href: "/events" },
 ];
@@ -17,23 +17,23 @@ const dropdownSections = [
     heading: "+1 programs",
     items: [
       { label: "+1 museum by any other name", href: "/museum" },
-      { label: "+a. farm", href: "/afarm" },
+      { label: "+a.farm", href: "/afarm" },
       { label: "+1 trash", href: "/trash" },
       { label: "+1 contemporary project", href: "/contemporary" },
       { label: "+1 nice place for experimentation", href: "/afarm" },
       { label: "+1 art advisory", href: "/advisory" },
       { label: "+1 residency", href: "/afarm" },
-      { label: "mot+sound", href: "/sound" },
-      { label: "mot+ performance", href: "/performance" },
+      { label: "+1 motsound", href: "/sound" },
+      { label: "+1 Performance", href: "/performance" },
     ],
   },
   {
     heading: "organization",
     items: [
-      { label: "mot+++ collective", href: "/collective" },
       { label: "previous residents", href: "/residents" },
       { label: "about", href: "/about" },
       { label: "contact", href: "/contact" },
+      { label: "mot+++ collective", href: "/collective" },
     ],
   },
 ];

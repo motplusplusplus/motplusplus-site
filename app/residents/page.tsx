@@ -14,7 +14,7 @@ export default function ResidentsPage() {
           previous residents
         </h1>
         <p style={{ fontSize: "15px", color: "#666666", maxWidth: "520px", lineHeight: 1.7 }}>
-          artists who have passed through the +a. farm program.
+          artists who have passed through the +a.farm program.
         </p>
       </div>
 

@@ -9,6 +9,8 @@ const carouselItems = [
     tagline: s.tagline,
     neighborhood: s.neighborhood,
     href: `/afarm/studios/${s.slug}`,
+    // MoT+++ studio (karlie-ho) is pinned to bottom of shuffle
+    pinned: s.slug === "karlie-ho",
   })),
   {
     slug: hotel.slug,
@@ -16,6 +18,7 @@ const carouselItems = [
     tagline: hotel.tagline,
     neighborhood: "thảo điền — hotel track",
     href: "/afarm/hotel",
+    pinned: true, // always last
   },
 ];
 
@@ -36,7 +39,7 @@ export default function AFarmPage() {
         }}
       >
         <p style={{ fontSize: "12px", color: "#aaaaaa", letterSpacing: "0.08em" }}>
-          +a. farm — hero image
+          +a.farm — hero image
         </p>
       </div>
 
@@ -52,7 +55,7 @@ export default function AFarmPage() {
             marginBottom: "24px",
           }}
         >
-          +a. farm
+          +a.farm
         </h1>
         <p
           style={{
@@ -81,6 +84,22 @@ export default function AFarmPage() {
             <StudioCarousel items={carouselItems} />
           </div>
         </div>
+
+        {/* pairing notice */}
+        <p
+          style={{
+            fontSize: "13px",
+            color: "#999999",
+            lineHeight: 1.7,
+            maxWidth: "480px",
+            marginTop: "32px",
+            marginBottom: "20px",
+          }}
+        >
+          pairings of resident with hosting artist are ultimately determined by
+          a.farm — we consider practice, timing, and fit carefully before
+          confirming any placement.
+        </p>
 
         {/* view studios link */}
         <div style={{ marginBottom: "80px" }}>
@@ -213,7 +232,7 @@ export default function AFarmPage() {
             heARTalk
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444" }}>
-            a weekly gathering of all current +a. farm residents and affiliates —
+            a weekly gathering of all current +a.farm residents and affiliates —
             an open discussion period to explore what resources the community can
             bring to support artistic endeavors. in-person, based in ho chi minh
             city.
