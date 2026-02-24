@@ -8,6 +8,7 @@ const primaryNav = [
   { label: "+1 museum", href: "/museum" },
   { label: "+a. farm", href: "/afarm" },
   { label: "+1 trash", href: "/trash" },
+  { label: "events", href: "/events" },
 ];
 
 const dropdownSections = [

@@ -52,13 +52,6 @@ export default function Footer() {
           >
             instagram
           </a>
-          <a
-            href="https://facebook.com/MoTplusplusplus"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            facebook
-          </a>
           <a href="mailto:motplusplusplus@gmail.com">
             motplusplusplus@gmail.com
           </a>
