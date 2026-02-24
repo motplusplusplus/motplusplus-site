@@ -90,10 +90,10 @@ export default function Header() {
           {/* logo */}
           <Link href="/" style={{ display: "flex", alignItems: "center" }}>
             <Image
-              src="/motpluspluspluslogo.jpg"
+              src="/motpluspluspluslogo-thin.png"
               alt="MoT+++"
-              width={120}
-              height={40}
+              width={160}
+              height={36}
               style={{ objectFit: "contain", objectPosition: "left" }}
               unoptimized
             />
