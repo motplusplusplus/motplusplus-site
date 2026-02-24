@@ -5,10 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 
 const primaryNav = [
-  { label: "+1 museum by any other name", href: "/museum" },
+  { label: "+1 museum", href: "/museum" },
   { label: "+a. farm", href: "/afarm" },
   { label: "+1 trash", href: "/trash" },
-  { label: "events", href: "/events" },
 ];
 
 const dropdownSections = [
@@ -111,7 +110,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   style={{
-                    fontSize: "15px",
+                    fontSize: "18px",
                     fontWeight: 400,
                     letterSpacing: "0.01em",
                     color: "#111111",
@@ -373,7 +372,7 @@ export default function Header() {
               href={item.href}
               style={{
                 display: "inline-block",
-                fontSize: "13px",
+                fontSize: "16px",
                 fontWeight: 400,
                 color: "#111111",
                 padding: "11px 16px 11px 0",
