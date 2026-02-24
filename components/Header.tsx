@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -40,6 +41,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (menuOpen || searchOpen) {
@@ -112,7 +114,7 @@ export default function Header() {
                   href={item.href}
                   style={{
                     fontSize: "18px",
-                    fontWeight: 400,
+                    fontWeight: pathname.startsWith(item.href) ? 700 : 400,
                     letterSpacing: "0.01em",
                     color: "#111111",
                     whiteSpace: "nowrap",
@@ -374,7 +376,7 @@ export default function Header() {
               style={{
                 display: "inline-block",
                 fontSize: "16px",
-                fontWeight: 400,
+                fontWeight: pathname.startsWith(item.href) ? 700 : 400,
                 color: "#111111",
                 padding: "11px 16px 11px 0",
                 marginRight: "16px",
