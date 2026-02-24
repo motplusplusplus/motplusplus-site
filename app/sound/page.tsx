@@ -9,7 +9,7 @@ const events = [
       { name: "Nikola H. Mounoud", bio: "Swiss sound artist now based in Hanoi, Vietnam. nearly two decades of experience in live sound making, using custom MAX/MSP software and analog mixer to create irresponsible sounds, unexpected dense sonic blasts.", link: "http://ooo.meovco.com" },
       { name: "Writher (Nguyen Hong Giang)", bio: "Vietnamese producer, composer, and label head, currently based in Saigon. conservatory training, working with experimental noise music employing computer, software, synthesis, tape manipulation, recordings, acoustic instruments, and analog effects.", link: "https://linktr.ee/outnhg" },
     ],
-    image: "https://motplusplusplus.com/wp-content/uploads/2025/09/fb-event-2.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/25-poster.jpg",
     photos: [],
   },
   {
@@ -24,16 +24,16 @@ const events = [
       { name: "Ken Ueno", bio: "Vietnamese American" },
       { name: "Arnont Nongyao", bio: "Thai based in HCMC" },
     ],
-    image: "https://motplusplusplus.com/wp-content/uploads/2024/10/sketch-for-future-basketball_ig1-2388393968-e1730358066394.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/24-poster.jpg",
     photos: [
-      "https://motplusplusplus.com/wp-content/uploads/2024/07/dscf5259.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/07/dscf5195.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/07/dscf5199.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/07/dscf5202.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/07/dscf5220.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/07/dscf5239.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/07/dscf5242.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/07/dscf5255.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/24-photo-01.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/24-photo-02.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/24-photo-03.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/24-photo-04.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/24-photo-05.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/24-photo-06.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/24-photo-07.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/24-photo-08.jpg",
     ],
   },
   {
@@ -48,15 +48,15 @@ const events = [
       { name: "Dave Phillips (CH) — Field Recordings", bio: "explores sound as communication, vibration, and consciousness. uses raw recordings from national parks, nature reserves, and non-human habitats in tropical/desert climates featuring insects, amphibians, avians, mammals, and weather phenomena. sets performed in darkness with no effects or manipulations applied.", link: "https://davephillips.ch/" },
       { name: "Mei Zhiyong (CN) — Noise of Python", bio: "active Harsh Noise artist creating unique noise through generators and modified industrial instruments. since 2007, performed 400+ shows globally with 40+ album releases. founder of Fuzztape label and A Bunch of Noise festival (2023). also runs machine factory and fuzzbox project exploring industrial production and noise art fusion.", link: "https://meizhiyong.com/" },
     ],
-    image: "https://motplusplusplus.com/wp-content/uploads/2024/10/20240412_211218.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/23-poster.jpg",
     photos: [
-      "https://motplusplusplus.com/wp-content/uploads/2024/10/20240412_200311.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/10/20240412_204540.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/10/20240412_211218.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/10/20240412_214649.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/10/20240412_223022.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/04/screenshot_20241031_145605_gallery.jpg",
-      "https://motplusplusplus.com/wp-content/uploads/2024/04/screenshot_20241031_145624_gallery.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/23-photo-01.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/23-photo-02.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/23-poster.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/23-photo-03.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/23-photo-04.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/23-photo-05.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/23-photo-06.jpg",
     ],
   },
   {
@@ -66,7 +66,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2024/10/screen-shot-2024-10-31-at-15.29.03-326233084-e1730363417415.png",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/22-poster.png",
     photos: [],
   },
   {
@@ -76,7 +76,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2024/10/screen-shot-2024-10-31-at-16.06.57-2048950795-e1730365890397.png",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/21-poster.png",
     photos: [],
   },
   {
@@ -86,7 +86,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2024/10/screen-shot-2024-10-31-at-15.23.46.png",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/20-poster.png",
     photos: [],
   },
   {
@@ -96,7 +96,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2020/11/dscf4697-1.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/16-poster.jpg",
     photos: [],
   },
   {
@@ -106,7 +106,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2020/09/motsound-15-arenaissance-newsletter-copy-01-2115828726-e1730960447253.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/15-poster.jpg",
     photos: [],
   },
   {
@@ -116,7 +116,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2020/02/screenshot-2024-11-07-at-1.25.37e280afpm-3200530695-e1730961079716.png",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/14-poster.png",
     photos: [],
   },
   {
@@ -126,7 +126,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2020/01/screenshot-2024-11-07-at-1.28.16e280afpm-870710423-e1730961344873.png",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/13-poster.png",
     photos: [],
   },
   {
@@ -136,7 +136,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2019/12/img_3791-1941243902-e1730961162660.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/12-poster.jpg",
     photos: [],
   },
   {
@@ -146,7 +146,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2019/08/motsound_11_2.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/11-poster.jpg",
     photos: [],
   },
   {
@@ -156,7 +156,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2019/04/79c2290b-aed7-4a92-937b-aad395c3cf7f.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/10-poster.jpg",
     photos: [],
   },
   {
@@ -166,7 +166,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2019/03/linhhafornow_2_20181202-e6b5a3e88e8e-1.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/09-poster.jpg",
     photos: [],
   },
   {
@@ -176,7 +176,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2024/11/originalphoto-555680801.436318-2274474061-e1730961975834.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/08-poster.jpg",
     photos: [],
   },
   {
@@ -196,7 +196,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2018/05/screenshot-2024-11-07-at-1.53.38e280afpm-4080227694-e1730962647391.png",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/06-poster.png",
     photos: [],
   },
   {
@@ -216,7 +216,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2018/03/img_3793-2646304466-e1730963326520.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/04-poster.jpg",
     photos: [],
   },
   {
@@ -246,7 +246,7 @@ const events = [
     location: "ho chi minh city",
     description: "",
     artists: [],
-    image: "https://motplusplusplus.com/wp-content/uploads/2017/05/motso1.jpg",
+    image: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/motsound/01-poster.jpg",
     photos: [],
   },
 ];
