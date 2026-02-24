@@ -111,7 +111,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   style={{
-                    fontSize: "13px",
+                    fontSize: "15px",
                     fontWeight: 400,
                     letterSpacing: "0.01em",
                     color: "#111111",
