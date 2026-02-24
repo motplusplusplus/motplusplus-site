@@ -343,12 +343,63 @@ export default function Header() {
         </div>
       )}
 
+      {/* mobile primary nav row */}
+      <div
+        style={{
+          position: "fixed",
+          top: "60px",
+          left: 0,
+          right: 0,
+          zIndex: 49,
+          backgroundColor: "#ffffff",
+          borderBottom: "1px solid #e5e5e5",
+          overflowX: "auto",
+          WebkitOverflowScrolling: "touch" as const,
+          scrollbarWidth: "none" as const,
+        }}
+        className="mobile-nav-row"
+      >
+        <div
+          style={{
+            display: "flex",
+            gap: "0",
+            padding: "0 16px",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {primaryNav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              style={{
+                display: "inline-block",
+                fontSize: "13px",
+                fontWeight: 400,
+                color: "#111111",
+                padding: "11px 16px 11px 0",
+                marginRight: "16px",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* spacer so content doesn't sit under fixed header */}
-      <div style={{ height: "60px" }} />
+      <div className="header-spacer" />
 
       <style>{`
         @media (max-width: 768px) {
           .hidden-mobile { display: none !important; }
+          .mobile-nav-row { display: block !important; }
+          .mobile-nav-row::-webkit-scrollbar { display: none; }
+          .header-spacer { height: 104px; }
+        }
+        @media (min-width: 769px) {
+          .mobile-nav-row { display: none !important; }
+          .header-spacer { height: 60px; }
         }
       `}</style>
     </>
