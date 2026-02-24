@@ -11,10 +11,11 @@ export default function Home() {
       >
         <h1
           style={{
-            fontSize: "clamp(36px, 5vw, 64px)",
+            fontSize: "clamp(28px, 3.2vw, 48px)",
             fontWeight: 300,
             lineHeight: 1.1,
             letterSpacing: "-0.02em",
+            whiteSpace: "nowrap",
           }}
         >
           +1 museum by any other name
@@ -54,7 +55,7 @@ export default function Home() {
           padding: "72px 24px",
         }}
       >
-        <div style={{ maxWidth: "640px" }}>
+        <div style={{ maxWidth: "860px" }}>
           <p
             style={{
               fontSize: "16px",
