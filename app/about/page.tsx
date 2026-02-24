@@ -34,22 +34,20 @@ export default function AboutPage() {
           >
             about MoT+++
           </h1>
-          <div
-            style={{
-              width: "100%",
-              height: "160px",
-              backgroundColor: "#f8f8f8",
-              border: "1px solid #eeeeee",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.06em" }}>
-              organization description — to be provided
-            </p>
-          </div>
+          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+            our ID
+          </p>
+          <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "20px", maxWidth: "640px" }}>
+            we are an independent artist-run contemporary art space in Saigon, Vietnam. our fluid and responsive approach to programming prioritizes artists by acknowledging the creative process as often non-linear and divergent, encouraging them to experiment with the boundaries of their practice.
+          </p>
+          <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "20px", maxWidth: "640px" }}>
+            born as a project space in 2015, our list of +1s activities is expanding as the space continues to grow and evolve its artistic and collaborative practices.
+          </p>
+          <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", maxWidth: "640px" }}>
+            in 2018 we co-founded a.farm international art residency.
+          </p>
         </div>
+
 
         {/* programs */}
         <div
