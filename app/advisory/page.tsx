@@ -67,23 +67,31 @@ export default function AdvisoryPage() {
             }}
           >
             {[
-              { name: "Post Vidai" },
-              { name: "The Nguyen Art Foundation" },
+              {
+                name: "Post Vidai",
+                img: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/advisory/post-vidai.jpg",
+              },
+              {
+                name: "The Nguyen Art Foundation",
+                img: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/advisory/nguyen-art-foundation.jpg",
+              },
             ].map((c) => (
-              <div
-                key={c.name}
-                style={{
-                  padding: "32px",
-                  border: "1px solid #e5e5e5",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minHeight: "120px",
-                }}
-              >
-                <span style={{ fontSize: "15px", fontWeight: 300, color: "#444444" }}>
-                  {c.name}
-                </span>
+              <div key={c.name} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div
+                  style={{
+                    width: "100%",
+                    aspectRatio: "4/3",
+                    overflow: "hidden",
+                    backgroundColor: "#f0f0f0",
+                  }}
+                >
+                  <img
+                    src={c.img}
+                    alt={c.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                </div>
+                <span style={{ fontSize: "14px", fontWeight: 300, color: "#444444" }}>{c.name}</span>
               </div>
             ))}
           </div>
