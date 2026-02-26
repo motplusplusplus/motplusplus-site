@@ -1,139 +1,177 @@
-const upcomingEvents = Array.from({ length: 4 }, (_, i) => ({
-  id: i + 1,
-  title: "event title",
-  type: i % 2 === 0 ? "opening" : "performance",
-  date: "date — time",
-  location: "location, hồ chí minh city",
-  description: "brief description of the event — to be provided.",
-}));
+"use client";
 
-const pastEvents = Array.from({ length: 8 }, (_, i) => ({
-  id: i + 1,
-  title: "event title",
-  type: ["opening", "performance", "talk", "screening"][i % 4],
-  date: "date",
-  location: "location, hồ chí minh city",
-}));
+import { useState } from "react";
+import Link from "next/link";
+import { allEvents, categories, isPast, type Event } from "@/lib/events";
+
+const ALL = "all";
 
 export default function EventsPage() {
+  const [activeCategory, setActiveCategory] = useState<string>(ALL);
+
+  const filtered =
+    activeCategory === ALL
+      ? allEvents
+      : allEvents.filter(e => e.category === activeCategory);
+
+  const upcoming = filtered.filter(e => !isPast(e));
+  const past     = filtered.filter(e => isPast(e));
+
+  // Hero: use the most recent upcoming event thumbnail, or first past event
+  const heroEvent = allEvents.find(e => !isPast(e)) || allEvents[0];
+
   return (
-    <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
-
-      {/* heading */}
-      <div style={{ marginBottom: "72px" }}>
-        <h1
-          style={{
-            fontSize: "clamp(28px, 3.5vw, 48px)",
-            fontWeight: 300,
-            lineHeight: 1.1,
-            letterSpacing: "-0.02em",
-            marginBottom: "16px",
-          }}
-        >
-          events
-        </h1>
-        <p style={{ fontSize: "15px", color: "#666666", maxWidth: "480px", lineHeight: 1.7 }}>
-          openings, performances, talks, and screenings — in and around
-          ho chi minh city.
-        </p>
-      </div>
-
-      {/* upcoming */}
-      <div style={{ marginBottom: "80px" }}>
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
-          upcoming
-        </p>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
-          {upcomingEvents.map((event) => (
-            <div
-              key={event.id}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "minmax(200px, 1fr) 2fr",
-                gap: "32px",
-                padding: "32px 0",
-                borderTop: "1px solid #e5e5e5",
-                alignItems: "start",
-              }}
-            >
-              {/* image placeholder */}
-              <div
-                style={{
-                  width: "100%",
-                  aspectRatio: "4/3",
-                  backgroundColor: "#f5f5f5",
-                  border: "1px solid #e5e5e5",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.06em" }}>
-                  image {event.id}
-                </p>
-              </div>
-
-              {/* text */}
-              <div>
-                <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.06em", marginBottom: "10px" }}>
-                  {event.type}
-                </p>
-                <h2
-                  style={{
-                    fontSize: "22px",
-                    fontWeight: 300,
-                    lineHeight: 1.2,
-                    marginBottom: "12px",
-                    color: "#111111",
-                  }}
-                >
-                  {event.title}
-                </h2>
-                <p style={{ fontSize: "13px", color: "#888888", marginBottom: "6px" }}>
-                  {event.date}
-                </p>
-                <p style={{ fontSize: "13px", color: "#aaaaaa", marginBottom: "20px" }}>
-                  {event.location}
-                </p>
-                <p style={{ fontSize: "14px", color: "#444444", lineHeight: 1.7, maxWidth: "480px" }}>
-                  {event.description}
-                </p>
-              </div>
-            </div>
-          ))}
-          <div style={{ borderTop: "1px solid #e5e5e5" }} />
+    <>
+      {/* hero */}
+      <div style={{
+        position: "relative",
+        width: "100%", height: "55vh", minHeight: "360px",
+        overflow: "hidden", backgroundColor: "#111111",
+        borderBottom: "1px solid #222222",
+      }}>
+        {heroEvent?.thumbnail && (
+          <img
+            src={heroEvent.thumbnail}
+            alt=""
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.45 }}
+          />
+        )}
+        <div style={{
+          position: "absolute", inset: 0,
+          display: "flex", flexDirection: "column", justifyContent: "flex-end",
+          padding: "clamp(24px, 4vw, 56px)",
+        }}>
+          <h1 style={{
+            fontSize: "clamp(36px, 6vw, 82px)",
+            fontWeight: 300, lineHeight: 1, letterSpacing: "-0.03em",
+            color: "#ffffff",
+          }}>
+            news & events
+          </h1>
+          <p style={{
+            fontSize: "12px", color: "rgba(255,255,255,0.35)",
+            letterSpacing: "0.08em", marginTop: "18px",
+          }}>
+            MoT+++ — Ho Chi Minh City
+          </p>
         </div>
       </div>
 
-      {/* past */}
-      <div>
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
-          past
-        </p>
+      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
-          {pastEvents.map((event) => (
-            <div
-              key={event.id}
+        {/* category filters */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "64px" }}>
+          {[ALL, ...categories].map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
               style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 2fr 1fr",
-                gap: "24px",
-                padding: "20px 0",
-                borderTop: "1px solid #e5e5e5",
-                alignItems: "center",
+                padding: "8px 18px", fontSize: "11px", letterSpacing: "0.06em",
+                border: "1px solid",
+                borderColor: activeCategory === cat ? "#111111" : "#dddddd",
+                backgroundColor: activeCategory === cat ? "#111111" : "transparent",
+                color: activeCategory === cat ? "#ffffff" : "#888888",
+                cursor: "pointer", fontFamily: "inherit",
               }}
             >
-              <p style={{ fontSize: "13px", color: "#aaaaaa" }}>{event.date}</p>
-              <p style={{ fontSize: "15px", color: "#111111", fontWeight: 300 }}>{event.title}</p>
-              <p style={{ fontSize: "12px", color: "#bbbbbb", letterSpacing: "0.04em" }}>{event.type}</p>
-            </div>
+              {cat}
+            </button>
           ))}
-          <div style={{ borderTop: "1px solid #e5e5e5" }} />
+        </div>
+
+        {/* upcoming */}
+        {upcoming.length > 0 && (
+          <div style={{ marginBottom: "80px" }}>
+            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+              upcoming
+            </p>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+              gap: "48px 32px",
+            }}>
+              {upcoming.map(e => <EventCard key={e.slug} event={e} />)}
+            </div>
+          </div>
+        )}
+
+        {/* archive */}
+        {past.length > 0 && (
+          <div style={{
+            borderTop: upcoming.length ? "1px solid #e5e5e5" : "none",
+            paddingTop: upcoming.length ? "56px" : 0,
+          }}>
+            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+              archive
+            </p>
+            <div>
+              {past.map(e => <PastRow key={e.slug} event={e} />)}
+            </div>
+          </div>
+        )}
+
+      </div>
+    </>
+  );
+}
+
+function EventCard({ event }: { event: Event }) {
+  return (
+    <Link href={`/events/${event.slug}`} className="evt-card">
+      <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+        <div className="evt-card-img" style={{ width: "100%", aspectRatio: "4/3", backgroundColor: "#f0f0f0" }}>
+          {event.thumbnail
+            ? <img src={event.thumbnail} alt={event.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: "11px", color: "#cccccc" }}>—</span>
+              </div>
+          }
+        </div>
+        <div>
+          <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.08em", marginBottom: "8px" }}>
+            {event.category}
+          </p>
+          <p style={{ fontSize: "16px", fontWeight: 300, color: "#111111", lineHeight: 1.35, marginBottom: "10px" }}>
+            {event.title}
+          </p>
+          <p style={{ fontSize: "12px", color: "#999999" }}>{event.displayDate || event.dateISO}</p>
+          {event.location && (
+            <p style={{ fontSize: "12px", color: "#cccccc", marginTop: "2px" }}>{event.location}</p>
+          )}
         </div>
       </div>
+    </Link>
+  );
+}
 
-    </div>
+function PastRow({ event }: { event: Event }) {
+  return (
+    <Link href={`/events/${event.slug}`} className="evt-row" style={{ textDecoration: "none", color: "inherit", display: "block" }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "80px 1fr auto",
+        gap: "0 20px",
+        alignItems: "center",
+        padding: "16px 8px",
+        borderBottom: "1px solid #f2f2f2",
+      }}>
+        <div style={{ width: "80px", height: "60px", overflow: "hidden", backgroundColor: "#f0f0f0", flexShrink: 0 }}>
+          {event.thumbnail && (
+            <img src={event.thumbnail} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          )}
+        </div>
+        <div>
+          <p style={{ fontSize: "10px", color: "#bbbbbb", letterSpacing: "0.06em", marginBottom: "4px" }}>
+            {event.category}
+          </p>
+          <p style={{ fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.35 }}>
+            {event.title}
+          </p>
+        </div>
+        <p style={{ fontSize: "12px", color: "#aaaaaa", whiteSpace: "nowrap", flexShrink: 0 }}>
+          {event.displayDate || event.dateISO}
+        </p>
+      </div>
+    </Link>
   );
 }

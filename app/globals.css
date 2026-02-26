@@ -26,3 +26,13 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* event cards */
+.evt-card { display: block; text-decoration: none; color: inherit; }
+.evt-card-img { overflow: hidden; }
+.evt-card-img img { transition: transform 0.45s ease; display: block; }
+.evt-card:hover .evt-card-img img { transform: scale(1.04); }
+
+/* archive rows */
+.evt-row { transition: background 0.15s ease; }
+.evt-row:hover { background-color: #fafafa; }
