@@ -1,9 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getEvent, getEventSlugs, isPast } from "@/lib/events";
+import { getEvent, getEventSlugs, getRelatedResidents, isPast, BIO_SLUGS } from "@/lib/events";
 
 export function generateStaticParams() {
-  return getEventSlugs().map(slug => ({ slug }));
+  // BIO_SLUGS get their own pages at /residents/[slug]; skip them here
+  return getEventSlugs()
+    .filter(slug => !BIO_SLUGS.has(slug))
+    .map(slug => ({ slug }));
 }
 
 // Images to skip (logos, footer, partner marks)
@@ -13,9 +16,12 @@ const SKIP = [
   'formapubli', 'kirti', 'marg1n', 'matca', 'nbs', 'rr-1', 'vanguard', 'wdg',
 ];
 
-export default function EventPage({ params }: { params: { slug: string } }) {
-  const event = getEvent(params.slug);
+export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const event = getEvent(slug);
   if (!event) notFound();
+
+  const relatedResidents = getRelatedResidents(event);
 
   const past = isPast(event);
 
@@ -109,6 +115,26 @@ export default function EventPage({ params }: { params: { slug: string } }) {
             <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>{event.category}</p>
           </div>
         </div>
+
+        {/* artist profile links */}
+        {relatedResidents.length > 0 && (
+          <div style={{ marginBottom: "48px" }}>
+            <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "12px" }}>
+              artist{relatedResidents.length > 1 ? "s" : ""}
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 24px" }}>
+              {relatedResidents.map(r => (
+                <Link
+                  key={r.slug}
+                  href={`/residents/${r.slug}`}
+                  style={{ fontSize: "14px", fontWeight: 300, color: "#111111", textDecoration: "none" }}
+                >
+                  {r.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* description */}
         {event.description && (

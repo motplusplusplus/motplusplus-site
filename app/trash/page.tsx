@@ -11,22 +11,21 @@ export default function TrashPage() {
         }}>
           +1 trash ♻
         </h1>
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
-          program
-        </p>
-        <p style={{ fontSize: "15px", color: "#444444", lineHeight: 1.8, marginBottom: "20px" }}>
-          MoT+++'s former office space converted into an art warehouse where local and
-          international artists drop off their favourite works with the hope of reaching
-          out to collectors. artworks selected and consigned by artists are on view
-          casually, in real life and virtually, for the indefinite future.
-        </p>
-        <p style={{ fontSize: "15px", color: "#444444", lineHeight: 1.8, marginBottom: "20px" }}>
-          twice a week MoT+++ becomes a small salon — an exercise in both the recycling
-          of artworks and ideas, and rediscovering forgotten beauty.
-        </p>
-        <p style={{ fontSize: "14px", color: "#888888", fontStyle: "italic", lineHeight: 1.8, marginBottom: "32px" }}>
+        <p style={{ fontSize: "14px", color: "#888888", fontStyle: "italic", lineHeight: 1.8, marginBottom: "24px" }}>
           &ldquo;collecting trash is always an act to make the world a better place
           &nbsp;—&nbsp; thu gom rác luôn là một hành vi làm đẹp cho đời&rdquo;
+          <br />
+          <span style={{ fontSize: "12px", fontStyle: "normal", color: "#aaaaaa" }}>— Cam Xanh</span>
+        </p>
+        <p style={{ fontSize: "15px", color: "#444444", lineHeight: 1.8, marginBottom: "20px" }}>
+          MoT+++'s former office space is converted into trash ♻, an art warehouse where
+          local and international artists drop off their favourite works with the hope of
+          reaching out to collectors. artworks selected and consigned by artists will be
+          on view casually, in real life and virtually, for the indefinite future.
+        </p>
+        <p style={{ fontSize: "14px", color: "#888888", fontStyle: "italic", lineHeight: 1.8, marginBottom: "32px" }}>
+          &ldquo;art is among few virtues of human trash &nbsp;—&nbsp;
+          nghệ thuật là một trong số ít rác rưởi có đạo đức của loài người&rdquo;
           <br />
           <span style={{ fontSize: "12px", fontStyle: "normal", color: "#aaaaaa" }}>— Cam Xanh</span>
         </p>
@@ -57,7 +56,7 @@ export default function TrashPage() {
           <div>
             <p style={{ fontSize: "12px", color: "#aaaaaa", letterSpacing: "0.06em", marginBottom: "8px" }}>contact</p>
             <p style={{ fontSize: "14px", color: "#444444", lineHeight: 1.7 }}>
-              <a href="tel:+84904497769" style={{ color: "#444444" }}>+84 90 4497 769</a> (Tra My)<br />
+              <a href="tel:+84904497769" style={{ color: "#444444" }}>+84 90 4497 769</a><br />
               <a href="mailto:motplusplusplus@gmail.com" style={{ color: "#444444" }}>motplusplusplus@gmail.com</a>
             </p>
           </div>

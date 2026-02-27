@@ -33,6 +33,7 @@ export default function Footer() {
           <Link href="/events">events</Link>
           <Link href="/collective">mot+++ collective</Link>
           <Link href="/about">about</Link>
+          <Link href="/press">press</Link>
           <Link href="/contact">contact</Link>
         </div>
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { allEvents, categories, isPast, type Event } from "@/lib/events";
+import { listingEvents, categories, isPast, type Event } from "@/lib/events";
 
 const ALL = "all";
 
@@ -11,14 +11,14 @@ export default function EventsPage() {
 
   const filtered =
     activeCategory === ALL
-      ? allEvents
-      : allEvents.filter(e => e.category === activeCategory);
+      ? listingEvents
+      : listingEvents.filter(e => e.category === activeCategory);
 
   const upcoming = filtered.filter(e => !isPast(e));
   const past     = filtered.filter(e => isPast(e));
 
   // Hero: use the most recent upcoming event thumbnail, or first past event
-  const heroEvent = allEvents.find(e => !isPast(e)) || allEvents[0];
+  const heroEvent = listingEvents.find(e => !isPast(e)) || listingEvents[0];
 
   return (
     <>
@@ -131,9 +131,12 @@ function EventCard({ event }: { event: Event }) {
           <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.08em", marginBottom: "8px" }}>
             {event.category}
           </p>
-          <p style={{ fontSize: "16px", fontWeight: 300, color: "#111111", lineHeight: 1.35, marginBottom: "10px" }}>
+          <p style={{ fontSize: "16px", fontWeight: 300, color: "#111111", lineHeight: 1.35, marginBottom: event.vnTitle ? "4px" : "10px" }}>
             {event.title}
           </p>
+          {event.vnTitle && (
+            <p style={{ fontSize: "12px", color: "#bbbbbb", marginBottom: "10px" }}>{event.vnTitle}</p>
+          )}
           <p style={{ fontSize: "12px", color: "#999999" }}>{event.displayDate || event.dateISO}</p>
           {event.location && (
             <p style={{ fontSize: "12px", color: "#cccccc", marginTop: "2px" }}>{event.location}</p>
@@ -167,6 +170,9 @@ function PastRow({ event }: { event: Event }) {
           <p style={{ fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.35 }}>
             {event.title}
           </p>
+          {event.vnTitle && (
+            <p style={{ fontSize: "11px", color: "#cccccc", marginTop: "2px" }}>{event.vnTitle}</p>
+          )}
         </div>
         <p style={{ fontSize: "12px", color: "#aaaaaa", whiteSpace: "nowrap", flexShrink: 0 }}>
           {event.displayDate || event.dateISO}

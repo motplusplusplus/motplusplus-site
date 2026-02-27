@@ -1,36 +1,3 @@
-const R2 = "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev";
-
-const artworks = [
-  {
-    src: `${R2}/motplus/museum/afarm-museum-2017.png`,
-    title: "+1 museum by any other name | A. Farm",
-    artist: "MoT+++",
-    date: "2017",
-    location: "A. Farm",
-  },
-  {
-    src: `${R2}/motplus/museum/cian-duggan-entrances.jpg`,
-    title: "entrances",
-    artist: "Cian Duggan",
-    date: "2018",
-    location: "ho chi minh city",
-  },
-  {
-    src: `${R2}/motplus/museum/dao-tung-it-seems-to-be.jpg`,
-    title: "it seems to be",
-    artist: "Đào Tùng",
-    date: "2018",
-    location: "ho chi minh city",
-  },
-  {
-    src: `${R2}/motplus/museum/tran-minh-duc-flowers.jpg`,
-    title: "flowers",
-    artist: "Trần Minh Đức",
-    date: "2019",
-    location: "ho chi minh city",
-  },
-];
-
 export default function MuseumPage() {
   return (
     <>
@@ -39,9 +6,16 @@ export default function MuseumPage() {
         <h1 style={{
           fontSize: "clamp(28px, 4vw, 48px)",
           fontWeight: 300, lineHeight: 1.1, letterSpacing: "-0.02em",
+          marginBottom: "16px",
         }}>
           +1 museum by any other name
         </h1>
+        <p style={{ fontSize: "13px", color: "#999999", letterSpacing: "0.06em", lineHeight: 1.8 }}>
+          mot | mót | hoard
+        </p>
+        <p style={{ fontSize: "14px", color: "#888888", marginTop: "8px" }}>
+          hosting one work, in one place anywhere in the world
+        </p>
       </div>
 
       {/* interactive map placeholder */}
@@ -69,34 +43,21 @@ export default function MuseumPage() {
         {/* description */}
         <div style={{ maxWidth: "720px", marginBottom: "72px" }}>
           <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}>
-            MoT+++ operates no single building. instead it places artworks within the city itself — in private homes, businesses, studios, and public spaces — treating the urban fabric of ho chi minh city as its architecture.
+            ho chi minh city has no contemporary art museum. this is not a complaint so much as an observation that creates a certain kind of opening.
           </p>
-          <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444" }}>
-            the collection is real, documented, and curated. the city is the museum building. the map is the floor plan.
+          <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}>
+            +1 museum by any other name is a decentralized collection sited across the city, in private homes, businesses, studios, and public spaces. the works are real, documented, and curated. what is unconventional is where they live and what it takes to see them. each work has its own location, its own host, and its own conditions of access: some are freely visible, others require a phone call, an introduction, a time of day. the platform maps all of this and tells you what you need to know to get there.
           </p>
-        </div>
-
-        {/* collection */}
-        <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
-            the collection
+          <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}>
+            navigating the collection means navigating the city. someone might plan an afternoon across several works in different neighborhoods, or discover a piece while already somewhere else entirely. the map is the floor plan. the city is the building.
           </p>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: "32px",
-          }}>
-            {artworks.map((w) => (
-              <div key={w.src}>
-                <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", backgroundColor: "#f5f5f5", marginBottom: "12px" }}>
-                  <img src={w.src} alt={w.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                </div>
-                <p style={{ fontSize: "13px", fontWeight: 400, color: "#111111", marginBottom: "4px" }}>{w.title}</p>
-                <p style={{ fontSize: "12px", color: "#888888" }}>{w.artist} — {w.location}</p>
-                <p style={{ fontSize: "11px", color: "#bbbbbb", marginTop: "2px" }}>{w.date}</p>
-              </div>
-            ))}
-          </div>
+          <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "32px" }}>
+            works enter the collection through artists, through collectors who open their spaces, and through the a. farm residency program. the collection grows as the network does.
+          </p>
+          <p style={{ fontSize: "14px", color: "#888888", lineHeight: 1.8 }}>
+            +1 museum by any other name is coming. in the meantime, get in touch at{" "}
+            <a href="mailto:motplusplusplus@gmail.com" style={{ color: "#666666" }}>motplusplusplus@gmail.com</a>.
+          </p>
         </div>
 
       </div>

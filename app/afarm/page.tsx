@@ -152,7 +152,7 @@ export default function AFarmPage() {
             >
               the resident lives and works directly alongside a hosting artist in
               their studio, making collaborative work together. collaborative
-              output may enter the plus one museum collection.
+              output may enter the +1 museum by any other name collection.
             </p>
             <p
               style={{
