@@ -1,5 +1,8 @@
+import Link from "next/link";
+
 const members = [
   {
+    slug: "aliansyah-caniago",
     name: "Aliansyah Caniago",
     origin: "Indonesia, b. 1987",
     website: "aliansyahcaniago.yolasite.com",
@@ -16,6 +19,7 @@ const members = [
     ],
   },
   {
+    slug: "cam-xanh",
     name: "Cam Xanh",
     origin: "Vietnam, b. 1977",
     website: "camxanh.net",
@@ -32,6 +36,7 @@ const members = [
     ],
   },
   {
+    slug: "cian-duggan",
     name: "Cian Duggan",
     origin: "Ireland",
     website: "cian-duggan.com",
@@ -48,6 +53,7 @@ const members = [
     ],
   },
   {
+    slug: "kim-duy",
     name: "Kim Duy",
     origin: "Vietnam, b. 1987",
     website: "nguyenkdnguyenkd.wixsite.com/website-15",
@@ -64,6 +70,7 @@ const members = [
     ],
   },
   {
+    slug: "le-phi-long",
     name: "Le Phi Long",
     origin: "Vietnam, b. 1988",
     website: "philongart-studio.blogspot.com",
@@ -83,6 +90,7 @@ const members = [
     ],
   },
   {
+    slug: "matthew-brannon",
     name: "Matthew Brannon",
     origin: "USA, b. 1971",
     website: "matthewbrannon.com",
@@ -91,6 +99,7 @@ const members = [
     images: [],
   },
   {
+    slug: "wu-chi-tsung",
     name: "Wu Chi-Tsung",
     origin: "Taiwan, b. 1981",
     website: "wuchitsung.com",
@@ -219,17 +228,24 @@ export default function CollectivePage() {
 
               {/* bio */}
               <div>
-                <h2
-                  style={{
-                    fontSize: "22px",
-                    fontWeight: 300,
-                    marginBottom: "20px",
-                    lineHeight: 1.2,
-                    color: "#111111",
-                  }}
-                >
-                  {member.name}
-                </h2>
+                <div style={{ marginBottom: "20px", display: "flex", alignItems: "baseline", gap: "16px", flexWrap: "wrap" }}>
+                  <h2
+                    style={{
+                      fontSize: "22px",
+                      fontWeight: 300,
+                      lineHeight: 1.2,
+                      color: "#111111",
+                    }}
+                  >
+                    {member.name}
+                  </h2>
+                  <Link
+                    href={`/artists/${member.slug}`}
+                    style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}
+                  >
+                    artist profile ↗
+                  </Link>
+                </div>
                 <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444" }}>
                   {member.bio}
                 </p>

@@ -85,7 +85,7 @@ export default function ResidentsPage() {
                 .map((e) => (
                   <Link
                     key={e.slug}
-                    href={`/residents/${e.slug}`}
+                    href={`/artists/${e.slug}`}
                     style={{
                       ...nameStyle,
                       color: e.slug === "lan-anh-le" ? "#666666" : "#111111",
@@ -124,7 +124,7 @@ export default function ResidentsPage() {
                 }}>
                   {perfPlus2019Artists.map(({ name, slug }) =>
                     slug ? (
-                      <Link key={name} href={`/residents/${slug}`} style={nameStyle}>
+                      <Link key={name} href={`/artists/${slug}`} style={nameStyle}>
                         {name}
                       </Link>
                     ) : (

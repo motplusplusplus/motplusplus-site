@@ -126,7 +126,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
               {relatedResidents.map(r => (
                 <Link
                   key={r.slug}
-                  href={`/residents/${r.slug}`}
+                  href={`/artists/${r.slug}`}
                   style={{ fontSize: "14px", fontWeight: 300, color: "#111111", textDecoration: "none" }}
                 >
                   {r.title}
