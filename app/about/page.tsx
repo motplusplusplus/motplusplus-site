@@ -1,24 +1,6 @@
 export default function AboutPage() {
   return (
     <>
-      {/* hero */}
-      <div
-        style={{
-          width: "100%",
-          height: "50vh",
-          minHeight: "320px",
-          backgroundColor: "#f0f0f0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderBottom: "1px solid #e5e5e5",
-        }}
-      >
-        <p style={{ fontSize: "12px", color: "#aaaaaa", letterSpacing: "0.08em" }}>
-          MoT+++ — image
-        </p>
-      </div>
-
       <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "72px 24px" }}>
 
         {/* heading */}
@@ -98,61 +80,36 @@ export default function AboutPage() {
         </div>
 
         {/* people */}
-        <div
-          style={{
-            borderTop: "1px solid #e5e5e5",
-            paddingTop: "48px",
-            marginBottom: "80px",
-          }}
-        >
+        <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
           <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
             people
           </p>
-          <div
-            style={{
-              width: "100%",
-              height: "120px",
-              backgroundColor: "#f8f8f8",
-              border: "1px solid #eeeeee",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <p style={{ fontSize: "15px", color: "#444444", lineHeight: 1.8, maxWidth: "560px", marginBottom: "24px" }}>
+            MoT+++ is run by a collective of artists, curators, and writers based in ho chi minh city.
+          </p>
+          <a
+            href="/collective"
+            style={{ fontSize: "13px", color: "#111111", borderBottom: "1px solid #111111", paddingBottom: "1px" }}
           >
-            <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.06em" }}>
-              team / contributors — to be provided
-            </p>
-          </div>
+            mot+++ collective →
+          </a>
         </div>
 
         {/* press */}
-        <div
-          style={{
-            borderTop: "1px solid #e5e5e5",
-            paddingTop: "48px",
-          }}
-        >
+        <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px" }}>
           <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
             press
           </p>
-          <div
-            style={{
-              width: "100%",
-              height: "120px",
-              backgroundColor: "#f8f8f8",
-              border: "1px solid #eeeeee",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.06em" }}>
-              press links — to be provided
-            </p>
-          </div>
+          <p style={{ fontSize: "14px", color: "#888888", lineHeight: 1.8, maxWidth: "480px" }}>
+            press archive being compiled. for media inquiries contact{" "}
+            <a href="mailto:motplusplusplus@gmail.com" style={{ color: "#555555" }}>
+              motplusplusplus@gmail.com
+            </a>
+          </p>
         </div>
 
       </div>
     </>
   );
 }
+
