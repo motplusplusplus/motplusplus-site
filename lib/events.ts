@@ -5,6 +5,7 @@ export type Event = {
   title:       string;
   displayDate: string;
   dateISO:     string;
+  sortDate:    string;   // actual event date (extracted from displayDate); used for ordering
   pubDate:     string;
   category:    string;
   location:    string;
@@ -32,7 +33,8 @@ export function getEventSlugs(): string[] {
   return allEvents.map(e => e.slug);
 }
 
-/** Returns true if the event's display date is in the past */
+/** Returns true if the event's actual date is in the past */
 export function isPast(event: Event): boolean {
-  return event.dateISO < new Date().toISOString().slice(0, 10);
+  const d = event.sortDate || event.dateISO;
+  return d < new Date().toISOString().slice(0, 10);
 }
