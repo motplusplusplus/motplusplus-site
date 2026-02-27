@@ -13,7 +13,9 @@ export type Event = {
   images:      string[];
   thumbnail:   string;
   wpLink:      string;
-  vnTitle?:    string;   // Vietnamese title for bilingual display
+  vnTitle?:       string;   // Vietnamese title for bilingual display
+  vnDescription?: string;   // Vietnamese description for bilingual display
+  videoUrl?:      string;   // YouTube or other video embed URL
 };
 
 export const allEvents: Event[] = eventsRaw as Event[];
