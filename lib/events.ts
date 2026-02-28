@@ -50,10 +50,10 @@ export const HIDDEN_SLUGS = new Set(['self-funded-residency-program']);
 /** Events shown in the public listing — excludes Vietnamese-language duplicate pages */
 export const publicEvents: Event[] = allEvents.filter(e => !e.slug.endsWith('-vn'));
 
-/** Events shown in the main listing — excludes bio pages and hidden entries */
-export const listingEvents: Event[] = publicEvents.filter(
-  e => !BIO_SLUGS.has(e.slug) && !HIDDEN_SLUGS.has(e.slug)
-);
+/** Events shown in the main listing — excludes bio pages and hidden entries, sorted newest first */
+export const listingEvents: Event[] = publicEvents
+  .filter(e => !BIO_SLUGS.has(e.slug) && !HIDDEN_SLUGS.has(e.slug))
+  .sort((a, b) => b.sortDate.localeCompare(a.sortDate));
 
 export const categories = [
   '+a.farm',
@@ -75,6 +75,16 @@ export function getEventSlugs(): string[] {
 export function isPast(event: Event): boolean {
   const d = event.sortDate || event.dateISO;
   return d < new Date().toISOString().slice(0, 10);
+}
+
+/** Previous and next events in the listing (newest-first order) */
+export function getAdjacentEvents(slug: string): { prev: Event | null; next: Event | null } {
+  const idx = listingEvents.findIndex(e => e.slug === slug);
+  if (idx === -1) return { prev: null, next: null };
+  return {
+    prev: idx > 0 ? listingEvents[idx - 1] : null,           // newer
+    next: idx < listingEvents.length - 1 ? listingEvents[idx + 1] : null, // older
+  };
 }
 
 /** For a given event, find bio entries whose artist name appears in the event's title/slug */

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getEvent, getEventSlugs, getRelatedResidents, isPast, BIO_SLUGS } from "@/lib/events";
+import { getEvent, getEventSlugs, getRelatedResidents, getAdjacentEvents, isPast, BIO_SLUGS } from "@/lib/events";
 import EventContent from "@/components/EventContent";
 
 export function generateStaticParams() {
@@ -22,6 +22,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   if (!event) notFound();
 
   const relatedResidents = getRelatedResidents(event);
+  const { prev, next } = getAdjacentEvents(slug);
 
   const past = isPast(event);
 
@@ -85,6 +86,8 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
         relatedResidents={relatedResidents.map(r => ({ slug: r.slug, title: r.title }))}
         contentImages={contentImages}
         wpLink={event.wpLink}
+        prevEvent={prev ? { slug: prev.slug, title: prev.title } : null}
+        nextEvent={next ? { slug: next.slug, title: next.title } : null}
       />
     </>
   );

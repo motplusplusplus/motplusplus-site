@@ -8,6 +8,11 @@ interface RelatedResident {
   title: string;
 }
 
+interface AdjacentEvent {
+  slug: string;
+  title: string;
+}
+
 interface EventContentProps {
   title: string;
   vnTitle?: string;
@@ -22,6 +27,8 @@ interface EventContentProps {
   relatedResidents: RelatedResident[];
   contentImages: string[];
   wpLink?: string;
+  prevEvent: AdjacentEvent | null;
+  nextEvent: AdjacentEvent | null;
 }
 
 function toEmbedUrl(url: string): string | null {
@@ -61,6 +68,8 @@ export default function EventContent({
   relatedResidents,
   contentImages,
   wpLink,
+  prevEvent,
+  nextEvent,
 }: EventContentProps) {
   const hasBilingual = Boolean(vnTitle || vnDescription);
   const [lang, setLang] = useState<"en" | "vi">("en");
@@ -271,22 +280,62 @@ export default function EventContent({
       {/* footer nav */}
       <div style={{
         borderTop: "1px solid #e5e5e5", paddingTop: "40px",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexWrap: "wrap", gap: "16px",
       }}>
-        <Link href="/events" style={{ fontSize: "13px", color: "#666666" }}>
-          ← back to events
-        </Link>
-        {wpLink && (
-          <a
-            href={wpLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}
-          >
-            original post ↗
-          </a>
+        {/* prev / next */}
+        {(prevEvent || nextEvent) && (
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "24px",
+            marginBottom: "32px",
+          }}>
+            <div>
+              {prevEvent && (
+                <Link href={`/events/${prevEvent.slug}`} style={{ textDecoration: "none" }}>
+                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.08em", marginBottom: "6px" }}>
+                    ← newer
+                  </p>
+                  <p style={{ fontSize: "13px", fontWeight: 300, color: "#333333", lineHeight: 1.35 }}>
+                    {prevEvent.title}
+                  </p>
+                </Link>
+              )}
+            </div>
+            <div style={{ textAlign: "right" }}>
+              {nextEvent && (
+                <Link href={`/events/${nextEvent.slug}`} style={{ textDecoration: "none" }}>
+                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.08em", marginBottom: "6px" }}>
+                    older →
+                  </p>
+                  <p style={{ fontSize: "13px", fontWeight: 300, color: "#333333", lineHeight: 1.35 }}>
+                    {nextEvent.title}
+                  </p>
+                </Link>
+              )}
+            </div>
+          </div>
         )}
+
+        {/* back link + original post */}
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          flexWrap: "wrap", gap: "16px",
+          borderTop: "1px solid #f2f2f2", paddingTop: "24px",
+        }}>
+          <Link href="/events" style={{ fontSize: "13px", color: "#666666" }}>
+            ← back to events
+          </Link>
+          {wpLink && (
+            <a
+              href={wpLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}
+            >
+              original post ↗
+            </a>
+          )}
+        </div>
       </div>
 
     </div>
