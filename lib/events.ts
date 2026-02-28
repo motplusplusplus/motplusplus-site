@@ -45,7 +45,11 @@ export const BIO_SLUGS = new Set([
 ]);
 
 /** Slugs to hide from all public listings */
-export const HIDDEN_SLUGS = new Set(['self-funded-residency-program']);
+export const HIDDEN_SLUGS = new Set([
+  'self-funded-residency-program',
+  'linh-le',      // curator bio — not an event
+  'post-vidai',   // standalone reference page — linked inline, not listed
+]);
 
 /** Events shown in the public listing — excludes Vietnamese-language duplicate pages */
 export const publicEvents: Event[] = allEvents.filter(e => !e.slug.endsWith('-vn'));
