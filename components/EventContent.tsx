@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 
 interface RelatedResident {
@@ -73,6 +73,16 @@ export default function EventContent({
 }: EventContentProps) {
   const hasBilingual = Boolean(vnTitle || vnDescription);
   const [lang, setLang] = useState<"en" | "vi">("en");
+  const [lightbox, setLightbox] = useState<string | null>(null);
+
+  const closeLightbox = useCallback(() => setLightbox(null), []);
+
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeLightbox(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox, closeLightbox]);
 
   const activeTitle = lang === "vi" && vnTitle ? vnTitle : title;
   const activeDescription = lang === "vi" && vnDescription ? vnDescription : description;
@@ -81,6 +91,35 @@ export default function EventContent({
 
   return (
     <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "52px 24px 96px" }}>
+
+      {/* lightbox overlay */}
+      {lightbox && (
+        <div
+          onClick={closeLightbox}
+          style={{
+            position: "fixed", inset: 0, zIndex: 9999,
+            backgroundColor: "rgba(0,0,0,0.92)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "zoom-out",
+          }}
+        >
+          <img
+            src={lightbox}
+            alt=""
+            style={{ maxWidth: "92vw", maxHeight: "92vh", objectFit: "contain", display: "block" }}
+            onClick={e => e.stopPropagation()}
+          />
+          <button
+            onClick={closeLightbox}
+            style={{
+              position: "absolute", top: "20px", right: "24px",
+              background: "none", border: "none", color: "#ffffff",
+              fontSize: "28px", cursor: "pointer", lineHeight: 1, padding: "4px 8px",
+            }}
+            aria-label="Close"
+          >×</button>
+        </div>
+      )}
 
       {/* breadcrumb + bilingual toggle row */}
       <div style={{
@@ -165,27 +204,26 @@ export default function EventContent({
           </p>
           <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>{category}</p>
         </div>
-      </div>
 
-      {/* artist profile links */}
-      {relatedResidents.length > 0 && (
-        <div style={{ marginBottom: "48px" }}>
-          <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "12px" }}>
-            artist{relatedResidents.length > 1 ? "s" : ""}
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 24px" }}>
-            {relatedResidents.map(r => (
-              <Link
-                key={r.slug}
-                href={`/artists/${r.slug}`}
-                style={{ fontSize: "14px", fontWeight: 300, color: "#111111", textDecoration: "none" }}
-              >
-                {r.title}
-              </Link>
-            ))}
+        {relatedResidents.length > 0 && (
+          <div>
+            <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+              artist{relatedResidents.length > 1 ? "s" : ""}
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              {relatedResidents.map(r => (
+                <Link
+                  key={r.slug}
+                  href={`/artists/${r.slug}`}
+                  style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
+                >
+                  {r.title}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* title (shown only in VI mode when vnTitle exists, to clarify which language) */}
       {lang === "vi" && vnTitle && (
@@ -243,10 +281,13 @@ export default function EventContent({
           </p>
 
           {/* first content image: wide banner */}
-          <div style={{
-            width: "100%", aspectRatio: "16/7", overflow: "hidden",
-            backgroundColor: "#f0f0f0", marginBottom: "8px",
-          }}>
+          <div
+            onClick={() => setLightbox(contentImages[0])}
+            style={{
+              width: "100%", aspectRatio: "16/7", overflow: "hidden",
+              backgroundColor: "#f0f0f0", marginBottom: "8px", cursor: "zoom-in",
+            }}
+          >
             <img
               src={contentImages[0]}
               alt={`${title} — 1`}
@@ -262,9 +303,14 @@ export default function EventContent({
               gap: "8px",
             }}>
               {contentImages.slice(1).map((img, i) => (
-                <div key={i} style={{
-                  width: "100%", aspectRatio: "4/3", overflow: "hidden", backgroundColor: "#f0f0f0",
-                }}>
+                <div
+                  key={i}
+                  onClick={() => setLightbox(img)}
+                  style={{
+                    width: "100%", aspectRatio: "4/3", overflow: "hidden",
+                    backgroundColor: "#f0f0f0", cursor: "zoom-in",
+                  }}
+                >
                   <img
                     src={img}
                     alt={`${title} — ${i + 2}`}
