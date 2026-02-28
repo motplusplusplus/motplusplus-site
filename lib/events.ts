@@ -61,6 +61,7 @@ export const categories = [
   '+1 performance',
   '+1 nice place for experimentation',
   'MoTsound',
+  'MoT+++',
 ] as const;
 
 export function getEvent(slug: string): Event | undefined {

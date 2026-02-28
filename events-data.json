@@ -1,5 +1,29 @@
 [
   {
+    "slug": "show-off-cam-xanh-andrew-newell-walther",
+    "title": "SHOW | off — Cam Xanh & Andrew Newell Walther",
+    "displayDate": "January 22, 2026",
+    "dateISO": "2026-01-22",
+    "pubDate": "Thu, 22 Jan 2026 00:00:00 +0000",
+    "category": "MoT+++",
+    "location": "hồ chí minh",
+    "description": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-01.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-02.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-03.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-04.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-05.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-06.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-07.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-08.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-09.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-01.jpg",
+    "wpLink": "",
+    "sortDate": "2026-01-22"
+  },
+  {
     "slug": "boynton-yue",
     "title": "Boynton Yue",
     "displayDate": "December 2025",
@@ -8,18 +32,8 @@
     "category": "+a.farm",
     "location": "hồ chí minh",
     "description": "Yue Cheuk Chi, known as Boynton, moves through cities the way some artists move through sketchbooks: attentive to the overlooked, drawn to fleeting moments, and always alert to the subtle negotiations between memory and place. Trained across Hong Kong, the UK, and Australia, his practice carries an unusual hybridity, part designer's precision, part urban wanderer's intuition, and part educator's reflective depth.\n\nAcross residencies in Kunming, Chiang Mai, Beijing, Wuhan, and Hong Kong, Boynton has developed a body of work that stretches across conceptual drawing, photography, and mixed-media urban narratives. His long-running project Urban Explorer serves as both method and philosophy: an investigation of how identity is assembled in the in-between spaces of contemporary cities, the alleys where childhood memories linger, the construction sites that promise reinvention, and the imagined \"fun-cities\" where personal and collective fantasies converge.\n\nA Cloud Never Dies, a contemplative documentary on the life and teachings of Zen Master Thich Nhat Hanh, offers a philosophical lens through which this exhibition unfolds. Grounded in Zen thought, the film introduces the cloud as a metaphor for impermanence and interbeing, suggesting that nothing truly disappears, but instead transforms and re-emerges in new forms. Memory, loss, and presence are presented not as fixed conditions, but as fluid processes, mirroring the film's meditative pacing and emphasis on continuity beyond absence.\n\nInspired by this Zen understanding of transformation, Boynton's work in this exhibition engages the cloud as both conceptual framework and visual presence. The cloud becomes a way of thinking about the city as an ever-shifting field; where emotions linger like atmosphere, and experiences leave traces without solid form. Drawing from Zen notions of emptiness, impermanence, and quiet persistence, Boynton invites viewers to encounter urban space not as something to be captured or defined, but as something to be breathed in, remembered, and continually reimagined.",
-    "images": [
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-01.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-02.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-03.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-04.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-05.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-06.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-07.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-08.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-09.jpg"
-    ],
-    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-01.jpg",
+    "images": [],
+    "thumbnail": "",
     "wpLink": "",
     "sortDate": "2025-12-01"
   },
@@ -50,18 +64,8 @@
     "category": "+a.farm",
     "location": "hồ chí minh",
     "description": "Yue Cheuk Chi, known as Boynton, moves through cities the way some artists move through sketchbooks: attentive to the overlooked, drawn to fleeting moments, and always alert to the subtle negotiations between memory and place. Trained across Hong Kong, the UK, and Australia, his practice carries an unusual hybridity, part designer's precision, part urban wanderer's intuition, and part educator's reflective depth.\n\nAcross residencies in Kunming, Chiang Mai, Beijing, Wuhan, and Hong Kong, Boynton has developed a body of work that stretches across conceptual drawing, photography, and mixed-media urban narratives. His long-running project Urban Explorer serves as both method and philosophy: an investigation of how identity is assembled in the in-between spaces of contemporary cities, the alleys where childhood memories linger, the construction sites that promise reinvention, and the imagined \"fun-cities\" where personal and collective fantasies converge.\n\nA Cloud Never Dies, a contemplative documentary on the life and teachings of Zen Master Thich Nhat Hanh, offers a philosophical lens through which this exhibition unfolds. Grounded in Zen thought, the film introduces the cloud as a metaphor for impermanence and interbeing, suggesting that nothing truly disappears, but instead transforms and re-emerges in new forms. Memory, loss, and presence are presented not as fixed conditions, but as fluid processes, mirroring the film's meditative pacing and emphasis on continuity beyond absence.\n\nInspired by this Zen understanding of transformation, Boynton's work in this exhibition engages the cloud as both conceptual framework and visual presence. The cloud becomes a way of thinking about the city as an ever-shifting field; where emotions linger like atmosphere, and experiences leave traces without solid form. Drawing from Zen notions of emptiness, impermanence, and quiet persistence, Boynton invites viewers to encounter urban space not as something to be captured or defined, but as something to be breathed in, remembered, and continually reimagined.",
-    "images": [
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-01.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-02.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-03.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-04.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-05.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-06.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-07.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-08.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-09.jpg"
-    ],
-    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/boynton-yue/boynton-yue-01.jpg",
+    "images": [],
+    "thumbnail": "",
     "wpLink": "",
     "sortDate": "2025-12-01"
   },
