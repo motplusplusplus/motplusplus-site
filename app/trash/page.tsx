@@ -1,46 +1,41 @@
-export default function TrashPage() {
+import { getTrashItems } from '@/lib/sanity';
+import TrashPageShell from './TrashPageShell';
+import type { TrashItem } from '@/lib/demoTrashItems';
+
+export default async function TrashPage() {
+  const raw = await getTrashItems();
+
+  const items: TrashItem[] = raw.map((r: any) => ({
+    _id: r._id,
+    artist: r.artist,
+    title: r.title ?? '',
+    medium: r.medium ?? '',
+    year: r.year ?? 0,
+    dimensions: r.dimensions ?? '',
+    edition: r.edition ?? '',
+    description: r.description ?? '',
+    images: [...(r.uploadedImageUrls ?? []), ...(r.legacyImageUrls ?? [])],
+    museumLocationId: r.museumLocationId,
+    neighbourhood: r.neighbourhood,
+    sold: r.sold ?? false,
+    price: r.price,
+  }));
+
   return (
     <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
-
-      {/* heading */}
-      <div style={{ maxWidth: "720px", marginBottom: "72px" }}>
+      <div style={{ maxWidth: "720px", marginBottom: "48px" }}>
         <h1 style={{
           fontSize: "clamp(28px, 3.5vw, 48px)",
           fontWeight: 300, lineHeight: 1.1,
-          letterSpacing: "-0.02em", marginBottom: "20px",
+          letterSpacing: "-0.02em", marginBottom: "32px",
         }}>
           +1 trash ♻
         </h1>
-        <p style={{ fontSize: "14px", color: "#888888", fontStyle: "italic", lineHeight: 1.8, marginBottom: "24px" }}>
-          &ldquo;collecting trash is always an act to make the world a better place
-          &nbsp;—&nbsp; thu gom rác luôn là một hành vi làm đẹp cho đời&rdquo;
-          <br />
-          <span style={{ fontSize: "12px", fontStyle: "normal", color: "#aaaaaa" }}>— Cam Xanh</span>
-        </p>
-        <p style={{ fontSize: "15px", color: "#444444", lineHeight: 1.8, marginBottom: "20px" }}>
-          MoT+++'s former office space is converted into trash ♻, an art warehouse where
-          local and international artists drop off their favourite works with the hope of
-          reaching out to collectors. artworks selected and consigned by artists will be
-          on view casually, in real life and virtually, for the indefinite future.
-        </p>
-        <p style={{ fontSize: "14px", color: "#888888", fontStyle: "italic", lineHeight: 1.8, marginBottom: "32px" }}>
-          &ldquo;art is among few virtues of human trash &nbsp;—&nbsp;
-          nghệ thuật là một trong số ít rác rưởi có đạo đức của loài người&rdquo;
-          <br />
-          <span style={{ fontSize: "12px", fontStyle: "normal", color: "#aaaaaa" }}>— Cam Xanh</span>
-        </p>
-      </div>
-
-      {/* visit info */}
-      <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "64px" }}>
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
-          visit
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "32px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "32px" }}>
           <div>
             <p style={{ fontSize: "12px", color: "#aaaaaa", letterSpacing: "0.06em", marginBottom: "8px" }}>hours</p>
             <p style={{ fontSize: "14px", color: "#444444", lineHeight: 1.7 }}>
-              Tuesday & Friday<br />
+              Tuesday &amp; Friday<br />
               6 – 9 pm<br />
               open by appointment
             </p>
@@ -63,31 +58,7 @@ export default function TrashPage() {
         </div>
       </div>
 
-      {/* inventory note */}
-      <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px" }}>
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
-          inventory
-        </p>
-        <p style={{ fontSize: "14px", color: "#666666", lineHeight: 1.8, maxWidth: "560px", marginBottom: "28px" }}>
-          works available for acquisition — artworks from exhibitions past, consigned
-          directly by artists. to inquire about what is currently available, get in touch.
-        </p>
-        <a
-          href="mailto:motplusplusplus@gmail.com?subject=+1%20trash%20%E2%99%BB%20%E2%80%94%20inquiry"
-          style={{
-            display: "inline-block",
-            fontSize: "13px",
-            fontWeight: 400,
-            color: "#ffffff",
-            backgroundColor: "#111111",
-            padding: "12px 28px",
-            textDecoration: "none",
-          }}
-        >
-          inquire about available works
-        </a>
-      </div>
-
+      <TrashPageShell items={items} />
     </div>
   );
 }

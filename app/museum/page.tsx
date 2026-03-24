@@ -1,3 +1,5 @@
+import MuseumMapWrapper from '@/components/MuseumMapWrapper';
+
 export default function MuseumPage() {
   return (
     <>
@@ -18,30 +20,11 @@ export default function MuseumPage() {
         </p>
       </div>
 
-      {/* interactive map placeholder */}
-      <div style={{
-        width: "100%", height: "60vh", minHeight: "400px",
-        backgroundColor: "#f0f0f0",
-        display: "flex", flexDirection: "column",
-        alignItems: "center", justifyContent: "center", gap: "12px",
-        borderTop: "1px solid #e5e5e5", borderBottom: "1px solid #e5e5e5",
-      }}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#cccccc" strokeWidth="1.5">
-          <circle cx="16" cy="14" r="5" />
-          <path d="M16 2C10.477 2 6 6.477 6 12c0 7.5 10 18 10 18s10-10.5 10-18c0-5.523-4.477-10-10-10z" />
-        </svg>
-        <p style={{ fontSize: "12px", color: "#aaaaaa", letterSpacing: "0.08em" }}>
-          interactive map — phase 2
-        </p>
-        <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.04em" }}>
-          works placed across ho chi minh city
-        </p>
-      </div>
+      {/* interactive map */}
+      <MuseumMapWrapper />
 
       <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
-
-        {/* description */}
-        <div style={{ maxWidth: "720px", marginBottom: "72px" }}>
+        <div style={{ maxWidth: "720px" }}>
           <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}>
             ho chi minh city has no contemporary art museum. this is not a complaint so much as an observation that creates a certain kind of opening.
           </p>
@@ -55,11 +38,10 @@ export default function MuseumPage() {
             works enter the collection through artists, through collectors who open their spaces, and through the a. farm residency program. the collection grows as the network does.
           </p>
           <p style={{ fontSize: "14px", color: "#888888", lineHeight: 1.8 }}>
-            +1 museum by any other name is coming. in the meantime, get in touch at{" "}
+            get in touch at{" "}
             <a href="mailto:motplusplusplus@gmail.com" style={{ color: "#666666" }}>motplusplusplus@gmail.com</a>.
           </p>
         </div>
-
       </div>
     </>
   );
