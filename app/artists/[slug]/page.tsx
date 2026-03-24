@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getArtist, getArtistSlugs, getArtistEvents } from "@/lib/artists";
-import { getEvent } from "@/lib/events";
+import { getEventBySlug, getAllEvents } from "@/lib/sanity";
 
 export function generateStaticParams() {
   return getArtistSlugs().map(slug => ({ slug }));
@@ -12,12 +12,15 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const artist = getArtist(slug);
   if (!artist) notFound();
 
-  // For residents: pull bio text from events-data.json entry if artists-data bio is empty
-  const eventBio = artist.resident && !artist.bio ? getEvent(slug) : null;
+  // For residents: pull bio text from Sanity event entry if artists-data bio is empty
+  const [eventBio, allEvents] = await Promise.all([
+    artist.resident && !artist.bio ? getEventBySlug(slug) : Promise.resolve(null),
+    getAllEvents(),
+  ]);
   const bioText = artist.bio || eventBio?.description || "";
   const displayDate = eventBio?.displayDate || "";
 
-  const relatedEvents = getArtistEvents(artist);
+  const relatedEvents = getArtistEvents(artist, allEvents);
 
   const badges = [
     artist.collective && "mot+++ collective",

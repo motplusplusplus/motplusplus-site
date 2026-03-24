@@ -1,24 +1,6 @@
-import eventsRaw from '../events-data.json';
+import type { SanityEvent } from './sanity';
 
-export type Event = {
-  slug:        string;
-  title:       string;
-  displayDate: string;
-  dateISO:     string;
-  sortDate:    string;   // actual event date (extracted from displayDate); used for ordering
-  pubDate:     string;
-  category:    string;
-  location:    string;
-  description: string;
-  images:      string[];
-  thumbnail:   string;
-  wpLink:      string;
-  vnTitle?:       string;   // Vietnamese title for bilingual display
-  vnDescription?: string;   // Vietnamese description for bilingual display
-  videoUrl?:      string;   // YouTube or other video embed URL
-};
-
-export const allEvents: Event[] = eventsRaw as Event[];
+export type Event = SanityEvent;
 
 /** Slugs that are resident bio pages (not event announcements) */
 export const BIO_SLUGS = new Set([
@@ -47,17 +29,9 @@ export const BIO_SLUGS = new Set([
 /** Slugs to hide from all public listings */
 export const HIDDEN_SLUGS = new Set([
   'self-funded-residency-program',
-  'linh-le',      // curator bio — not an event
-  'post-vidai',   // standalone reference page — linked inline, not listed
+  'linh-le',
+  'post-vidai',
 ]);
-
-/** Events shown in the public listing — excludes Vietnamese-language duplicate pages */
-export const publicEvents: Event[] = allEvents.filter(e => !e.slug.endsWith('-vn'));
-
-/** Events shown in the main listing — excludes bio pages and hidden entries, sorted newest first */
-export const listingEvents: Event[] = publicEvents
-  .filter(e => !BIO_SLUGS.has(e.slug) && !HIDDEN_SLUGS.has(e.slug))
-  .sort((a, b) => b.sortDate.localeCompare(a.sortDate));
 
 export const categories = [
   '+a.farm',
@@ -68,34 +42,33 @@ export const categories = [
   'MoT+++',
 ] as const;
 
-export function getEvent(slug: string): Event | undefined {
-  return allEvents.find(e => e.slug === slug);
-}
-
-export function getEventSlugs(): string[] {
-  return allEvents.map(e => e.slug);
-}
-
-/** Returns true if the event's actual date is in the past */
+/** Returns true if the event's date is in the past */
 export function isPast(event: Event): boolean {
   const d = event.sortDate || event.dateISO;
   return d < new Date().toISOString().slice(0, 10);
 }
 
+/** Filter events to the public listing (no bio pages, no hidden, no VN mirrors) */
+export function getListingEvents(events: Event[]): Event[] {
+  return events
+    .filter(e => !BIO_SLUGS.has(e.slug) && !HIDDEN_SLUGS.has(e.slug) && !e.slug.endsWith('-vn') && !e.isBioPage)
+    .sort((a, b) => b.sortDate.localeCompare(a.sortDate));
+}
+
 /** Previous and next events in the listing (newest-first order) */
-export function getAdjacentEvents(slug: string): { prev: Event | null; next: Event | null } {
+export function getAdjacentEvents(slug: string, listingEvents: Event[]): { prev: Event | null; next: Event | null } {
   const idx = listingEvents.findIndex(e => e.slug === slug);
   if (idx === -1) return { prev: null, next: null };
   return {
-    prev: idx > 0 ? listingEvents[idx - 1] : null,           // newer
-    next: idx < listingEvents.length - 1 ? listingEvents[idx + 1] : null, // older
+    prev: idx > 0 ? listingEvents[idx - 1] : null,
+    next: idx < listingEvents.length - 1 ? listingEvents[idx + 1] : null,
   };
 }
 
 /** For a given event, find bio entries whose artist name appears in the event's title/slug */
-export function getRelatedResidents(event: Event): Event[] {
+export function getRelatedResidents(event: Event, allEvents: Event[]): Event[] {
   return allEvents
-    .filter(bio => BIO_SLUGS.has(bio.slug))
+    .filter(bio => BIO_SLUGS.has(bio.slug) || bio.isBioPage)
     .filter(bio => {
       const nameParts = bio.title.toLowerCase().split(/\s+/).filter(w => w.length >= 4);
       const haystack = (event.title + ' ' + event.slug).toLowerCase();
@@ -104,9 +77,9 @@ export function getRelatedResidents(event: Event): Event[] {
 }
 
 /** For a given resident bio, find real events that mention the artist */
-export function getRelatedEvents(bio: Event): Event[] {
+export function getRelatedEvents(bio: Event, allEvents: Event[]): Event[] {
   const nameParts = bio.title.toLowerCase().split(/\s+/).filter(w => w.length >= 4);
-  return listingEvents
+  return getListingEvents(allEvents)
     .filter(event => {
       const haystack = (event.title + ' ' + event.slug).toLowerCase();
       return nameParts.some(w => haystack.includes(w));

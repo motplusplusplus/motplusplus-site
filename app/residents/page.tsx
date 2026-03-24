@@ -1,22 +1,8 @@
 import Link from "next/link";
+import { getAllEvents } from "@/lib/sanity";
 import { BIO_SLUGS } from "@/lib/events";
-import eventsRaw from "../../events-data.json";
 
 type ResidentEntry = { slug: string; title: string; sortDate: string };
-
-// Pull resident bio events from the full event list
-const afarmBios = (eventsRaw as ResidentEntry[]).filter(
-  (e) => BIO_SLUGS.has(e.slug)
-);
-
-// Group by year
-const byYear: Record<string, ResidentEntry[]> = {};
-for (const e of afarmBios) {
-  const yr = e.sortDate.slice(0, 4);
-  if (!byYear[yr]) byYear[yr] = [];
-  byYear[yr].push(e);
-}
-const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
 
 // Performance Plus 2019 cohort — integrated as text entries
 const perfPlus2019Artists: { name: string; slug?: string }[] = [
@@ -34,7 +20,18 @@ const perfPlus2019Artists: { name: string; slug?: string }[] = [
   { name: "Chu Hao Pei", slug: "chu-hao-pei" },
 ];
 
-export default function ResidentsPage() {
+export default async function ResidentsPage() {
+  const allEvents = await getAllEvents();
+  const afarmBios = allEvents.filter(e => BIO_SLUGS.has(e.slug) || e.isBioPage);
+
+  const byYear: Record<string, ResidentEntry[]> = {};
+  for (const e of afarmBios) {
+    const yr = (e.sortDate || e.dateISO || '').slice(0, 4);
+    if (!byYear[yr]) byYear[yr] = [];
+    byYear[yr].push(e);
+  }
+  const years = Object.keys(byYear).filter(Boolean).sort((a, b) => Number(b) - Number(a));
+
   const totalResidents = afarmBios.length + perfPlus2019Artists.length;
 
   const nameStyle = {

@@ -1,61 +1,68 @@
-export type Studio = {
-  slug: string;
-  artistName: string;
-  tagline: string;
-  neighborhood: string;
+import studiosRaw from '../studios-data.json';
+import type { Event } from './events';
+
+export type StudioPractical = {
+  floor:            string | null;
+  size:             number | null;
+  naturalLight:     boolean | null;
+  ac:               boolean | null;
+  bathrooms:        number | null;
+  privateBathroom:  boolean | null;
+  kitchenAccess:    boolean | null;
+  internet:         boolean | null;
+  petsInResidence:  boolean | null;
+  petsAllowed:      boolean | null;
+  laundry:          boolean | null;
+};
+
+export type StudioEntry = {
+  slug:             string;
+  name:             string;
+  hostSlug:         string | null;
+  address:          string;
+  neighborhood:     string;
+  description:      string;
+  active:           boolean;
+  note:             string;
+  images:           string[];
+  locationKeywords: string[];
+  mapLat:           number | null;
+  mapLng:           number | null;
+  practical:        StudioPractical;
+  tagline?:         string;
   collectiveMember?: boolean;
 };
 
-export type Hotel = {
-  slug: string;
-  name: string;
-  tagline: string;
-  address: string;
+export const allStudios: StudioEntry[] = studiosRaw as StudioEntry[];
+
+/** Alias for backward compat — adds artistName and tagline aliases */
+export const studios = allStudios.map(s => ({
+  ...s,
+  artistName: s.name,
+  tagline: s.tagline ?? s.neighborhood,
+}));
+
+/** Hotel entry sourced inline (no longer in studios-data.json) */
+export const hotel = {
+  slug: 'amanaki',
+  name: 'Amanaki Thao Dien Hotel',
+  tagline: 'hotel track — independence and focus',
+  address: '10 Nguyễn Đăng Giai, Thảo Điền, Thủ Đức',
 };
 
-export const studios: Studio[] = [
-  {
-    slug: "andrew-newell-walther",
-    artistName: "Andrew Newell Walther",
-    tagline: "studio on stilts over the river's edge",
-    neighborhood: "thảo điền",
-  },
-  {
-    slug: "le-phi-long",
-    artistName: "Le Phi Long",
-    tagline: "artist studio",
-    neighborhood: "hồ chí minh city",
-    collectiveMember: true,
-  },
-  {
-    slug: "quoc-anh-le",
-    artistName: "Quoc Anh Le",
-    tagline: "artist studio",
-    neighborhood: "hồ chí minh city",
-  },
-  {
-    slug: "hoang-nam-viet",
-    artistName: "Hoang Nam Viet",
-    tagline: "artist studio",
-    neighborhood: "hồ chí minh city",
-  },
-  {
-    slug: "karlie-ho",
-    artistName: "MoT+++ studio",
-    tagline: "hosted by Karlie Ho",
-    neighborhood: "thảo điền",
-  },
-  {
-    slug: "thom-nguyen",
-    artistName: "Thom Nguyen",
-    tagline: "artist studio",
-    neighborhood: "hồ chí minh city",
-  },
-];
+export function getStudio(slug: string): StudioEntry | undefined {
+  return allStudios.find(s => s.slug === slug);
+}
 
-export const hotel: Hotel = {
-  slug: "amanaki",
-  name: "Amanaki Thao Dien Hotel",
-  tagline: "hotel track — independence and focus",
-  address: "10 Nguyễn Đăng Giai, Thảo Điền, Thủ Đức",
-};
+export function getStudioSlugs(): string[] {
+  return allStudios.map(s => s.slug);
+}
+
+export function getStudioEvents(studio: StudioEntry, events: Event[]): Event[] {
+  const keywords = studio.locationKeywords.map(k => k.toLowerCase());
+  if (keywords.length === 0) return [];
+  return events.filter(evt => {
+    const haystack = (evt.title + ' ' + evt.slug + ' ' + (evt.location || '')).toLowerCase();
+    return keywords.some(k => haystack.includes(k));
+  }).sort((a, b) => b.sortDate.localeCompare(a.sortDate));
+}

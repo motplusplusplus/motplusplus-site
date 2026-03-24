@@ -1,5 +1,5 @@
 import artistsRaw from '../artists-data.json';
-import { BIO_SLUGS, getEvent, listingEvents, type Event } from './events';
+import { BIO_SLUGS, type Event } from './events';
 
 export type Artist = {
   slug:        string;
@@ -16,27 +16,22 @@ export type Artist = {
 
 const artistsFromData: Artist[] = artistsRaw as Artist[];
 
-// Augment with resident bios not already in artistsFromData
-// (residents that are also collective members are already in artistsFromData with resident: true)
+// Build stub entries for residents not in artists-data.json so their pages are generated.
+// Name and bio are fetched from Sanity at page render time.
 const residentArtists: Artist[] = Array.from(BIO_SLUGS)
   .filter(slug => !artistsFromData.find(a => a.slug === slug))
-  .reduce<Artist[]>((acc, slug) => {
-    const evt = getEvent(slug);
-    if (!evt) return acc;
-    acc.push({
-      slug:       evt.slug,
-      name:       evt.title,
-      collective: false,
-      resident:   true,
-      studioHost: false,
-      origin:     '',
-      website:    '',
-      bio:        '',   // pulled from events-data.json in profile page via getEvent()
-      photo:      '',
-      workImages: [],
-    });
-    return acc;
-  }, []);
+  .map(slug => ({
+    slug,
+    name:       slug.replace(/-/g, ' '),
+    collective: false,
+    resident:   true,
+    studioHost: false,
+    origin:     '',
+    website:    '',
+    bio:        '',
+    photo:      '',
+    workImages: [],
+  }));
 
 export const allArtists: Artist[] = [...artistsFromData, ...residentArtists]
   .sort((a, b) => a.name.localeCompare(b.name));
@@ -50,10 +45,10 @@ export function getArtistSlugs(): string[] {
 }
 
 /** For a given artist, find listing events that mention them by name */
-export function getArtistEvents(artist: Artist): Event[] {
+export function getArtistEvents(artist: Artist, events: Event[]): Event[] {
   const nameParts = artist.name.toLowerCase().split(/\s+/).filter(w => w.length >= 4);
   if (nameParts.length === 0) return [];
-  return listingEvents
+  return events
     .filter(event => {
       const haystack = (event.title + ' ' + event.slug).toLowerCase();
       return nameParts.some(w => haystack.includes(w));

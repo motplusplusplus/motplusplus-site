@@ -1,15 +1,15 @@
 import { notFound } from "next/navigation";
-import { getEvent, getEventSlugs, getRelatedResidents, getAdjacentEvents, isPast, BIO_SLUGS } from "@/lib/events";
+import { getAllEvents, getAllEventSlugs, getEventBySlug } from "@/lib/sanity";
+import { getListingEvents, getRelatedResidents, getAdjacentEvents, isPast, BIO_SLUGS } from "@/lib/events";
 import EventContent from "@/components/EventContent";
 
-export function generateStaticParams() {
-  // BIO_SLUGS get their own pages at /artists/[slug]; skip them here
-  return getEventSlugs()
+export async function generateStaticParams() {
+  const slugs = await getAllEventSlugs();
+  return slugs
     .filter(slug => !BIO_SLUGS.has(slug))
     .map(slug => ({ slug }));
 }
 
-// Images to skip (logos, footer, partner marks)
 const SKIP = [
   'logomot', 'a.farmlogo', 's-1-edited', 'amanaki_png', 'artboard',
   'web-e1760', 'web-1-e1760', '3nam-2', 'ajar', 'artrepublik', 'codesurfing',
@@ -18,12 +18,15 @@ const SKIP = [
 
 export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const event = getEvent(slug);
+  const [event, allEvents] = await Promise.all([
+    getEventBySlug(slug),
+    getAllEvents(),
+  ]);
   if (!event) notFound();
 
-  const relatedResidents = getRelatedResidents(event);
-  const { prev, next } = getAdjacentEvents(slug);
-
+  const listing = getListingEvents(allEvents);
+  const relatedResidents = getRelatedResidents(event, allEvents);
+  const { prev, next } = getAdjacentEvents(slug, listing);
   const past = isPast(event);
 
   const galleryImages = event.images.filter(url => {
@@ -36,7 +39,6 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
 
   return (
     <>
-      {/* hero with title overlay */}
       <div style={{
         position: "relative",
         width: "100%", height: "70vh", minHeight: "460px",
@@ -49,7 +51,6 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.78 }}
           />
         )}
-        {/* gradient + text overlay */}
         <div style={{
           position: "absolute", inset: 0,
           background: "linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.72) 100%)",

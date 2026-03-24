@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getStudio, getStudioSlugs, getStudioEvents, type StudioPractical } from "@/lib/studios";
 import { getArtist } from "@/lib/artists";
+import { getAllEvents } from "@/lib/sanity";
+import { getListingEvents } from "@/lib/events";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -58,7 +60,8 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
   if (!studio) notFound();
 
   const host = studio.hostSlug ? getArtist(studio.hostSlug) : null;
-  const studioEvents = getStudioEvents(studio);
+  const allEvents = await getAllEvents();
+  const studioEvents = getStudioEvents(studio, getListingEvents(allEvents));
 
   // Check if any practical fields are non-null
   const hasPractical = PRACTICAL_FIELDS.some(f => studio.practical[f.key] !== null);

@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
-import { allEvents, BIO_SLUGS, HIDDEN_SLUGS } from '@/lib/events';
+import { getAllEvents } from '@/lib/sanity';
+import { BIO_SLUGS, HIDDEN_SLUGS } from '@/lib/events';
 import { allArtists } from '@/lib/artists';
 import { allStudios } from '@/lib/studios';
 
@@ -7,7 +8,9 @@ export const dynamic = 'force-static';
 
 const BASE = 'https://motplusplus.com';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const allEvents = await getAllEvents();
+
   const staticPages = [
     { url: BASE, priority: 1.0 },
     { url: `${BASE}/events`, priority: 0.9 },
@@ -27,12 +30,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const eventPages = allEvents
     .filter(e => !HIDDEN_SLUGS.has(e.slug) && !e.slug.endsWith('-vn'))
     .map(e => ({
-      url: BIO_SLUGS.has(e.slug)
+      url: (BIO_SLUGS.has(e.slug) || e.isBioPage)
         ? `${BASE}/residents/${e.slug}`
         : `${BASE}/events/${e.slug}`,
       lastModified: new Date(),
       changeFrequency: 'yearly' as const,
-      priority: BIO_SLUGS.has(e.slug) ? 0.7 : 0.6,
+      priority: (BIO_SLUGS.has(e.slug) || e.isBioPage) ? 0.7 : 0.6,
     }));
 
   const artistPages = allArtists

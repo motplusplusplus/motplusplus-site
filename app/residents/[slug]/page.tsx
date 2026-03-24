@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { BIO_SLUGS, getEvent, getRelatedEvents } from "@/lib/events";
+import { BIO_SLUGS, getRelatedEvents } from "@/lib/events";
+import { getAllEvents, getEventBySlug } from "@/lib/sanity";
 import { getArtist } from "@/lib/artists";
 import { allStudios } from "@/lib/studios";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const event = getEvent(slug);
+  const event = await getEventBySlug(slug);
   const artist = getArtist(slug);
   const name = artist?.name || event?.title || slug;
   const bio = artist?.bio || event?.description || "";
@@ -23,10 +24,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export function generateStaticParams() {
-  return Array.from(BIO_SLUGS)
-    .filter((slug): slug is string => typeof slug === 'string' && !slug.startsWith("artist-in-residence-"))
-    .map(slug => ({ slug }));
+export async function generateStaticParams() {
+  const allEvents = await getAllEvents();
+  return allEvents
+    .filter(e => (BIO_SLUGS.has(e.slug) || e.isBioPage) && !e.slug.startsWith("artist-in-residence-"))
+    .map(e => ({ slug: e.slug }));
 }
 
 // Images to skip (logos, partner marks, etc.)
@@ -39,12 +41,11 @@ const SKIP = [
 export default async function ResidentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  if (!BIO_SLUGS.has(slug) || slug.startsWith("artist-in-residence-")) notFound();
+  if (slug.startsWith("artist-in-residence-")) notFound();
 
-  const event = getEvent(slug);
+  const [event, allEvents] = await Promise.all([getEventBySlug(slug), getAllEvents()]);
   if (!event) notFound();
 
-  // artists-data.json entry may exist for collective members who are also residents
   const artist = getArtist(slug);
   const studio = allStudios.find(s => s.hostSlug === slug);
 
@@ -53,7 +54,7 @@ export default async function ResidentPage({ params }: { params: Promise<{ slug:
   const workImages = artist?.workImages || [];
   const website = artist?.website || "";
 
-  const relatedEvents = getRelatedEvents(event);
+  const relatedEvents = getRelatedEvents(event, allEvents);
 
   const galleryImages = event.images.filter(url => {
     const filename = url.split('/').pop() || '';
