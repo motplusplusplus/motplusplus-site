@@ -3,7 +3,7 @@
 ## Site
 - **Live:** `https://motplusplus-site.motplusplusplus.workers.dev`
 - **Future domain:** `https://motplusplus.com`
-- **Deploy:** `CLOUDFLARE_API_TOKEN=y79s_aim-QtIrziq-JT92jGFrdUc-UcbBS5ELulv npx wrangler deploy` (run from this directory)
+- **Deploy:** `CLOUDFLARE_API_TOKEN=y79s_aim-QtIrziq-JT92jGFrdUc-UcbBS5ELulv CLOUDFLARE_ACCOUNT_ID=f2a86349fa252c2582bc0f478ccdf9ab npx wrangler deploy` (run from this directory)
 - **GitHub:** `https://github.com/motplusplusplus/motplusplus-site.git`
 - **Framework:** Next.js static export → Cloudflare Workers
 
@@ -11,7 +11,7 @@
 - **Bucket:** `site-general` (account `31a35595add67ae1366b3f6420432773`)
 - **Public URL:** `https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev`
 - **Upload token:** `0y5cIePwh8kUz1aBnCZmYIuFJF1IVarrr7RDvWrD`
-- **MUST pass** `CLOUDFLARE_ACCOUNT_ID=31a35595add67ae1366b3f6420432773` with wrangler
+- **MUST pass** `CLOUDFLARE_ACCOUNT_ID=31a35595add67ae1366b3f6420432773` for R2 wrangler commands (NOT for `wrangler deploy` — Workers uses account `f2a86349fa252c2582bc0f478ccdf9ab`)
 - Image upload settings: max 1600px, quality 85, JPEG
 
 ## Sanity CMS
