@@ -15,6 +15,29 @@ export type StudioPractical = {
   laundry:          boolean | null;
 };
 
+export type StudioProfile = {
+  studioName?:          string;
+  portrait?:            string;
+  walkthroughVideoUrl?: string;
+  workImages?:          string[];
+  practiceBio?:         string;
+  welcomeBio?:          string;
+  collaboration?:       string;
+  languages?:           string[];
+  availability?:        string;
+  neighbourhood?:       string;
+  environment?:         string;
+  transport?:           string;
+  amenities?:           string;
+  livingArrangement?:   string;
+  residentRoom?:        string;
+  smoking?:             boolean;
+  smokingDetail?:       string;
+  guests?:              boolean;
+  guestsDetail?:        string;
+  rules?:               string;
+};
+
 export type StudioEntry = {
   slug:             string;
   name:             string;
@@ -31,6 +54,7 @@ export type StudioEntry = {
   practical:        StudioPractical;
   tagline?:         string;
   collectiveMember?: boolean;
+  profile?:         StudioProfile;
 };
 
 export const allStudios: StudioEntry[] = studiosRaw as StudioEntry[];

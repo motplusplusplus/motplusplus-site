@@ -23,7 +23,7 @@ const members = [
     name: "Cam Xanh",
     origin: "Vietnam, b. 1977",
     website: "camxanh.net",
-    bio: "Cam Xanh (real name: Tran Thanh Ha, b.1977) is a conceptual artist from Vietnam based in Saigon (Ho Chi Minh City). she co-founded the Post Vidai Collection — the first collection dedicated to contemporary Vietnamese art — in 2004 and has acted as its Director / Curator since then. in 2014 she co-founded the Dia Projects which morphed into MoT+++. she co-founded the MoT collective, a.farm, and the Nguyen Art Foundation. she began making art in 2012 under the pseudonym Cam Xanh and has exhibited in Vietnam and internationally. her artist name Cam Xanh, which translates as Green Orange, exemplifies the minimalist and playful nature of her works.",
+    bio: "Cam Xanh (real name: Tran Thanh Ha, b.1977) is a conceptual artist from Vietnam based in Saigon (Ho Chi Minh City). she co-founded the Post Vidai Collection — the first collection dedicated to contemporary Vietnamese art — in 2004 and has acted as its Director / Curator since then. in 2014 she co-founded the Dia Projects which morphed into MoT+++. she co-founded the MoT collective, a.Farm, and the Nguyen Art Foundation. she began making art in 2012 under the pseudonym Cam Xanh and has exhibited in Vietnam and internationally. her artist name Cam Xanh, which translates as Green Orange, exemplifies the minimalist and playful nature of her works.",
     portrait: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/collective/cam-xanh/portrait.jpg",
     images: [
       "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/collective/cam-xanh/work-01.jpg",

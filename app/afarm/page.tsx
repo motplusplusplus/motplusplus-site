@@ -39,7 +39,7 @@ export default function AFarmPage() {
         }}
       >
         <p style={{ fontSize: "12px", color: "#aaaaaa", letterSpacing: "0.08em" }}>
-          +a.farm — hero image
+          +a.Farm — hero image
         </p>
       </div>
 
@@ -55,7 +55,7 @@ export default function AFarmPage() {
             marginBottom: "24px",
           }}
         >
-          +a.farm
+          +a.Farm
         </h1>
         <p
           style={{
@@ -97,7 +97,7 @@ export default function AFarmPage() {
           }}
         >
           pairings of resident with hosting artist are ultimately determined by
-          a.farm — we consider practice, timing, and fit carefully before
+          a.Farm — we consider practice, timing, and fit carefully before
           confirming any placement.
         </p>
 
@@ -232,7 +232,7 @@ export default function AFarmPage() {
             heARTalk
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444" }}>
-            a weekly gathering of all current +a.farm residents and affiliates —
+            a weekly gathering of all current +a.Farm residents and affiliates —
             an open discussion period to explore what resources the community can
             bring to support artistic endeavors. in-person, based in ho chi minh
             city.

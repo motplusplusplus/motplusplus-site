@@ -1,30 +1,50 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getArtist, getArtistSlugs, getArtistEvents } from "@/lib/artists";
-import { getEventBySlug, getAllEvents } from "@/lib/sanity";
+import { getArtist, getArtistSlugs, getArtistEvents, type Artist } from "@/lib/artists";
+import { getEventBySlug, getAllEvents, getArtistBySlug, getAllSanityArtistSlugs } from "@/lib/sanity";
 
-export function generateStaticParams() {
-  return getArtistSlugs().map(slug => ({ slug }));
+export async function generateStaticParams() {
+  const localSlugs = getArtistSlugs();
+  const sanitySlugs = await getAllSanityArtistSlugs();
+  const all = new Set([...localSlugs, ...sanitySlugs]);
+  return Array.from(all).map(slug => ({ slug }));
 }
 
 export default async function ArtistPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const artist = getArtist(slug);
-  if (!artist) notFound();
+  const localArtist = getArtist(slug);
+
+  // For Sanity-only artists (not in artists-data.json or BIO_SLUGS)
+  const sanityArtist = !localArtist ? await getArtistBySlug(slug) : null;
+  if (!localArtist && !sanityArtist) notFound();
+
+  // Merge: local data wins, Sanity fills gaps
+  const artist: Artist = localArtist ?? {
+    slug,
+    name:       sanityArtist!.name as string,
+    collective: false,
+    resident:   !!(sanityArtist!.isAfarmResident),
+    studioHost: false,
+    origin:     ([sanityArtist!.originCity, sanityArtist!.nationality] as string[]).filter(Boolean).join(", "),
+    website:    ((sanityArtist!.links?.[0] as string) ?? "").replace(/^https?:\/\//, ""),
+    bio:        (sanityArtist!.bio as string) ?? "",
+    photo:      (sanityArtist!.portrait as string) ?? "",
+    workImages: (sanityArtist!.images as string[]) ?? [],
+  };
 
   // For residents: pull bio text from Sanity event entry if artists-data bio is empty
   const [eventBio, allEvents] = await Promise.all([
     artist.resident && !artist.bio ? getEventBySlug(slug) : Promise.resolve(null),
     getAllEvents(),
   ]);
-  const bioText = artist.bio || eventBio?.description || "";
+  const bioText = artist.bio || (sanityArtist?.bio as string) || eventBio?.description || "";
   const displayDate = eventBio?.displayDate || "";
 
   const relatedEvents = getArtistEvents(artist, allEvents);
 
   const badges = [
     artist.collective && "mot+++ collective",
-    artist.resident   && "a.farm resident",
+    artist.resident   && "a.Farm resident",
     artist.studioHost && "hosting artist",
   ].filter(Boolean) as string[];
 

@@ -59,7 +59,7 @@ export default function HotelPage() {
             location
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "16px" }}>
-            Floor 6 of the Amanaki Thao Dien Hotel is the primary site for A. Farm
+            Floor 6 of the Amanaki Thao Dien Hotel is the primary site for a.Farm
             exhibitions, open studios, and events. residents in the hotel track have
             direct access to the program space and Thao Dien neighbourhood.
           </p>

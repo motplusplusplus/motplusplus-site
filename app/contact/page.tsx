@@ -40,10 +40,10 @@ export default function ContactPage() {
           </p>
         </div>
 
-        {/* +a.farm */}
+        {/* +a.Farm */}
         <div>
           <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
-            +a.farm residency
+            +a.Farm residency
           </p>
           <a
             href="mailto:a.farm.saigon@gmail.com"

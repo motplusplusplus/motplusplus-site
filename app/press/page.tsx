@@ -13,7 +13,7 @@ const pressItems = [
     date: "2019",
     url: "https://vietcetera.vn/en/cultural-trends-in-vietnam-2019-seven-experts-share-their-opinions",
     excerpt: "Nguyen Art Foundation, Sàn Art, and MoT+++ jointly launched the A. Farm arts and residency space.",
-    tag: "a.farm",
+    tag: "a.Farm",
   },
   {
     outlet: "TQPR",
@@ -29,7 +29,7 @@ const pressItems = [
     date: "May 28, 2020",
     url: "https://www.artandmarket.net/my-own-words/2020/5/28/the-future-of-international-art-residencies",
     excerpt: "In February 2020, A. Farm received the news that its international art residency in Ho Chi Minh City would need to vacate its current premises — a reflection on the fragility and resilience of artist-run spaces.",
-    tag: "a.farm",
+    tag: "a.Farm",
   },
   {
     outlet: "Mineral House Media",
@@ -37,7 +37,7 @@ const pressItems = [
     date: "April 2020",
     url: "https://www.mineralhousemedia.com/media/2020/4/6/nghia-dang-interview",
     excerpt: "In conversation with Nghia Dang about his practice and research during his residency at A. Farm.",
-    tag: "a.farm",
+    tag: "a.Farm",
   },
   {
     outlet: "Weston Teruya",
@@ -45,7 +45,7 @@ const pressItems = [
     date: "June 2, 2019",
     url: "https://westonteruya.com/2019/06/02/artist-in-residence-jun-aug-a-farm-ho-chi-minh-city/",
     excerpt: "Artist Weston Teruya on his residency at A. Farm in Ho Chi Minh City.",
-    tag: "a.farm",
+    tag: "a.Farm",
   },
   {
     outlet: "Artsy",
@@ -61,7 +61,7 @@ const pressItems = [
     date: null,
     url: "https://www.transartists.org/en/air/mot",
     excerpt: "Listing and full description of the A. Farm international art residency programme.",
-    tag: "a.farm",
+    tag: "a.Farm",
   },
   {
     outlet: "Nguyen Art Foundation",
@@ -69,7 +69,7 @@ const pressItems = [
     date: null,
     url: "https://nguyenartfoundation.com/community-building/a-farm-residency/",
     excerpt: "A. Farm — an international art residency conceived by artists Cam Xanh and Dinh Q. Lê, with the support of the Nguyen Art Foundation.",
-    tag: "a.farm",
+    tag: "a.Farm",
   },
 ];
 
@@ -87,7 +87,7 @@ export default function PressPage() {
           press
         </h1>
         <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8 }}>
-          coverage of MoT+++ and the A. Farm international art residency.
+          coverage of MoT+++ and the a.Farm international art residency.
         </p>
         <p style={{ fontSize: "13px", color: "#aaaaaa", marginTop: "12px" }}>
           for media inquiries:{" "}

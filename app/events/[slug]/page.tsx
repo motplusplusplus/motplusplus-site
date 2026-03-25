@@ -1,13 +1,17 @@
 import { notFound } from "next/navigation";
-import { getAllEvents, getAllEventSlugs, getEventBySlug } from "@/lib/sanity";
+import { getAllEvents, getAllEventSlugs, getEventBySlug, getAllEventsFromJson } from "@/lib/sanity";
 import { getListingEvents, getRelatedResidents, getAdjacentEvents, isPast, BIO_SLUGS } from "@/lib/events";
 import EventContent from "@/components/EventContent";
 
 export async function generateStaticParams() {
-  const slugs = await getAllEventSlugs();
-  return slugs
-    .filter(slug => !BIO_SLUGS.has(slug))
-    .map(slug => ({ slug }));
+  const [sanitySlugs, jsonEvents] = await Promise.all([
+    getAllEventSlugs(),
+    Promise.resolve(getAllEventsFromJson()),
+  ]);
+  const sanitySlugSet = new Set(sanitySlugs);
+  const jsonOnlySlugs = jsonEvents.map(e => e.slug).filter(s => !sanitySlugSet.has(s));
+  const allSlugs = [...sanitySlugs, ...jsonOnlySlugs];
+  return allSlugs.filter(slug => !BIO_SLUGS.has(slug)).map(slug => ({ slug }));
 }
 
 const SKIP = [
@@ -18,11 +22,19 @@ const SKIP = [
 
 export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [event, allEvents] = await Promise.all([
+  const jsonEvents = getAllEventsFromJson();
+  const [sanityEvent, sanityAllEvents] = await Promise.all([
     getEventBySlug(slug),
     getAllEvents(),
   ]);
+  // Fall back to JSON data for events not in Sanity
+  const event = sanityEvent ?? jsonEvents.find(e => e.slug === slug) ?? null;
   if (!event) notFound();
+
+  // Merge for navigation / related events
+  const sanitySlugSet = new Set(sanityAllEvents.map(e => e.slug));
+  const jsonOnly = jsonEvents.filter(e => !sanitySlugSet.has(e.slug));
+  const allEvents = [...sanityAllEvents, ...jsonOnly];
 
   const listing = getListingEvents(allEvents);
   const relatedResidents = getRelatedResidents(event, allEvents);

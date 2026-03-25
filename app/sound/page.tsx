@@ -52,7 +52,7 @@ export default function MoTsoundPage() {
         </p>
         <p style={{ fontSize: "13px", color: "#aaaaaa" }}>
           if you are an artist that would like to be involved, message{" "}
-          <a href="mailto:info@motplus.xyz" style={{ color: "#888888" }}>info@motplus.xyz</a>
+          <a href="mailto:motplusplusplus@gmail.com" style={{ color: "#888888" }}>motplusplusplus@gmail.com</a>
         </p>
       </div>
 
@@ -71,8 +71,6 @@ export default function MoTsoundPage() {
             <a
               key={ed.number}
               href={`/events/${ed.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
               className="snd-card"
               style={{ textDecoration: "none", color: "inherit", display: "block" }}
             >

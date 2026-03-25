@@ -1,4 +1,5 @@
 import { createClient } from '@sanity/client';
+import eventsDataRaw from '../events-data.json';
 
 export const sanityClient = createClient({
   projectId: 't5nsm79o',
@@ -19,7 +20,7 @@ export async function getTrashItems() {
       dimensions,
       edition,
       description,
-      "uploadedImageUrls": images[].asset->url,
+      "uploadedImageUrls": uploadedImages[].asset->url,
       legacyImageUrls,
       "museumLocationId": museumLocationRef->._id,
       "neighbourhood": museumLocationRef->neighbourhood,
@@ -104,6 +105,13 @@ export async function getArtistBySlug(slug: string) {
   );
 }
 
+export async function getAllSanityArtistSlugs(): Promise<string[]> {
+  const results: { slug: string }[] = await sanityClient.fetch(
+    `*[_type == "artist" && active == true]{ "slug": slug.current }`
+  );
+  return results.map(r => r.slug).filter(Boolean);
+}
+
 // ─── Events ──────────────────────────────────────────────────────────────────
 
 const EVENT_FIELDS = `
@@ -143,29 +151,56 @@ export type SanityEvent = {
   bandcampAlbumId?: string; wpLink: string; isBioPage: boolean;
 };
 
+// Filenames that are logos/brand assets — never valid event images
+const JUNK_STEMS = [
+  'a.farmlogo', 'logomot', 's-1-edited', 'amanaki_png', 'artboard',
+  'web-e1760', 'web-1-e1760', '3nam-2', 'ajar', 'artrepublik',
+  'codesurfing', 'formapubli', 'kirti', 'marg1n', 'matca', 'nbs',
+  'rr-1', 'vanguard', 'wdg',
+];
+function isJunk(url: string): boolean {
+  const filename = url.split('/').pop()?.toLowerCase() ?? '';
+  return JUNK_STEMS.some(s => filename.includes(s));
+}
+
+// Slug → ALL images from events-data.json (R2 CDN URLs), junk filtered
+const legacyImages: Record<string, string[]> = {};
+for (const e of eventsDataRaw as Array<{ slug: string; images?: string[] }>) {
+  if (e.slug && e.images?.length) {
+    legacyImages[e.slug] = e.images.filter(u => !isJunk(u));
+  }
+}
+
 function toSanityEvent(e: RawEvent): SanityEvent {
   const uploaded = e.uploadedImageUrls ?? [];
-  const legacy   = e.legacyImageUrls ?? [];
-  const images   = [...uploaded, ...legacy];
+  // Filter junk from Sanity legacyImageUrls (logos, brand assets mixed in during migration)
+  const legacy   = (e.legacyImageUrls ?? []).filter(u => !isJunk(u));
+  const sanityImages = [...uploaded, ...legacy];
+  const jsonImages   = legacyImages[e.slug] ?? [];
+  // Merge both sources; deduplicate by filename so same file from different paths isn't doubled
+  const seenFilenames = new Set(sanityImages.map(u => u.split('/').pop()));
+  const uniqueJson = jsonImages.filter(u => !seenFilenames.has(u.split('/').pop()));
+  const images = [...sanityImages, ...uniqueJson];
+  const thumbnail    = images[0] ?? '';
   return {
-    slug:           e.slug,
-    title:          e.title,
-    vnTitle:        e.vnTitle,
-    dateISO:        e.dateISO,
-    sortDate:       e.dateISO,
-    pubDate:        e.dateISO,
-    endDateISO:     e.endDateISO,
-    displayDate:    e.displayDate,
-    category:       e.category,
-    location:       e.location,
-    description:    e.description,
-    vnDescription:  e.vnDescription,
+    slug:            e.slug,
+    title:           e.title,
+    vnTitle:         e.vnTitle,
+    dateISO:         e.dateISO,
+    sortDate:        e.dateISO,
+    pubDate:         e.dateISO,
+    endDateISO:      e.endDateISO,
+    displayDate:     e.displayDate,
+    category:        e.category === '+a.farm' ? '+a.Farm' : e.category,
+    location:        e.location,
+    description:     e.description,
+    vnDescription:   e.vnDescription,
     images,
-    thumbnail:      images[0] ?? '',
-    videoUrl:       e.videoUrl,
+    thumbnail,
+    videoUrl:        e.videoUrl,
     bandcampAlbumId: e.bandcampAlbumId,
-    wpLink:         e.wpLink,
-    isBioPage:      e.isBioPage,
+    wpLink:          e.wpLink,
+    isBioPage:       e.isBioPage,
   };
 }
 
@@ -175,6 +210,36 @@ export async function getAllEvents(): Promise<SanityEvent[]> {
     `*[_type == "event" && active == true] | order(dateISO desc) { ${EVENT_FIELDS} }`
   );
   return raw.map(toSanityEvent);
+}
+
+/** Convert a raw events-data.json entry to SanityEvent shape */
+function toEventFromJson(e: Record<string, unknown>): SanityEvent {
+  const images = (e.images as string[]) ?? [];
+  return {
+    slug:            e.slug as string,
+    title:           (e.title as string) ?? '',
+    vnTitle:         e.vnTitle as string | undefined,
+    dateISO:         (e.dateISO as string) ?? '',
+    sortDate:        (e.sortDate as string) ?? (e.dateISO as string) ?? '',
+    pubDate:         (e.pubDate as string) ?? (e.dateISO as string) ?? '',
+    endDateISO:      e.endDateISO as string | undefined,
+    displayDate:     (e.displayDate as string) ?? '',
+    category:        ((e.category as string) ?? '') === '+a.farm' ? '+a.Farm' : ((e.category as string) ?? ''),
+    location:        (e.location as string) ?? '',
+    description:     (e.description as string) ?? '',
+    vnDescription:   e.vnDescription as string | undefined,
+    images,
+    thumbnail:       (e.thumbnail as string) ?? images[0] ?? '',
+    videoUrl:        e.videoUrl as string | undefined,
+    bandcampAlbumId: e.bandcampAlbumId as string | undefined,
+    wpLink:          (e.wpLink as string) ?? '',
+    isBioPage:       (e.isBioPage as boolean) ?? false,
+  };
+}
+
+/** All events from events-data.json as SanityEvent-compatible objects */
+export function getAllEventsFromJson(): SanityEvent[] {
+  return (eventsDataRaw as Record<string, unknown>[]).map(toEventFromJson);
 }
 
 /** Single event by slug */

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { sanityClient } from '@/lib/sanity';
 import { DEMO_LOCATIONS } from '@/lib/demoLocations';
 import { MUSEUM_TO_TRASH } from '@/lib/demoTrashItems';
@@ -130,6 +131,7 @@ export default function MuseumMap() {
   // Init map
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
+    if (!MAPBOX_TOKEN) return; // token not set at build time — skip map init
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
 
@@ -212,14 +214,34 @@ export default function MuseumMap() {
           .addTo(map);
         markersRef.current.push(marker);
       });
+
+      // Fit map to show all markers
+      const withCoords = mapLocations.filter(l => l.coordinates?.lng && l.coordinates?.lat);
+      if (withCoords.length > 1) {
+        const lngs = withCoords.map(l => l.coordinates.lng);
+        const lats = withCoords.map(l => l.coordinates.lat);
+        map.fitBounds(
+          [[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]],
+          { padding: 60, maxZoom: 14, duration: 0 }
+        );
+      }
     };
 
     if (map.loaded()) {
+      map.resize(); // re-sync canvas size with actual DOM dimensions
       addMarkers();
     } else {
-      map.on('load', addMarkers);
+      map.once('load', () => {
+        map.resize();
+        addMarkers();
+      });
     }
   }, [locations, artistFilter, mapFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Resize map when mobile state toggles (container height changes 65vh ↔ 80vh)
+  useEffect(() => {
+    if (mapRef.current) mapRef.current.resize();
+  }, [isMobile]);
 
   // Pulse + scale the selected pin
   useEffect(() => {
@@ -286,6 +308,10 @@ export default function MuseumMap() {
   return (
     <div>
       <style>{`
+        /* Grayscale only the map tiles canvas — NOT the marker layer.
+           Applying filter to the container creates a stacking context that
+           breaks Mapbox's translate3d marker positioning. */
+        .mapboxgl-canvas-container { filter: grayscale(1); }
         @keyframes pin-pulse {
           0%   { box-shadow: 0 0 0 0   rgba(0,0,0,0.35), 0 1px 4px rgba(0,0,0,0.25); }
           60%  { box-shadow: 0 0 0 9px rgba(0,0,0,0),    0 1px 4px rgba(0,0,0,0.25); }
@@ -310,20 +336,20 @@ export default function MuseumMap() {
       `}</style>
 
       {/* ─── MAP ─── */}
-      <div ref={mapSectionRef} style={{ borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5', position: 'relative', width: '100%' }}>
 
-        {/* demo banner */}
-        {isDemo && !loading && (
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10,
-            backgroundColor: '#111111', color: 'white',
-            fontSize: '11px', letterSpacing: '0.08em',
-            padding: '8px 16px',
-            display: 'flex', alignItems: 'center',
-          }}>
-            <span>COMING SOON — THIS IS A DEMO VERSION OF +1 MUSEUM BY ANY OTHER NAME — ALL WORKS ARE PLACEHOLDERS — POSTED MARCH 21, 2026</span>
-          </div>
-        )}
+      {/* demo banner — sits above the map in normal flow so it doesn't offset pin positioning */}
+      {isDemo && !loading && (
+        <div style={{
+          backgroundColor: '#111111', color: 'white',
+          fontSize: '11px', letterSpacing: '0.08em',
+          padding: '8px 16px',
+          display: 'flex', alignItems: 'center',
+        }}>
+          <span>COMING SOON — THIS IS A DEMO VERSION OF +1 MUSEUM BY ANY OTHER NAME — ALL WORKS ARE PLACEHOLDERS — POSTED MARCH 21, 2026</span>
+        </div>
+      )}
+
+      <div ref={mapSectionRef} style={{ borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5', position: 'relative', width: '100%' }}>
 
         {/* tap-to-close overlay on mobile when panel is open */}
         {selected && isMobile && (
@@ -337,7 +363,7 @@ export default function MuseumMap() {
           />
         )}
 
-        {/* map container */}
+        {/* map container — keep clean, no filter, no padding */}
         <div
           ref={mapContainer}
           style={{
@@ -345,8 +371,6 @@ export default function MuseumMap() {
             height: isMobile ? '80vh' : '65vh',
             minHeight: isMobile ? '500px' : '480px',
             backgroundColor: '#f0f0f0',
-            filter: 'grayscale(1)',
-            paddingTop: isDemo && !loading ? '34px' : '0',
           }}
         />
 
@@ -431,7 +455,7 @@ export default function MuseumMap() {
         {/* artist filter active indicator */}
         {artistFilter && (
           <div style={{
-            position: 'absolute', top: isDemo ? '46px' : '12px', left: '16px',
+            position: 'absolute', top: '12px', left: '16px',
             backgroundColor: 'rgba(255,255,255,0.97)',
             border: '1px solid #dddddd',
             padding: '6px 10px',

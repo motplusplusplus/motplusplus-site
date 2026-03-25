@@ -61,7 +61,7 @@ export default function Home() {
           }}>
             {[
               { label: "events & news", href: "/events", img: `${R2}/motplus/general/homepage-events.jpg` },
-              { label: "+a.farm residency", href: "/afarm", img: `${R2}/motplus/general/homepage-residents.jpg` },
+              { label: "+a.Farm residency", href: "/afarm", img: `${R2}/motplus/general/homepage-residents.jpg` },
               { label: "all programs", href: "/about", img: `${R2}/motplus/general/homepage-programs.jpg` },
             ].map((item) => (
               <Link key={item.href} href={item.href} style={{ textDecoration: "none", color: "inherit" }}>

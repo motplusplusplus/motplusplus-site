@@ -23,7 +23,7 @@ const events = [
   { title: "Poetry Plus | Frozen Data", date: "February 22, 2020" },
   { title: "Big Day of Performances #5", date: "December 21, 2019" },
   { title: "Little Night of Performances", date: "December 19, 2019" },
-  { title: "Big Day of Performances #4 @ a.farm", date: "December 14, 2019" },
+  { title: "Big Day of Performances #4 @ a.Farm", date: "December 14, 2019" },
   { title: "Cam Xanh — ChaoArt|ArtChao", date: "December 10, 2019" },
   { title: "Big Day of Performances #3", date: "December 7, 2019" },
   { title: "Tanya Amador — Documenting Performance Art (Presentation & Round Table)", date: "December 3, 2019" },

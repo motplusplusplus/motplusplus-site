@@ -7,7 +7,7 @@ import Image from "next/image";
 
 const primaryNav = [
   { label: "+1 museum", href: "/museum" },
-  { label: "+a.farm", href: "/afarm" },
+  { label: "+a.Farm", href: "/afarm" },
   { label: "+1 trash", href: "/trash" },
   { label: "events", href: "/events" },
 ];
@@ -17,14 +17,14 @@ const dropdownSections = [
     heading: "+1 programs",
     items: [
       { label: "+1 museum by any other name", href: "/museum" },
-      { label: "+a.farm", href: "/afarm" },
+      { label: "+a.Farm", href: "/afarm" },
       { label: "+1 trash", href: "/trash" },
       { label: "+1 contemporary project", href: "/contemporary" },
       { label: "+1 nice place for experimentation", href: "/afarm" },
       { label: "+1 art advisory", href: "/advisory" },
       { label: "+1 residency", href: "/afarm" },
-      { label: "+1 MoTsound", href: "/sound" },
-      { label: "+1 Performance", href: "/performance" },
+      { label: "MoTsound", href: "/sound" },
+      { label: "+1 performance", href: "/performance" },
     ],
   },
   {
@@ -93,7 +93,7 @@ export default function Header() {
           }}
         >
           {/* logo */}
-          <Link href="/" style={{ display: "flex", alignItems: "center" }}>
+          <Link href="/museum" style={{ display: "flex", alignItems: "center" }}>
             <Image
               src="/motpluspluspluslogo-thin.png"
               alt="MoT+++"

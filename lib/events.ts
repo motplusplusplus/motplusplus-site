@@ -34,7 +34,7 @@ export const HIDDEN_SLUGS = new Set([
 ]);
 
 export const categories = [
-  '+a.farm',
+  '+a.Farm',
   '+1 contemporary project',
   '+1 performance',
   '+1 nice place for experimentation',

@@ -26,7 +26,7 @@ export default function AboutPage() {
             born as a project space in 2015, our list of +1s activities is expanding as the space continues to grow and evolve its artistic and collaborative practices.
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", maxWidth: "640px" }}>
-            in 2018 we co-founded a.farm international art residency.
+            in 2018 we co-founded a.Farm international art residency.
           </p>
         </div>
 
@@ -51,14 +51,14 @@ export default function AboutPage() {
           >
             {[
               { name: "+1 museum by any other name", href: "/museum" },
-              { name: "+a.farm", href: "/afarm" },
+              { name: "+a.Farm", href: "/afarm" },
               { name: "+1 trash", href: "/trash" },
               { name: "+1 contemporary project", href: "/contemporary" },
               { name: "+1 nice place for experimentation", href: "/afarm" },
               { name: "+1 art advisory", href: "/advisory" },
               { name: "+1 residency", href: "/afarm" },
-              { name: "mot+sound", href: "/sound" },
-              { name: "mot+ performance", href: "/performance" },
+              { name: "MoTsound", href: "/sound" },
+              { name: "+1 performance", href: "/performance" },
             ].map((p) => (
               <a
                 key={p.name}
@@ -100,12 +100,12 @@ export default function AboutPage() {
           <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
             press
           </p>
-          <p style={{ fontSize: "14px", color: "#888888", lineHeight: 1.8, maxWidth: "480px" }}>
-            press archive being compiled. for media inquiries contact{" "}
-            <a href="mailto:motplusplusplus@gmail.com" style={{ color: "#555555" }}>
-              motplusplusplus@gmail.com
-            </a>
-          </p>
+          <a
+            href="/press"
+            style={{ fontSize: "13px", color: "#111111", borderBottom: "1px solid #111111", paddingBottom: "1px" }}
+          >
+            press archive →
+          </a>
         </div>
 
       </div>

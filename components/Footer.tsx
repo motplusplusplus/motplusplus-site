@@ -28,7 +28,7 @@ export default function Footer() {
           }}
         >
           <Link href="/museum">+1 museum by any other name</Link>
-          <Link href="/afarm">+a.farm</Link>
+          <Link href="/afarm">+a.Farm</Link>
           <Link href="/trash">+1 trash</Link>
           <Link href="/events">events</Link>
           <Link href="/collective">mot+++ collective</Link>
@@ -58,9 +58,7 @@ export default function Footer() {
           </a>
         </div>
 
-        <p style={{ fontSize: "11px", color: "#cccccc" }}>
-          MoT+++, la astoria tower 2, 383 nguyễn duy trinh, hồ chí minh
-        </p>
+
       </div>
     </footer>
   );

@@ -55,7 +55,7 @@ export default async function ResidentsPage() {
           previous residents
         </h1>
         <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8, marginBottom: "12px" }}>
-          artists who have passed through the +a.farm program at MoT+++.
+          artists who have passed through the +a.Farm program at MoT+++.
         </p>
         <p style={{ fontSize: "12px", color: "#aaaaaa" }}>
           {totalResidents}+ artists — 2018 to present
