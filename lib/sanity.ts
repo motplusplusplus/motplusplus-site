@@ -171,16 +171,26 @@ for (const e of eventsDataRaw as Array<{ slug: string; images?: string[] }>) {
   }
 }
 
+/** Deduplicate image URLs: exact URL match first, then filename match (handles same photo in EN/VN folders) */
+function dedupImages(urls: string[]): string[] {
+  const seenUrls = new Set<string>();
+  const seenFilenames = new Set<string>();
+  return urls.filter(url => {
+    const fname = url.split('/').pop() ?? '';
+    if (seenUrls.has(url) || seenFilenames.has(fname)) return false;
+    seenUrls.add(url);
+    seenFilenames.add(fname);
+    return true;
+  });
+}
+
 function toSanityEvent(e: RawEvent): SanityEvent {
   const uploaded = e.uploadedImageUrls ?? [];
   // Filter junk from Sanity legacyImageUrls (logos, brand assets mixed in during migration)
   const legacy   = (e.legacyImageUrls ?? []).filter(u => !isJunk(u));
-  const sanityImages = [...uploaded, ...legacy];
-  const jsonImages   = legacyImages[e.slug] ?? [];
-  // Merge both sources; deduplicate by filename so same file from different paths isn't doubled
-  const seenFilenames = new Set(sanityImages.map(u => u.split('/').pop()));
-  const uniqueJson = jsonImages.filter(u => !seenFilenames.has(u.split('/').pop()));
-  const images = [...sanityImages, ...uniqueJson];
+  const jsonImages = legacyImages[e.slug] ?? [];
+  // Merge all sources then deduplicate — handles same photo uploaded to EN+VN folders in R2
+  const images = dedupImages([...uploaded, ...legacy, ...jsonImages]);
   const thumbnail    = images[0] ?? '';
   return {
     slug:            e.slug,
