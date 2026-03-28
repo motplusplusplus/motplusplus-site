@@ -291,6 +291,7 @@ export default function EventContent({
             <img
               src={contentImages[0]}
               alt={`${title} — 1`}
+              loading="eager"
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
           </div>
@@ -314,6 +315,7 @@ export default function EventContent({
                   <img
                     src={img}
                     alt={`${title} — ${i + 2}`}
+                    loading="lazy"
                     style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                   />
                 </div>

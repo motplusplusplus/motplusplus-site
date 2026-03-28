@@ -4,25 +4,11 @@ import { BIO_SLUGS } from "@/lib/events";
 
 type ResidentEntry = { slug: string; title: string; sortDate: string };
 
-// Performance Plus 2019 cohort — integrated as text entries
-const perfPlus2019Artists: { name: string; slug?: string }[] = [
-  { name: "Xxavier Edward Carter" },
-  { name: "Do Nguyen Lap-Xuan" },
-  { name: "Samira Jamouchi" },
-  { name: "Aliansyah Caniago" },
-  { name: "Dang Thuy Anh" },
-  { name: "Flinh" },
-  { name: "Masayuki Miyaji" },
-  { name: "Shayekh Mohammed Arif" },
-  { name: "Zach Sch" },
-  { name: "Ayumi Adachi" },
-  { name: "Sikarnt Skoolisariyaporn" },
-  { name: "Chu Hao Pei", slug: "chu-hao-pei" },
-];
-
 export default async function ResidentsPage() {
   const allEvents = await getAllEvents();
-  const afarmBios = allEvents.filter(e => BIO_SLUGS.has(e.slug) || e.isBioPage);
+  const afarmBios = allEvents.filter(e =>
+    (BIO_SLUGS.has(e.slug) || e.isBioPage) && e.category?.toLowerCase() === '+a.farm'
+  );
 
   const byYear: Record<string, ResidentEntry[]> = {};
   for (const e of afarmBios) {
@@ -32,7 +18,7 @@ export default async function ResidentsPage() {
   }
   const years = Object.keys(byYear).filter(Boolean).sort((a, b) => Number(b) - Number(a));
 
-  const totalResidents = afarmBios.length + perfPlus2019Artists.length;
+  const totalResidents = afarmBios.length;
 
   const nameStyle = {
     fontSize: "14px",
@@ -52,10 +38,10 @@ export default async function ResidentsPage() {
           fontWeight: 300, lineHeight: 1.1,
           letterSpacing: "-0.02em", marginBottom: "20px",
         }}>
-          previous residents
+          previous a.farm residents
         </h1>
         <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8, marginBottom: "12px" }}>
-          artists who have passed through the +a.Farm program at MoT+++.
+          artists who have been in residence at +a.Farm, the international art residency at MoT+++.
         </p>
         <p style={{ fontSize: "12px", color: "#aaaaaa" }}>
           {totalResidents}+ artists — 2018 to present
@@ -105,34 +91,6 @@ export default async function ResidentsPage() {
                 ))}
             </div>
 
-            {/* Performance Plus sub-section — shown in 2019 bucket */}
-            {yr === "2019" && (
-              <div style={{ marginTop: "32px" }}>
-                <p style={{
-                  fontSize: "10px", color: "#cccccc",
-                  letterSpacing: "0.06em", marginBottom: "16px",
-                }}>
-                  performance plus
-                </p>
-                <div style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-                  gap: "10px 32px",
-                }}>
-                  {perfPlus2019Artists.map(({ name, slug }) =>
-                    slug ? (
-                      <Link key={name} href={`/artists/${slug}`} style={nameStyle}>
-                        {name}
-                      </Link>
-                    ) : (
-                      <span key={name} style={{ ...nameStyle, cursor: "default" }}>
-                        {name}
-                      </span>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         ))}
       </div>

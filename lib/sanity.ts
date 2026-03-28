@@ -171,6 +171,18 @@ for (const e of eventsDataRaw as Array<{ slug: string; images?: string[] }>) {
   }
 }
 
+// Merge images from duplicate-slug JSON entries into their canonical counterparts
+const SLUG_ALIASES: Record<string, string> = {
+  'nuoc-water-resistance-a-solo-exhibition-by-thom-nguyen': 'nuoc-water-resistance',
+  'giua-nhung-chop-bong-toi-mo-tiep-nhung-giac-mo-in-between-frames-i-dream-the-dreams-i-have-been-dreaming': 'in-between-frames-i-dream-the-dreams-i-have-been-dreaming',
+};
+for (const [alias, canonical] of Object.entries(SLUG_ALIASES)) {
+  if (legacyImages[alias]?.length) {
+    legacyImages[canonical] = [...(legacyImages[canonical] ?? []), ...legacyImages[alias]];
+    delete legacyImages[alias];
+  }
+}
+
 /** Deduplicate image URLs: exact URL match first, then filename match (handles same photo in EN/VN folders) */
 function dedupImages(urls: string[]): string[] {
   const seenUrls = new Set<string>();

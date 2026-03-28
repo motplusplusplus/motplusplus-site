@@ -24,6 +24,11 @@ export const BIO_SLUGS = new Set([
   "tricia-nguyen-thanh-trang","bagus-mazasupa-anwarridwan","maung-day",
   "ben-valentine","tuyen-nguyen","alisa-chunchue","karen-thao-nguyen-la",
   "lem-trag","wu-chi-tsung",
+  "weston-teruya",
+  // +1 residency artists (performance plus 2018–2019)
+  "enkhbold-togmidshiirev","ngo-thanh-bac","lap-xuan",
+  // artists (MoT+++ collaborators with bio pages)
+  "tran-minh-duc",
 ]);
 
 /** Slugs to hide from all public listings */
@@ -31,6 +36,24 @@ export const HIDDEN_SLUGS = new Set([
   'self-funded-residency-program',
   'linh-le',
   'post-vidai',
+  // Duplicate slugs — images merged into canonical counterpart
+  'mot-sound-8-amoeba-2',
+  'nuoc-water-resistance-a-solo-exhibition-by-thom-nguyen',
+  'giua-nhung-chop-bong-toi-mo-tiep-nhung-giac-mo-in-between-frames-i-dream-the-dreams-i-have-been-dreaming',
+  // -vn duplicates — vnDescription merged into canonical
+  'all-animals-are-equal-1-vn',
+  'it-seems-to-be-dao-tung-vn',
+  'minimal-prayer-duy-nguyen-vn',
+  'mot-doi-gai-a-beach-life-cam-xanh-vn',
+  'mot-sound-10-anoise-vn',
+  'mot-sound-11-adom-vn',
+  'mot-sound-15-arenaissance-vn',
+  'mot-sound-16-poetry-plus-vol-3-vn',
+  'mot-sound-5-vn',
+  'mot-sound-6-vn',
+  'mot-sound-9-aconvergence-vn',
+  'othermother-cian-duggan-vn',
+  'tuan-mami-amp-cam-xanh-artist-presentations-performance-plus-2019-vn',
 ]);
 
 export const categories = [
