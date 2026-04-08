@@ -14,7 +14,7 @@ export default async function TrashPage() {
     dimensions: r.dimensions ?? '',
     edition: r.edition ?? '',
     description: r.description ?? '',
-    images: [...(r.uploadedImageUrls ?? []), ...(r.legacyImageUrls ?? [])],
+    images: [...(r.uploadedImageUrls ?? []), ...(r.directImageUrls ?? []), ...(r.legacyImageUrls ?? [])],
     museumLocationId: r.museumLocationId,
     neighbourhood: r.neighbourhood,
     sold: r.sold ?? false,

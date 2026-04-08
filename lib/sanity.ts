@@ -19,7 +19,7 @@ const buildClient = createClient({
 
 export async function getTrashItems() {
   return sanityClient.fetch(`
-    *[_type == "trashItem" && active == true && (count(images) > 0 || count(legacyImageUrls) > 0) && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(sortOrder asc, artist asc) {
+    *[_type == "trashItem" && active == true && (count(images) > 0 || count(uploadedImages) > 0 || count(legacyImageUrls) > 0) && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(sortOrder asc, artist asc) {
       _id,
       artist,
       "artistSlug": artistRef->slug.current,
@@ -30,6 +30,7 @@ export async function getTrashItems() {
       edition,
       description,
       "uploadedImageUrls": uploadedImages[].asset->url,
+      "directImageUrls": images[].url,
       legacyImageUrls,
       "museumLocationId": museumLocationRef->._id,
       "neighbourhood": museumLocationRef->neighbourhood,
