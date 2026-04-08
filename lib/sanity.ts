@@ -30,7 +30,7 @@ export async function getTrashItems() {
       edition,
       description,
       "uploadedImageUrls": uploadedImages[].asset->url,
-      "directImageUrls": images[].url,
+      "directImageUrls": images[].asset->url,
       legacyImageUrls,
       "museumLocationId": museumLocationRef->._id,
       "neighbourhood": museumLocationRef->neighbourhood,
