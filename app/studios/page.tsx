@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { allStudios } from "@/lib/studios";
+import { getAllStudios } from "@/lib/studios";
 import { getArtist } from "@/lib/artists";
 
 export const metadata: Metadata = {
@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function StudiosPage() {
+export default async function StudiosPage() {
+  const allStudios = await getAllStudios();
   return (
     <>
       {/* hero */}
@@ -56,7 +57,7 @@ export default function StudiosPage() {
             marginBottom: "64px",
           }}
         >
-          {allStudios.map((studio) => {
+          {allStudios.filter(s => !s.hidden).map((studio) => {
             const host = studio.hostSlug ? getArtist(studio.hostSlug) : null;
             const firstImage = studio.images[0] || null;
 

@@ -215,17 +215,10 @@ function EventCard({ event }: { event: Event }) {
 function PastRow({ event }: { event: Event }) {
   return (
     <Link href={`/events/${event.slug}`} className="evt-row" style={{ textDecoration: "none", color: "inherit", display: "block" }}>
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "80px 1fr auto",
-        gap: "0 20px",
-        alignItems: "center",
-        padding: "16px 8px",
-        borderBottom: "1px solid #f2f2f2",
-      }}>
+      <div className="evt-past-inner" style={{ padding: "16px 8px", borderBottom: "1px solid #f2f2f2" }}>
         <div style={{ width: "80px", height: "60px", overflow: "hidden", backgroundColor: "#111111", flexShrink: 0 }}>
           {event.thumbnail
-            ? <img src={event.thumbnail} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: "grayscale(100%)" }} />
+            ? <img src={event.thumbnail} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: "saturate(0.5)" }} />
             : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <span style={{ fontSize: "9px", color: "rgba(255,255,255,0.2)", letterSpacing: "0.06em" }}>MoT+++</span>
               </div>
@@ -242,7 +235,7 @@ function PastRow({ event }: { event: Event }) {
             <p style={{ fontSize: "11px", color: "#cccccc", marginTop: "2px" }}>{event.vnTitle}</p>
           )}
         </div>
-        <p style={{ fontSize: "12px", color: "#aaaaaa", whiteSpace: "nowrap", flexShrink: 0 }}>
+        <p className="evt-past-date" style={{ fontSize: "12px", color: "#aaaaaa" }}>
           {event.displayDate || event.dateISO}
         </p>
       </div>

@@ -46,62 +46,40 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
     return !SKIP.some(s => filename.toLowerCase().includes(s));
   });
 
-  const heroImg = galleryImages[0] || event.thumbnail;
-  const contentImages = galleryImages.slice(1);
+  const AFARM_LOGO = 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg';
+  const MOT_LOGO = '/motpluspluspluslogo-thin.png';
+  const isAfarm = event.category?.toLowerCase().includes('a.farm');
+
+  // Prefer first jpg for hero — png flyers were often not uploaded to R2
+  const realHero =
+    galleryImages.find(u => /\.(jpg|jpeg)$/i.test(u)) ||
+    galleryImages[0] ||
+    event.thumbnail ||
+    null;
+  const logoFallback = isAfarm ? AFARM_LOGO : null;
+  const heroImg = realHero || logoFallback;
+
+  // contentImages = all gallery images except the one used as hero
+  const contentImages = galleryImages.filter(u => u !== heroImg);
 
   return (
-    <>
-      <div style={{
-        position: "relative",
-        width: "100%", height: "70vh", minHeight: "460px",
-        overflow: "hidden", backgroundColor: "#111111",
-      }}>
-        {heroImg && (
-          <img
-            src={heroImg}
-            alt={event.title}
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.78 }}
-          />
-        )}
-        <div style={{
-          position: "absolute", inset: 0,
-          background: "linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.72) 100%)",
-          display: "flex", flexDirection: "column", justifyContent: "flex-end",
-          padding: "clamp(24px, 4vw, 56px)",
-        }}>
-          <p style={{
-            fontSize: "11px", letterSpacing: "0.1em",
-            color: "rgba(255,255,255,0.5)", marginBottom: "14px", fontWeight: 300,
-          }}>
-            {event.category}
-          </p>
-          <h1 style={{
-            fontSize: "clamp(22px, 3.5vw, 44px)",
-            fontWeight: 300, lineHeight: 1.15, letterSpacing: "-0.02em",
-            color: "#ffffff", maxWidth: "860px",
-          }}>
-            {event.title}
-          </h1>
-        </div>
-      </div>
-
-      <EventContent
-        title={event.title}
-        vnTitle={event.vnTitle}
-        description={event.description}
-        vnDescription={event.vnDescription}
-        videoUrl={event.videoUrl}
-        category={event.category}
-        displayDate={event.displayDate}
-        dateISO={event.dateISO}
-        location={event.location}
-        past={past}
-        relatedResidents={relatedResidents.map(r => ({ slug: r.slug, title: r.title }))}
-        contentImages={contentImages}
-        wpLink={event.wpLink}
-        prevEvent={prev ? { slug: prev.slug, title: prev.title } : null}
-        nextEvent={next ? { slug: next.slug, title: next.title } : null}
-      />
-    </>
+    <EventContent
+      title={event.title}
+      vnTitle={event.vnTitle}
+      description={event.description}
+      vnDescription={event.vnDescription}
+      videoUrl={event.videoUrl}
+      category={event.category}
+      displayDate={event.displayDate}
+      dateISO={event.dateISO}
+      location={event.location}
+      past={past}
+      relatedResidents={relatedResidents.map(r => ({ slug: r.slug, title: r.title }))}
+      heroImg={heroImg}
+      contentImages={contentImages}
+      wpLink={event.wpLink}
+      prevEvent={prev ? { slug: prev.slug, title: prev.title } : null}
+      nextEvent={next ? { slug: next.slug, title: next.title } : null}
+    />
   );
 }

@@ -8,6 +8,15 @@ export const sanityClient = createClient({
   useCdn: true, // cached reads — fast for public map data
 });
 
+// Fresh (non-CDN) client for build-time event queries — avoids stale CDN cache
+// causing events to fall back to events-data.json instead of Sanity data
+const buildClient = createClient({
+  projectId: 't5nsm79o',
+  dataset: 'production',
+  apiVersion: '2026-03-20',
+  useCdn: false,
+});
+
 export async function getTrashItems() {
   return sanityClient.fetch(`
     *[_type == "trashItem" && active == true && (count(images) > 0 || count(legacyImageUrls) > 0) && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(sortOrder asc, artist asc) {
@@ -228,7 +237,7 @@ function toSanityEvent(e: RawEvent): SanityEvent {
 
 /** All active events from Sanity, in newest-first order, as Event-compatible objects */
 export async function getAllEvents(): Promise<SanityEvent[]> {
-  const raw: RawEvent[] = await sanityClient.fetch(
+  const raw: RawEvent[] = await buildClient.fetch(
     `*[_type == "event" && active == true] | order(dateISO desc) { ${EVENT_FIELDS} }`
   );
   return raw.map(toSanityEvent);
@@ -266,16 +275,78 @@ export function getAllEventsFromJson(): SanityEvent[] {
 
 /** Single event by slug */
 export async function getEventBySlug(slug: string): Promise<SanityEvent | null> {
-  const raw: RawEvent | null = await sanityClient.fetch(
+  const raw: RawEvent | null = await buildClient.fetch(
     `*[_type == "event" && slug.current == $slug && active == true][0] { ${EVENT_FIELDS} }`,
     { slug }
   );
   return raw ? toSanityEvent(raw) : null;
 }
 
+// ─── A.Farm host profiles ─────────────────────────────────────────────────────
+
+const AFARM_HOST_FIELDS = `
+  _id,
+  "slug": slug.current,
+  name,
+  studioName,
+  neighbourhood,
+  mapLat,
+  mapLng,
+  practiceBio,
+  welcomeBio,
+  collaboration,
+  languages,
+  availability,
+  environment,
+  transport,
+  amenities,
+  livingArrangement,
+  residentRoom,
+  smoking,
+  smokingDetail,
+  guests,
+  guestsDetail,
+  rules,
+  practiceBioVi,
+  welcomeBioVi,
+  collaborationVi,
+  languagesVi,
+  availabilityVi,
+  environmentVi,
+  transportVi,
+  amenitiesVi,
+  livingArrangementVi,
+  residentRoomVi,
+  rulesVi,
+  floor,
+  ac,
+  bathrooms,
+  privateBathroom,
+  kitchenAccess,
+  internet,
+  petsInResidence,
+  laundry,
+  "portrait": portrait.asset->url,
+  "uploadedImageUrls": images[].asset->url,
+  imageUrls,
+  visibility,
+  hostType,
+`;
+
+export async function getAfarmHosts() {
+  return buildClient.fetch(`*[_type == "afarmHost"] | order(name asc) { ${AFARM_HOST_FIELDS} }`);
+}
+
+export async function getAfarmHostBySlug(slug: string) {
+  return buildClient.fetch(
+    `*[_type == "afarmHost" && slug.current == $slug][0] { ${AFARM_HOST_FIELDS} }`,
+    { slug }
+  );
+}
+
 /** All event slugs — for generateStaticParams */
 export async function getAllEventSlugs(): Promise<string[]> {
-  const results: { slug: string }[] = await sanityClient.fetch(
+  const results: { slug: string }[] = await buildClient.fetch(
     `*[_type == "event" && active == true]{ "slug": slug.current }`
   );
   return results.map(r => r.slug);

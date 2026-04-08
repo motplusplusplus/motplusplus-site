@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getArtist, getArtistSlugs, getArtistEvents, type Artist } from "@/lib/artists";
 import { getEventBySlug, getAllEvents, getArtistBySlug, getAllSanityArtistSlugs } from "@/lib/sanity";
+import ArtistGallery from "./ArtistGallery";
 
 export async function generateStaticParams() {
   const localSlugs = getArtistSlugs();
@@ -43,9 +44,11 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const relatedEvents = getArtistEvents(artist, allEvents);
 
   const badges = [
-    artist.collective && "mot+++ collective",
-    artist.resident   && "a.Farm resident",
-    artist.studioHost && "hosting artist",
+    artist.collective      && "mot+++ collective",
+    artist.resident        && "a.Farm resident",
+    artist.studioHost      && "hosting artist",
+    artist.curator         && "curator",
+    artist.performancePlus && "+1 performance",
   ].filter(Boolean) as string[];
 
   return (
@@ -164,23 +167,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
               work
             </p>
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: "8px",
-            }}>
-              {artist.workImages.map((img, i) => (
-                <div key={i} style={{
-                  width: "100%", aspectRatio: "4/3", overflow: "hidden", backgroundColor: "#f0f0f0",
-                }}>
-                  <img
-                    src={img}
-                    alt={`${artist.name} — work ${i + 1}`}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
-                </div>
-              ))}
-            </div>
+            <ArtistGallery images={artist.workImages} artistName={artist.name} />
           </div>
         )}
 

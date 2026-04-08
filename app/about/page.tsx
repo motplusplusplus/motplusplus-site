@@ -20,14 +20,17 @@ export default function AboutPage() {
             our ID
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "20px", maxWidth: "640px" }}>
-            we are an independent artist-run contemporary art space in Saigon, Vietnam. our fluid and responsive approach to programming prioritizes artists by acknowledging the creative process as often non-linear and divergent, encouraging them to experiment with the boundaries of their practice.
+            founded by <a href="/artists/cam-xanh" style={{ color: "#444444", borderBottom: "1px solid #aaaaaa" }}>Cam Xanh</a> in 2015, MoT+++ is an independent artist-run contemporary art space in Saigon, Vietnam. our list of +1s activities is expanding as the organization continues to evolve.
           </p>
-          <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "20px", maxWidth: "640px" }}>
-            born as a project space in 2015, our list of +1s activities is expanding as the space continues to grow and evolve its artistic and collaborative practices.
-          </p>
-          <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", maxWidth: "640px" }}>
+          <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "28px", maxWidth: "640px" }}>
             in 2018 we co-founded a.Farm international art residency.
           </p>
+          <a
+            href="/contact"
+            style={{ fontSize: "13px", color: "#111111", borderBottom: "1px solid #111111", paddingBottom: "1px" }}
+          >
+            contact →
+          </a>
         </div>
 
 

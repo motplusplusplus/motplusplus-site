@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { studios } from "@/lib/studios";
 import { notFound } from "next/navigation";
+import StudioProfileContent from "@/app/studios/[slug]/StudioProfileContent";
+import StudioGallery from "@/app/studios/[slug]/StudioGallery";
 
 export function generateStaticParams() {
   return studios.map((s) => ({ slug: s.slug }));
@@ -94,36 +96,12 @@ export default async function StudioPage({
 
       <div style={{ maxWidth: "720px" }}>
 
-        {/* practice bio */}
-        {profile?.practiceBio && (
+        {/* bilingual profile content (toggle + all sections) */}
+        {profile ? (
           <div style={{ marginBottom: "48px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
-              about the artist
-            </p>
-            {profile.practiceBio.split(/\n{2,}/).filter(Boolean).map((para, i) => (
-              <p key={i} style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "16px" }}>
-                {para.trim()}
-              </p>
-            ))}
+            <StudioProfileContent profile={profile} profileVi={studio.profileVi} />
           </div>
-        )}
-
-        {/* welcome bio / about the space */}
-        {profile?.welcomeBio && (
-          <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "48px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
-              about the space
-            </p>
-            {profile.welcomeBio.split(/\n{2,}/).filter(Boolean).map((para, i) => (
-              <p key={i} style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "16px" }}>
-                {para.trim()}
-              </p>
-            ))}
-          </div>
-        )}
-
-        {/* fallback description if no profile */}
-        {!profile?.welcomeBio && studio.description && (
+        ) : studio.description ? (
           <div style={{ marginBottom: "48px" }}>
             <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
               about the space
@@ -134,19 +112,7 @@ export default async function StudioPage({
               </p>
             ))}
           </div>
-        )}
-
-        {/* collaboration */}
-        {profile?.collaboration && (
-          <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "48px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
-              collaboration
-            </p>
-            <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444" }}>
-              {profile.collaboration}
-            </p>
-          </div>
-        )}
+        ) : null}
 
       </div>
 
@@ -168,36 +134,13 @@ export default async function StudioPage({
         </div>
       )}
 
-      {/* horizontal scroll gallery — studio images + work images */}
+      {/* gallery with lightbox */}
       {galleryImages.length > 0 && (
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "48px" }}>
           <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
             studio &amp; work
           </p>
-          <div style={{
-            display: "flex",
-            gap: "10px",
-            overflowX: "auto",
-            paddingBottom: "12px",
-            scrollbarWidth: "thin" as const,
-            scrollbarColor: "#dddddd transparent",
-          }}>
-            {galleryImages.map((img, i) => (
-              <div key={i} style={{
-                flexShrink: 0,
-                width: "340px",
-                aspectRatio: "4/3",
-                overflow: "hidden",
-                backgroundColor: "#f0f0f0",
-              }}>
-                <img
-                  src={img}
-                  alt={`${studio.artistName} — ${i + 1}`}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                />
-              </div>
-            ))}
-          </div>
+          <StudioGallery images={galleryImages} studioName={profile?.studioName || studio.artistName} />
         </div>
       )}
 

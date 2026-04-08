@@ -22,56 +22,97 @@ Notes:
     - Safe to re-run: will resume from last position
 """
 
-import os, json, subprocess, time, urllib.request, tempfile
+import os, json, subprocess, time, tempfile
 import face_recognition
 import cv2
 import numpy as np
+import boto3
+import requests
 
 # ── CONFIG ────────────────────────────────────────────────────────────────────
 REFERENCE_DIR   = "/Volumes/MoT/miscellaneous/L and TM photos to train bot to erase face "
 EVENTS_JSON     = "/Users/andrewwalther/Documents/motplus/events-data.json"
 TOKEN           = "0y5cIePwh8kUz1aBnCZmYIuFJF1IVarrr7RDvWrD"
 ACCOUNT_ID      = "31a35595add67ae1366b3f6420432773"
+ACCESS_KEY      = "83343e12beb2f0aed8d48bc3047814a2"
+SECRET_KEY      = "8d3e7535a2e3ed492102802160c1a51cb94ee306c6f95cecb9cb3fa537c3ca56"
 BUCKET          = "site-general"
 R2_BASE         = "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/"
+ENDPOINT_URL    = f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com"
 REPORT_FILE     = "/tmp/blur_report.json"
 PROGRESS_FILE   = "/tmp/blur_progress.json"
+MANIFEST_FILE   = "/Users/andrewwalther/Documents/motplus/scripts/face-blur-manifest.json"
 THRESHOLD       = 0.5       # Lower = stricter (0.4 very strict, 0.6 lenient)
 BLUR_KERNEL     = 51        # Blur strength (odd number, higher = more blur)
 MOTPLUS_DIR     = "/Users/andrewwalther/Documents/motplus"
 # ─────────────────────────────────────────────────────────────────────────────
 
+def make_s3():
+    return boto3.client(
+        "s3",
+        endpoint_url=ENDPOINT_URL,
+        aws_access_key_id=ACCESS_KEY,
+        aws_secret_access_key=SECRET_KEY,
+        region_name="auto",
+    )
+
+def save_original_to_r2(s3, r2_key):
+    """Copy the current R2 object to <stem>__orig.<ext> before blurring."""
+    ext = os.path.splitext(r2_key)[1].lower()
+    orig_key = r2_key[:len(r2_key)-len(ext)] + "__orig" + ext
+    # Only copy if orig doesn't already exist
+    try:
+        s3.head_object(Bucket=BUCKET, Key=orig_key)
+        return orig_key  # already saved
+    except:
+        pass
+    s3.copy_object(
+        Bucket=BUCKET,
+        CopySource={"Bucket": BUCKET, "Key": r2_key},
+        Key=orig_key,
+    )
+    return orig_key
+
 PHOTO_EXTS = {'.jpg', '.jpeg', '.png'}
 
+# Only Luke's reference photos — Asian women excluded to prevent false positives.
+# Add Tra My files here once better reference photos are available.
+_NB = "\u202f"  # narrow no-break space used by macOS in screenshot filenames
+LUKE_ONLY_FILES = {
+    f"Screenshot 2026-03-17 at 12.44.14{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 12.49.51{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 12.55.14{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 12.59.37{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 1.00.19{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 1.02.09{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 1.07.09{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 1.15.43{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 1.20.08{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 1.21.49{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 1.24.56{_NB}PM.png",
+    f"Screenshot 2026-03-17 at 1.40.50{_NB}PM.png",
+}
+
 def load_reference_encodings():
-    """
-    Load face encodings from reference photos.
-    Returns list of (name, encoding) tuples.
-    Tries to auto-detect person by filename: files with 'luke' → Luke, others → Tra My.
-    """
     encodings = []
     if not os.path.exists(REFERENCE_DIR):
         print(f"ERROR: Reference directory not found: {REFERENCE_DIR}")
         return encodings
 
-    files = [f for f in os.listdir(REFERENCE_DIR)
-             if os.path.splitext(f.lower())[1] in PHOTO_EXTS and not f.startswith('.')]
-
-    print(f"Loading {len(files)} reference photos...")
-    for fname in files:
+    print(f"Loading {len(LUKE_ONLY_FILES)} Luke reference photos...")
+    for fname in sorted(LUKE_ONLY_FILES):
         path = os.path.join(REFERENCE_DIR, fname)
         try:
             img = face_recognition.load_image_file(path)
             encs = face_recognition.face_encodings(img)
             if encs:
-                # Guess person from filename (screenshots — use first face found per image)
-                # Since all reference photos are of Luke (man) or Tra My (woman),
-                # we encode all as targets to blur (both are being removed)
                 encodings.append(encs[0])
+            else:
+                print(f"  no face detected: {fname}")
         except Exception as e:
             print(f"  Skip {fname}: {e}")
 
-    print(f"  Loaded {len(encodings)} reference encodings")
+    print(f"  Loaded {len(encodings)} Luke encodings")
     return encodings
 
 
@@ -163,8 +204,18 @@ def main():
     print(f"Already processed: {already_done}, remaining: {len(all_urls) - already_done}")
 
     report = {'blurred': [], 'errors': []}
-    env = {**os.environ, 'CLOUDFLARE_API_TOKEN': TOKEN, 'CLOUDFLARE_ACCOUNT_ID': ACCOUNT_ID}
     checked = 0
+    sess = requests.Session()
+    sess.headers['User-Agent'] = 'Mozilla/5.0'
+
+    # Load or init manifest
+    manifest = []
+    if os.path.exists(MANIFEST_FILE):
+        with open(MANIFEST_FILE) as f:
+            manifest = json.load(f)
+    manifest_keys = {m['url'] for m in manifest}
+
+    s3 = make_s3()
 
     for url in sorted(all_urls):
         if url in progress:
@@ -173,27 +224,46 @@ def main():
         r2_key = url[len(R2_BASE):]
 
         try:
+            resp = sess.get(url, timeout=15)
+            resp.raise_for_status()
             with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as tmp:
+                tmp.write(resp.content)
                 tmp_path = tmp.name
-
-            urllib.request.urlretrieve(url, tmp_path)
             modified, num_blurred = process_image(tmp_path, reference_encodings)
 
             if modified is not None and num_blurred > 0:
+                # 1. Save original in R2 before overwriting
+                orig_key = save_original_to_r2(s3, r2_key)
+
+                # 2. Upload blurred version
                 out_path = tmp_path + '_blurred.jpg'
                 cv2.imwrite(out_path, modified, [cv2.IMWRITE_JPEG_QUALITY, 88])
-                res = subprocess.run(
-                    ['npx', 'wrangler', 'r2', 'object', 'put', f'{BUCKET}/{r2_key}',
-                     '--remote', '--file', out_path, '--content-type', 'image/jpeg'],
-                    capture_output=True, text=True, env=env, cwd=MOTPLUS_DIR
-                )
-                if res.returncode == 0:
-                    print(f"  BLURRED ({num_blurred} faces): {r2_key.split('/')[-1]}")
-                    report['blurred'].append({'url': url, 'faces_blurred': num_blurred})
-                    progress[url] = 'blurred'
-                else:
-                    print(f"  UPLOAD FAILED: {r2_key.split('/')[-1]}")
-                    progress[url] = 'error'
+                with open(out_path, 'rb') as fh:
+                    s3.put_object(
+                        Bucket=BUCKET,
+                        Key=r2_key,
+                        Body=fh.read(),
+                        ContentType='image/jpeg',
+                        CacheControl='public, max-age=31536000',
+                    )
+                print(f"  BLURRED ({num_blurred} faces): {r2_key.split('/')[-1]}")
+                report['blurred'].append({'url': url, 'faces_blurred': num_blurred})
+                progress[url] = 'blurred'
+
+                # 3. Record in manifest
+                if url not in manifest_keys:
+                    manifest.append({
+                        'url': url,
+                        'r2_key': r2_key,
+                        'orig_key': orig_key,
+                        'orig_url': R2_BASE + orig_key,
+                        'faces_blurred': num_blurred,
+                        'timestamp': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+                    })
+                    manifest_keys.add(url)
+                    with open(MANIFEST_FILE, 'w') as f:
+                        json.dump(manifest, f, indent=2)
+
                 os.unlink(out_path)
             else:
                 progress[url] = 'no_faces'
@@ -223,6 +293,7 @@ def main():
     print(f"\nDone. Checked {checked} images.")
     print(f"  Blurred: {len(report['blurred'])}")
     print(f"  Errors: {len(report['errors'])}")
+    print(f"  Manifest: {MANIFEST_FILE}")
     print(f"  Report: {REPORT_FILE}")
 
 

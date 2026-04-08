@@ -2,13 +2,19 @@ import Link from "next/link";
 import { studios, hotel } from "@/lib/studios";
 import StudioCarousel from "@/components/StudioCarousel";
 
+// Specific card images (overrides s.images[0] where needed)
+const CARD_IMAGE_OVERRIDES: Record<string, string> = {
+  "hoang-nam-viet-studio": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05452.jpg",
+};
+
 const carouselItems = [
-  ...studios.map((s) => ({
+  ...studios.filter(s => !s.hidden).map((s) => ({
     slug: s.slug,
     name: s.artistName,
     tagline: s.tagline,
     neighborhood: s.neighborhood,
     href: `/afarm/studios/${s.slug}`,
+    image: CARD_IMAGE_OVERRIDES[s.slug] ?? s.images[0] ?? undefined,
     // MoT+++ studio (karlie-ho) is pinned to bottom of shuffle
     pinned: s.slug === "karlie-ho",
   })),
@@ -25,49 +31,52 @@ const carouselItems = [
 export default function AFarmPage() {
   return (
     <>
-      {/* hero image placeholder */}
+      {/* hero */}
       <div
         style={{
+          position: "relative",
           width: "100%",
           height: "55vh",
           minHeight: "360px",
-          backgroundColor: "#f0f0f0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderBottom: "1px solid #e5e5e5",
+          overflow: "hidden",
+          backgroundColor: "#111111",
         }}
       >
-        <p style={{ fontSize: "12px", color: "#aaaaaa", letterSpacing: "0.08em" }}>
-          +a.Farm — hero image
-        </p>
+        <img
+          src="https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05503.jpg"
+          alt="+a.Farm"
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block", opacity: 0.72 }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.82) 100%)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-end",
+            padding: "clamp(24px, 4vw, 56px)",
+          }}
+        >
+          <h1
+            style={{
+              fontSize: "clamp(32px, 4vw, 56px)",
+              fontWeight: 300,
+              lineHeight: 1.05,
+              letterSpacing: "-0.02em",
+              color: "#ffffff",
+              marginBottom: "12px",
+            }}
+          >
+            +a.Farm
+          </h1>
+          <p style={{ fontSize: "15px", color: "rgba(255,255,255,0.5)", fontWeight: 300 }}>
+            a new model for the artist residency — vietnam
+          </p>
+        </div>
       </div>
 
       <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "72px 24px" }}>
-
-        {/* heading */}
-        <h1
-          style={{
-            fontSize: "clamp(36px, 4vw, 56px)",
-            fontWeight: 300,
-            lineHeight: 1.1,
-            letterSpacing: "-0.02em",
-            marginBottom: "24px",
-          }}
-        >
-          +a.Farm
-        </h1>
-        <p
-          style={{
-            fontSize: "18px",
-            fontWeight: 300,
-            color: "#555555",
-            marginBottom: "72px",
-            maxWidth: "640px",
-          }}
-        >
-          a new model for the artist residency — ho chi minh city
-        </p>
 
         {/* studio carousel */}
         <div
@@ -183,39 +192,36 @@ export default function AFarmPage() {
               independence in the city
             </h2>
 
-            {/* hotel image placeholder */}
-            <div
-              style={{
-                width: "100%",
-                aspectRatio: "16/9",
-                backgroundColor: "#f5f5f5",
-                border: "1px solid #e5e5e5",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "20px",
-              }}
-            >
-              <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.06em" }}>
-                Amanaki Thao Dien Hotel
-              </p>
-            </div>
-
             <p
               style={{
                 fontSize: "15px",
                 lineHeight: 1.8,
                 color: "#444444",
-                marginBottom: "16px",
+                marginBottom: "20px",
               }}
             >
-              Amanaki Thao Dien Hotel, for artists who want the ho chi minh
-              city residency experience with independence. suited to
-              introverts or those who prefer to focus on their own practice.
+              for artists who want the ho chi minh city residency experience
+              with independence. suited to introverts or those who prefer to
+              focus on their own practice.
             </p>
-            <p style={{ fontSize: "13px", color: "#888888" }}>
-              10 Nguyễn Đăng Giai, Thảo Điền, Thủ Đức
+
+            <p style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.08em", marginBottom: "12px" }}>
+              options
             </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div>
+                <p style={{ fontSize: "14px", fontWeight: 400, color: "#333333", marginBottom: "2px" }}>
+                  Amanaki Thao Dien Hotel
+                </p>
+                <p style={{ fontSize: "13px", color: "#888888" }}>10 Nguyễn Đăng Giai, Thảo Điền, Thủ Đức</p>
+              </div>
+              <div>
+                <p style={{ fontSize: "14px", fontWeight: 400, color: "#333333", marginBottom: "2px" }}>
+                  Saigon Domaine
+                </p>
+                <p style={{ fontSize: "13px", color: "#888888" }}>Ho Chi Minh City</p>
+              </div>
+            </div>
           </div>
         </div>
 

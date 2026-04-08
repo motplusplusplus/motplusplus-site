@@ -3,6 +3,22 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 
+/** Render a paragraph that may contain [text](url) markdown links */
+function RichPara({ text, style }: { text: string; style: React.CSSProperties }) {
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+  return (
+    <p style={style}>
+      {parts.map((part, i) => {
+        const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+        if (m) {
+          return <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}>{m[1]}</a>;
+        }
+        return part;
+      })}
+    </p>
+  );
+}
+
 interface RelatedResident {
   slug: string;
   title: string;
@@ -25,6 +41,7 @@ interface EventContentProps {
   location?: string;
   past: boolean;
   relatedResidents: RelatedResident[];
+  heroImg: string | null;
   contentImages: string[];
   wpLink?: string;
   prevEvent: AdjacentEvent | null;
@@ -66,6 +83,7 @@ export default function EventContent({
   location,
   past,
   relatedResidents,
+  heroImg,
   contentImages,
   wpLink,
   prevEvent,
@@ -73,16 +91,26 @@ export default function EventContent({
 }: EventContentProps) {
   const hasBilingual = Boolean(vnTitle || vnDescription);
   const [lang, setLang] = useState<"en" | "vi">("en");
-  const [lightbox, setLightbox] = useState<string | null>(null);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
-  const closeLightbox = useCallback(() => setLightbox(null), []);
+  // All images: hero first, then content — used for lightbox cycle
+  // contentImages already excludes heroImg (filtered in page.tsx)
+  const allImages = heroImg ? [heroImg, ...contentImages] : contentImages;
+  // Gallery click offset: allImages[0] = hero, so gallery[0] = allImages[1]
+  const heroOffset = heroImg ? 1 : 0;
+
+  const closeLightbox = useCallback(() => setLightboxIdx(null), []);
 
   useEffect(() => {
-    if (!lightbox) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeLightbox(); };
+    if (lightboxIdx === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight") setLightboxIdx(i => i !== null ? Math.min(i + 1, allImages.length - 1) : null);
+      if (e.key === "ArrowLeft")  setLightboxIdx(i => i !== null ? Math.max(i - 1, 0) : null);
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [lightbox, closeLightbox]);
+  }, [lightboxIdx, closeLightbox, allImages.length]);
 
   const activeTitle = lang === "vi" && vnTitle ? vnTitle : title;
   const activeDescription = lang === "vi" && vnDescription ? vnDescription : description;
@@ -90,10 +118,51 @@ export default function EventContent({
   const embedUrl = videoUrl ? toEmbedUrl(videoUrl) : null;
 
   return (
+    <>
+      {/* hero banner — clickable to open lightbox at index 0 */}
+      <div
+        onClick={allImages.length > 0 ? () => setLightboxIdx(0) : undefined}
+        style={{
+          position: "relative",
+          width: "100%", height: "70vh", minHeight: "460px",
+          overflow: "hidden", backgroundColor: "#111111",
+          cursor: allImages.length > 0 ? "zoom-in" : "default",
+        }}
+      >
+        {heroImg && (
+          <img
+            src={heroImg}
+            alt={title}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.78 }}
+          />
+        )}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.72) 100%)",
+          display: "flex", flexDirection: "column", justifyContent: "flex-end",
+          padding: "clamp(24px, 4vw, 56px)",
+          pointerEvents: "none",
+        }}>
+          <p style={{
+            fontSize: "11px", letterSpacing: "0.1em",
+            color: "rgba(255,255,255,0.5)", marginBottom: "14px", fontWeight: 300,
+          }}>
+            {category}
+          </p>
+          <h1 style={{
+            fontSize: "clamp(22px, 3.5vw, 44px)",
+            fontWeight: 300, lineHeight: 1.15, letterSpacing: "-0.02em",
+            color: "#ffffff", maxWidth: "860px",
+          }}>
+            {title}
+          </h1>
+        </div>
+      </div>
+
     <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "52px 24px 96px" }}>
 
       {/* lightbox overlay */}
-      {lightbox && (
+      {lightboxIdx !== null && (
         <div
           onClick={closeLightbox}
           style={{
@@ -104,7 +173,7 @@ export default function EventContent({
           }}
         >
           <img
-            src={lightbox}
+            src={allImages[lightboxIdx]}
             alt=""
             style={{ maxWidth: "92vw", maxHeight: "92vh", objectFit: "contain", display: "block" }}
             onClick={e => e.stopPropagation()}
@@ -118,6 +187,34 @@ export default function EventContent({
             }}
             aria-label="Close"
           >×</button>
+          {allImages.length > 1 && (
+            <>
+              <button
+                onClick={e => { e.stopPropagation(); setLightboxIdx(i => i !== null ? Math.max(i - 1, 0) : null); }}
+                style={{
+                  position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)",
+                  background: "none", border: "none", color: "#ffffff",
+                  fontSize: "32px", cursor: "pointer", padding: "8px 12px", opacity: lightboxIdx === 0 ? 0.3 : 0.9,
+                }}
+                aria-label="Previous"
+              >‹</button>
+              <button
+                onClick={e => { e.stopPropagation(); setLightboxIdx(i => i !== null ? Math.min(i + 1, allImages.length - 1) : null); }}
+                style={{
+                  position: "absolute", right: "56px", top: "50%", transform: "translateY(-50%)",
+                  background: "none", border: "none", color: "#ffffff",
+                  fontSize: "32px", cursor: "pointer", padding: "8px 12px", opacity: lightboxIdx === allImages.length - 1 ? 0.3 : 0.9,
+                }}
+                aria-label="Next"
+              >›</button>
+            </>
+          )}
+          <span style={{
+            position: "absolute", bottom: "20px", left: "50%", transform: "translateX(-50%)",
+            color: "rgba(255,255,255,0.5)", fontSize: "12px", letterSpacing: "0.1em",
+          }}>
+            {lightboxIdx + 1} / {allImages.length}
+          </span>
         </div>
       )}
 
@@ -246,11 +343,9 @@ export default function EventContent({
             about
           </p>
           {activeDescription.split(/\n{2,}/).filter(Boolean).map((para, i) => (
-            <p key={i} style={{
+            <RichPara key={i} text={para.trim()} style={{
               fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px",
-            }}>
-              {para.trim()}
-            </p>
+            }} />
           ))}
         </div>
       )}
@@ -282,7 +377,7 @@ export default function EventContent({
 
           {/* first content image: wide banner */}
           <div
-            onClick={() => setLightbox(contentImages[0])}
+            onClick={() => setLightboxIdx(heroOffset + 0)}
             style={{
               width: "100%", aspectRatio: "16/7", overflow: "hidden",
               backgroundColor: "#f0f0f0", marginBottom: "8px", cursor: "zoom-in",
@@ -306,7 +401,7 @@ export default function EventContent({
               {contentImages.slice(1).map((img, i) => (
                 <div
                   key={i}
-                  onClick={() => setLightbox(img)}
+                  onClick={() => setLightboxIdx(heroOffset + i + 1)}
                   style={{
                     width: "100%", aspectRatio: "4/3", overflow: "hidden",
                     backgroundColor: "#f0f0f0", cursor: "zoom-in",
@@ -387,5 +482,6 @@ export default function EventContent({
       </div>
 
     </div>
+    </>
   );
 }

@@ -1,3 +1,6 @@
+import Link from "next/link";
+import artistsData from "@/artists-data.json";
+
 const R2 = "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/performance";
 
 const photos = [
@@ -19,21 +22,26 @@ const photos = [
 ];
 
 const events = [
-  { title: "Dusk Dance for Saigon River — Emmanuelle Huynh", date: "February 25, 2020" },
-  { title: "Poetry Plus | Frozen Data", date: "February 22, 2020" },
-  { title: "Big Day of Performances #5", date: "December 21, 2019" },
-  { title: "Little Night of Performances", date: "December 19, 2019" },
-  { title: "Big Day of Performances #4 @ a.Farm", date: "December 14, 2019" },
-  { title: "Cam Xanh — ChaoArt|ArtChao", date: "December 10, 2019" },
-  { title: "Big Day of Performances #3", date: "December 7, 2019" },
-  { title: "Tanya Amador — Documenting Performance Art (Presentation & Round Table)", date: "December 3, 2019" },
-  { title: "Big Day of Performances #2", date: "December 1, 2019" },
-  { title: "Tuan Mami & Cam Xanh — Artist Presentations", date: "November 29, 2019" },
-  { title: "Poetry Plus", date: "November 28, 2019" },
-  { title: "Big Day of Performances #1", date: "November 24, 2019" },
-  { title: "Cam Xanh — Run Run Run (ongoing collaborative performance)", date: "April 26, 2019 – present" },
-  { title: "Artist Talk | Collaborative Performance — Singapore", date: "January 25, 2019" },
+  { title: "Dusk Dance for Saigon River — Emmanuelle Huynh", date: "February 25, 2020", slug: "dusk-dance-for-saigon-river-emmanuelle-huynh" },
+  { title: "Poetry Plus | Frozen Data", date: "February 22, 2020", slug: "poetry-plus-frozen-data" },
+  { title: "Big Day of Performances #5", date: "December 21, 2019", slug: "big-day-of-performances-5-performance-plus-2019" },
+  { title: "Little Night of Performances", date: "December 19, 2019", slug: "little-night-of-performances-performance-plus-2019" },
+  { title: "Big Day of Performances #4 @ a.Farm", date: "December 14, 2019", slug: "big-day-of-performances-4-a-farm-performance-plus-2019" },
+  { title: "Cam Xanh — ChaoArt|ArtChao", date: "December 10, 2019", slug: "cam-xanh-chaoartartchao-performance-plus-2019" },
+  { title: "Big Day of Performances #3", date: "December 7, 2019", slug: "big-day-of-performances-3-performance-plus-2019" },
+  { title: "Tanya Amador — Documenting Performance Art (Presentation & Round Table)", date: "December 3, 2019", slug: "tanya-amador-documenting-performance-art-presentation-round-table-performance-plus-2019" },
+  { title: "Big Day of Performances #2", date: "December 1, 2019", slug: "big-day-of-performances-2-performance-plus-2019" },
+  { title: "Tuan Mami & Cam Xanh — Artist Presentations", date: "November 29, 2019", slug: "tuan-mami-cam-xanh-artist-presentations-performance-plus-2019" },
+  { title: "Poetry Plus", date: "November 28, 2019", slug: "poetry-plus-performance-plus-2019" },
+  { title: "Big Day of Performances #1", date: "November 24, 2019", slug: "big-day-of-performances-1-performance-plus-2019" },
+  { title: "Cam Xanh — Run Run Run (ongoing collaborative performance)", date: "April 26, 2019 – present", slug: "cam-xanh-run-run-run-ongoing-collaborative-performance" },
+  { title: "Artist Talk | Collaborative Performance — Singapore", date: "January 25, 2019", slug: "collaborative-performance-artists-talk" },
 ];
+
+type ArtistEntry = { slug: string; name: string; performancePlus?: boolean };
+const performanceArtists = (artistsData as ArtistEntry[])
+  .filter(a => a.performancePlus)
+  .sort((a, b) => a.name.localeCompare(b.name));
 
 export default function PerformancePage() {
   return (
@@ -111,6 +119,36 @@ export default function PerformancePage() {
           </div>
         </div>
 
+        {/* participating artists */}
+        <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
+          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+            participating artists
+          </p>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: "4px 24px",
+          }}>
+            {performanceArtists.map(a => (
+              <Link
+                key={a.slug}
+                href={`/artists/${a.slug}`}
+                style={{
+                  fontSize: "14px",
+                  fontWeight: 300,
+                  color: "#333333",
+                  textDecoration: "none",
+                  padding: "8px 0",
+                  borderBottom: "1px solid #f5f5f5",
+                  display: "block",
+                }}
+              >
+                {a.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* event list */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px" }}>
           <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
@@ -118,24 +156,29 @@ export default function PerformancePage() {
           </p>
           <div style={{ display: "flex", flexDirection: "column" }}>
             {events.map((e, i) => (
-              <div
+              <Link
                 key={i}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "baseline",
-                  gap: "24px",
-                  padding: "16px 0",
-                  borderBottom: "1px solid #f0f0f0",
-                }}
+                href={`/events/${e.slug}`}
+                style={{ textDecoration: "none", color: "inherit" }}
               >
-                <span style={{ fontSize: "15px", fontWeight: 300, color: "#111111", lineHeight: 1.4 }}>
-                  {e.title}
-                </span>
-                <span style={{ fontSize: "12px", color: "#999999", whiteSpace: "nowrap", flexShrink: 0 }}>
-                  {e.date}
-                </span>
-              </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "baseline",
+                    gap: "24px",
+                    padding: "16px 0",
+                    borderBottom: "1px solid #f0f0f0",
+                  }}
+                >
+                  <span style={{ fontSize: "15px", fontWeight: 300, color: "#111111", lineHeight: 1.4 }}>
+                    {e.title}
+                  </span>
+                  <span style={{ fontSize: "12px", color: "#999999", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    {e.date}
+                  </span>
+                </div>
+              </Link>
             ))}
           </div>
         </div>

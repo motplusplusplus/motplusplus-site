@@ -9,6 +9,7 @@ type CarouselItem = {
   tagline: string;
   neighborhood: string;
   href: string;
+  image?: string;
   pinned?: boolean; // pinned items stay at bottom of stack
 };
 
@@ -87,17 +88,25 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
               aspectRatio: "3/2",
               backgroundColor: "#f0f0f0",
               border: "1px solid #e5e5e5",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              overflow: "hidden",
               cursor: "pointer",
               position: "relative",
               zIndex: 2,
             }}
           >
-            <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.06em" }}>
-              {front.name} — studio photo
-            </p>
+            {front.image ? (
+              <img
+                src={front.image}
+                alt={front.name}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+            ) : (
+              <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.06em" }}>
+                  {front.name}
+                </p>
+              </div>
+            )}
           </div>
         </Link>
 

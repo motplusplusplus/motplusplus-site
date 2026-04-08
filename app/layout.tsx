@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
+import { DM_Sans, Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -8,6 +8,13 @@ const dmSans = DM_Sans({
   subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500"],
   variable: "--font-dm-sans",
+});
+
+// Fallback for Vietnamese characters not covered by DM Sans
+const beVietnam = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500"],
+  variable: "--font-be-vietnam",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={dmSans.variable}>
+      <body className={`${dmSans.variable} ${beVietnam.variable}`}>
         <Header />
         <main>{children}</main>
         <Footer />

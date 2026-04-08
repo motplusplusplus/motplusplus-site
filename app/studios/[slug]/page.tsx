@@ -5,10 +5,12 @@ import { getStudio, getStudioSlugs, getStudioEvents, type StudioPractical } from
 import { getArtist } from "@/lib/artists";
 import { getAllEvents } from "@/lib/sanity";
 import { getListingEvents } from "@/lib/events";
+import StudioProfileContent from "./StudioProfileContent";
+import StudioGallery from "./StudioGallery";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const studio = getStudio(slug);
+  const studio = await getStudio(slug);
   if (!studio) return {};
   const description = studio.description
     ? studio.description.slice(0, 160).trim()
@@ -24,8 +26,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export function generateStaticParams() {
-  return getStudioSlugs().map(slug => ({ slug }));
+export async function generateStaticParams() {
+  const slugs = await getStudioSlugs();
+  return slugs.map(slug => ({ slug }));
 }
 
 type PracticalField = {
@@ -56,7 +59,7 @@ function formatPracticalValue(value: string | boolean | number | null, type: Pra
 
 export default async function StudioPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const studio = getStudio(slug);
+  const studio = await getStudio(slug);
   if (!studio) notFound();
 
   const host = studio.hostSlug ? getArtist(studio.hostSlug) : null;
@@ -215,31 +218,37 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
           </div>
         )}
 
-        {/* about the space */}
-        <div style={{ maxWidth: "680px", marginBottom: "72px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "28px" }}>
-            about the space
-          </p>
-          {studio.description ? (
-            studio.description.split(/\n{2,}/).filter(Boolean).map((para, i) => (
-              <p
-                key={i}
-                style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}
-              >
-                {para.trim()}
+        {/* profile content (bilingual) or plain description fallback */}
+        {studio.profile ? (
+          <div style={{ marginBottom: "72px" }}>
+            <StudioProfileContent profile={studio.profile} profileVi={studio.profileVi} />
+          </div>
+        ) : (
+          <div style={{ maxWidth: "680px", marginBottom: "72px" }}>
+            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "28px" }}>
+              about the space
+            </p>
+            {studio.description ? (
+              studio.description.split(/\n{2,}/).filter(Boolean).map((para, i) => (
+                <p
+                  key={i}
+                  style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}
+                >
+                  {para.trim()}
+                </p>
+              ))
+            ) : (
+              <p style={{ fontSize: "14px", color: "#aaaaaa", fontWeight: 300 }}>
+                information coming soon.
               </p>
-            ))
-          ) : (
-            <p style={{ fontSize: "14px", color: "#aaaaaa", fontWeight: 300 }}>
-              information coming soon.
-            </p>
-          )}
-          {studio.address && (
-            <p style={{ fontSize: "13px", color: "#888888", marginTop: "20px", lineHeight: 1.6 }}>
-              {studio.address}
-            </p>
-          )}
-        </div>
+            )}
+            {studio.address && (
+              <p style={{ fontSize: "13px", color: "#888888", marginTop: "20px", lineHeight: 1.6 }}>
+                {studio.address}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* map */}
         {studio.mapLat && studio.mapLng && (() => {
@@ -295,37 +304,13 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
           </div>
         )}
 
-        {/* studio images */}
+        {/* studio images with lightbox */}
         {studio.images.length > 0 && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "72px" }}>
             <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
               images
             </p>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                gap: "8px",
-              }}
-            >
-              {studio.images.map((img, i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: "100%",
-                    aspectRatio: "4/3",
-                    overflow: "hidden",
-                    backgroundColor: "#f0f0f0",
-                  }}
-                >
-                  <img
-                    src={img}
-                    alt={`${studio.name} — ${i + 1}`}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
-                </div>
-              ))}
-            </div>
+            <StudioGallery images={studio.images} studioName={studio.name} />
           </div>
         )}
 

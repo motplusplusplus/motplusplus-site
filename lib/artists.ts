@@ -2,16 +2,18 @@ import artistsRaw from '../artists-data.json';
 import { BIO_SLUGS, type Event } from './events';
 
 export type Artist = {
-  slug:        string;
-  name:        string;
-  collective:  boolean;
-  resident:    boolean;
-  studioHost:  boolean;
-  origin:      string;
-  website:     string;
-  bio:         string;
-  photo:       string;
-  workImages:  string[];
+  slug:           string;
+  name:           string;
+  collective:     boolean;
+  resident:       boolean;
+  studioHost:     boolean;
+  curator?:       boolean;
+  performancePlus?: boolean;
+  origin:         string;
+  website:        string;
+  bio:            string;
+  photo:          string;
+  workImages:     string[];
 };
 
 const artistsFromData: Artist[] = artistsRaw as Artist[];

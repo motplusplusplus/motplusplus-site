@@ -2,14 +2,14 @@ import { MetadataRoute } from 'next';
 import { getAllEvents } from '@/lib/sanity';
 import { BIO_SLUGS, HIDDEN_SLUGS } from '@/lib/events';
 import { allArtists } from '@/lib/artists';
-import { allStudios } from '@/lib/studios';
+import { getAllStudios } from '@/lib/studios';
 
 export const dynamic = 'force-static';
 
 const BASE = 'https://motplusplus.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const allEvents = await getAllEvents();
+  const [allEvents, allStudios] = await Promise.all([getAllEvents(), getAllStudios()]);
 
   const staticPages = [
     { url: BASE, priority: 1.0 },
@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-  const studioPages = allStudios.map(s => ({
+  const studioPages = allStudios.filter(s => !s.hidden).map(s => ({
     url: `${BASE}/studios/${s.slug}`,
     lastModified: new Date(),
     changeFrequency: 'yearly' as const,
