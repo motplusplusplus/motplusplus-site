@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import type { TrashItem } from '@/lib/demoTrashItems';
 
-function buildInquiryEmail(item: TrashItem) {
+function buildFallbackEmail(item: TrashItem) {
   const subject = encodeURIComponent(
     `+1 trash — inquiry: ${item.title} by ${item.artist}`
   );
@@ -33,10 +33,194 @@ function shuffleArray<T>(arr: T[]): T[] {
 type SortOption = 'random' | 'date' | 'artist';
 type Props = { items: TrashItem[]; unlocked?: boolean };
 
+type InquiryState = 'idle' | 'submitting' | 'success' | 'error';
+
+function InquiryModal({ item, onClose }: { item: TrashItem; onClose: () => void }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState<InquiryState>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onClose]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('submitting');
+    try {
+      const res = await fetch('/submit-inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'trash',
+          name,
+          email,
+          message,
+          artworkTitle: item.title,
+          artworkId: item._id,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus('success');
+      } else {
+        throw new Error(data.error || 'submission failed');
+      }
+    } catch (err) {
+      // fallback to mailto
+      window.location.href = buildFallbackEmail(item);
+      setStatus('error');
+      setErrorMsg('could not submit — opening email client instead');
+    }
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    border: 'none',
+    borderBottom: '1px solid #cccccc',
+    padding: '10px 0',
+    fontSize: '14px',
+    fontFamily: 'inherit',
+    background: 'transparent',
+    outline: 'none',
+    color: '#111',
+    borderRadius: 0,
+    boxSizing: 'border-box',
+  };
+
+  return (
+    <div
+      ref={overlayRef}
+      onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1300,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '24px',
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          backgroundColor: '#fff',
+          maxWidth: '480px',
+          width: '100%',
+          padding: '32px',
+          position: 'relative',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+        }}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute', top: '12px', right: '16px',
+            background: 'none', border: 'none', fontSize: '22px',
+            cursor: 'pointer', color: '#aaa', lineHeight: 1, padding: '4px',
+          }}
+        >×</button>
+
+        {status === 'success' ? (
+          <div style={{ textAlign: 'center', padding: '24px 0' }}>
+            <p style={{ fontSize: '16px', color: '#111', marginBottom: '8px' }}>inquiry sent</p>
+            <p style={{ fontSize: '13px', color: '#888', lineHeight: 1.6 }}>
+              we'll be in touch about <em>{item.title}</em>.
+            </p>
+            <button
+              onClick={onClose}
+              style={{
+                marginTop: '24px', fontSize: '13px', color: '#fff',
+                backgroundColor: '#111', border: 'none', padding: '10px 28px',
+                cursor: 'pointer', fontFamily: 'inherit',
+              }}
+            >close</button>
+          </div>
+        ) : (
+          <>
+            <p style={{ fontSize: '11px', color: '#aaa', letterSpacing: '0.06em', marginBottom: '4px' }}>
+              {item.artist}
+            </p>
+            <p style={{ fontSize: '16px', color: '#111', marginBottom: '28px', lineHeight: 1.3 }}>
+              {item.title}{item.year ? `, ${item.year}` : ''}
+            </p>
+
+            <form onSubmit={handleSubmit}>
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ fontSize: '11px', color: '#999', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>
+                  your name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  placeholder="full name"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ fontSize: '11px', color: '#999', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>
+                  your email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="email address"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div style={{ marginBottom: '28px' }}>
+                <label style={{ fontSize: '11px', color: '#999', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>
+                  message
+                </label>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  required
+                  rows={4}
+                  placeholder="i am writing to inquire about this work…"
+                  style={{ ...inputStyle, resize: 'vertical' }}
+                />
+              </div>
+
+              {errorMsg && (
+                <p style={{ fontSize: '12px', color: '#cc4444', marginBottom: '16px' }}>{errorMsg}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={status === 'submitting'}
+                style={{
+                  width: '100%', fontSize: '13px', color: '#fff',
+                  backgroundColor: status === 'submitting' ? '#888' : '#111',
+                  border: 'none', padding: '12px', cursor: status === 'submitting' ? 'not-allowed' : 'pointer',
+                  fontFamily: 'inherit', letterSpacing: '0.03em',
+                }}
+              >
+                {status === 'submitting' ? 'sending…' : 'send inquiry'}
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function TrashGallery({ items, unlocked = false }: Props) {
   const [shuffled, setShuffled] = useState<TrashItem[]>([]);
   const [sort, setSort] = useState<SortOption>('random');
   const [openId, setOpenId] = useState<string | null>(null);
+  const [inquiryItem, setInquiryItem] = useState<TrashItem | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
 
@@ -75,13 +259,14 @@ export default function TrashGallery({ items, unlocked = false }: Props) {
   // Keyboard nav
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if (inquiryItem) return; // don't navigate lightbox while inquiry modal is open
       if (e.key === 'Escape') setOpenId(null);
       else if (e.key === 'ArrowRight') nav(1);
       else if (e.key === 'ArrowLeft') nav(-1);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [nav]);
+  }, [nav, inquiryItem]);
 
   return (
     <>
@@ -171,12 +356,12 @@ export default function TrashGallery({ items, unlocked = false }: Props) {
                   <span style={{ fontSize: '16px', lineHeight: 1 }}>●</span> sold
                 </span>
               ) : (
-                <a
-                  href={buildInquiryEmail(item)}
-                  style={{ fontSize: '11px', color: '#fff', backgroundColor: '#111', padding: '5px 12px', textDecoration: 'none', letterSpacing: '0.03em' }}
+                <button
+                  onClick={() => setInquiryItem(item)}
+                  style={{ fontSize: '11px', color: '#fff', backgroundColor: '#111', padding: '5px 12px', border: 'none', cursor: 'pointer', letterSpacing: '0.03em', fontFamily: 'inherit' }}
                 >
                   inquire
-                </a>
+                </button>
               )}
             </div>
           </div>
@@ -295,12 +480,12 @@ export default function TrashGallery({ items, unlocked = false }: Props) {
                     <span style={{ fontSize: '18px', lineHeight: 1 }}>●</span> sold
                   </span>
                 ) : (
-                  <a
-                    href={buildInquiryEmail(open)}
-                    style={{ fontSize: '12px', color: '#fff', backgroundColor: '#111', padding: '8px 18px', textDecoration: 'none', letterSpacing: '0.03em' }}
+                  <button
+                    onClick={() => setInquiryItem(open)}
+                    style={{ fontSize: '12px', color: '#fff', backgroundColor: '#111', padding: '8px 18px', border: 'none', cursor: 'pointer', letterSpacing: '0.03em', fontFamily: 'inherit' }}
                   >
                     inquire through +1 trash
-                  </a>
+                  </button>
                 )}
                 {unlocked && open.price && !open.sold && (
                   <span style={{ fontSize: '12px', color: '#888888', letterSpacing: '0.03em', marginLeft: 'auto' }}>
@@ -311,6 +496,11 @@ export default function TrashGallery({ items, unlocked = false }: Props) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* inquiry modal */}
+      {inquiryItem && (
+        <InquiryModal item={inquiryItem} onClose={() => setInquiryItem(null)} />
       )}
     </>
   );

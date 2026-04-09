@@ -39,6 +39,10 @@ function ApplyForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [portfolio, setPortfolio] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     if (preselectedStudio) setStudio(preselectedStudio);
@@ -46,8 +50,10 @@ function ApplyForm() {
 
   const monthOptions = getMonthOptions();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    setSubmitError("");
 
     const studioLabel =
       studioOptions.find((o) => o.value === studio)?.label || studio;
@@ -56,25 +62,32 @@ function ApplyForm() {
     const durationLabel =
       durationOptions.find((o) => o.value === duration)?.label || duration;
 
-    const subject = encodeURIComponent(
-      `a.Farm residency inquiry — ${name} — ${studioLabel} — ${monthLabel}`
-    );
-
-    const body = encodeURIComponent(
-      `preferred studio / accommodation: ${studioLabel}
-preferred start: ${monthLabel}
-duration: ${durationLabel}
-name: ${name}
-email: ${email}
-${portfolio ? `portfolio / website: ${portfolio}\n` : ""}
----
-
-hello — please add a brief description of your practice and what you hope to make or explore during your time in ho chi minh city. tell us about any recent or relevant work, and anything else about yourself or your practice that feels important. we're looking forward to hearing from you.
-
-[your message here]`
-    );
-
-    window.location.href = `mailto:a.farm.saigon@gmail.com?subject=${subject}&body=${body}`;
+    try {
+      const res = await fetch("/submit-inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "residency",
+          name,
+          email,
+          message: message || `preferred studio: ${studioLabel}\npreferred start: ${monthLabel}\nduration: ${durationLabel}`,
+          studioType: studioLabel,
+          startMonth: month,
+          duration: durationLabel,
+          portfolioUrl: portfolio || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        throw new Error(data.error || "submission failed");
+      }
+    } catch {
+      setSubmitError("something went wrong — please try again or email a.farm.saigon@gmail.com directly.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputStyle = {
@@ -104,6 +117,29 @@ hello — please add a brief description of your practice and what you hope to m
     marginBottom: "40px",
   };
 
+  if (submitted) {
+    return (
+      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
+        <div style={{ maxWidth: "640px" }}>
+          <h1
+            style={{
+              fontSize: "clamp(28px, 3.5vw, 48px)",
+              fontWeight: 300,
+              lineHeight: 1.1,
+              letterSpacing: "-0.02em",
+              marginBottom: "24px",
+            }}
+          >
+            inquiry received
+          </h1>
+          <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8, maxWidth: "480px" }}>
+            thank you, {name}. we'll be in touch about your residency inquiry at a.Farm.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
 
@@ -128,9 +164,7 @@ hello — please add a brief description of your practice and what you hope to m
             maxWidth: "480px",
           }}
         >
-          complete the form below and your email client will open with a
-          pre-populated message. add a description of your practice before
-          sending.
+          complete the form below to send your residency inquiry directly to a.Farm.
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -227,28 +261,43 @@ hello — please add a brief description of your practice and what you hope to m
             />
           </div>
 
+          {/* message */}
+          <div style={fieldStyle}>
+            <label style={labelStyle}>about your practice</label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              required
+              rows={6}
+              placeholder="tell us about your practice and what you hope to make or explore during your time in ho chi minh city…"
+              style={{ ...inputStyle, resize: "vertical" }}
+            />
+          </div>
+
+          {submitError && (
+            <p style={{ fontSize: "13px", color: "#cc4444", marginBottom: "20px", lineHeight: 1.6 }}>
+              {submitError}
+            </p>
+          )}
+
           <button
             type="submit"
+            disabled={submitting}
             style={{
               fontSize: "15px",
               fontWeight: 400,
               color: "#ffffff",
-              backgroundColor: "#111111",
+              backgroundColor: submitting ? "#888888" : "#111111",
               border: "none",
               padding: "16px 40px",
-              cursor: "pointer",
+              cursor: submitting ? "not-allowed" : "pointer",
               fontFamily: "inherit",
               display: "block",
               width: "100%",
             }}
           >
-            open email to send inquiry
+            {submitting ? "sending…" : "send inquiry"}
           </button>
-
-          <p style={{ fontSize: "12px", color: "#aaaaaa", marginTop: "16px", lineHeight: 1.6 }}>
-            this will open your email client with your selections pre-filled.
-            you'll be prompted to describe your practice before sending.
-          </p>
 
         </form>
       </div>
