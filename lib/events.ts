@@ -71,6 +71,48 @@ export const categories = [
   'MoT+++',
 ] as const;
 
+const VN_MONTHS: Record<string, string> = {
+  '1': 'January', '2': 'February', '3': 'March', '4': 'April',
+  '5': 'May', '6': 'June', '7': 'July', '8': 'August',
+  '9': 'September', '10': 'October', '11': 'November', '12': 'December',
+};
+const EN_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+/**
+ * Normalize a raw displayDate string to "DD Month YYYY".
+ * Handles: "10 tháng 3, 2024", "10/03/2024", "2024-03-10", plain ISO dates.
+ * Falls back to the original string if parsing fails.
+ */
+export function normalizeDisplayDate(raw: string): string {
+  if (!raw) return raw;
+
+  // "DD tháng MM, YYYY" or "DD tháng MM YYYY"
+  const vnMatch = raw.match(/^(\d{1,2})\s+tháng\s+(\d{1,2})[,\s]+(\d{4})$/i);
+  if (vnMatch) {
+    const [, d, m, y] = vnMatch;
+    const month = VN_MONTHS[String(parseInt(m, 10))];
+    if (month) return `${parseInt(d, 10)} ${month} ${y}`;
+  }
+
+  // "DD/MM/YYYY"
+  const slashMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slashMatch) {
+    const [, d, m, y] = slashMatch;
+    const month = VN_MONTHS[String(parseInt(m, 10))];
+    if (month) return `${parseInt(d, 10)} ${month} ${y}`;
+  }
+
+  // "YYYY-MM-DD" or ISO date string
+  const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoMatch) {
+    const [, y, m, d] = isoMatch;
+    const month = EN_MONTHS[parseInt(m, 10) - 1];
+    if (month) return `${parseInt(d, 10)} ${month} ${y}`;
+  }
+
+  return raw;
+}
+
 /** Returns true if the event's date is in the past */
 export function isPast(event: Event): boolean {
   const d = event.sortDate || event.dateISO;

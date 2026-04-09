@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { categories, isPast, type Event } from "@/lib/events";
+import { categories, isPast, normalizeDisplayDate, type Event } from "@/lib/events";
 
 const ALL = "all";
 
@@ -73,7 +73,7 @@ export function EventsShell({ events }: { events: Event[] }) {
         </div>
       </div>
 
-      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
+      <div className="evt-shell-body" style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
 
         {/* category filters + random button */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "64px", alignItems: "center" }}>
@@ -202,7 +202,7 @@ function EventCard({ event }: { event: Event }) {
           {event.vnTitle && (
             <p style={{ fontSize: "12px", color: "#bbbbbb", marginBottom: "10px" }}>{event.vnTitle}</p>
           )}
-          <p style={{ fontSize: "12px", color: "#999999" }}>{event.displayDate || event.dateISO}</p>
+          <p style={{ fontSize: "12px", color: "#999999" }}>{normalizeDisplayDate(event.displayDate || event.dateISO)}</p>
           {event.location && (
             <p style={{ fontSize: "12px", color: "#cccccc", marginTop: "2px" }}>{event.location}</p>
           )}
@@ -236,7 +236,7 @@ function PastRow({ event }: { event: Event }) {
           )}
         </div>
         <p className="evt-past-date" style={{ fontSize: "12px", color: "#aaaaaa" }}>
-          {event.displayDate || event.dateISO}
+          {normalizeDisplayDate(event.displayDate || event.dateISO)}
         </p>
       </div>
     </Link>

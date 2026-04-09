@@ -46,6 +46,9 @@ a {
 .evt-past-date { white-space: nowrap; }
 
 @media (max-width: 600px) {
+  .evt-shell-body {
+    padding: 32px 16px !important;
+  }
   .evt-past-inner {
     grid-template-columns: 72px 1fr;
     align-items: start;

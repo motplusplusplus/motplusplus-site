@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { normalizeDisplayDate } from "@/lib/events";
 
 /** Render a paragraph that may contain [text](url) markdown links */
 function RichPara({ text, style }: { text: string; style: React.CSSProperties }) {
@@ -277,7 +278,7 @@ export default function EventContent({
             date
           </p>
           <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>
-            {displayDate || dateISO}
+            {normalizeDisplayDate(displayDate || dateISO)}
           </p>
           {past && (
             <p style={{ fontSize: "11px", color: "#bbbbbb", letterSpacing: "0.06em", marginTop: "5px" }}>
