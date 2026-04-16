@@ -437,7 +437,17 @@
     },
     "profile": {
       "practiceBio": "Quoc Anh Le (b. 1999, Vietnam) is a painter whose work explores the emotional terrain of love, loss, and memory. Working with a minimalist visual language, his paintings carry an intensity of feeling that belies their restraint — vulnerability rendered as form.\n\nHis series Eros, Erotoropia, Philautia, Philia, Pragma, Storge and Agápe, shown at MoT+++, maps the Greek taxonomy of love through the lens of personal experience, paying tribute to a lost relationship while connecting with a broader human condition. When in the studio, he is in the company of his pets. He has participated in group exhibitions at MoT+++, Ho Chi Minh City, where he lives and works."
-    }
+    },
+    "portraitPairs": [
+      {
+        "url": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/portraits/quoc-anh-le.jpg",
+        "name": "Quoc Anh"
+      },
+      {
+        "url": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/portraits/craig.jpg",
+        "name": "Craig"
+      }
+    ]
   },
   {
     "slug": "thom-nguyen",
@@ -524,7 +534,17 @@
       "guests": true,
       "guestsDetail": "Guests are welcome. Thom and Michael frequently host friends, artists, and collectors.",
       "rules": "Quiet hours 10pm–6am. Motorbike parking available in the courtyard."
-    }
+    },
+    "portraitPairs": [
+      {
+        "url": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/portraits/thom-nguyen.jpg",
+        "name": "Thom"
+      },
+      {
+        "url": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/portraits/michael-bell.jpg",
+        "name": "Michael"
+      }
+    ]
   },
   {
     "slug": "nguyen-thuy-hang",

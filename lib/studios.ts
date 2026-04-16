@@ -39,9 +39,13 @@ export type StudioProfile = {
   rules?:               string;
 };
 
+export type PortraitPair = { url: string; name: string };
+
 export type StudioEntry = {
   slug:             string;
-  name:             string;
+  name:             string;       // studioName if set, else artistName + ' studio'
+  artistName:       string;       // always the person's name
+  hasStudioName:    boolean;      // true when a named studio (e.g. "La Astoria")
   hostSlug:         string | null;
   address:          string;
   neighborhood:     string;
@@ -56,17 +60,19 @@ export type StudioEntry = {
   practical:        StudioPractical;
   tagline?:         string;
   collectiveMember?: boolean;
+  portraitPairs?:   PortraitPair[];
   profile?:         StudioProfile;
   profileVi?:       StudioProfile;
 };
 
-// JSON supplement: fields not stored in Sanity (hostSlug, locationKeywords)
-type JsonSupplement = { hostSlug: string | null; locationKeywords: string[] };
+// JSON supplement: fields not stored in Sanity (hostSlug, locationKeywords, portraitPairs)
+type JsonSupplement = { hostSlug: string | null; locationKeywords: string[]; portraitPairs?: PortraitPair[] };
 const jsonSupplements: Record<string, JsonSupplement> = {};
-for (const s of studiosRaw as Array<{ slug: string; hostSlug?: string | null; locationKeywords?: string[] }>) {
+for (const s of studiosRaw as Array<{ slug: string; hostSlug?: string | null; locationKeywords?: string[]; portraitPairs?: PortraitPair[] }>) {
   jsonSupplements[s.slug] = {
     hostSlug: s.hostSlug ?? null,
     locationKeywords: s.locationKeywords ?? [],
+    portraitPairs: s.portraitPairs,
   };
 }
 
@@ -88,7 +94,9 @@ function sanityToStudioEntry(raw: any): StudioEntry {
     practiceBio:       raw.practiceBio,
     welcomeBio:        raw.welcomeBio,
     collaboration:     raw.collaboration,
-    languages:         raw.languages,
+    languages:         typeof raw.languages === 'string'
+                         ? raw.languages.split(/[,;]\s*/).filter(Boolean)
+                         : raw.languages,
     availability:      raw.availability,
     neighbourhood:     raw.neighbourhood,
     environment:       raw.environment,
@@ -132,15 +140,20 @@ function sanityToStudioEntry(raw: any): StudioEntry {
     ...(raw.imageUrls ?? []),
   ];
 
+  const hasStudioName = !!(raw.studioName);
+
   return {
     slug:             raw.slug,
-    name:             raw.studioName || raw.name,
+    name:             raw.studioName || (raw.name + ' studio'),
+    artistName:       raw.name,
+    hasStudioName,
     hostSlug:         supplement.hostSlug,
+    portraitPairs:    supplement.portraitPairs,
     address:          '',
     neighborhood:     raw.neighbourhood ?? '',
     description:      '',
-    active:           raw.visibility === 'visible' || raw.visibility === 'historical',
-    hidden:           raw.visibility === 'hidden',
+    active:           raw.visibility === 'visible',
+    hidden:           raw.visibility === 'hidden' || raw.visibility === 'historical',
     note:             '',
     images,
     locationKeywords: supplement.locationKeywords,
@@ -186,7 +199,7 @@ export const allStudios: StudioEntry[] = (studiosRaw as StudioEntry[]);
 
 export const studios = allStudios.map(s => ({
   ...s,
-  artistName: s.name,
+  artistName: s.artistName ?? s.name,
   tagline: s.tagline ?? s.neighborhood,
 }));
 

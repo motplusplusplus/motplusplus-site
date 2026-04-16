@@ -160,13 +160,34 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
               borderBottom: "1px solid #e5e5e5",
               paddingBottom: "56px",
               marginBottom: "56px",
-              display: "flex",
-              gap: "32px",
-              alignItems: "flex-start",
-              flexWrap: "wrap",
             }}
           >
-            {host.photo && (
+            {/* portrait pairs (named people with labels) */}
+            {studio.portraitPairs && studio.portraitPairs.length > 0 ? (
+              <div style={{ display: "flex", gap: "24px", marginBottom: "28px", flexWrap: "wrap" }}>
+                {studio.portraitPairs.map((p) => (
+                  <div key={p.name} style={{ textAlign: "center" }}>
+                    <div
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        borderRadius: "50%",
+                        overflow: "hidden",
+                        backgroundColor: "#f0f0f0",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      <img
+                        src={p.url}
+                        alt={p.name}
+                        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      />
+                    </div>
+                    <p style={{ fontSize: "11px", color: "#888888", letterSpacing: "0.04em" }}>{p.name}</p>
+                  </div>
+                ))}
+              </div>
+            ) : host.photo ? (
               <div
                 style={{
                   width: "80px",
@@ -175,6 +196,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
                   overflow: "hidden",
                   flexShrink: 0,
                   backgroundColor: "#f0f0f0",
+                  marginBottom: "16px",
                 }}
               >
                 <img
@@ -183,8 +205,8 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                 />
               </div>
-            )}
-            <div style={{ flex: 1, minWidth: "240px" }}>
+            ) : null}
+            <div style={{ minWidth: "240px" }}>
               <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "8px" }}>
                 hosting artist
               </p>
