@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { hotel } from "@/lib/studios";
+import { hotel, getStudio } from "@/lib/studios";
+import StudioGallery from "@/app/studios/[slug]/StudioGallery";
 
-export default function HotelPage() {
+export default async function HotelPage() {
+  const amanakiStudio = await getStudio("amanaki-hotel");
+  const images = amanakiStudio?.images ?? [];
   return (
     <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
 
@@ -68,6 +71,16 @@ export default function HotelPage() {
           </p>
         </div>
       </div>
+
+      {/* gallery */}
+      {images.length > 0 && (
+        <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "72px" }}>
+          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+            images
+          </p>
+          <StudioGallery images={images} studioName={hotel.name} />
+        </div>
+      )}
 
       {/* inquire CTA */}
       <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px" }}>

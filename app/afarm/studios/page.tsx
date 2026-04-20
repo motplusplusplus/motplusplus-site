@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { studios, hotel } from "@/lib/studios";
+import { getAllStudios, hotel } from "@/lib/studios";
 
-export default function StudiosPage() {
+export default async function StudiosPage() {
+  const allStudios = await getAllStudios();
+  const studios = allStudios.filter(s => !s.hidden && s.active);
+
   return (
     <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
 
@@ -37,12 +40,14 @@ export default function StudiosPage() {
                   <span style={{ marginLeft: "12px", color: "#bbbbbb" }}>mot+++ collective</span>
                 )}
               </p>
-              <h2 style={{ fontSize: "20px", fontWeight: 300, marginBottom: "4px", lineHeight: 1.2 }}>
+              <h2 style={{ fontSize: "20px", fontWeight: 300, marginBottom: studio.artistName !== studio.name ? "2px" : "4px", lineHeight: 1.2 }}>
                 <Link href={`/afarm/studios/${studio.slug}`} style={{ color: "#111111" }}>
-                  {studio.artistName}
+                  {studio.name}
                 </Link>
               </h2>
-              <p style={{ fontSize: "13px", color: "#888888" }}>{studio.tagline}</p>
+              {studio.artistName !== studio.name && (
+                <p style={{ fontSize: "13px", color: "#888888", marginBottom: "0px" }}>{studio.artistName}</p>
+              )}
             </div>
 
             <Link

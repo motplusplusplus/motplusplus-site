@@ -58,6 +58,9 @@ export default function Footer() {
           </a>
         </div>
 
+        <p style={{ fontSize: "11px", color: "#cccccc" }}>
+          © MoT+++ {new Date().getFullYear()}
+        </p>
 
       </div>
     </footer>

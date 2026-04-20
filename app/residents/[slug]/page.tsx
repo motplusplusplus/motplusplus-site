@@ -36,6 +36,7 @@ const SKIP = [
   'logomot', 'a.farmlogo', 's-1-edited', 'amanaki_png', 'artboard',
   'web-e1760', 'web-1-e1760', '3nam-2', 'ajar', 'artrepublik', 'codesurfing',
   'formapubli', 'kirti', 'marg1n', 'matca', 'nbs', 'rr-1', 'vanguard', 'wdg',
+  'logo',
 ];
 
 export default async function ResidentPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -91,7 +92,7 @@ export default async function ResidentPage({ params }: { params: Promise<{ slug:
             color: "rgba(255,255,255,0.4)", marginBottom: "14px",
             display: "block",
           }}>
-            a.Farm resident
+            {event.category === '+a.Farm' ? 'a.Farm resident' : '+1 residency'}
           </span>
           <h1 style={{
             fontSize: "clamp(26px, 4.5vw, 56px)",

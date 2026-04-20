@@ -18,6 +18,7 @@ const SKIP = [
   'logomot', 'a.farmlogo', 's-1-edited', 'amanaki_png', 'artboard',
   'web-e1760', 'web-1-e1760', '3nam-2', 'ajar', 'artrepublik', 'codesurfing',
   'formapubli', 'kirti', 'marg1n', 'matca', 'nbs', 'rr-1', 'vanguard', 'wdg',
+  'logo',
 ];
 
 export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -47,7 +48,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   });
 
   const AFARM_LOGO = 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg';
-  const MOT_LOGO = '/motpluspluspluslogo-thin.png';
+  const MOT_LOGO = '/motpluspluspluslogo.jpg';
   const isAfarm = event.category?.toLowerCase().includes('a.farm');
 
   // Prefer first jpg for hero — png flyers were often not uploaded to R2
@@ -56,7 +57,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
     galleryImages[0] ||
     event.thumbnail ||
     null;
-  const logoFallback = isAfarm ? AFARM_LOGO : null;
+  const logoFallback = isAfarm ? AFARM_LOGO : MOT_LOGO;
   const heroImg = realHero || logoFallback;
 
   // contentImages = all gallery images except the one used as hero

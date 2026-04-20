@@ -363,16 +363,23 @@
   },
   {
     "slug": "le-phi-long-studio",
-    "name": "Le Phi Long Studio",
+    "name": "P.artspace",
     "hostSlug": "le-phi-long",
     "address": "",
-    "neighborhood": "Ho Chi Minh City",
+    "neighborhood": "Binh Thanh, Ho Chi Minh City",
     "description": "",
-    "active": false,
-    "hidden": true,
+    "active": true,
     "note": "",
-    "images": [],
-    "locationKeywords": [],
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/p-artspace/studio-01.jpg"
+    ],
+    "locationKeywords": [
+      "le phi long",
+      "p.artspace",
+      "partspace",
+      "binh thanh",
+      "pham viet chanh"
+    ],
     "mapLat": null,
     "mapLng": null,
     "practical": {
@@ -387,7 +394,17 @@
       "laundry": null,
       "size": null,
       "naturalLight": null
-    }
+    },
+    "portraitPairs": [
+      {
+        "url": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/p-artspace/portrait-phi-long.jpg",
+        "name": "Le Phi Long"
+      },
+      {
+        "url": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/p-artspace/portrait-quinn.jpg",
+        "name": "Quinn"
+      }
+    ]
   },
   {
     "slug": "quoc-anh-le-studio",

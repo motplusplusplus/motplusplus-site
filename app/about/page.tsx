@@ -22,8 +22,11 @@ export default function AboutPage() {
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "20px", maxWidth: "640px" }}>
             founded by <a href="/artists/cam-xanh" style={{ color: "#444444", borderBottom: "1px solid #aaaaaa" }}>Cam Xanh</a> in 2015, MoT+++ is an independent artist-run contemporary art space in Saigon, Vietnam. our list of +1s activities is expanding as the organization continues to evolve.
           </p>
+          <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "20px", maxWidth: "640px" }}>
+            in 2018 we co-founded a.Farm international art residency with Nguyen Art Foundation and Din Q. Lê (SANart).
+          </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "28px", maxWidth: "640px" }}>
-            in 2018 we co-founded a.Farm international art residency.
+            born as a project space in 2015, our list of +1s activities is expanding as the space continues to grow and evolve its artistic and collaborative practices.
           </p>
           <a
             href="/contact"
@@ -87,8 +90,11 @@ export default function AboutPage() {
           <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
             people
           </p>
+          <p style={{ fontSize: "15px", color: "#444444", lineHeight: 1.8, maxWidth: "560px", marginBottom: "16px" }}>
+            founded by Cam Xanh, MoT+++ is from its inception an artist-run space, physical and non physical.
+          </p>
           <p style={{ fontSize: "15px", color: "#444444", lineHeight: 1.8, maxWidth: "560px", marginBottom: "24px" }}>
-            MoT+++ is run by a collective of artists, curators, and writers based in ho chi minh city.
+            we are a team of artists, curators, and writers based in ho chi minh city. MoT+++ Collective supports our team.
           </p>
           <a
             href="/collective"

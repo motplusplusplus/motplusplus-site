@@ -3,6 +3,23 @@ import Link from "next/link";
 import { getArtist, getArtistSlugs, getArtistEvents, type Artist } from "@/lib/artists";
 import { getEventBySlug, getAllEvents, getArtistBySlug, getAllSanityArtistSlugs } from "@/lib/sanity";
 import ArtistGallery from "./ArtistGallery";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const artist = getArtist(slug);
+  const sanityArtist = !artist ? await getArtistBySlug(slug) : null;
+  const name = artist?.name || sanityArtist?.name || slug;
+  return {
+    title: `${name} | MoT+++`,
+    description: `${name} — artist featured in MoT+++ exhibitions and programs in Ho Chi Minh City, Vietnam.`,
+    openGraph: {
+      title: `${name} | MoT+++`,
+      url: `https://motplusplusplus.com/artists/${slug}`,
+    },
+    alternates: { canonical: `https://motplusplusplus.com/artists/${slug}` },
+  };
+}
 
 export async function generateStaticParams() {
   const localSlugs = getArtistSlugs();

@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-dm-sans);
+  --font-sans: var(--font-inter);
 }
 
 * {
@@ -18,13 +18,20 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-dm-sans), var(--font-be-vietnam), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* events hero title — always visible on mobile, hover-reveal on desktop */
+.evt-hero-title { opacity: 1; transition: opacity 0.3s ease; }
+@media (min-width: 768px) {
+  .evt-hero-title { opacity: 0; }
+  a:hover .evt-hero-title { opacity: 1; }
 }
 
 /* event cards */

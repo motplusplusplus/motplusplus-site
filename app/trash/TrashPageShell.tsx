@@ -185,11 +185,18 @@ export default function TrashPageShell({ items }: Props) {
       )}
 
       {/* inventory */}
-      <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: '28px', marginTop: '32px' }}>
-        <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.08em', marginBottom: '12px' }}>
-          inventory{unlocked && <span style={{ color: '#bbbbbb', marginLeft: '12px', fontWeight: 300 }}>· prices visible</span>}
-        </p>
-        <p style={{ fontSize: '14px', color: '#666666', lineHeight: 1.8, maxWidth: '560px', marginBottom: '28px' }}>
+      <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: '40px', marginTop: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: '20px' }}>
+          <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.08em' }}>
+            inventory
+          </p>
+          {unlocked && (
+            <span style={{ fontSize: '11px', color: '#bbbbbb', fontWeight: 300, letterSpacing: '0.06em' }}>
+              · prices visible
+            </span>
+          )}
+        </div>
+        <p style={{ fontSize: '15px', color: '#555555', lineHeight: 1.85, maxWidth: '480px', marginBottom: '36px' }}>
           works available for acquisition, consigned directly by artists. to inquire about what is currently available, get in touch.
         </p>
 

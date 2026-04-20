@@ -1,11 +1,35 @@
 import Link from "next/link";
-import { studios } from "@/lib/studios";
+import { getStudio, getStudioSlugs } from "@/lib/studios";
 import { notFound } from "next/navigation";
 import StudioProfileContent from "@/app/studios/[slug]/StudioProfileContent";
 import StudioGallery from "@/app/studios/[slug]/StudioGallery";
+import type { Metadata } from "next";
 
-export function generateStaticParams() {
-  return studios.map((s) => ({ slug: s.slug }));
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const studio = await getStudio(slug);
+  if (!studio) return {};
+  const name = studio.profile?.studioName || studio.name;
+  const artist = studio.artistName !== studio.name ? studio.artistName : null;
+  const desc = artist
+    ? `${name} by ${artist} — artist residency studio in ${studio.neighborhood}, Ho Chi Minh City. Available through +a.Farm, MoT+++'s international artist residency in Vietnam.`
+    : `${name} — artist residency studio in ${studio.neighborhood}, Ho Chi Minh City. Available through +a.Farm, MoT+++'s international artist residency in Vietnam.`;
+  return {
+    title: `${name} — Artist Studio Vietnam | MoT+++`,
+    description: desc,
+    openGraph: {
+      title: `${name} | +a.Farm Artist Residency Vietnam`,
+      description: desc,
+      url: `https://motplusplusplus.com/afarm/studios/${slug}`,
+      images: studio.images[0] ? [{ url: studio.images[0] }] : [],
+    },
+    alternates: { canonical: `https://motplusplusplus.com/afarm/studios/${slug}` },
+  };
+}
+
+export async function generateStaticParams() {
+  const slugs = await getStudioSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 /** Convert a YouTube or Vimeo URL to an embeddable src */
@@ -26,7 +50,7 @@ export default async function StudioPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const studio = studios.find((s) => s.slug === slug);
+  const studio = await getStudio(slug);
   if (!studio) notFound();
 
   const profile = studio.profile;
@@ -64,9 +88,9 @@ export default async function StudioPage({
           fontWeight: 300, lineHeight: 1.1,
           letterSpacing: "-0.02em", marginBottom: "12px",
         }}>
-          {profile?.studioName || studio.artistName}
+          {profile?.studioName || studio.name}
         </h1>
-        {profile?.studioName && (
+        {studio.artistName !== studio.name && (
           <p style={{ fontSize: "16px", color: "#666666", fontWeight: 300, marginBottom: "4px" }}>
             {studio.artistName}
           </p>
@@ -76,12 +100,23 @@ export default async function StudioPage({
         </p>
       </div>
 
-      {/* artist portrait */}
-      {profile?.portrait && (
+      {/* portrait pairs (named people with labels) or single portrait */}
+      {studio.portraitPairs && studio.portraitPairs.length > 0 ? (
+        <div style={{ display: "flex", gap: "24px", marginBottom: "48px", flexWrap: "wrap" }}>
+          {studio.portraitPairs.map((p) => (
+            <div key={p.name} style={{ textAlign: "center" }}>
+              <div style={{ width: "80px", height: "80px", borderRadius: "50%", overflow: "hidden", backgroundColor: "#f0f0f0", marginBottom: "8px" }}>
+                <img src={p.url} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              </div>
+              <p style={{ fontSize: "11px", color: "#888888", letterSpacing: "0.04em" }}>{p.name}</p>
+            </div>
+          ))}
+        </div>
+      ) : profile?.portrait ? (
         <div style={{ marginBottom: "64px" }}>
           <img
             src={profile.portrait}
-            alt={studio.artistName}
+            alt={studio.name}
             style={{
               display: "block",
               width: "100%",
@@ -92,14 +127,18 @@ export default async function StudioPage({
             }}
           />
         </div>
-      )}
+      ) : null}
 
       <div style={{ maxWidth: "720px" }}>
 
         {/* bilingual profile content (toggle + all sections) */}
         {profile ? (
           <div style={{ marginBottom: "48px" }}>
-            <StudioProfileContent profile={profile} profileVi={studio.profileVi} />
+            <StudioProfileContent
+              profile={profile}
+              profileVi={studio.profileVi}
+              hostLabel="about the host"
+            />
           </div>
         ) : studio.description ? (
           <div style={{ marginBottom: "48px" }}>
@@ -125,7 +164,7 @@ export default async function StudioPage({
           <div style={{ position: "relative", width: "100%", maxWidth: "900px", aspectRatio: "16/9" }}>
             <iframe
               src={embedSrc}
-              title={`${studio.artistName} studio walkthrough`}
+              title={`${studio.name} studio walkthrough`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
@@ -140,7 +179,7 @@ export default async function StudioPage({
           <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
             studio &amp; work
           </p>
-          <StudioGallery images={galleryImages} studioName={profile?.studioName || studio.artistName} />
+          <StudioGallery images={galleryImages} studioName={profile?.studioName || studio.name} />
         </div>
       )}
 

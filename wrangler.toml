@@ -1,5 +1,9 @@
 name = "motplusplus-site"
 compatibility_date = "2024-09-23"
+routes = [
+  { pattern = "motplusplusplus.com", custom_domain = true },
+  { pattern = "www.motplusplusplus.com", custom_domain = true },
+]
 
 [assets]
 directory = "out"

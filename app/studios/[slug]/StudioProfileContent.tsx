@@ -6,9 +6,10 @@ import type { StudioProfile } from '@/lib/studios';
 type Props = {
   profile: StudioProfile;
   profileVi?: StudioProfile;
+  hostLabel?: string;
 };
 
-export default function StudioProfileContent({ profile, profileVi }: Props) {
+export default function StudioProfileContent({ profile, profileVi, hostLabel }: Props) {
   const [lang, setLang] = useState<'en' | 'vi'>('en');
   const p = lang === 'vi' && profileVi ? profileVi : profile;
   const bilingual = !!profileVi;
@@ -60,7 +61,7 @@ export default function StudioProfileContent({ profile, profileVi }: Props) {
       {p.practiceBio && (
         <div style={{ maxWidth: '680px', marginBottom: '56px' }}>
           <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.08em', marginBottom: '24px' }}>
-            {label('about the artist', 'về nghệ sĩ')}
+            {hostLabel ?? label('about the artist', 'về nghệ sĩ')}
           </p>
           {p.practiceBio.split(/\n{2,}/).filter(Boolean).map((para, i) => (
             <p key={i} style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '20px' }}>
