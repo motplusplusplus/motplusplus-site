@@ -145,18 +145,18 @@ export default function CollectivePage() {
       <div
         style={{
           borderTop: "1px solid #e5e5e5",
-          paddingTop: "32px",
-          marginBottom: "72px",
+          paddingTop: "24px",
+          marginBottom: "64px",
           display: "flex",
           flexWrap: "wrap",
-          gap: "8px 32px",
+          gap: "0 16px",
         }}
       >
         {members.map((m) => (
           <a
             key={m.name}
             href={`#${m.name.toLowerCase().replace(/\s+/g, "-")}`}
-            style={{ fontSize: "15px", color: "#888888", fontWeight: 300 }}
+            style={{ fontSize: "15px", color: "#888888", fontWeight: 300, padding: "10px 8px" }}
           >
             {m.name}
           </a>

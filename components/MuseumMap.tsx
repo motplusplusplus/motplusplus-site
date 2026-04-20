@@ -53,6 +53,7 @@ export default function MuseumMap() {
   const touchStartX = useRef<number | null>(null);
   // Image viewer for the detail panel (per-work image navigation)
   const [imgViewerOpen, setImgViewerOpen] = useState(false);
+  const [manifestoOpen, setManifestoOpen] = useState(false);
   const [imgViewerIndex, setImgViewerIndex] = useState(0);
   const imgTouchStartX = useRef<number | null>(null);
 
@@ -345,7 +346,7 @@ export default function MuseumMap() {
           padding: '8px 16px',
           display: 'flex', alignItems: 'center',
         }}>
-          <span>COMING SOON — THIS IS A DEMO VERSION OF +1 MUSEUM BY ANY OTHER NAME — ALL WORKS ARE PLACEHOLDERS — POSTED MARCH 21, 2026</span>
+          <span>COMING SOON: demo version of +1 museum by any other name. all works are placeholders. posted march 21, 2026</span>
         </div>
       )}
 
@@ -381,8 +382,7 @@ export default function MuseumMap() {
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
             backgroundColor: '#f5f5f5', pointerEvents: 'none',
           }}>
-            <p style={{ fontSize: '12px', color: '#aaaaaa', letterSpacing: '0.08em' }}>loading</p>
-            <span className="map-loading-icon">🗺</span>
+            <p style={{ fontSize: '12px', color: '#aaaaaa', letterSpacing: '0.08em' }}>+++loading+++</p>
           </div>
         )}
 
@@ -657,22 +657,158 @@ export default function MuseumMap() {
       {/* ─── DESCRIPTION ─── */}
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '64px 24px 48px' }}>
         <div style={{ maxWidth: '720px' }}>
-          <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '20px' }}>
-            ho chi minh city has no contemporary art museum.
-          </p>
+
+          {/* intro */}
+          <h2 style={{ fontSize: 'clamp(22px, 2.5vw, 36px)', fontWeight: 300, lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: '32px' }}>
+            +1 museum by any other name
+          </h2>
           <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '20px' }}>
             +1 museum by any other name is a decentralized collection sited across the city, in private homes, businesses, studios, and public spaces. the works are real, documented, and curated. what is unconventional is where they live and what it takes to see them. each work has its own location, its own host, and its own conditions of access: some are freely visible, others require a phone call, an introduction, a time of day. the platform maps all of this and tells you what you need to know to get there.
           </p>
           <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '20px' }}>
             navigating the collection means navigating the world. someone might plan an afternoon across several works in different neighborhoods, or discover a piece while already somewhere else entirely. the map is the floor plan. the city is the building.
           </p>
-          <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '32px' }}>
+          <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '48px' }}>
             works enter the collection through artists, through collectors who open their spaces, and through the a.Farm residency program. the collection grows as the network does.
           </p>
-          <p style={{ fontSize: '14px', color: '#888888', lineHeight: 1.8 }}>
-            get in touch at{' '}
-            <a href="mailto:motplusplusplus@gmail.com" style={{ color: '#666666' }}>motplusplusplus@gmail.com</a>.
-          </p>
+
+          {/* manifesto */}
+          <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: '48px' }}>
+            <button
+              onClick={() => setManifestoOpen(o => !o)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                marginBottom: manifestoOpen ? '32px' : '0',
+              }}
+            >
+              <h3 style={{ fontSize: '18px', fontWeight: 400, letterSpacing: '0.04em', color: '#111111', margin: 0 }}>
+                a manifesto for virgin lands
+              </h3>
+              <span style={{ fontSize: '12px', color: '#aaaaaa', userSelect: 'none' }}>
+                {manifestoOpen ? '▲' : '▼'}
+              </span>
+            </button>
+
+            {manifestoOpen && (<>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              ho chi minh city has no contemporary art museum.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              this is not a failure. it is not a missing building. it is not a gap on a cultural map waiting to be filled by a foreign foundation or a state-approved monument.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              it is virgin land.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              untouched by the monumental classical model. unburdened by legacy. uncaptured by the corruption of power, the domination of ownership, the agenda of any flag or party.
+              what grows here will not be a copy of the white cube. it will be something else entirely.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
+              +1 museum by any other name is that something.
+            </p>
+
+            <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.1em', marginBottom: '16px' }}>i. the museum without walls</p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              there is no building. instead, +1 is a decentralized collection sited across the city: in private homes, businesses, studios, and public spaces. the works are real. they are documented. they are curated. what is unconventional is where they live and what it takes to see them.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              each work has its own location, its own host, its own conditions of access. some are freely visible. others require a phone call, an introduction, a time of day. one piece can only be seen at dawn. another only during rain.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              navigating the collection means navigating the world. someone plans an afternoon across five works in three neighborhoods. someone else discovers a piece while already somewhere else entirely. the map is the floor plan. the city is the building.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              there is no central lobby, no admissions desk, no gift shop, no board of directors to be captured by developers. +1 cannot be closed. it cannot be captured. it has no single point of control.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
+              works enter the collection through artists, through collectors who open their spaces, and through the a.Farm residency program. the collection grows as the network does.
+            </p>
+
+            <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.1em', marginBottom: '16px' }}>ii. the unheld exhibition</p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              +1 also makes room for the unheld exhibition: art that appears where attention lands. a drawing on a steamed window. a melody hummed into a busy market and never repeated. a sentence scratched into wet cement and gone by morning. these are not works in the institutional sense. they have no permanent form. they arise, they meet a witness, they dissolve.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              art as event, not object. as gift, not commodity. as breath, not property.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              no one can sell the result. if a political party claims it, it becomes propaganda. if a corporation buys the residue, it becomes a product. if an artist insists on credit or control, the work collapses into ego. art survives only in the absence of domination.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
+              you cannot build this concept. building implies control. the only way to give rise to art itself is to stop trying to give rise to it. to make, to vanish, to let the making stand alone.
+              +1 holds space for that vanishing.
+            </p>
+
+            <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.1em', marginBottom: '16px' }}>iii. the virgin lands</p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              there are cities across the world with no contemporary art museum. ho chi minh city. phnom penh. yangon. dhaka. addis ababa. karachi. lagos. they are already cultural producers, just without the monumental container.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              each is virgin land. each can invent its own logic from the ground up, with one shared principle: innovation over monument.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              monument: permanent, heavy, expensive, exclusive, static.<br />
+              innovation: temporary, light, low-cost, porous, adaptive.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              +1 expands through a simple protocol. survey the territory first: map what already exists, artist-run spaces, cafe galleries, studio open days, street interventions. the map is the gift back to the city. then introduce the lightest possible structure, not a building, not a foundation, but a protocol: any space can host art for any duration, any person can be a host, no permanent accession, no ownership. connect virgin lands to each other.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              a residency sends an artist from ho chi minh city to lagos, not to a studio but to live in someone's home and leave a work in a local market. a traveling library of manifestos: each city writes its own, passes it on.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              the museum exists as a time-based event, present for three months in any fixed form, then gone. then reappearing somewhere else. no permanent address. you have to follow it.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
+              every six months, one question: do we still need to exist? if yes, it reinvents. if no, it dissolves. no legacy. no endowment. no ego.
+            </p>
+
+            <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.1em', marginBottom: '16px' }}>iv. why start here. why start now.</p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              ho chi minh city has no contemporary art museum. that absence is not a problem to solve. it is a platform to build from.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              the monumental classical concept is exhausted. it produces debt, exclusion, spectacle, and corruption. the virgin lands can leapfrog it entirely, just as mobile phones leapfrogged landlines.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              you do not need a building to have a museum. you do not need a collection to have art. you do not need permission to show a work.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
+              one host, one work, one visitor at a time. then another. then another.<br />
+              the map grows. the city becomes the building. the world becomes the collection.<br />
+              no walls. no owners. no domination. only art, rising where it is needed most.
+            </p>
+
+            <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.1em', marginBottom: '16px' }}>v. the name</p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              +1 museum by any other name.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              the "+1" is an invitation. you are always the next guest, the next host, the next work. the museum grows by one every time someone participates.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
+              "by any other name" means it refuses to be a brand. call it what you want. it has no trademark, no logo, no director to interview.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
+              it is simply what happens when people in a city without a contemporary art museum decide to show art outside the monument.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '32px' }}>
+              you are already part of it. no application. no fee. no permission.
+            </p>
+
+            <p style={{ fontSize: '14px', color: '#888888', lineHeight: 1.8 }}>
+              get in touch at{' '}
+              <a href="mailto:motplusplusplus@gmail.com" style={{ color: '#666666' }}>motplusplusplus@gmail.com</a>.
+            </p>
+            </>)}
+          </div>
+
         </div>
       </div>
 

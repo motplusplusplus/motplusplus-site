@@ -25,6 +25,7 @@ const dropdownSections = [
       { label: "+1 residency", href: "/afarm" },
       { label: "MoTsound", href: "/sound" },
       { label: "+1 performance", href: "/performance" },
+      { label: "+1 direct experience", href: "/directexperience" },
     ],
   },
   {
@@ -138,9 +139,12 @@ export default function Header() {
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                padding: "4px",
+                padding: "8px",
+                minWidth: "33px",
+                minHeight: "33px",
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
                 color: "#111111",
               }}
             >
@@ -168,9 +172,13 @@ export default function Header() {
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                padding: "4px",
+                padding: "8px",
+                minWidth: "33px",
+                minHeight: "33px",
                 display: "flex",
                 flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
                 gap: "5px",
               }}
             >

@@ -4,7 +4,7 @@ const pressItems = [
     title: "MoT+++: A New Destination For Art Lovers",
     date: "January 18, 2023",
     url: "https://vietcetera.com/en/mot-a-new-destination-for-art-lovers",
-    excerpt: "Founded in 2015, MoT+++ operates as an independent artist-run space — creating a tight-knit community where artistic experiences have been created, and many intriguing dialogues have been formed.",
+    excerpt: "Founded in 2015, MoT+++ operates as an independent artist-run space - creating a tight-knit community where artistic experiences have been created, and many intriguing dialogues have been formed.",
     tag: "mot+++",
   },
   {
@@ -28,7 +28,7 @@ const pressItems = [
     title: "My Own Words: The Future of International Art Residencies",
     date: "May 28, 2020",
     url: "https://www.artandmarket.net/my-own-words/2020/5/28/the-future-of-international-art-residencies",
-    excerpt: "In February 2020, A. Farm received the news that its international art residency in Ho Chi Minh City would need to vacate its current premises — a reflection on the fragility and resilience of artist-run spaces.",
+    excerpt: "In February 2020, A. Farm received the news that its international art residency in Ho Chi Minh City would need to vacate its current premises - a reflection on the fragility and resilience of artist-run spaces.",
     tag: "a.Farm",
   },
   {
@@ -49,7 +49,7 @@ const pressItems = [
   },
   {
     outlet: "Artsy",
-    title: "MoT+++ — Gallery Profile",
+    title: "MoT+++ - Gallery Profile",
     date: null,
     url: "https://www.artsy.net/partner/mot-plus-plus-plus",
     excerpt: "An independent, artist-run space in Ho Chi Minh City, Vietnam, collaborating with artists to create an experimental environment that encourages them to push the boundaries of their practice.",
@@ -57,7 +57,7 @@ const pressItems = [
   },
   {
     outlet: "Trans Artists",
-    title: "MoT+++ — Residency Profile",
+    title: "MoT+++ - Residency Profile",
     date: null,
     url: "https://www.transartists.org/en/air/mot",
     excerpt: "Listing and full description of the A. Farm international art residency programme.",
@@ -68,7 +68,7 @@ const pressItems = [
     title: "A. Farm Residency",
     date: null,
     url: "https://nguyenartfoundation.com/community-building/a-farm-residency/",
-    excerpt: "A. Farm — an international art residency conceived by artists Cam Xanh and Dinh Q. Lê, with the support of the Nguyen Art Foundation.",
+    excerpt: "A. Farm - an international art residency conceived by artists Cam Xanh and Dinh Q. Lê, with the support of the Nguyen Art Foundation.",
     tag: "a.Farm",
   },
 ];
