@@ -27,12 +27,20 @@ export const BIO_SLUGS = new Set([
   "weston-teruya",
   // +1 residency artists (performance plus 2018–2019)
   "enkhbold-togmidshiirev","ngo-thanh-bac","lap-xuan",
+  // performance plus 2019 resident artists
+  "masayuki-miyaji","xxavier-edward-carter","dang-thuy-anh","flinh",
+  "samira-jamouchi","sikarnt-skoolisariyaporn","shayekh-mohammed-arif",
+  "zach-sch","ayumi-adachi","tuan-mami",
+  // aliansyah caniago (MoT+++ co-founder, performance plus 2018)
+  "aliansyah-caniago",
   // performance plus 2018 resident & guest artists
   "lai-dieu-ha","karma-huong","nguyen-thuy-tien",
   // a.farm season 0 artists
   "maxime-brygo","phuong-gio","le-quoc-thanh",
-  // MoT+++ early exhibitions
-  "dao-tung","le-hien-minh",
+  // MoT+++ early exhibitions & visiting artists
+  "dao-tung","le-hien-minh","bang-nhat-linh",
+  // a.farm residents
+  "perrine-lievens","celina-huynh",
   // MoT+++ collective members
   "cam-xanh",
   // artists (MoT+++ collaborators with bio pages)
