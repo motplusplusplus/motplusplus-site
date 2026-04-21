@@ -27,6 +27,14 @@ export const BIO_SLUGS = new Set([
   "weston-teruya",
   // +1 residency artists (performance plus 2018–2019)
   "enkhbold-togmidshiirev","ngo-thanh-bac","lap-xuan",
+  // performance plus 2018 resident & guest artists
+  "lai-dieu-ha","karma-huong","nguyen-thuy-tien",
+  // a.farm season 0 artists
+  "maxime-brygo","phuong-gio","le-quoc-thanh",
+  // MoT+++ early exhibitions
+  "dao-tung","le-hien-minh",
+  // MoT+++ collective members
+  "cam-xanh",
   // artists (MoT+++ collaborators with bio pages)
   "tran-minh-duc",
   // curators
