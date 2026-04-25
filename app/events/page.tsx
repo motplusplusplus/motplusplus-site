@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getAllEvents, getAllEventsFromJson } from "@/lib/sanity";
 import { getListingEvents } from "@/lib/events";
 import { EventsShell } from "./EventsShell";
@@ -11,5 +12,9 @@ export default async function EventsPage() {
   const sanitySlugSet = new Set(sanityEvents.map(e => e.slug));
   const jsonOnly = jsonEvents.filter(e => !sanitySlugSet.has(e.slug));
   const events = getListingEvents([...sanityEvents, ...jsonOnly]);
-  return <EventsShell events={events} />;
+  return (
+    <Suspense fallback={<div style={{ padding: "64px 24px" }}>loading...</div>}>
+      <EventsShell events={events} />
+    </Suspense>
+  );
 }

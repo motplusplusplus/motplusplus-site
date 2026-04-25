@@ -1,16 +1,50 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { categories, isPast, normalizeDisplayDate, type Event } from "@/lib/events";
+import { categories, isPast, normalizeDisplayDate, stripDiacritics, type Event } from "@/lib/events";
 
 const ALL = "all";
 
+function searchEvents(events: Event[], query: string): Event[] {
+  if (!query.trim()) return events;
+  const terms = stripDiacritics(query.toLowerCase()).split(/\s+/).filter(t => t.length >= 2);
+  if (terms.length === 0) return events;
+  return events.filter(e => {
+    const haystack = stripDiacritics(
+      [e.title, e.vnTitle, e.description, e.category, e.location].filter(Boolean).join(" ")
+    ).toLowerCase();
+    return terms.every(term => haystack.includes(term));
+  });
+}
+
 export function EventsShell({ events }: { events: Event[] }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const urlQuery = searchParams.get("q") || "";
+  const [searchInput, setSearchInput] = useState(urlQuery);
   const [activeCategory, setActiveCategory] = useState<string>(ALL);
   const [tagsOpen, setTagsOpen] = useState(false);
 
-  // Hero: random event with image
+  // Filter by search query from URL
+  const searchFiltered = useMemo(() => searchEvents(events, urlQuery), [events, urlQuery]);
+
+  const clearSearch = () => {
+    setSearchInput("");
+    router.push("/events");
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchInput.trim()) {
+      router.push(`/events?q=${encodeURIComponent(searchInput.trim())}`);
+    } else {
+      router.push("/events");
+    }
+  };
+
+  // Hero: random event with image (only when not searching)
   const eventsWithImg = useRef(events.filter(e => e.thumbnail));
   const pickRandom = (exclude?: Event) => {
     const pool = eventsWithImg.current.filter(e => e !== exclude);
@@ -29,7 +63,9 @@ export function EventsShell({ events }: { events: Event[] }) {
   }, []);
 
   // Only show events with real documentation (thumbnail)
-  const documented = events.filter(e => e.thumbnail);
+  // When searching, use searchFiltered; otherwise use all events
+  const baseEvents = urlQuery ? searchFiltered : events;
+  const documented = baseEvents.filter(e => e.thumbnail);
 
   const filtered =
     activeCategory === ALL
@@ -50,13 +86,14 @@ export function EventsShell({ events }: { events: Event[] }) {
 
   return (
     <>
-      {/* hero — random event, click to view, button to randomize */}
-      <Link
-        href={`/events/${heroEvent.slug}`}
-        style={{ display: "block", textDecoration: "none" }}
-        onMouseEnter={() => setHeroHovered(true)}
-        onMouseLeave={() => setHeroHovered(false)}
-      >
+      {/* hero — random event, click to view, button to randomize (hidden when searching) */}
+      {!urlQuery && (
+        <Link
+          href={`/events/${heroEvent.slug}`}
+          style={{ display: "block", textDecoration: "none" }}
+          onMouseEnter={() => setHeroHovered(true)}
+          onMouseLeave={() => setHeroHovered(false)}
+        >
         <div style={{
           position: "relative",
           width: "100%", height: "55vh", minHeight: "360px",
@@ -116,32 +153,82 @@ export function EventsShell({ events }: { events: Event[] }) {
           </button>
         </div>
       </Link>
+      )}
 
       <div className="evt-shell-body" style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
+
+        {/* search bar */}
+        <form onSubmit={handleSearchSubmit} style={{ marginBottom: "32px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", maxWidth: "480px" }}>
+            <div style={{
+              flex: 1, display: "flex", alignItems: "center", gap: "10px",
+              border: "1px solid #e0e0e0", padding: "10px 14px", backgroundColor: "#fafafa",
+            }}>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#999999" strokeWidth="1.5" style={{ flexShrink: 0 }}>
+                <circle cx="6.5" cy="6.5" r="5" />
+                <line x1="10.5" y1="10.5" x2="14.5" y2="14.5" />
+              </svg>
+              <input
+                type="text"
+                placeholder="search events, artists..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                style={{
+                  flex: 1, border: "none", outline: "none", fontSize: "14px",
+                  fontWeight: 300, color: "#111111", fontFamily: "inherit",
+                  background: "transparent",
+                }}
+              />
+              {urlQuery && (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  style={{
+                    background: "none", border: "none", cursor: "pointer",
+                    fontSize: "12px", color: "#999999", fontFamily: "inherit", padding: 0,
+                  }}
+                >
+                  clear
+                </button>
+              )}
+            </div>
+          </div>
+        </form>
+
+        {/* search results indicator */}
+        {urlQuery && (
+          <div style={{ marginBottom: "24px" }}>
+            <p style={{ fontSize: "13px", color: "#666666" }}>
+              {filtered.length} result{filtered.length !== 1 ? "s" : ""} for "{urlQuery}"
+            </p>
+          </div>
+        )}
 
         {/* page label + collapsible category filters */}
         <div style={{ marginBottom: "40px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: tagsOpen ? "16px" : "0" }}>
             <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em" }}>
-              news &amp; events
+              {urlQuery ? "search results" : "news & events"}
             </p>
-            <button
-              onClick={() => setTagsOpen(o => !o)}
-              style={{
-                fontSize: "11px", color: "#bbbbbb", letterSpacing: "0.06em",
-                background: "none", border: "none", cursor: "pointer",
-                fontFamily: "inherit", padding: 0,
-                display: "flex", alignItems: "center", gap: "5px",
-              }}
-            >
-              filter
-              <span style={{
-                display: "inline-block",
-                transform: tagsOpen ? "rotate(0deg)" : "rotate(-90deg)",
-                transition: "transform 0.18s",
-              }}>↓</span>
-            </button>
-            {activeCategory !== ALL && (
+            {!urlQuery && (
+              <button
+                onClick={() => setTagsOpen(o => !o)}
+                style={{
+                  fontSize: "11px", color: "#bbbbbb", letterSpacing: "0.06em",
+                  background: "none", border: "none", cursor: "pointer",
+                  fontFamily: "inherit", padding: 0,
+                  display: "flex", alignItems: "center", gap: "5px",
+                }}
+              >
+                filter
+                <span style={{
+                  display: "inline-block",
+                  transform: tagsOpen ? "rotate(0deg)" : "rotate(-90deg)",
+                  transition: "transform 0.18s",
+                }}>↓</span>
+              </button>
+            )}
+            {activeCategory !== ALL && !urlQuery && (
               <span style={{ fontSize: "11px", color: "#888888", letterSpacing: "0.04em" }}>
                 {activeCategory}
                 <button
@@ -153,7 +240,7 @@ export function EventsShell({ events }: { events: Event[] }) {
               </span>
             )}
           </div>
-          {tagsOpen && (
+          {tagsOpen && !urlQuery && (
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
               {[ALL, ...categories].map(cat => (
                 <button
@@ -175,35 +262,54 @@ export function EventsShell({ events }: { events: Event[] }) {
           )}
         </div>
 
-        {/* upcoming */}
-        {upcoming.length > 0 && (
-          <div style={{ marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
-              upcoming
-            </p>
+        {/* search results — flat grid when searching */}
+        {urlQuery ? (
+          filtered.length > 0 ? (
             <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
               gap: "48px 32px",
             }}>
-              {upcoming.map(e => <EventCard key={e.slug} event={e} />)}
+              {filtered.map(e => <EventCard key={e.slug} event={e} />)}
             </div>
-          </div>
-        )}
-
-        {/* archive — grouped by year with collapsible rows */}
-        {years.length > 0 && (
-          <div style={{
-            borderTop: upcoming.length ? "1px solid #e5e5e5" : "none",
-            paddingTop: upcoming.length ? "56px" : 0,
-          }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
-              archive
+          ) : (
+            <p style={{ fontSize: "14px", color: "#999999" }}>
+              no events found matching "{urlQuery}"
             </p>
-            {years.map(year => (
-              <YearGroup key={year} year={year} events={pastByYear[year]} />
-            ))}
-          </div>
+          )
+        ) : (
+          <>
+            {/* upcoming */}
+            {upcoming.length > 0 && (
+              <div style={{ marginBottom: "80px" }}>
+                <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+                  upcoming
+                </p>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+                  gap: "48px 32px",
+                }}>
+                  {upcoming.map(e => <EventCard key={e.slug} event={e} />)}
+                </div>
+              </div>
+            )}
+
+            {/* archive — grouped by year with collapsible rows */}
+            {years.length > 0 && (
+              <div style={{
+                borderTop: upcoming.length ? "1px solid #e5e5e5" : "none",
+                paddingTop: upcoming.length ? "56px" : 0,
+              }}>
+                <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+                  archive
+                </p>
+                {years.map(year => (
+                  <YearGroup key={year} year={year} events={pastByYear[year]} />
+                ))}
+              </div>
+            )}
+          </>
         )}
 
       </div>

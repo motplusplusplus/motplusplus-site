@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -31,7 +31,6 @@ const dropdownSections = [
   {
     heading: "organization",
     items: [
-      { label: "previous residents", href: "/residents" },
       { label: "artists", href: "/artists" },
       { label: "about", href: "/about" },
       { label: "press", href: "/press" },
@@ -44,8 +43,10 @@ const dropdownSections = [
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     if (menuOpen || searchOpen) {
@@ -259,7 +260,9 @@ export default function Header() {
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="search"
+              placeholder="search events, artists..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 flex: 1,
                 border: "none",
@@ -271,11 +274,22 @@ export default function Header() {
                 background: "transparent",
               }}
               onKeyDown={(e) => {
-                if (e.key === "Escape") setSearchOpen(false);
+                if (e.key === "Escape") {
+                  setSearchOpen(false);
+                  setSearchQuery("");
+                }
+                if (e.key === "Enter" && searchQuery.trim()) {
+                  router.push(`/events?q=${encodeURIComponent(searchQuery.trim())}`);
+                  setSearchOpen(false);
+                  setSearchQuery("");
+                }
               }}
             />
             <button
-              onClick={() => setSearchOpen(false)}
+              onClick={() => {
+                setSearchOpen(false);
+                setSearchQuery("");
+              }}
               style={{
                 background: "none",
                 border: "none",
