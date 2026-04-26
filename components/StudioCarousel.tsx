@@ -44,6 +44,19 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  // Keyboard navigation (arrow keys)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        prev();
+      } else if (e.key === 'ArrowRight') {
+        next();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
+
   // Responsive spread - tighter on mobile to prevent horizontal overflow
   const SPREAD_X = isMobile ? 20 : 48;
   const SPREAD_Y = isMobile ? 10 : 14;
