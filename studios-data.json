@@ -180,7 +180,7 @@
     "active": false,
     "hidden": true,
     "note": "",
-    "images": [],
+    "images": [{ "url": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/saola/saola-studio.jpg", "width": 1600, "height": 1063 }],
     "locationKeywords": [
       "saola",
       "da lat",
@@ -265,9 +265,9 @@
     "active": true,
     "note": "",
     "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05437.jpg",
       "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05435.jpg",
       "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05436.jpg",
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05437.jpg",
       "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05440.jpg",
       "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05442.jpg",
       "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05444.jpg",
@@ -572,7 +572,7 @@
     "description": "",
     "active": true,
     "note": "",
-    "images": [],
+    "images": [{ "url": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/nguyen-thuy-hang/ass05743.jpg", "width": 1600, "height": 1067 }],
     "locationKeywords": [
       "nguyen thuy hang",
       "nguyễn thúy-hằng"

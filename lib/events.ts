@@ -50,6 +50,11 @@ export const BIO_SLUGS = new Set([
   // artists & collectives with event appearances
   "nhan-phan","yui-nguyen","tran-uy-duc","montez-press","lyon-nguyen",
   "song-nguyen","bert-nguyen-san",
+  // visiting artists, lecturers & collaborators
+  "arnont-nongyao","bill-nguyen","emmanuelle-huynh","le-mai-anh",
+  "nguyen-quoc-chanh","dan-nguyen-demonslayer","tuyp-tran","phung-tien-son",
+  "laurent-weyl","pamela-n-corey","map-office","regis-golay",
+
 ]);
 
 /** Slugs to hide from all public listings */
@@ -182,8 +187,16 @@ const MATCH_BLOCKLIST = new Set([
  */
 const SINGLE_NAME_WHITELIST = new Set(['kaki', 'coco', 'yeonjeong']);
 
-function matchParts(title: string): string[] {
-  const parts = title.toLowerCase().split(/\s+/)
+/** Strip diacritical marks from a string for robust cross-diacritic matching.
+ *  "Régis" → "regis", "phùng" → "phung". Used so that inconsistent diacritic
+ *  usage in event text doesn't prevent valid name matches. */
+export function stripDiacritics(s: string): string {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+export function matchParts(title: string): string[] {
+  // Strip diacritics then lowercase so "Régis"/"regis" and "phùng"/"phung" compare equal
+  const parts = stripDiacritics(title).toLowerCase().split(/\s+/)
     .filter(w => w.length >= 4 && !MATCH_BLOCKLIST.has(w));
   // PERMANENT RULE: full-name matching only.
   // Require at least 2 significant parts unless the name is a whitelisted unique single word.
@@ -202,13 +215,13 @@ export function getRelatedResidents(event: Event, allEvents: Event[]): Event[] {
     .filter(bio => {
       const nameParts = matchParts(bio.title);
       if (nameParts.length === 0) return false;
-      const titleSlug = (event.title + ' ' + event.slug).toLowerCase();
+      const titleSlug = stripDiacritics(event.title + ' ' + event.slug).toLowerCase();
       if (nameParts.every(w => titleSlug.includes(w))) return true;
       // Also check description, but only when at least one name part is ≥6 chars (distinctive enough).
       // Two short 4-5 char parts can both appear in unrelated descriptions → only title/slug for those.
       const safeToCheckDesc = nameParts.some(w => w.length >= 6);
       if (!safeToCheckDesc) return false;
-      const desc = (event.description || '').toLowerCase();
+      const desc = stripDiacritics(event.description || '').toLowerCase();
       return nameParts.every(w => desc.includes(w));
     });
 }
@@ -220,10 +233,10 @@ export function getRelatedEvents(bio: Event, allEvents: Event[]): Event[] {
   const safeToCheckDesc = nameParts.some(w => w.length >= 6);
   return getListingEvents(allEvents)
     .filter(event => {
-      const titleSlug = (event.title + ' ' + event.slug).toLowerCase();
+      const titleSlug = stripDiacritics(event.title + ' ' + event.slug).toLowerCase();
       if (nameParts.every(w => titleSlug.includes(w))) return true;
       if (!safeToCheckDesc) return false;
-      const desc = (event.description || '').toLowerCase();
+      const desc = stripDiacritics(event.description || '').toLowerCase();
       return nameParts.every(w => desc.includes(w));
     })
     .sort((a, b) => b.sortDate.localeCompare(a.sortDate));

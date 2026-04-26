@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getArtist, getArtistSlugs, getArtistEvents, type Artist } from "@/lib/artists";
 import { getEventBySlug, getAllEvents, getArtistBySlug, getAllSanityArtistSlugs } from "@/lib/sanity";
+import { BIO_SLUGS } from "@/lib/events";
 import ArtistGallery from "./ArtistGallery";
 import type { Metadata } from "next";
 
@@ -50,13 +51,25 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
     workImages: (sanityArtist!.images as string[]) ?? [],
   };
 
-  // For residents: pull bio text from Sanity event entry if artists-data bio is empty
-  const [eventBio, allEvents] = await Promise.all([
-    artist.resident && !artist.bio ? getEventBySlug(slug) : Promise.resolve(null),
+  // For BIO_SLUGS artists: pull full event entry (bio text, residency date, gallery images)
+  const isBioSlug = BIO_SLUGS.has(slug);
+  const [eventEntry, allEvents] = await Promise.all([
+    isBioSlug ? getEventBySlug(slug) : Promise.resolve(null),
     getAllEvents(),
   ]);
-  const bioText = artist.bio || (sanityArtist?.bio as string) || eventBio?.description || "";
-  const displayDate = eventBio?.displayDate || "";
+  const bioText = artist.bio || (sanityArtist?.bio as string) || eventEntry?.description || "";
+  const displayDate = eventEntry?.displayDate || "";
+
+  // Gallery images from the bio event entry (documentation photos), junk-filtered
+  const SKIP_PATTERNS = [
+    'logomot', 'a.farmlogo', 's-1-edited', 'amanaki_png', 'artboard',
+    'web-e1760', 'web-1-e1760', '3nam-2', 'ajar', 'artrepublik', 'codesurfing',
+    'formapubli', 'kirti', 'marg1n', 'matca', 'nbs', 'rr-1', 'vanguard', 'wdg', 'logo',
+  ];
+  const eventGallery = (eventEntry?.images ?? []).filter(url => {
+    const filename = url.split('/').pop() || '';
+    return !SKIP_PATTERNS.some(s => filename.toLowerCase().includes(s));
+  });
 
   const relatedEvents = getArtistEvents(artist, allEvents);
 
@@ -185,6 +198,32 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
               work
             </p>
             <ArtistGallery images={artist.workImages} artistName={artist.name} />
+          </div>
+        )}
+
+        {/* documentation gallery from bio event entry (a.Farm residents) */}
+        {eventGallery.length > 0 && (
+          <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
+            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+              documentation
+            </p>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: "8px",
+            }}>
+              {eventGallery.map((img, i) => (
+                <div key={i} style={{
+                  width: "100%", aspectRatio: "4/3", overflow: "hidden", backgroundColor: "#f0f0f0",
+                }}>
+                  <img
+                    src={img}
+                    alt={`${artist.name} — ${i + 1}`}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

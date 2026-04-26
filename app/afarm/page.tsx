@@ -189,7 +189,7 @@ export default async function AFarmPage() {
           style={{
             borderTop: "1px solid #e5e5e5",
             paddingTop: "56px",
-            paddingBottom: "56px",
+            paddingBottom: "0",
             marginBottom: "0",
           }}
         >

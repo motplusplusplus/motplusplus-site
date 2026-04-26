@@ -68,7 +68,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
       <div
         style={{
           position: "relative",
-          paddingBottom: `${SPREAD_Y * 3 + 48}px`,
+          paddingBottom: `${SPREAD_Y * 3 + 8}px`,
           marginBottom: "0",
           overflow: "visible",
         }}
