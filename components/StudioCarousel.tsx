@@ -30,6 +30,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
   const [index, setIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   // Touch/swipe state
   const touchStartX = useRef(0);
@@ -107,6 +108,8 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onMouseEnter={() => !isMobile && setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
         style={{
           position: "relative",
           paddingBottom: `${SPREAD_Y * 3 + 8}px`,
@@ -218,6 +221,68 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
             )}
           </div>
         </Link>
+
+        {/* hover arrows - desktop only */}
+        {!isMobile && (
+          <>
+            <button
+              onClick={(e) => { e.preventDefault(); prev(); }}
+              aria-label="previous studio"
+              style={{
+                position: "absolute",
+                left: "12px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                zIndex: 10,
+                width: "44px",
+                height: "44px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(255,255,255,0.9)",
+                border: "none",
+                borderRadius: "50%",
+                cursor: "pointer",
+                opacity: isHovering ? 1 : 0,
+                transition: "opacity 0.2s ease",
+                pointerEvents: isHovering ? "auto" : "none",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="#111111" strokeWidth="2">
+                <polyline points="9,2 4,7 9,12" />
+              </svg>
+            </button>
+            <button
+              onClick={(e) => { e.preventDefault(); next(); }}
+              aria-label="next studio"
+              style={{
+                position: "absolute",
+                right: "12px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                zIndex: 10,
+                width: "44px",
+                height: "44px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(255,255,255,0.9)",
+                border: "none",
+                borderRadius: "50%",
+                cursor: "pointer",
+                opacity: isHovering ? 1 : 0,
+                transition: "opacity 0.2s ease",
+                pointerEvents: isHovering ? "auto" : "none",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="#111111" strokeWidth="2">
+                <polyline points="5,2 10,7 5,12" />
+              </svg>
+            </button>
+          </>
+        )}
 
       </div>
 
