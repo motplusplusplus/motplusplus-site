@@ -38,7 +38,11 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   const allEvents = [...sanityAllEvents, ...jsonOnly];
 
   const listing = getListingEvents(allEvents);
-  const relatedResidents = getRelatedResidents(event, allEvents);
+  const nameResidents = getRelatedResidents(event, allEvents);
+  // Merge explicit Sanity artist refs with name-matched residents, deduplicate by slug
+  const explicitArtists = (event.artists ?? []).map(a => ({ slug: a.slug, title: a.name }));
+  const explicitSlugs = new Set(explicitArtists.map(a => a.slug));
+  const relatedResidents = [...explicitArtists, ...nameResidents.filter(r => !explicitSlugs.has(r.slug))];
   const { prev, next } = getAdjacentEvents(slug, listing);
   const past = isPast(event);
 
