@@ -180,7 +180,9 @@
     "active": false,
     "hidden": true,
     "note": "",
-    "images": [{ "url": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/saola/saola-studio.jpg", "width": 1600, "height": 1063 }],
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/saola/saola-studio.jpg"
+    ],
     "locationKeywords": [
       "saola",
       "da lat",
@@ -572,7 +574,9 @@
     "description": "",
     "active": true,
     "note": "",
-    "images": [{ "url": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/nguyen-thuy-hang/ass05743.jpg", "width": 1600, "height": 1067 }],
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/nguyen-thuy-hang/ass05743.jpg"
+    ],
     "locationKeywords": [
       "nguyen thuy hang",
       "nguyễn thúy-hằng"
