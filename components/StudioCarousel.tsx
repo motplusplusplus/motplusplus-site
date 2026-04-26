@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 
 type CarouselItem = {
@@ -29,6 +29,12 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
   const ordered = useMemo(() => shuffleUnpinned(items), [items]);
   const [index, setIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  // Touch/swipe state
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 480);
@@ -42,8 +48,37 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
   const SPREAD_Y = isMobile ? 10 : 14;
 
   const total = ordered.length;
-  const next = () => setIndex((i) => (i + 1) % total);
-  const prev = () => setIndex((i) => (i - 1 + total) % total);
+
+  const goTo = (newIndex: number) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setIndex(newIndex);
+    setTimeout(() => setIsAnimating(false), 300);
+  };
+
+  const next = () => goTo((index + 1) % total);
+  const prev = () => goTo((index - 1 + total) % total);
+
+  // Touch handlers for swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    const threshold = 50; // minimum swipe distance
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) {
+        next(); // swipe left = next
+      } else {
+        prev(); // swipe right = prev
+      }
+    }
+  };
 
   const i0 = index;
   const i1 = (index + 1) % total;
@@ -55,6 +90,8 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
   const mid2  = ordered[i2];
   const back  = ordered[i3];
 
+  const cardTransition = "transform 0.3s ease, opacity 0.3s ease";
+
   return (
     <div>
       {/* hidden preload — triggers browser fetch for all images immediately */}
@@ -64,13 +101,18 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
         )}
       </div>
 
-      {/* stack */}
+      {/* stack with touch support */}
       <div
+        ref={containerRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         style={{
           position: "relative",
           paddingBottom: `${SPREAD_Y * 3 + 8}px`,
           marginBottom: "0",
           overflow: "visible",
+          touchAction: "pan-y pinch-zoom",
         }}
       >
         {/* back card — furthest behind, smallest */}
@@ -84,6 +126,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
             backgroundColor: "#c8c8c8",
             border: "1px solid #c0c0c0",
             overflow: "hidden",
+            transition: cardTransition,
           }}
         >
           {back.image && (
@@ -107,6 +150,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
             backgroundColor: "#d8d8d8",
             border: "1px solid #d0d0d0",
             overflow: "hidden",
+            transition: cardTransition,
           }}
         >
           {mid2.image && (
@@ -130,6 +174,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
             backgroundColor: "#e8e8e8",
             border: "1px solid #e0e0e0",
             overflow: "hidden",
+            transition: cardTransition,
           }}
         >
           {mid1.image && (
@@ -154,6 +199,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
               cursor: "pointer",
               position: "relative",
               zIndex: 2,
+              transition: cardTransition,
             }}
           >
             {front.image ? (
@@ -176,7 +222,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
       </div>
 
       {/* front card meta */}
-      <div style={{ marginBottom: "28px" }}>
+      <div style={{ marginBottom: "28px", transition: "opacity 0.2s ease" }}>
         <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.06em", marginBottom: "8px" }}>
           {front.neighborhood}
         </p>
@@ -205,8 +251,13 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
         )}
       </div>
 
-      {/* controls */}
-      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+      {/* controls - compact on mobile */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        gap: isMobile ? "12px" : "20px",
+        flexWrap: "wrap",
+      }}>
         <button
           onClick={prev}
           aria-label="previous studio"
@@ -214,8 +265,8 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
             background: "none",
             border: "1px solid #cccccc",
             cursor: "pointer",
-            width: "44px",
-            height: "44px",
+            width: isMobile ? "40px" : "44px",
+            height: isMobile ? "40px" : "44px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -227,18 +278,25 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
           </svg>
         </button>
 
-        <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+        {/* dots - smaller touch targets on mobile, scrollable if many */}
+        <div style={{
+          display: "flex",
+          gap: isMobile ? "2px" : "4px",
+          alignItems: "center",
+          overflow: "hidden",
+          maxWidth: isMobile ? "180px" : "none",
+        }}>
           {ordered.map((_, i) => (
             <button
               key={i}
-              onClick={() => setIndex(i)}
+              onClick={() => goTo(i)}
               aria-label={`go to studio ${i + 1}`}
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                minWidth: "44px",
-                minHeight: "44px",
+                minWidth: isMobile ? "24px" : "44px",
+                minHeight: isMobile ? "24px" : "44px",
                 background: "none",
                 border: "none",
                 cursor: "pointer",
@@ -246,11 +304,12 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
               }}
             >
               <span style={{
-                width: i === index ? "20px" : "6px",
+                width: i === index ? (isMobile ? "14px" : "20px") : "6px",
                 height: "6px",
                 backgroundColor: i === index ? "#111111" : "#cccccc",
                 display: "block",
                 transition: "width 0.2s, background-color 0.2s",
+                borderRadius: "3px",
               }} />
             </button>
           ))}
@@ -263,8 +322,8 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
             background: "none",
             border: "1px solid #cccccc",
             cursor: "pointer",
-            width: "44px",
-            height: "44px",
+            width: isMobile ? "40px" : "44px",
+            height: isMobile ? "40px" : "44px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -276,7 +335,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
           </svg>
         </button>
 
-        <span style={{ fontSize: "12px", color: "#aaaaaa", marginLeft: "4px" }}>
+        <span style={{ fontSize: "12px", color: "#aaaaaa", marginLeft: isMobile ? "0" : "4px" }}>
           {index + 1} / {total}
         </span>
       </div>
