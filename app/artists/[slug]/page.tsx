@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getArtist, getArtistSlugs, getArtistEvents, type Artist } from "@/lib/artists";
-import { getEventBySlug, getAllEvents, getArtistBySlug, getAllSanityArtistSlugs } from "@/lib/sanity";
+import { getEventBySlug, getAllEvents, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef } from "@/lib/sanity";
 import { BIO_SLUGS } from "@/lib/events";
 import ArtistGallery from "./ArtistGallery";
 import type { Metadata } from "next";
@@ -33,8 +33,13 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const { slug } = await params;
   const localArtist = getArtist(slug);
 
-  // For Sanity-only artists (not in artists-data.json or BIO_SLUGS)
-  const sanityArtist = !localArtist ? await getArtistBySlug(slug) : null;
+  // Always fetch Sanity artist (for _id, bio, and Sanity-ref events); fall back to local data
+  const isBioSlug = BIO_SLUGS.has(slug);
+  const [sanityArtist, eventEntry, allEvents] = await Promise.all([
+    getArtistBySlug(slug),
+    isBioSlug ? getEventBySlug(slug) : Promise.resolve(null),
+    getAllEvents(),
+  ]);
   if (!localArtist && !sanityArtist) notFound();
 
   // Merge: local data wins, Sanity fills gaps
@@ -51,12 +56,6 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
     workImages: (sanityArtist!.images as string[]) ?? [],
   };
 
-  // For BIO_SLUGS artists: pull full event entry (bio text, residency date, gallery images)
-  const isBioSlug = BIO_SLUGS.has(slug);
-  const [eventEntry, allEvents] = await Promise.all([
-    isBioSlug ? getEventBySlug(slug) : Promise.resolve(null),
-    getAllEvents(),
-  ]);
   const bioText = artist.bio || (sanityArtist?.bio as string) || eventEntry?.description || "";
   const displayDate = eventEntry?.displayDate || "";
 
@@ -71,7 +70,14 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
     return !SKIP_PATTERNS.some(s => filename.toLowerCase().includes(s));
   });
 
-  const relatedEvents = getArtistEvents(artist, allEvents);
+  // Merge Sanity-ref events (explicit) with name-matched events, deduplicate by slug
+  const sanityArtistId = sanityArtist?._id as string | undefined;
+  const [refEvents, nameEvents] = await Promise.all([
+    sanityArtistId ? getEventsByArtistRef(sanityArtistId) : Promise.resolve([]),
+    Promise.resolve(getArtistEvents(artist, allEvents)),
+  ]);
+  const refSlugs = new Set(refEvents.map(e => e.slug));
+  const relatedEvents = [...refEvents, ...nameEvents.filter(e => !refSlugs.has(e.slug))];
 
   const badges = [
     artist.collective      && "mot+++ collective",

@@ -141,7 +141,10 @@ const EVENT_FIELDS = `
   bandcampAlbumId,
   "wpLink": coalesce(wpLink, ""),
   "isBioPage": coalesce(isBioPage, false),
+  "artists": artists[]->{_id, name, "slug": slug.current},
 `;
+
+export type LinkedArtist = { _id: string; name: string; slug: string };
 
 // Shape returned by Sanity before JS transformation
 type RawEvent = {
@@ -150,6 +153,7 @@ type RawEvent = {
   location: string; description: string; vnDescription?: string;
   uploadedImageUrls: string[] | null; legacyImageUrls: string[];
   videoUrl?: string; bandcampAlbumId?: string; wpLink: string; isBioPage: boolean;
+  artists?: LinkedArtist[] | null;
 };
 
 // Shape compatible with lib/events.ts Event type
@@ -159,6 +163,7 @@ export type SanityEvent = {
   category: string; location: string; description: string; vnDescription?: string;
   images: string[]; thumbnail: string; videoUrl?: string;
   bandcampAlbumId?: string; wpLink: string; isBioPage: boolean;
+  artists: LinkedArtist[];
 };
 
 // Filenames that are logos/brand assets — never valid event images
@@ -233,6 +238,7 @@ function toSanityEvent(e: RawEvent): SanityEvent {
     bandcampAlbumId: e.bandcampAlbumId,
     wpLink:          e.wpLink,
     isBioPage:       e.isBioPage,
+    artists:         (e.artists ?? []).filter(Boolean) as LinkedArtist[],
   };
 }
 
@@ -266,6 +272,7 @@ function toEventFromJson(e: Record<string, unknown>): SanityEvent {
     bandcampAlbumId: e.bandcampAlbumId as string | undefined,
     wpLink:          (e.wpLink as string) ?? '',
     isBioPage:       (e.isBioPage as boolean) ?? false,
+    artists:         [],
   };
 }
 
@@ -343,6 +350,15 @@ export async function getAfarmHostBySlug(slug: string) {
     `*[_type == "afarmHost" && slug.current == $slug][0] { ${AFARM_HOST_FIELDS} }`,
     { slug }
   );
+}
+
+/** Events that explicitly reference a given artist (by Sanity _id) */
+export async function getEventsByArtistRef(artistId: string): Promise<SanityEvent[]> {
+  const raw: RawEvent[] = await buildClient.fetch(
+    `*[_type == "event" && active == true && !isBioPage && references($artistId)] | order(dateISO desc) { ${EVENT_FIELDS} }`,
+    { artistId }
+  );
+  return raw.map(toSanityEvent);
 }
 
 /** All event slugs — for generateStaticParams */
