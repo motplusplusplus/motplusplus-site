@@ -7,6 +7,16 @@ import { categories, isPast, normalizeDisplayDate, stripDiacritics, type Event }
 
 const ALL = "all";
 
+/** Returns true if the thumbnail is a real event photo, not a placeholder logo */
+function hasRealThumbnail(e: Event): boolean {
+  if (!e.thumbnail) return false;
+  const t = e.thumbnail.toLowerCase();
+  // Exclude placeholder logos
+  if (t.includes('logo')) return false;
+  if (t.includes('motplusplus')) return false;
+  return true;
+}
+
 function searchEvents(events: Event[], query: string): Event[] {
   if (!query.trim()) return events;
   const terms = stripDiacritics(query.toLowerCase()).split(/\s+/).filter(t => t.length >= 2);
@@ -44,8 +54,8 @@ export function EventsShell({ events }: { events: Event[] }) {
     }
   };
 
-  // Hero: random event with image (only when not searching)
-  const eventsWithImg = useRef(events.filter(e => e.thumbnail));
+  // Hero: random event with real image (not placeholder logos)
+  const eventsWithImg = useRef(events.filter(hasRealThumbnail));
   const pickRandom = (exclude?: Event) => {
     const pool = eventsWithImg.current.filter(e => e !== exclude);
     return pool.length > 0
@@ -62,10 +72,10 @@ export function EventsShell({ events }: { events: Event[] }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Only show events with real documentation (thumbnail)
+  // Only show events with real documentation (real photos, not placeholder logos)
   // When searching, use searchFiltered; otherwise use all events
   const baseEvents = urlQuery ? searchFiltered : events;
-  const documented = baseEvents.filter(e => e.thumbnail);
+  const documented = baseEvents.filter(hasRealThumbnail);
 
   const filtered =
     activeCategory === ALL
