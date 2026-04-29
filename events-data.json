@@ -6276,8 +6276,11 @@
     "category": "MoTsound",
     "location": "hồ chí minh",
     "description": "Sound artists included Dan Nguyen aka Demon Slayer from LA/Saigon and Nguyen Hong Giang, a Vietnamese musician, record producer, composer and experimental multi-genre music producer. The show also featured ‘Spiel’, a live improvisation by 5 artists: Sonar Lee, MadderModes, Kin, Scobi Wan, Fad Plastic; directed by Nic Ford, a multimedia and electronic music artist responsible for the project ‘ MadderModes ‘. Drinks were served by Cù Rú Bar. Cù Rú Bar is a local artist-run spirits bar inspired by a modern tribe in the north of Lang Biang. The people here live in caves, farm their own food and make their own spirits to share with everybody, anybody. They love to sleep all day. They don’t take bath but love swimming and making love. When feeling inspired they write poems, make paintings and sometimes video art. This is the first time Cù Rú Bar collaborating with MoT+++ in MọT.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/mot-sound-2/mot-sound-2-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/mot-sound-2/mot-sound-2-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/mot-sound-2/mot-sound-2-1.jpg",
     "wpLink": "https://motplusplusplus.com/2017/07/17/mot-sound-2/",
     "sortDate": "2017-07-17"
   },
@@ -6423,8 +6426,11 @@
     "category": "MoT+++",
     "location": "hồ chí minh",
     "description": "dao tung (b. 1983, ho chi minh city, vietnam). his work experiments with sound, installation, and video mediums that draw from his practice as a music composer and sound artist. a graduate of the university of economics in ho chi minh city, dao tung went on to collaborate on performances at home in vietnam, as well as in korea and the usa. his practice engages with urban society, political issues, and identity, using video, performance, installation, photography, and collaborative projects as materials. raised in a well-known artist family, he found his own artistic path through economics before returning fully to art-making. in 2010, he was sponsored by the cultural development and exchange fund (CDEF) in vietnam to stage an experimental project. in 2014, he collaborated on 'open room,' also supported by CDEF. his video work 'it seems to be' became the inaugural work in MoT+++'s +1 museum by any other name. in 2017, he participated in an artist exchange at 18th street arts center in los angeles.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tung/dao-tung-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tung/dao-tung-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tung/dao-tung-1.jpg",
     "wpLink": "",
     "sortDate": "2017-01-01",
     "isBioPage": true
@@ -6629,8 +6635,11 @@
     "category": "MoT+++",
     "location": "hồ chí minh",
     "description": "lê hiền minh is a vietnamese visual artist whose practice centers on material transformation and cultural memory. working with traditional vietnamese dó paper, she creates works that explore the poetic and tactile properties of craft and handmade materials. her work 'hạt' — small balls of crumpled dó paper cast in resin — was presented at MoT+++ in the 2016 group exhibition 'kệ.' in 2017, she collaborated with cam xanh on 'home | land,' presented at the taiwan annual art fair.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/le-hien-minh/le-hien-minh-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/le-hien-minh/le-hien-minh-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/le-hien-minh/le-hien-minh-1.jpg",
     "wpLink": "",
     "sortDate": "2016-01-01",
     "isBioPage": true
