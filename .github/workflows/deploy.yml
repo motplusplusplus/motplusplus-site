@@ -12,6 +12,10 @@ on:
   repository_dispatch:
     types: [deploy]
 
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
