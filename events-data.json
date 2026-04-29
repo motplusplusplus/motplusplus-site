@@ -4903,8 +4903,11 @@
     "category": "MoT+++",
     "location": "hồ chí minh",
     "description": "when does taking inspiration from another artist's work become stealing? at what point does an art historical reference become plagiarism? as part of a conclusion to its six-month performance plus programme, MoT+++ hosts a round-table discussion on artistic influences, with a specific focus on the contemporary vietnamese art context. monday, october 1, 7:00pm – 9:00pm. location: ground floor, saigon domaine, 1057 bình quới, ward 28, bình thạnh district, saigon. free of charge.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/round-table-creative-influences-in-contemporary-art/rt-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/round-table-creative-influences-in-contemporary-art/rt-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/round-table-creative-influences-in-contemporary-art/rt-1.jpg",
     "wpLink": "",
     "sortDate": "2018-10-01",
     "vnDescription": "khi nào lấy cảm hứng từ tác phẩm của một nghệ sĩ khác trở thành ăn cắp? tại điểm nào, một tham khảo lịch sử nghệ thuật trở thành đạo văn? là một phần tổng kết chương trình sáu tháng tập trung vào nghệ thuật trình diễn, MoT+++ tổ chức một cuộc thảo luận bàn tròn về ảnh hưởng trong sáng tác nghệ thuật, với trọng tâm là bối cảnh nghệ thuật đương đại việt nam. thứ hai, ngày 1 tháng 10, 7:00 – 9:00 tối. miễn phí."
@@ -4918,8 +4921,11 @@
     "category": "+1 performance",
     "location": "hồ chí minh",
     "description": "phụ lục (the appendix group) concludes MoT+++'s six-month performance plus programme with an artist presentation at MoT+++. the presentation marks the end of their extended residency at MoT+++ during which they served as the anchor artists of the program. sunday, september 9, 4:00pm. free of charge.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/phu-luc-artist-presentation-performance-plus-2018/phu-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/phu-luc-artist-presentation-performance-plus-2018/phu-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/phu-luc-artist-presentation-performance-plus-2018/phu-1.jpg",
     "wpLink": "",
     "sortDate": "2018-09-09"
   },
@@ -5173,8 +5179,11 @@
     "category": "+1 performance",
     "location": "hồ chí minh",
     "description": "following the success of happy birthday bill, MoT+++ presents big day of performances #2 as part of the six-month performance plus program. the line-up includes resident artists nguyen song, ngo thanh bac, and hoang minh duc from phụ lục (the appendix group), le nam dy, thuy tien, and duc flying. performances take place across MoT+++'s main exhibition space, garden, and project room. sunday, july 22, 4:00pm to 7:00pm. location: ground floor, saigon domaine, 1057 bình quới, ward 28, bình thạnh district. free of charge.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/big-day-of-performances-2-performance-plus-2018/bdp2-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/big-day-of-performances-2-performance-plus-2018/bdp2-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/big-day-of-performances-2-performance-plus-2018/bdp2-1.jpg",
     "wpLink": "",
     "sortDate": "2018-07-22"
   },
