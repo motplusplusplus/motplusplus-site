@@ -4400,8 +4400,11 @@
     "category": "MoT+++",
     "location": "",
     "description": "Trần Minh Đức is a Vietnamese artist whose work flowers was acquired by the +1 museum by any other name collection at MoT+++. the piece centres on the song 'Where have all the flowers gone?' by Pete Seeger, exploring themes of anti-war, memory, and the passage of time.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/tran-minh-duc/tran-minh-duc-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/tran-minh-duc/tran-minh-duc-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/tran-minh-duc/tran-minh-duc-1.jpg",
     "wpLink": "",
     "sortDate": "2019-04-03",
     "isBioPage": true
@@ -5536,8 +5539,11 @@
     "category": "+1 performance",
     "location": "hồ chí minh",
     "description": "for the month of may, former MoT+++ staff writer maria sowter returns to take on a new role in the performance 'researcher-in-residence'. maria utilizes the MoT+++ space as a base from which to confront questions concerning the lack of criticality in writing about vietnamese contemporary art. she writes, researches, and investigates from the MoT+++ space daily. members of the public are welcome to drop in and engage her in conversation and debate throughout may 2018. location: ground floor, saigon domaine, 1057 bình quới, ward 28, bình thạnh district, saigon.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/researcher-in-residence-maria-sowter/maria-sowter-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/researcher-in-residence-maria-sowter/maria-sowter-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/researcher-in-residence-maria-sowter/maria-sowter-1.jpg",
     "wpLink": "",
     "sortDate": "2018-05-01"
   },
@@ -5603,8 +5609,11 @@
     "category": "+1 performance",
     "location": "hồ chí minh",
     "description": "MoT+++ artists in residence Phụ Lục (The Appendix group) conducted a workshop in performance art practices, including discussions and illustrations of how to use everyday objects to create novel situations, lead by Phụ Lục member Huy An. The workshop was open to all and free of charge; no prior experience or knowledge of performance art was necessary for participation. Saturday, April 7 4:00 pm to 6:00 pm",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-workshop-phu-luc/phu-luc-workshop-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-workshop-phu-luc/phu-luc-workshop-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-workshop-phu-luc/phu-luc-workshop-1.jpg",
     "wpLink": "http://motplus.xyz/2018/04/07/performance-workshop-phu-luc/"
   },
   {
