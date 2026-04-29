@@ -4339,8 +4339,12 @@
     "category": "+1 nice place for experimentation",
     "location": "hồ chí minh",
     "description": "Hanoi-based artist Phùng Tiến Sơn will return to Saigon on Thursday April 18 for an artist presentation at MoT+++. the presentation marks the last week of his sound installation, Soundtracks , which is on view at MoT+++ until April 23, and will discuss the over six-month process behind the work. “we set foot in Vi Xuyen martyrs’ cemetery, which had 1768 (until July 2013) graves of the deceased from 1979 to the beginning of 1990, especially in 1984 and 1988. i recorded all the information about these 1768 people, which were etched on their tombstones. from the information i collected, i used Google Maps to draw connecting paths from their hometowns to Vi Xuyen (where they sacrificed their lives and their remaining corpses were concentrated). i separated these paths from the maps, for all that’s left are the cold and meaningless lines. in other words, we can only see 1768 winding strokes. is there anything left but 1768 routes which all lead to death at the same place?” – Phùng Tiến Sơn about the artist: Phùng Tiến Sơn is a multimedia visual artist and university dropout from Hanoi, Vietnam. music is a continuing feature of Sơn’s practice, and he cites sound and technology as important influences in his work. past exhibitions include group shows as an ongoing member of the Nhà Sàn Collective, the Hanoi Collective Orchestra in 2015 and 2016, and Utopia Land at Hanoi’s Heritage Space in 2017. in 2018, Sơn performed in Big Day of Performances – Happy Birthday Billas part of MoT+++’s six-month performance plus programme. Soundtracks was first exhibited in the Nhà Sàn Collective show Mise en Scene in 2016. Thursday, April 18 7pm",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-phung-tien-son/phung-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-phung-tien-son/phung-2.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-phung-tien-son/phung-3.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-phung-tien-son/phung-1.jpg",
     "wpLink": "http://motplus.xyz/2019/04/18/artist-presentation-phung-tien-son/"
   },
   {
@@ -5459,8 +5463,11 @@
     "category": "+1 performance",
     "location": "hồ chí minh",
     "description": "Cry for Father on Mother’s day – Salting the Pongour is deeply personal work in response to the premature death of the artist’s father, aged 40. The performance marked the artist’s first visit to Da Lat, a place noted for its waterfalls and ghosts. It was a place her father spoke of but never reached, becoming an emblem for unaccomplished life plans and alternative histories. In the documentation we see a lone figure gesturing upwards in the rain—too young at the time to fully understand the gravity of loss, Cam Xanh threw salt into the rain to form the tears she never cried for her father’s death. The trip, part pilgrimage, part exorcism, was a chance for Cam Xanh to confront the personal tragedy of losing her father, and the burden of her mother’s sorrow alongside her own. Cry for Father on Mother’s day – Salting the Pongour opens the possibility for us to question how significant events in our own pasts might inform our later lives, and opens the thought of how those absent from our lives might still have presence. By adding salt to a fresh water source that runs throughout southern Vietnam before joining the South China Sea, Cam Xanh creates her own purifying ritual, drawn in-part from her father’s Catholic religion, and shares it, through joining the water cycle, with the rest of the world. From a place of quiet solitude, Cam Xanh uses the medium of performance to reach out for the oceanic feeling that bonds us to each other and the universe in its whole. location: Pongour Waterfall, Da Lat, Lam Dong Province, Vietnam",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-salting-the-pongour-cam-xanh/salt-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-salting-the-pongour-cam-xanh/salt-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-salting-the-pongour-cam-xanh/salt-1.jpg",
     "wpLink": "http://motplus.xyz/2018/05/13/performance-salting-the-pongour-cam-xanh/"
   },
   {
@@ -5867,8 +5874,11 @@
     "category": "MoT+++",
     "location": "hồ chí minh",
     "description": "le quoc thanh is a ho chi minh city-based artist who participated in an exchange residency with baik art in seoul, south korea in november – december 2018, as part of MoT+++'s ongoing exchange collaboration with baik art.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/le-quoc-thanh/lequoc-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/le-quoc-thanh/lequoc-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/le-quoc-thanh/lequoc-1.jpg",
     "wpLink": "",
     "sortDate": "2018-01-01",
     "isBioPage": true
