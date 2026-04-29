@@ -4658,8 +4658,11 @@
     "category": "MoT+++",
     "location": "",
     "description": "Arnont Nongyao is a Thai artist based in Chiang Mai, Thailand working in sound, video, and installation. his primary research interest is sound, with a concentration on vibration, field recording, and acoustic phenomena. he participated in MoT sound #10 aNoise and MoT sound #24.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/arnont-nongyao/arnont-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/arnont-nongyao/arnont-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/arnont-nongyao/arnont-1.jpg",
     "wpLink": "",
     "sortDate": "2019-01-01",
     "isBioPage": true
@@ -5613,8 +5616,11 @@
     "category": "MoTsound",
     "location": "hồ chí minh",
     "description": "The MoT sound art showcase returned for its fifth session. The night began with an improvisation by Nothing+ Trio, consisting of Ben Litwicki, Van Thanh Trung, and Alec Schachner, followed by a live electronic set by a special guest from Hanoi, Nguyen Do Minh Quan, who performed using a modular synthesizer containing elements of his own design. The night closed with a jam session involving all the previous performers, who were also joined by Alex McCarl on the iPads.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/mot-sound-5/mot-sound-5-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/mot-sound-5/mot-sound-5-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/mot-sound-5/mot-sound-5-1.jpg",
     "wpLink": "https://motplusplusplus.com/2018/04/03/mot-sound-5/",
     "sortDate": "2018-04-03",
     "vnDescription": "Trình diễn âm thanh thử nghiệm MoT # 5 sẽ bắt đầu với một màn trình diễn ứng biến bằng nhạc khí bởi bộ ba Nothing+ (Ben Litwicki, Văn Thành Trung và Alec Schachner), tiếp theo là trình diễn nhạc điện tử sống bởi nghệ sĩ và nhạc sĩ đến từ Sài Gòn Đan Nguyễn (Demonslayer), và một khách mời đặc biệt đến từ Hà Nội, Nguyễn Đỗ Minh Quân. Thứ Ba, 3 Tháng Tư 19:00 đến 22:00 Địa điểm: Tầng Trệt, Saigon Domaine, 1057 Bình Quới, P. 28, Q. Bình Thạnh, Tp. HCM Vé vào cửa: 100.000 VND MoT sound #5 – MoT+++ programs collective MoTsound A. Farm about us MoT sound #5"
@@ -5659,8 +5665,11 @@
     "category": "+1 performance",
     "location": "hồ chí minh",
     "description": "Resident artists Aliansyah Caniago and Phu Luc (The Appendix Group) shared insights into their practices following with a panel discussion. Aliansyah Caniago is a painter and performance artist concerned with activism and social realism in public space. Based in Bandung, Indonesia, Caniago will be staying in Saigon for one month; during this time he will complete a durational performance, the details of which will be announced at his talk. Hanoi based performance art group Phu Luc (The Appendix) was founded in 2010 by six artists and is currently made up by four core members: Nguyễn Huy An, Vũ Đức Toàn, Nguyễn Song and Ngô Thành Bắc. From March to August, they will be based at MoT+++, acting as an anchor for the performance plus program. Saturday, March 17 4:00 pm to 7:00 pm English and Vietnamese with translation.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-talk-phu-luc-the-appendix-group-discussing-performance-art-i/phu-luc-talk-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-talk-phu-luc-the-appendix-group-discussing-performance-art-i/phu-luc-talk-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-talk-phu-luc-the-appendix-group-discussing-performance-art-i/phu-luc-talk-1.jpg",
     "wpLink": "http://motplus.xyz/2018/03/17/artist-talk-phu-luc-the-appendix-group-discussing-performance-art-i/"
   },
   {
