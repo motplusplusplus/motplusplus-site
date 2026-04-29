@@ -5784,8 +5784,11 @@
     "category": "MoT+++",
     "location": "",
     "description": "Ngô Thành Bắc is a Hanoi-based performance artist and core member of Phụ Lục (The Appendix Group), founded in 2010. Phụ Lục served as artists-in-residence throughout the six-month performance plus 2018 programme at MoT+++, acting as an anchor for the programme.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/ngo-thanh-bac/ngo-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/ngo-thanh-bac/ngo-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/ngo-thanh-bac/ngo-1.jpg",
     "wpLink": "",
     "sortDate": "2018-03-01",
     "isBioPage": true
@@ -5828,8 +5831,11 @@
     "category": "+a.Farm",
     "location": "hồ chí minh",
     "description": "perrine lievens is a french visual artist based in paris. her work uses familiar objects, challenging their perceived function to create imaginary and poetic realities. she offers an insightful reimagining of reality, inviting the viewer to experience a reinvented world. often fragile and ephemeral, her sculptural installations expose her to real technical challenges which she considers acts of resistance: retaining the fragile and ephemeral aspects of materials. she gave an artist presentation at a. farm at MoT+++ in june 2018.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/perrine-lievens/perrine-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/perrine-lievens/perrine-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/perrine-lievens/perrine-1.jpg",
     "wpLink": "",
     "sortDate": "2018-01-01",
     "isBioPage": true
@@ -5843,8 +5849,11 @@
     "category": "+1 performance",
     "location": "hồ chí minh",
     "description": "aliansyah caniago (b. 1987, tangerang, indonesia) is an interdisciplinary artist whose work critically examines the intersections of power, social injustice, and environmental crises. he completed a master of arts in art and ecology from goldsmiths, university of london. his practice engages with the idea of central (metropole) and periphery (satellite) and works with communities affected by industrialisation in java and sumatera, through studio-based practices, site-specific installations, and durational performances exploring land-use conflict, migration, urbanisation, waste, and contested spaces. he investigates barus, a north sumatran port town connected to his family history and the extinction of the camphor tree. co-founder of unground collective (london), gerilya artist collective (bandung), and MoT+++ (ho chi minh). exhibitions include tainan art museum (2024), museumsquartier (2024), MUMA-monash university museum of art (2018), jakarta biennale (2017), 14th lyon biennale (2017), documenta 15 (2022). in 2018, he completed a one-month performance residency at MoT+++ as part of the six-month performance plus program.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/aliansyah-caniago/aliansyah-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/aliansyah-caniago/aliansyah-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/aliansyah-caniago/aliansyah-1.jpg",
     "wpLink": "",
     "sortDate": "2018-01-01",
     "isBioPage": true
