@@ -5715,8 +5715,11 @@
     "category": "MoT+++",
     "location": "",
     "description": "a Vietnamese dancer and choreographer, graduate of Rencontres Internationales de Danse Contemporaine in Paris. she presents conceptual performances incorporating dance and poetry. she collaborated with Cam Xanh on sàn!, a performance presented at MoT+++ in 2018.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/le-mai-anh/le-mai-anh-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/le-mai-anh/le-mai-anh-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/le-mai-anh/le-mai-anh-1.jpg",
     "wpLink": "",
     "sortDate": "2018-03-06",
     "isBioPage": true
@@ -5802,8 +5805,11 @@
     "category": "MoT+++",
     "location": "",
     "description": "Nguyễn Song is a Hanoi-based performance artist and core member of Phụ Lục (The Appendix Group), founded in 2010. Phụ Lục served as artists-in-residence throughout the six-month performance plus 2018 programme at MoT+++, acting as an anchor for the programme. he also co-curated the short film screening Causal Capture at A. Farm in 2025.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/song-nguyen/song-nguyen-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/song-nguyen/song-nguyen-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/song-nguyen/song-nguyen-1.jpg",
     "wpLink": "",
     "sortDate": "2018-03-01",
     "isBioPage": true
@@ -5922,8 +5928,11 @@
     "category": "MoT+++",
     "location": "hồ chí minh",
     "description": "nguyễn thuỷ tiên is a ho chi minh city-based artist who participated as a guest artist in MoT+++'s performance plus program (march – september 2018).",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/nguyen-thuy-tien/thuy-tien-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/nguyen-thuy-tien/thuy-tien-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/nguyen-thuy-tien/thuy-tien-1.jpg",
     "wpLink": "",
     "sortDate": "2018-01-01",
     "isBioPage": true
