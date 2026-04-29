@@ -5208,8 +5208,11 @@
     "category": "MoT+++",
     "location": "hồ chí minh",
     "description": "lại diệu hà, founder of the hanoi-based performance art collective psyper lab, is stationed at MoT+++ for a residency from june 20 to july 4, 2018, as part of the performance plus program. both in her performances with psyper lab and in her independent practice — encompassing performance, painting, installation, and video — lại diệu hà engages with the themes of sexuality and the body. she is known for her acclaimed performance 'fly away' at nha san collective in 2010. dieu ha performs at the event 'all animals are equal' at a. farm on june 23rd and gives an artist presentation at MoT+++ on june 28th.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-in-residence-lai-dieu-ha/lai-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-in-residence-lai-dieu-ha/lai-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-in-residence-lai-dieu-ha/lai-1.jpg",
     "wpLink": "",
     "sortDate": "2018-07-01",
     "vnDescription": "lại diệu hà, người sáng lập nhóm nghệ sĩ trình diễn psyper lab tại hà nội, lưu trú tại MoT+++ từ ngày 20/6 đến 4/7 năm 2018, trong khuôn khổ chương trình performance plus. trong cả các trình diễn với psyper lab lẫn trong thực hành độc lập về trình diễn, hội họa, sắp đặt và video, lại diệu hà khai thác chủ đề giới tính và cơ thể. cô được biết đến với trình diễn 'bay lên' tại nhà sàn năm 2010."
@@ -5362,8 +5365,11 @@
     "category": "+1 performance",
     "location": "hồ chí minh",
     "description": "For this performance, resident artist Enkhbold Togmidshiirev will present a multi-media installation in the MoT+++ exhibition space featuring a Mongolian Ger (traditional tent) made by the artist using bamboo (a material never before used in Mongolia for this purpose) accompanied by a soundscape evoking the Gobi Desert at night. Enkhboldis one of Mongolia’s leading contemporary artists and has represented his country at the 56th International Art Exhibition, la Biennale di Venezia, in 2015, marking Mongolia’s first participation at the Biennale. His practice draws inspiration on the traditional Mongolian nomadic life and uses the Ger (a portable hut) as a metaphor for the universe. Organic materials such as horse dung, ash, rust, leather and wood are often found in his installations, referencing humans’ relationship with nature. Saturday, May 19 6:30 – 8:00 pm",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-enkhbold-togmidshiirev/enk-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-enkhbold-togmidshiirev/enk-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-enkhbold-togmidshiirev/enk-1.jpg",
     "wpLink": "http://motplus.xyz/2018/05/19/performance-enkhbold-togmidshiirev/"
   },
   {
@@ -5375,8 +5381,11 @@
     "category": "MoT+++",
     "location": "",
     "description": "one of Mongolia's leading contemporary artists, Enkhbold Togmidshiirev represented his country at the 56th International Art Exhibition, la Biennale di Venezia, in 2015, marking Mongolia's first participation at the Biennale. his practice draws inspiration from traditional Mongolian culture, reinterpreting it through contemporary art. he was a resident artist in performance plus 2018 at MoT+++, where he presented a multi-media installation featuring a Mongolian Ger made from bamboo accompanied by a soundscape evoking the Gobi Desert.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/enkhbold-togmidshiirev/enk-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/enkhbold-togmidshiirev/enk-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/enkhbold-togmidshiirev/enk-1.jpg",
     "wpLink": "",
     "sortDate": "2018-05-19",
     "isBioPage": true
