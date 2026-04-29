@@ -5946,8 +5946,11 @@
     "category": "+a.Farm",
     "location": "hồ chí minh",
     "description": "phương giò was a resident artist at a. farm during season 0 (2018), the first season of MoT+++'s artist residency program in ho chi minh city. her work was presented at the season 0 closing exhibition 'buy . bay . buy' in december 2018.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/phuong-gio/phuong-gio-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/phuong-gio/phuong-gio-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/phuong-gio/phuong-gio-1.jpg",
     "wpLink": "",
     "sortDate": "2018-01-01",
     "isBioPage": true
@@ -6021,8 +6024,11 @@
     "category": "MoT+++",
     "location": "",
     "description": "a Ho Chi Minh City-based artist and curator whose practice spans performance, curation, and conceptual art. he performed in performance plus 2018 and 2019 at MoT+++, including the durational piece Bless You Hold Me (with Cam Xanh) and curated the Happy Birthday Bill programme. Bill Nguyen tattooed a poem by Cam Xanh onto his right thigh during the opening performance of Happy Birthday Bill.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bill-nguyen/bill-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bill-nguyen/bill-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bill-nguyen/bill-1.jpg",
     "wpLink": "",
     "sortDate": "2018-01-01",
     "isBioPage": true
@@ -6036,8 +6042,11 @@
     "category": "MoT+++",
     "location": "",
     "description": "Bert Nguyễn San is a Ho Chi Minh City-based artist and writer who participated in A. Farm and MoT+++ programmes.",
-    "images": [],
-    "thumbnail": "",
+    "images": [
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bert-nguyen-san/bert-1.jpg",
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bert-nguyen-san/bert-2.jpg"
+    ],
+    "thumbnail": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bert-nguyen-san/bert-1.jpg",
     "wpLink": "",
     "sortDate": "2018-01-01",
     "isBioPage": true
