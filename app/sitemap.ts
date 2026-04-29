@@ -18,7 +18,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/afarm/hotel`,     priority: 0.8 },
     { url: `${BASE}/directexperience`, priority: 0.8 },
     { url: `${BASE}/events`,          priority: 0.9 },
-    { url: `${BASE}/residents`,       priority: 0.9 },
     { url: `${BASE}/artists`,         priority: 0.8 },
     { url: `${BASE}/contemporary`,    priority: 0.7 },
     { url: `${BASE}/performance`,     priority: 0.7 },
@@ -37,24 +36,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const eventPages = allEvents
-    .filter(e => !HIDDEN_SLUGS.has(e.slug) && !e.slug.endsWith('-vn'))
+    .filter(e => !HIDDEN_SLUGS.has(e.slug) && !e.slug.endsWith('-vn') && !BIO_SLUGS.has(e.slug) && !e.isBioPage)
     .map(e => ({
-      url: (BIO_SLUGS.has(e.slug) || e.isBioPage)
-        ? `${BASE}/residents/${e.slug}`
-        : `${BASE}/events/${e.slug}`,
+      url: `${BASE}/events/${e.slug}`,
       lastModified: new Date(),
       changeFrequency: 'yearly' as const,
-      priority: (BIO_SLUGS.has(e.slug) || e.isBioPage) ? 0.7 : 0.6,
+      priority: 0.6,
     }));
 
-  const artistPages = allArtists
-    .filter(a => !BIO_SLUGS.has(a.slug))
-    .map(a => ({
-      url: `${BASE}/artists/${a.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly' as const,
-      priority: 0.7,
-    }));
+  const artistPages = allArtists.map(a => ({
+    url: `${BASE}/artists/${a.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'yearly' as const,
+    priority: 0.7,
+  }));
 
   return [...staticPages, ...afarmStudioPages, ...eventPages, ...artistPages];
 }
