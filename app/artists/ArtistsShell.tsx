@@ -7,9 +7,11 @@ export type ArtistEntry = {
   slug: string;
   name: string;
   isAfarmResident: boolean;
+  isHostingArtist: boolean;
+  bioPage: boolean;
 };
 
-const FILTERS = ["all", "a.Farm residents", "other"] as const;
+const FILTERS = ["all", "a.Farm residents", "hosting artists", "other"] as const;
 type Filter = typeof FILTERS[number];
 
 export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
@@ -17,8 +19,10 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
 
   const visible = filter === "a.Farm residents"
     ? artists.filter(a => a.isAfarmResident)
+    : filter === "hosting artists"
+    ? artists.filter(a => a.isHostingArtist)
     : filter === "other"
-    ? artists.filter(a => !a.isAfarmResident)
+    ? artists.filter(a => !a.isAfarmResident && !a.isHostingArtist)
     : artists;
 
   const groups: Record<string, ArtistEntry[]> = {};
@@ -75,7 +79,7 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
               gap: "10px 32px",
             }}>
               {groups[letter].map(a => (
-                <Link key={a.slug} href={`/artists/${a.slug}`} style={{ textDecoration: "none", display: "block" }}>
+                <Link key={a.slug} href={a.bioPage ? `/residents/${a.slug}` : `/artists/${a.slug}`} style={{ textDecoration: "none", display: "block" }}>
                   <p style={{
                     fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.4,
                     fontStyle: a.slug === "lan-anh-le" ? "italic" : "normal",
@@ -85,7 +89,12 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
                       <span style={{ fontSize: "11px", color: "#aaaaaa", marginLeft: "6px" }}>1993–2020</span>
                     )}
                   </p>
-                  {a.isAfarmResident && (
+                  {a.isHostingArtist && (
+                    <p style={{ fontSize: "10px", color: "#cccccc", letterSpacing: "0.04em", marginTop: "2px" }}>
+                      hosting artist
+                    </p>
+                  )}
+                  {a.isAfarmResident && !a.isHostingArtist && (
                     <p style={{ fontSize: "10px", color: "#cccccc", letterSpacing: "0.04em", marginTop: "2px" }}>
                       a.Farm resident
                     </p>

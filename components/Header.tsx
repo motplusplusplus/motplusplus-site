@@ -279,7 +279,7 @@ export default function Header() {
                   setSearchQuery("");
                 }
                 if (e.key === "Enter" && searchQuery.trim()) {
-                  router.push(`/events?q=${encodeURIComponent(searchQuery.trim())}`);
+                  router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
                   setSearchOpen(false);
                   setSearchQuery("");
                 }

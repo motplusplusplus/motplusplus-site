@@ -47,6 +47,7 @@ interface EventContentProps {
   wpLink?: string;
   prevEvent: AdjacentEvent | null;
   nextEvent: AdjacentEvent | null;
+  seeAlso?: AdjacentEvent[];
 }
 
 function toEmbedUrl(url: string): string | null {
@@ -89,6 +90,7 @@ export default function EventContent({
   wpLink,
   prevEvent,
   nextEvent,
+  seeAlso,
 }: EventContentProps) {
   const hasBilingual = Boolean(vnTitle || vnDescription);
   const [lang, setLang] = useState<"en" | "vi">("en");
@@ -316,6 +318,25 @@ export default function EventContent({
                   style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
                 >
                   {r.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {seeAlso && seeAlso.length > 0 && (
+          <div>
+            <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+              see also
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              {seeAlso.map(e => (
+                <Link
+                  key={e.slug}
+                  href={`/events/${e.slug}`}
+                  style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
+                >
+                  {e.title}
                 </Link>
               ))}
             </div>
