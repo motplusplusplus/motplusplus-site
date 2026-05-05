@@ -75,7 +75,7 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
               gap: "10px 32px",
             }}>
               {groups[letter].map(a => (
-                <Link key={a.slug} href={`/artists/${a.slug}`} style={{ textDecoration: "none", display: "block" }}>
+                <Link key={a.slug} href={`/profiles/${a.slug}`} style={{ textDecoration: "none", display: "block" }}>
                   <p style={{
                     fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.4,
                     fontStyle: a.slug === "lan-anh-le" ? "italic" : "normal",

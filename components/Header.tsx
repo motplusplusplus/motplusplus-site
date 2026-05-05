@@ -31,7 +31,7 @@ const dropdownSections = [
   {
     heading: "organization",
     items: [
-      { label: "artists", href: "/artists" },
+      { label: "profiles", href: "/profiles" },
       { label: "about", href: "/about" },
       { label: "press", href: "/press" },
       { label: "contact", href: "/contact" },

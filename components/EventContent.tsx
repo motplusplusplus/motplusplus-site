@@ -312,7 +312,7 @@ export default function EventContent({
               {relatedResidents.map(r => (
                 <Link
                   key={r.slug}
-                  href={`/artists/${r.slug}`}
+                  href={`/profiles/${r.slug}`}
                   style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
                 >
                   {r.title}

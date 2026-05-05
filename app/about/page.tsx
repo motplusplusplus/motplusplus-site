@@ -20,7 +20,7 @@ export default function AboutPage() {
             our ID
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "20px", maxWidth: "640px" }}>
-            founded by <a href="/artists/cam-xanh" style={{ color: "#444444", borderBottom: "1px solid #aaaaaa" }}>Cam Xanh</a> in 2015, MoT+++ is an independent artist-run contemporary art space in Saigon, Vietnam. our list of +1s activities is expanding as the organization continues to evolve.
+            founded by <a href="/profiles/cam-xanh" style={{ color: "#444444", borderBottom: "1px solid #aaaaaa" }}>Cam Xanh</a> in 2015, MoT+++ is an independent artist-run contemporary art space in Saigon, Vietnam. our list of +1s activities is expanding as the organization continues to evolve.
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "20px", maxWidth: "640px" }}>
             in 2018 we co-founded a.Farm international art residency with Nguyen Art Foundation and Din Q. Lê (SANart).

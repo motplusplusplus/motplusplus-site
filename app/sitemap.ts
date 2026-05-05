@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/afarm/hotel`,     priority: 0.8 },
     { url: `${BASE}/directexperience`, priority: 0.8 },
     { url: `${BASE}/events`,          priority: 0.9 },
-    { url: `${BASE}/artists`,         priority: 0.8 },
+    { url: `${BASE}/profiles`,         priority: 0.8 },
     { url: `${BASE}/contemporary`,    priority: 0.7 },
     { url: `${BASE}/performance`,     priority: 0.7 },
     { url: `${BASE}/sound`,           priority: 0.7 },
@@ -45,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   const artistPages = allArtists.map(a => ({
-    url: `${BASE}/artists/${a.slug}`,
+    url: `${BASE}/profiles/${a.slug}`,
     lastModified: new Date(),
     changeFrequency: 'yearly' as const,
     priority: 0.7,

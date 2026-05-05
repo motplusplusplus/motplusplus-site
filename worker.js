@@ -3,9 +3,15 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // /residents/* → /artists/*
+    // /residents/* → /profiles/*
     if (path === '/residents' || path.startsWith('/residents/')) {
-      url.pathname = path.replace(/^\/residents/, '/artists');
+      url.pathname = path.replace(/^\/residents/, '/profiles');
+      return Response.redirect(url.toString(), 301);
+    }
+
+    // /artists/* → /profiles/*
+    if (path === '/artists' || path.startsWith('/artists/')) {
+      url.pathname = path.replace(/^\/artists/, '/profiles');
       return Response.redirect(url.toString(), 301);
     }
 

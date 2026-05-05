@@ -211,7 +211,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
                 hosting artist
               </p>
               <Link
-                href={`/artists/${studio.hostSlug}`}
+                href={`/profiles/${studio.hostSlug}`}
                 style={{
                   fontSize: "18px",
                   fontWeight: 300,
