@@ -132,7 +132,7 @@ export default function PerformancePage() {
             {performanceArtists.map(a => (
               <Link
                 key={a.slug}
-                href={`/artists/${a.slug}`}
+                href={`/profiles/${a.slug}`}
                 style={{
                   fontSize: "14px",
                   fontWeight: 300,

@@ -16,9 +16,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: `${name} — artist featured in MoT+++ exhibitions and programs in Ho Chi Minh City, Vietnam.`,
     openGraph: {
       title: `${name} | MoT+++`,
-      url: `https://motplusplusplus.com/artists/${slug}`,
+      url: `https://motplusplusplus.com/profiles/${slug}`,
     },
-    alternates: { canonical: `https://motplusplusplus.com/artists/${slug}` },
+    alternates: { canonical: `https://motplusplusplus.com/profiles/${slug}` },
   };
 }
 
@@ -144,8 +144,8 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
 
         {/* breadcrumb */}
         <div style={{ marginBottom: "52px" }}>
-          <Link href="/artists" style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em" }}>
-            ← artists
+          <Link href="/profiles" style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em" }}>
+            ← profiles
           </Link>
         </div>
 
@@ -283,8 +283,8 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           display: "flex", justifyContent: "space-between", alignItems: "center",
           flexWrap: "wrap", gap: "16px",
         }}>
-          <Link href="/artists" style={{ fontSize: "13px", color: "#666666" }}>
-            ← back to artists
+          <Link href="/profiles" style={{ fontSize: "13px", color: "#666666" }}>
+            ← back to profiles
           </Link>
           {artist.collective && (
             <Link

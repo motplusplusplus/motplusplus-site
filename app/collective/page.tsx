@@ -240,7 +240,7 @@ export default function CollectivePage() {
                     {member.name}
                   </h2>
                   <Link
-                    href={`/artists/${member.slug}`}
+                    href={`/profiles/${member.slug}`}
                     style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}
                   >
                     artist profile ↗
