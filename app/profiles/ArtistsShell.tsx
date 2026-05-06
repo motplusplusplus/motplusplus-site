@@ -9,6 +9,7 @@ export type ArtistEntry = {
   isAfarmResident: boolean;
   isHostingArtist: boolean;
   bioPage: boolean;
+  role?: string;
 };
 
 const FILTERS = ["all", "a.Farm residents", "hosting artists", "other"] as const;
@@ -89,14 +90,9 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
                       <span style={{ fontSize: "11px", color: "#aaaaaa", marginLeft: "6px" }}>1993–2020</span>
                     )}
                   </p>
-                  {a.isHostingArtist && (
+                  {(a.role || a.isHostingArtist || (a.isAfarmResident && !a.isHostingArtist)) && (
                     <p style={{ fontSize: "10px", color: "#cccccc", letterSpacing: "0.04em", marginTop: "2px" }}>
-                      hosting artist
-                    </p>
-                  )}
-                  {a.isAfarmResident && !a.isHostingArtist && (
-                    <p style={{ fontSize: "10px", color: "#cccccc", letterSpacing: "0.04em", marginTop: "2px" }}>
-                      a.Farm resident
+                      {a.role ?? (a.isHostingArtist ? "hosting artist" : "a.Farm resident")}
                     </p>
                   )}
                 </Link>

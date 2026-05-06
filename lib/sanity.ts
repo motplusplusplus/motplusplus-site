@@ -78,6 +78,7 @@ const ARTIST_FIELDS = `
   isAfarmResident,
   season,
   period,
+  role,
   "bio": pt::text(bio),
   "vnBio": pt::text(vnBio),
   instagram,

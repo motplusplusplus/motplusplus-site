@@ -24,6 +24,7 @@ export default async function ArtistsPage() {
       isAfarmResident: isResident,
       isHostingArtist: isHost,
       bioPage: BIO_SLUGS.has(a.slug) || isHost,
+      role: a.role ?? undefined,
     };
   });
 
