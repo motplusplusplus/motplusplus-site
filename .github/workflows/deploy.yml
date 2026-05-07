@@ -38,7 +38,12 @@ jobs:
           SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
 
       - name: Build
-        run: npm run build
+        run: |
+          if [ -z "$NEXT_PUBLIC_MAPBOX_TOKEN" ]; then
+            echo "❌ NEXT_PUBLIC_MAPBOX_TOKEN secret is not set — map will be broken. Add it in GitHub → Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          npm run build
         env:
           NEXT_PUBLIC_MAPBOX_TOKEN: ${{ secrets.NEXT_PUBLIC_MAPBOX_TOKEN }}
 
