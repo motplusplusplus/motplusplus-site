@@ -1,8 +1,9 @@
 name: Deploy site
 
 on:
-  push:
-    branches: [main]
+  # push trigger disabled — CI lacks NEXT_PUBLIC_MAPBOX_TOKEN; deploy locally with wrangler
+  # push:
+  #   branches: [main]
   workflow_dispatch:
     inputs:
       triggered_by:
