@@ -74,3 +74,17 @@ a {
 .snd-card-img img { transition: transform 0.45s ease; display: block; }
 .snd-card:hover .snd-card-img img { transform: scale(1.04); }
 .snd-card:hover p { color: #000000; }
+
+/* press page rows */
+.press-row-inner {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0 32px;
+  align-items: start;
+}
+@media (max-width: 520px) {
+  .press-row-inner {
+    grid-template-columns: 1fr;
+    gap: 16px 0;
+  }
+}

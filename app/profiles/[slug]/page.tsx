@@ -50,7 +50,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
     resident:   !!(sanityArtist!.isAfarmResident),
     studioHost: false,
     origin:     ([sanityArtist!.originCity, sanityArtist!.nationality] as string[]).filter(Boolean).join(", "),
-    website:    ((sanityArtist!.links?.[0] as any)?.url ?? "").replace(/^https?:\/\//, ""),
+    website:    ((sanityArtist!.links?.[0] as { url?: string })?.url ?? "").replace(/^https?:\/\//, ""),
     bio:        (sanityArtist!.bio as string) ?? "",
     photo:      (sanityArtist!.portrait as string) ?? "",
     workImages: (sanityArtist!.images as string[]) ?? [],

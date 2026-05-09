@@ -171,20 +171,22 @@
     }
   },
   {
-    "slug": "saola-dalat",
-    "name": "Saola",
+    "slug": "curu",
+    "name": "Cù Rú Studio",
     "hostSlug": null,
     "address": "",
     "neighborhood": "Đà Lạt",
     "description": "",
-    "active": false,
-    "hidden": true,
+    "active": true,
+    "hidden": false,
     "note": "",
     "images": [
-      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/saola/saola-studio.jpg"
+      "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/saola/cu-ru-studio.jpg"
     ],
     "locationKeywords": [
       "saola",
+      "cu ru",
+      "cù rú",
       "da lat",
       "dalat",
       "đà lạt"
@@ -581,6 +583,7 @@
       "nguyen thuy hang",
       "nguyễn thúy-hằng"
     ],
+    "videoUrl": "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/nguyen-thuy-hang/studio-space.mp4",
     "mapLat": null,
     "mapLng": null,
     "practical": {

@@ -114,12 +114,7 @@ export default function PressPage() {
             }}
             className="press-row"
           >
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "140px 1fr",
-              gap: "0 32px",
-              alignItems: "start",
-            }}>
+            <div className="press-row-inner">
               <div>
                 <p style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em", marginBottom: "6px" }}>
                   {item.outlet}

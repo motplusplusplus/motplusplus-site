@@ -282,6 +282,32 @@ export default async function AFarmPage() {
           </div>
         </div>
 
+        {/* about */}
+        <div
+          style={{
+            borderTop: "1px solid #e5e5e5",
+            paddingTop: "48px",
+            marginBottom: "80px",
+            maxWidth: "720px",
+          }}
+        >
+          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "8px" }}>
+            a.Farm international art residency
+          </p>
+          <p style={{ fontSize: "13px", color: "#aaaaaa", marginBottom: "32px" }}>
+            Ho Chi Minh City, Vietnam
+          </p>
+          <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "24px" }}>
+            Established in 2018 by MoT+++, a.Farm is the first and longest-running international art residency in Ho Chi Minh City, co-founded by MoT+++, Sàn Art and Nguyễn Art Foundation. We established a series of exhibitions that democratizes access for all artists, regardless of medium, career stage, or category; inaugurated by <Link href="/events/all-animals-are-equal-1" style={{ color: "#444444", borderBottom: "1px solid #cccccc", paddingBottom: "1px" }}>All Animals Are Equal</Link>. The spirit of the program is one of non-stop transformation, never fixed, always current. At its heart, a.Farm&rsquo;s vision is to make the art world a better place!
+          </p>
+          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "16px", marginTop: "36px" }}>
+            the model
+          </p>
+          <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444" }}>
+            The residency is hosted by local artists without nationality restriction. Participating in the program means contributing your ideas, curiosity, and knowledge; you bring the energy, and together we create something that didn&rsquo;t exist before. The residency is structured around that proximity: time inside a practice, inside a network, inside a city that rewards the curious.
+          </p>
+        </div>
+
         {/* cta */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px" }}>
           <Link

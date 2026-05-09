@@ -65,14 +65,15 @@ export type StudioEntry = {
   profileVi?:       StudioProfile;
 };
 
-// JSON supplement: fields not stored in Sanity (hostSlug, locationKeywords, portraitPairs)
-type JsonSupplement = { hostSlug: string | null; locationKeywords: string[]; portraitPairs?: PortraitPair[] };
+// JSON supplement: fields not stored in Sanity (hostSlug, locationKeywords, portraitPairs, videoUrl)
+type JsonSupplement = { hostSlug: string | null; locationKeywords: string[]; portraitPairs?: PortraitPair[]; videoUrl?: string };
 const jsonSupplements: Record<string, JsonSupplement> = {};
-for (const s of studiosRaw as Array<{ slug: string; hostSlug?: string | null; locationKeywords?: string[]; portraitPairs?: PortraitPair[] }>) {
+for (const s of studiosRaw as Array<{ slug: string; hostSlug?: string | null; locationKeywords?: string[]; portraitPairs?: PortraitPair[]; videoUrl?: string }>) {
   jsonSupplements[s.slug] = {
     hostSlug: s.hostSlug ?? null,
     locationKeywords: s.locationKeywords ?? [],
     portraitPairs: s.portraitPairs,
+    videoUrl: s.videoUrl,
   };
 }
 
@@ -89,9 +90,10 @@ function sanityToStudioEntry(raw: any): StudioEntry {
   );
 
   const profile: StudioProfile | undefined = hasProfile ? {
-    studioName:        raw.studioName,
-    portrait:          raw.portrait ?? undefined,
-    practiceBio:       raw.practiceBio,
+    studioName:          raw.studioName,
+    portrait:            raw.portrait ?? undefined,
+    walkthroughVideoUrl: supplement.videoUrl,
+    practiceBio:         raw.practiceBio,
     welcomeBio:        raw.welcomeBio,
     collaboration:     raw.collaboration,
     languages:         typeof raw.languages === 'string'

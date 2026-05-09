@@ -32,6 +32,19 @@
 - `artists-data.json` — all artist profiles
 - `lib/events.ts` — AFARM_RESIDENT_SLUGS, BIO_SLUGS, HIDDEN_SLUGS (authoritative lists)
 
+## Known gotchas
+
+### Stale build cache (Next.js + Sanity)
+- Next.js caches Sanity fetch responses between builds in `.next/cache`
+- If pages show missing images/data after a deploy, the cache is stale
+- Fix: `rm -rf .next && npm run build` before deploying
+- Always do a clean build after significant Sanity content changes
+
+### Mapbox GL + CSS filter (MuseumMap.tsx)
+- **Never** apply `filter` (including `grayscale`) to `.mapboxgl-canvas-container` or any ancestor of the map container div
+- CSS `filter` on an ancestor of a WebGL canvas forces a compositing group — the WebGL output goes blank in all major browsers (pins/markers survive because they're DOM elements, not WebGL)
+- **Correct pattern:** `filter: grayscale(1)` applied directly to `.mapboxgl-canvas` — post-processes the canvas output without touching the WebGL pipeline
+
 ## Important rules
 - `AFARM_RESIDENT_SLUGS` in lib/events.ts is sourced from WP XML export — only add slugs confirmed in that XML
 - WP XML at: `/Volumes/MoT/EXPORTED DATA/wordpress/motplusplusplus.wordpress.com-2026-03-17-04_52_48/`

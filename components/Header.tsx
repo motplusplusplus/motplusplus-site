@@ -61,7 +61,11 @@ export default function Header() {
 
   useEffect(() => {
     if (searchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
+      // Delay focus slightly so iOS keyboard doesn't pop up during the 300ms
+      // ghost-click window — prevents layout shift from causing ghost tap to
+      // land on page content below the search icon
+      const t = setTimeout(() => searchInputRef.current?.focus(), 350);
+      return () => clearTimeout(t);
     }
   }, [searchOpen]);
 
@@ -147,6 +151,7 @@ export default function Header() {
                 alignItems: "center",
                 justifyContent: "center",
                 color: "#111111",
+                touchAction: "manipulation",
               }}
             >
               <svg
@@ -230,7 +235,7 @@ export default function Header() {
             top: "60px",
             left: 0,
             right: 0,
-            zIndex: 40,
+            zIndex: 51,
             backgroundColor: "#ffffff",
             borderBottom: "1px solid #e5e5e5",
             padding: "20px 24px",
@@ -372,7 +377,7 @@ export default function Header() {
         </div>
       )}
 
-      {/* mobile primary nav row */}
+      {/* mobile primary nav row — hidden when search overlay is open */}
       <div
         style={{
           position: "fixed",
@@ -385,6 +390,7 @@ export default function Header() {
           overflowX: "auto",
           WebkitOverflowScrolling: "touch" as const,
           scrollbarWidth: "none" as const,
+          display: searchOpen ? "none" : undefined,
         }}
         className="mobile-nav-row"
       >

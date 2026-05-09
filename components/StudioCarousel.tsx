@@ -26,8 +26,15 @@ function shuffleUnpinned(items: CarouselItem[]): CarouselItem[] {
 }
 
 export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
-  const ordered = useMemo(() => shuffleUnpinned(items), [items]);
+  // Shuffle must run client-side only — Math.random() in useMemo causes a
+  // server/client hydration mismatch (different shuffle orders), which makes
+  // the visible image and the click href point to different studios.
+  const [ordered, setOrdered] = useState<CarouselItem[]>(items);
   const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setOrdered(shuffleUnpinned(items));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [isMobile, setIsMobile] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isHovering, setIsHovering] = useState(false);

@@ -41,6 +41,8 @@ export const BIO_SLUGS = new Set([
   "dao-tung","le-hien-minh","bang-nhat-linh",
   // a.farm residents
   "perrine-lievens","celina-huynh",
+  // a.Farm hosting artists
+  "andrew-newell-walther","karlie-ho","le-phi-long","quoc-anh-le","hoang-nam-viet","nguyen-thuy-hang",
   // MoT+++ collective members
   "cam-xanh",
   // artists (MoT+++ collaborators with bio pages)

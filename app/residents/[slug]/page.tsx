@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { BIO_SLUGS, getRelatedEvents } from "@/lib/events";
-import { getAllEvents, getEventBySlug } from "@/lib/sanity";
+import { getAllEvents, getEventBySlug, getEventsByArtistRef } from "@/lib/sanity";
 import { getArtist } from "@/lib/artists";
 import { allStudios } from "@/lib/studios";
 
@@ -55,7 +55,24 @@ export default async function ResidentPage({ params }: { params: Promise<{ slug:
   const workImages = artist?.workImages || [];
   const website = artist?.website || "";
 
-  const relatedEvents = getRelatedEvents(event, allEvents);
+  // Name-based matching (most artists)
+  const nameMatchedEvents = getRelatedEvents(event, allEvents);
+
+  // Sanity-reference lookup — catches artists whose surnames are blocklisted
+  // (e.g. "Nguyen") so name matching returns nothing.
+  // Only look up the artist whose slug matches this page — the bio event may link
+  // multiple artists (e.g. collaborators) and we must not pull in their events.
+  const pageArtist = (event.artists ?? []).find((a: { slug: string }) => a.slug === slug);
+  const sanityRefEvents = pageArtist
+    ? await getEventsByArtistRef((pageArtist as { _id: string })._id)
+    : [];
+
+  // Merge: name-matched first, then any extras from Sanity refs, deduped by slug
+  const seenSlugs = new Set(nameMatchedEvents.map(e => e.slug));
+  const relatedEvents = [
+    ...nameMatchedEvents,
+    ...sanityRefEvents.filter(e => !seenSlugs.has(e.slug)),
+  ].sort((a, b) => b.sortDate.localeCompare(a.sortDate));
 
   const galleryImages = event.images.filter(url => {
     const filename = url.split('/').pop() || '';
@@ -116,11 +133,26 @@ export default async function ResidentPage({ params }: { params: Promise<{ slug:
 
       <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "52px 24px 96px" }}>
 
-        {/* breadcrumb */}
-        <div style={{ marginBottom: "52px" }}>
+        {/* breadcrumb + hosting artist badge */}
+        <div style={{ marginBottom: "52px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
           <Link href="/residents" style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em" }}>
             ← previous residents
           </Link>
+          {studio && (
+            <Link
+              href={`/afarm/studios/${studio.slug}`}
+              style={{
+                fontSize: "11px",
+                color: "#ffffff",
+                backgroundColor: "#111111",
+                letterSpacing: "0.08em",
+                padding: "6px 14px",
+                textDecoration: "none",
+              }}
+            >
+              hosting artist — view studio ↗
+            </Link>
+          )}
         </div>
 
         {/* metadata strip */}
@@ -277,7 +309,7 @@ export default async function ResidentPage({ params }: { params: Promise<{ slug:
           </Link>
           {studio && (
             <Link
-              href={`/studios/${studio.slug}`}
+              href={`/afarm/studios/${studio.slug}`}
               style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}
             >
               view studio ↗

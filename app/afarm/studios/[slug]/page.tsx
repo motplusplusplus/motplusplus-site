@@ -61,7 +61,9 @@ export default async function StudioPage({
     ...(profile?.workImages ?? []),
   ];
 
-  const embedSrc = profile?.walkthroughVideoUrl ? toEmbedSrc(profile.walkthroughVideoUrl) : null;
+  const walkthroughUrl = profile?.walkthroughVideoUrl ?? null;
+  const embedSrc = walkthroughUrl ? toEmbedSrc(walkthroughUrl) : null;
+  const isDirectVideo = walkthroughUrl && !embedSrc && /\.(mp4|webm|ogg)$/i.test(walkthroughUrl);
 
   return (
     <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px 96px" }}>
@@ -156,20 +158,29 @@ export default async function StudioPage({
       </div>
 
       {/* walkthrough video — full width */}
-      {embedSrc && (
+      {(embedSrc || isDirectVideo) && (
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "48px" }}>
           <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
             walkthrough
           </p>
-          <div style={{ position: "relative", width: "100%", maxWidth: "900px", aspectRatio: "16/9" }}>
-            <iframe
-              src={embedSrc}
-              title={`${studio.name} studio walkthrough`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
+          {embedSrc ? (
+            <div style={{ position: "relative", width: "100%", maxWidth: "900px", aspectRatio: "16/9" }}>
+              <iframe
+                src={embedSrc}
+                title={`${studio.name} studio walkthrough`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
+              />
+            </div>
+          ) : (
+            <video
+              src={walkthroughUrl!}
+              controls
+              playsInline
+              style={{ width: "100%", maxWidth: "640px", display: "block", backgroundColor: "#000" }}
             />
-          </div>
+          )}
         </div>
       )}
 

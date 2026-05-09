@@ -67,6 +67,11 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   // contentImages = all gallery images except the one used as hero
   const contentImages = galleryImages.filter(u => u !== heroImg);
 
+  const SEE_ALSO: Record<string, { slug: string; title: string }[]> = {
+    "all-animals-are-equal-1": [{ slug: "all-animals-are-equal-2", title: "All Animals Are Equal #2" }],
+    "all-animals-are-equal-2": [{ slug: "all-animals-are-equal-1", title: "All Animals Are Equal #1" }],
+  };
+
   return (
     <EventContent
       title={event.title}
@@ -85,6 +90,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       wpLink={event.wpLink}
       prevEvent={prev ? { slug: prev.slug, title: prev.title } : null}
       nextEvent={next ? { slug: next.slug, title: next.title } : null}
+      seeAlso={SEE_ALSO[slug]}
     />
   );
 }

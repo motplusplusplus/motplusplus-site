@@ -56,6 +56,12 @@ export default function MuseumMap() {
   const [manifestoOpen, setManifestoOpen] = useState(false);
   const [imgViewerIndex, setImgViewerIndex] = useState(0);
   const imgTouchStartX = useRef<number | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [pseudoFullscreen, setPseudoFullscreen] = useState(false);
+  const isMapFullscreen = isFullscreen || pseudoFullscreen;
+  const [expandedOpen, setExpandedOpen] = useState(false);
+  const [expandedImgIndex, setExpandedImgIndex] = useState(0);
+  const expandedTouchStartX = useRef<number | null>(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -114,8 +120,10 @@ export default function MuseumMap() {
         "images": images[].asset->url,
       }
     `).then((data: MuseumLocation[]) => {
-      if (data && data.length > 0) {
-        setLocations(data);
+      // Only use Sanity data if we have locations with valid coordinates
+      const validData = data?.filter(d => d.coordinates?.lat && d.coordinates?.lng) ?? [];
+      if (validData.length > 0) {
+        setLocations(validData);
         setIsDemo(false);
       } else {
         setLocations(DEMO_LOCATIONS);
@@ -290,6 +298,63 @@ export default function MuseumMap() {
     }
   }, [locations, flyToLocation]);
 
+  const toggleFullscreen = useCallback(async () => {
+    const el = mapSectionRef.current;
+    if (!el) return;
+    if (pseudoFullscreen) {
+      setPseudoFullscreen(false);
+      return;
+    }
+    if (document.fullscreenEnabled) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        el.requestFullscreen().catch(() => setPseudoFullscreen(true));
+      }
+    } else {
+      // iOS Safari: no fullscreen API — use fixed-position overlay
+      setPseudoFullscreen(true);
+    }
+  }, [pseudoFullscreen]);
+
+  // Sync native fullscreen state and resize map after transition
+  useEffect(() => {
+    const onFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+      setTimeout(() => mapRef.current?.resize(), 150);
+    };
+    document.addEventListener('fullscreenchange', onFsChange);
+    return () => document.removeEventListener('fullscreenchange', onFsChange);
+  }, []);
+
+  // Pseudo-fullscreen (iOS): lock scroll, handle Escape, resize map
+  useEffect(() => {
+    setTimeout(() => mapRef.current?.resize(), 150);
+    if (!pseudoFullscreen) return;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setPseudoFullscreen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [pseudoFullscreen]);
+
+  // Close expanded view when selection changes
+  useEffect(() => { if (!selected) setExpandedOpen(false); }, [selected]);
+
+  // Expanded view: scroll lock + Escape
+  useEffect(() => {
+    if (!expandedOpen) return;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setExpandedOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [expandedOpen]);
+
   const selectArtist = (artist: string | null) => {
     setArtistFilter(artist);
     setSelected(null);
@@ -309,10 +374,12 @@ export default function MuseumMap() {
   return (
     <div>
       <style>{`
-        /* Grayscale only the map tiles canvas — NOT the marker layer.
-           Applying filter to the container creates a stacking context that
-           breaks Mapbox's translate3d marker positioning. */
-        .mapboxgl-canvas-container { filter: grayscale(1); }
+        /* Grayscale the map canvas directly.
+           Never apply filter to .mapboxgl-canvas-container or any ancestor —
+           a CSS filter on a parent wraps the WebGL canvas in a compositing layer
+           which blanks the WebGL output in Chrome, Firefox, and Safari.
+           Filtering the canvas element itself is a safe post-process step. */
+        .mapboxgl-canvas { filter: grayscale(1); }
         @keyframes pin-pulse {
           0%   { box-shadow: 0 0 0 0   rgba(0,0,0,0.35), 0 1px 4px rgba(0,0,0,0.25); }
           60%  { box-shadow: 0 0 0 9px rgba(0,0,0,0),    0 1px 4px rgba(0,0,0,0.25); }
@@ -350,7 +417,13 @@ export default function MuseumMap() {
         </div>
       )}
 
-      <div ref={mapSectionRef} style={{ borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5', position: 'relative', width: '100%' }}>
+      <div ref={mapSectionRef} style={{
+        borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5',
+        position: pseudoFullscreen ? 'fixed' : 'relative',
+        ...(pseudoFullscreen ? { inset: 0 } : {}),
+        zIndex: pseudoFullscreen ? 9999 : undefined,
+        width: '100%',
+      }}>
 
         {/* tap-to-close overlay on mobile when panel is open */}
         {selected && isMobile && (
@@ -369,8 +442,8 @@ export default function MuseumMap() {
           ref={mapContainer}
           style={{
             width: '100%',
-            height: isMobile ? '80vh' : '65vh',
-            minHeight: isMobile ? '500px' : '480px',
+            height: isMapFullscreen ? '100vh' : (isMobile ? '80vh' : '65vh'),
+            minHeight: isMapFullscreen ? 'unset' : (isMobile ? '500px' : '480px'),
             backgroundColor: '#f0f0f0',
           }}
         />
@@ -452,6 +525,34 @@ export default function MuseumMap() {
           </div>
         )}
 
+        {/* fullscreen toggle */}
+        {!loading && (
+          <button
+            onClick={toggleFullscreen}
+            title={isMapFullscreen ? 'exit fullscreen' : 'fullscreen'}
+            aria-label={isMapFullscreen ? 'exit fullscreen' : 'fullscreen'}
+            style={{
+              position: 'absolute', bottom: '62px', right: '16px',
+              width: '32px', height: '32px',
+              backgroundColor: 'rgba(255,255,255,0.95)',
+              border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.18)',
+              zIndex: 10,
+            }}
+          >
+            {isMapFullscreen ? (
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#444" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 1v4H1M9 1v4h4M5 13v-4H1M9 13v-4h4"/>
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#444" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 5V1h4M13 5V1H9M1 9v4h4M13 9v4H9"/>
+              </svg>
+            )}
+          </button>
+        )}
+
         {/* artist filter active indicator */}
         {artistFilter && (
           <div style={{
@@ -501,9 +602,23 @@ export default function MuseumMap() {
                 <div style={{ width: '36px', height: '4px', borderRadius: '2px', backgroundColor: '#dddddd', position: 'absolute' }} />
               )}
               <button
-                onClick={() => setSelected(null)}
+                onClick={() => { setExpandedImgIndex(0); setExpandedOpen(true); }}
+                title="expand"
+                aria-label="expand entry"
                 style={{
                   marginLeft: 'auto',
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  color: '#bbbbbb', lineHeight: 1, padding: '4px 8px',
+                  display: 'flex', alignItems: 'center',
+                }}
+              >
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11 11L2 2M6 2H2v4"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => setSelected(null)}
+                style={{
                   background: 'none', border: 'none', cursor: 'pointer',
                   fontSize: '20px', color: '#aaaaaa', lineHeight: 1, padding: '4px',
                 }}
@@ -1192,6 +1307,197 @@ export default function MuseumMap() {
           </div>
         </div>
       )}
+
+      {/* ─── EXPANDED ENTRY VIEW ─── */}
+      {expandedOpen && selected && (() => {
+        const imgs = [selected.mainImage, ...(selected.images || [])].filter(Boolean) as string[];
+        const navImg = (dir: 1 | -1) =>
+          setExpandedImgIndex(i => (i + dir + imgs.length) % imgs.length);
+        const trashId = selected.trashItemId || MUSEUM_TO_TRASH[selected._id];
+        return (
+          <div style={{
+            position: 'fixed', inset: 0, zIndex: 10000,
+            backgroundColor: 'white',
+            display: 'flex', flexDirection: isMobile ? 'column' : 'row',
+            overflowY: isMobile ? 'auto' : 'hidden',
+          }}>
+            {/* close */}
+            <button
+              onClick={() => setExpandedOpen(false)}
+              style={{
+                position: 'absolute', top: '16px', right: '16px', zIndex: 10,
+                background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer',
+                width: '36px', height: '36px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '22px', color: '#888',
+                boxShadow: '0 1px 6px rgba(0,0,0,0.12)',
+              }}
+            >×</button>
+
+            {/* ── images (left on desktop, top on mobile) ── */}
+            {imgs.length > 0 && (
+              <div style={{
+                width: isMobile ? '100%' : '50%',
+                height: isMobile ? '45vh' : '100vh',
+                backgroundColor: '#f5f5f5',
+                display: 'flex', flexDirection: 'column',
+                flexShrink: 0, position: isMobile ? 'relative' : 'sticky', top: 0,
+              }}>
+                {/* main image */}
+                <div
+                  style={{ flex: 1, position: 'relative', overflow: 'hidden', minHeight: 0 }}
+                  onTouchStart={e => { expandedTouchStartX.current = e.touches[0].clientX; }}
+                  onTouchEnd={e => {
+                    if (expandedTouchStartX.current === null) return;
+                    const dx = e.changedTouches[0].clientX - expandedTouchStartX.current;
+                    if (Math.abs(dx) > 50) navImg(dx < 0 ? 1 : -1);
+                    expandedTouchStartX.current = null;
+                  }}
+                >
+                  <img
+                    src={imgs[expandedImgIndex]}
+                    alt={selected.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                  />
+                  {imgs.length > 1 && (<>
+                    <button
+                      onClick={() => navImg(-1)}
+                      style={{
+                        position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
+                        background: 'rgba(255,255,255,0.82)', border: 'none', cursor: 'pointer',
+                        width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '18px', color: '#555', boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
+                      }}
+                    >‹</button>
+                    <button
+                      onClick={() => navImg(1)}
+                      style={{
+                        position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
+                        background: 'rgba(255,255,255,0.82)', border: 'none', cursor: 'pointer',
+                        width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '18px', color: '#555', boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
+                      }}
+                    >›</button>
+                    <div style={{
+                      position: 'absolute', bottom: '10px', right: '12px',
+                      fontSize: '10px', color: '#888', letterSpacing: '0.06em',
+                      backgroundColor: 'rgba(255,255,255,0.82)', padding: '2px 7px',
+                    }}>
+                      {expandedImgIndex + 1} / {imgs.length}
+                    </div>
+                  </>)}
+                </div>
+                {/* thumbnail strip */}
+                {imgs.length > 1 && (
+                  <div style={{ display: 'flex', gap: '2px', backgroundColor: '#e8e8e8', flexShrink: 0, overflowX: 'auto' }}>
+                    {imgs.map((src, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setExpandedImgIndex(i)}
+                        style={{
+                          flexShrink: 0, padding: 0, border: 'none', cursor: 'pointer',
+                          outline: i === expandedImgIndex ? '2px solid #333' : 'none',
+                          outlineOffset: '-2px',
+                        }}
+                      >
+                        <img src={src} alt="" style={{ width: '72px', height: '54px', objectFit: 'cover', display: 'block' }} />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── text (right on desktop, below on mobile) ── */}
+            <div style={{
+              flex: 1, overflowY: 'auto',
+              padding: isMobile ? '28px 20px 64px' : '56px 52px 56px',
+            }}>
+              <div style={{
+                display: 'inline-block', fontSize: '9px', letterSpacing: '0.1em',
+                color: ACCESS_COLORS[selected.accessType],
+                border: `1px solid ${ACCESS_COLORS[selected.accessType]}`,
+                padding: '2px 7px', marginBottom: '20px',
+              }}>
+                {ACCESS_LABELS[selected.accessType]}
+              </div>
+
+              <p style={{ fontSize: isMobile ? '24px' : '30px', fontWeight: 300, color: '#111', lineHeight: 1.15, marginBottom: '10px' }}>
+                {selected.title}
+              </p>
+              <p style={{ fontSize: '15px', color: '#666', fontWeight: 300, marginBottom: '28px', lineHeight: 1.5 }}>
+                {selected.artist}
+                {selected.year ? `, ${selected.year}` : ''}
+                {selected.medium ? ` — ${selected.medium}` : ''}
+              </p>
+
+              {selected.description && (
+                <p style={{ fontSize: '15px', lineHeight: 1.9, color: '#444', marginBottom: '36px' }}>
+                  {selected.description}
+                </p>
+              )}
+
+              <div style={{ borderTop: '1px solid #eeeeee', paddingTop: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                {selected.neighbourhood && (
+                  <div>
+                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>neighbourhood</p>
+                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300 }}>{selected.neighbourhood}</p>
+                  </div>
+                )}
+                {selected.hostName && (
+                  <div>
+                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>hosted by</p>
+                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300 }}>{selected.hostName}</p>
+                  </div>
+                )}
+                {selected.dateAdded && (
+                  <div>
+                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>added to the collection</p>
+                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300 }}>{selected.dateAdded}</p>
+                  </div>
+                )}
+                {selected.hours && (
+                  <div>
+                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>hours</p>
+                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300 }}>{selected.hours}</p>
+                  </div>
+                )}
+                {selected.accessDetails && (
+                  <div>
+                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>how to visit</p>
+                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300, lineHeight: 1.7 }}>{selected.accessDetails}</p>
+                  </div>
+                )}
+                {selected.contactMethod && (
+                  <div>
+                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>contact</p>
+                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300 }}>{selected.contactMethod}</p>
+                  </div>
+                )}
+              </div>
+
+              {trashId && (
+                <a
+                  href={`/trash?item=${trashId}`}
+                  style={{
+                    display: 'inline-block', marginTop: '28px',
+                    fontSize: '13px', color: '#fff', backgroundColor: '#111',
+                    padding: '11px 22px', textDecoration: 'none', letterSpacing: '0.03em',
+                  }}
+                >
+                  inquire through +1 trash
+                </a>
+              )}
+
+              {selected._demo && (
+                <p style={{ fontSize: '10px', color: '#ccc', marginTop: '28px', letterSpacing: '0.06em' }}>
+                  demo content — not a real work or artist
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ─── PANEL IMAGE VIEWER ─── */}
       {imgViewerOpen && selected && (() => {
