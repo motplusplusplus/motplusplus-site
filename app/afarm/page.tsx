@@ -213,7 +213,7 @@ export default async function AFarmPage() {
           }}
         >
           pairings of resident with hosting artist are ultimately determined by
-          a.Farm — we consider practice, timing, and fit carefully before
+          a.Farm. we consider practice, timing, and fit carefully before
           confirming any placement.
         </p>
 
@@ -245,7 +245,7 @@ export default async function AFarmPage() {
             heARTalk
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444" }}>
-            a weekly gathering of all current +a.Farm residents and affiliates —
+            a weekly gathering of all current +a.Farm residents and affiliates.
             an open discussion period to explore what resources the community can
             bring to support artistic endeavors. in-person, based in ho chi minh
             city.
@@ -278,7 +278,7 @@ export default async function AFarmPage() {
             <p style={{ marginBottom: "4px" }}>priority to 3 months residency.</p>
             <p style={{ marginBottom: "4px" }}>extensions available at the same rate.</p>
             <p style={{ marginBottom: "4px" }}>no refunds.</p>
-            <p>inquiries are welcome — commitments are firm.</p>
+            <p>inquiries are welcome. commitments are firm.</p>
           </div>
         </div>
 
@@ -295,16 +295,16 @@ export default async function AFarmPage() {
             a.Farm international art residency
           </p>
           <p style={{ fontSize: "13px", color: "#aaaaaa", marginBottom: "32px" }}>
-            Ho Chi Minh City, Vietnam
+            ho chi minh city, vietnam
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "24px" }}>
-            Established in 2018 by MoT+++, a.Farm is the first and longest-running international art residency in Ho Chi Minh City, co-founded by MoT+++, Sàn Art and Nguyễn Art Foundation. We established a series of exhibitions that democratizes access for all artists, regardless of medium, career stage, or category; inaugurated by <Link href="/events/all-animals-are-equal-1" style={{ color: "#444444", borderBottom: "1px solid #cccccc", paddingBottom: "1px" }}>All Animals Are Equal</Link>. The spirit of the program is one of non-stop transformation, never fixed, always current. At its heart, a.Farm&rsquo;s vision is to make the art world a better place!
+            established in 2018 by MoT+++, a.Farm is the first and longest-running international art residency in ho chi minh city, co-founded by MoT+++, Sàn Art and Nguyễn Art Foundation. we established a series of exhibitions that democratizes access for all artists, regardless of medium, career stage, or category; inaugurated by <Link href="/events/all-animals-are-equal-1" style={{ color: "#444444", borderBottom: "1px solid #cccccc", paddingBottom: "1px" }}>all animals are equal</Link>. the spirit of the program is one of non-stop transformation, never fixed, always current. at its heart, a.Farm&rsquo;s vision is to make the art world a better place!
           </p>
           <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "16px", marginTop: "36px" }}>
             the model
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444" }}>
-            The residency is hosted by local artists without nationality restriction. Participating in the program means contributing your ideas, curiosity, and knowledge; you bring the energy, and together we create something that didn&rsquo;t exist before. The residency is structured around that proximity: time inside a practice, inside a network, inside a city that rewards the curious.
+            the residency is hosted by local artists without nationality restriction. participating in the program means contributing your ideas, curiosity, and knowledge; you bring the energy, and together we create something that didn&rsquo;t exist before. the residency is structured around that proximity: time inside a practice, inside a network, inside a city that rewards the curious.
           </p>
         </div>
 

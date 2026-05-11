@@ -50,7 +50,7 @@ export default function MuseumPage() {
       {/* hosting CTA */}
       <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "48px 24px 96px", borderTop: "1px solid #e5e5e5" }}>
         <p style={{ fontSize: "15px", color: "#444444", maxWidth: "480px", lineHeight: 1.7, marginBottom: "24px" }}>
-          interested in hosting a work in your space — anywhere in the world.
+          interested in hosting a work in your space, anywhere in the world.
         </p>
         <Link
           href="/museum/inquire"
