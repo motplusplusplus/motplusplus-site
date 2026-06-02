@@ -53,3 +53,10 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: f2a86349fa252c2582bc0f478ccdf9ab
+
+      # Cloudflare Workers Assets sometimes silently returns 404 for large files (>500KB) after
+      # marking them as "already uploaded" — the file is in CF's content store but not served.
+      # This has broken the museum map twice. Verify large chunks are reachable post-deploy.
+      # If this step fails: make a trivial change to components/MuseumMap.tsx, rebuild, redeploy.
+      - name: Verify large chunks are accessible
+        run: npm run verify-deploy

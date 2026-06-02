@@ -8,7 +8,10 @@
     "build:cf": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "eslint",
-    "validate": "node scripts/validate-sanity-images.mjs"
+    "validate": "node scripts/validate-sanity-images.mjs",
+    "verify-deploy": "node scripts/verify-deploy.js",
+    "predeploy": "node -e \"if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN) { console.error('\\n❌  NEXT_PUBLIC_MAPBOX_TOKEN is not set.\\n    The map will be broken in the deployed build.\\n    Set it in .env.local and re-run: NEXT_PUBLIC_MAPBOX_TOKEN=$(grep NEXT_PUBLIC_MAPBOX_TOKEN .env.local | cut -d= -f2) npm run build\\n'); process.exit(1); }\"",
+    "deploy": "npx wrangler deploy && npm run verify-deploy"
   },
   "dependencies": {
     "@sanity/client": "^7.20.0",
