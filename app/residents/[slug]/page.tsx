@@ -80,6 +80,7 @@ export default async function ResidentPage({ params }: { params: Promise<{ slug:
   });
 
   const isLanAnh = slug === "lan-anh-le";
+  const isDavidWillis = slug === "david-willis";
 
   return (
     <>
@@ -110,6 +111,7 @@ export default async function ResidentPage({ params }: { params: Promise<{ slug:
             display: "block",
           }}>
             {event.category === '+a.Farm' ? 'a.Farm resident' : '+1 residency'}
+            {isDavidWillis && ' · curator'}
           </span>
           <h1 style={{
             fontSize: "clamp(26px, 4.5vw, 56px)",
@@ -200,6 +202,21 @@ export default async function ResidentPage({ params }: { params: Promise<{ slug:
                 {para.trim()}
               </p>
             ))}
+            {isDavidWillis && (
+              <Link
+                href="/afarm/retreat"
+                style={{
+                  display: "inline-block",
+                  fontSize: "13px",
+                  color: "#111111",
+                  borderBottom: "1px solid #111111",
+                  paddingBottom: "2px",
+                  marginTop: "8px",
+                }}
+              >
+                a.farm saigon artist intensive retreat — aug. 22–28, 2026 →
+              </Link>
+            )}
           </div>
         )}
 
