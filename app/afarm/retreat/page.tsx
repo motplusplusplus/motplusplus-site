@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import Reveal from "@/components/Reveal";
 
 const R2 = "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/retreat";
 const APPLY_URL =
@@ -148,14 +149,17 @@ export default function RetreatPage() {
   return (
     <>
       {/* hero */}
-      <SectionBanner
+      <Reveal>
+        <SectionBanner
         src={IMAGES.hero}
         alt="a.farm and mot+++ community dinner"
         eyebrow="a.farm × mot+++"
         title="a.farm saigon artist intensive retreat"
         subtitle="aug. 22–28, 2026"
       />
-      <ContentBlock maxWidth="720px">
+      </Reveal>
+      <Reveal delay={0.12}>
+        <ContentBlock maxWidth="720px">
         <p style={body}>
           a one-week critical intensive for contemporary artists seeking rigorous feedback,
           deeper critical engagement, and clearer positioning within the contemporary art
@@ -170,16 +174,20 @@ export default function RetreatPage() {
         </p>
         <ApplyButton />
       </ContentBlock>
+      </Reveal>
 
       {/* organized by — david willis */}
-      <SectionBanner
+      <Reveal>
+        <SectionBanner
         src={IMAGES.davidWillis}
         alt="david willis"
         eyebrow="organized by"
         title="david willis"
         subtitle="curator, critic & art advisor"
       />
-      <ContentBlock>
+      </Reveal>
+      <Reveal delay={0.12}>
+        <ContentBlock>
         <p style={body}>
           <Link href="/profiles/david-willis/" style={{ color: "#111111" }}>
             david willis
@@ -234,15 +242,19 @@ export default function RetreatPage() {
           </a>
         </div>
       </ContentBlock>
+      </Reveal>
 
       {/* institutional host — a.farm */}
-      <SectionBanner
+      <Reveal>
+        <SectionBanner
         src={IMAGES.afarm}
         alt="a.farm exhibition space"
         eyebrow="institutional host"
         title="a.farm international art residency"
       />
-      <ContentBlock>
+      </Reveal>
+      <Reveal delay={0.12}>
+        <ContentBlock>
         <p style={body}>
           <Link href="/afarm/" style={{ color: "#111111" }}>a.farm</Link> was founded in
           2018 as a collaboration between sàn art, mot+++, and the nguyễn art foundation.
@@ -252,15 +264,19 @@ export default function RetreatPage() {
           leading artists, collectors, and art professionals.
         </p>
       </ContentBlock>
+      </Reveal>
 
       {/* accommodation — amanaki thao dien hotel */}
-      <SectionBanner
+      <Reveal>
+        <SectionBanner
         src={IMAGES.hotel}
         alt="amanaki thao dien hotel"
         eyebrow="accommodation"
         title="amanaki thao dien hotel"
       />
-      <ContentBlock>
+      </Reveal>
+      <Reveal delay={0.12}>
+        <ContentBlock>
         <p style={body}>
           participants will stay at{" "}
           <Link href="/afarm/hotel/" style={{ color: "#111111" }}>amanaki thao dien hotel</Link>,
@@ -275,15 +291,19 @@ export default function RetreatPage() {
           daily breakfast, and daily dinner are included in the program fee.
         </p>
       </ContentBlock>
+      </Reveal>
 
       {/* core program — critical intensive */}
-      <SectionBanner
+      <Reveal>
+        <SectionBanner
         src={IMAGES.coreProgram}
         alt="group critique and discussion"
         eyebrow="core program"
         title="critical intensive"
       />
-      <ContentBlock>
+      </Reveal>
+      <Reveal delay={0.12}>
+        <ContentBlock>
         <p style={body}>
           the core of the program takes place over four intensive working days. each
           morning, two participants receive individual one-hour consultations with david
@@ -297,9 +317,11 @@ export default function RetreatPage() {
         </p>
         <ApplyButton />
       </ContentBlock>
+      </Reveal>
 
       {/* day-by-day program */}
-      <ContentBlock maxWidth="720px">
+      <Reveal delay={0.12}>
+        <ContentBlock maxWidth="720px">
         <p style={eyebrow}>day-by-day program</p>
 
         <p style={{ ...body, fontWeight: 400, color: "#222222", marginBottom: "8px" }}>
@@ -384,17 +406,21 @@ export default function RetreatPage() {
           a.farm and mot+++ community.
         </p>
       </ContentBlock>
+      </Reveal>
 
       {/* topics */}
-      <ContentBlock maxWidth="720px">
+      <Reveal delay={0.12}>
+        <ContentBlock maxWidth="720px">
         <p style={eyebrow}>topics may include</p>
         <p style={{ fontSize: "14px", color: "#aaaaaa", fontStyle: "italic" }}>
           content pending — to be added from the program document.
         </p>
       </ContentBlock>
+      </Reveal>
 
       {/* what's included / not included */}
-      <ContentBlock maxWidth="900px">
+      <Reveal delay={0.12}>
+        <ContentBlock maxWidth="900px">
         <div
           style={{
             display: "grid",
@@ -439,9 +465,11 @@ export default function RetreatPage() {
           </div>
         </div>
       </ContentBlock>
+      </Reveal>
 
       {/* apply */}
-      <ContentBlock maxWidth="720px">
+      <Reveal delay={0.12}>
+        <ContentBlock maxWidth="720px">
         <p style={eyebrow}>apply</p>
         <p style={{ ...body, fontSize: "17px", color: "#222222" }}>
           applications are now open. maximum 8 artists. program fee: usd 3,500.
@@ -461,9 +489,11 @@ export default function RetreatPage() {
           </a>
         </p>
       </ContentBlock>
+      </Reveal>
 
       {/* annual program note */}
-      <ContentBlock maxWidth="640px">
+      <Reveal delay={0.12}>
+        <ContentBlock maxWidth="640px">
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "32px" }}>
           <p style={{ fontSize: "13px", lineHeight: 1.8, color: "#999999" }}>
             the a.farm saigon artist intensive is envisioned as an annual program. future
@@ -474,6 +504,7 @@ export default function RetreatPage() {
           </p>
         </div>
       </ContentBlock>
+      </Reveal>
     </>
   );
 }
