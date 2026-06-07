@@ -181,7 +181,7 @@ export default function RetreatPage() {
       />
       <ContentBlock>
         <p style={body}>
-          <Link href="/residents/david-willis/" style={{ color: "#111111" }}>
+          <Link href="/profiles/david-willis/" style={{ color: "#111111" }}>
             david willis
           </Link>{" "}
           is a writer, curator, and art advisor who splits his time between new york,
@@ -198,7 +198,7 @@ export default function RetreatPage() {
           various projects and initiatives.
         </p>
         <Link
-          href="/residents/david-willis/"
+          href="/profiles/david-willis/"
           style={{
             display: "inline-block",
             fontSize: "13px",

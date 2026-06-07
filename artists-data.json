@@ -1226,6 +1226,7 @@
     "collective": false,
     "resident": true,
     "studioHost": false,
+    "curator": true,
     "performancePlus": false,
     "origin": "USA/Portugal",
     "website": "",

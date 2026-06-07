@@ -1,10 +1,10 @@
 // Legacy event-announcement slugs (e.g. "introducing resident X") that were
-// migrated to /residents/[slug] bio pages and excluded from /events/ static
+// migrated to /profiles/[slug] bio pages and excluded from /events/ static
 // generation (see BIO_SLUGS in lib/events.ts). Their old /events/[slug] URLs
 // 404 — some are still indexed by search engines — so we 301 them to the
-// bio page that now holds this content. Verified individually: each of these
-// slugs resolves to a working /residents/[slug]/ page.
-const EVENT_TO_RESIDENT_SLUGS = new Set([
+// profile page that now holds this content. Verified individually: each of
+// these slugs resolves to a working /profiles/[slug]/ page.
+const EVENT_TO_PROFILE_SLUGS = new Set([
   "alisa-chunchue", "anh-tran", "anh-vo", "ania-reynolds", "annabelle-yep", "aram-han-sifuentes",
   "aylin-derya-stahl", "bagus-mazasupa-anwarridwan", "ben-valentine", "bert-ackley", "bert-nguyen-san", "blake-palmer",
   "boynton-yue", "chau-kim-sanh", "chu-hao-pei", "cian-duggan", "claire-bloomfield", "coco",
@@ -30,8 +30,8 @@ export default {
 
     // Legacy event-announcement URLs for individual residents → bio pages
     const eventSlugMatch = path.match(/^\/events\/([^/]+)\/?$/);
-    if (eventSlugMatch && EVENT_TO_RESIDENT_SLUGS.has(eventSlugMatch[1])) {
-      url.pathname = `/residents/${eventSlugMatch[1]}/`;
+    if (eventSlugMatch && EVENT_TO_PROFILE_SLUGS.has(eventSlugMatch[1])) {
+      url.pathname = `/profiles/${eventSlugMatch[1]}/`;
       return Response.redirect(url.toString(), 301);
     }
 

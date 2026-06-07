@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getArtist, getArtistSlugs, getArtistEvents, type Artist } from "@/lib/artists";
 import { getEventBySlug, getAllEvents, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef } from "@/lib/sanity";
 import { BIO_SLUGS } from "@/lib/events";
+import { allStudios } from "@/lib/studios";
 import ArtistGallery from "./ArtistGallery";
 import type { Metadata } from "next";
 
@@ -79,6 +80,10 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const refSlugs = new Set(refEvents.map(e => e.slug));
   const relatedEvents = [...refEvents, ...nameEvents.filter(e => !refSlugs.has(e.slug))];
 
+  const studio = allStudios.find(s => s.hostSlug === slug);
+  const isLanAnh = slug === "lan-anh-le";
+  const isDavidWillis = slug === "david-willis";
+
   const badges = [
     artist.collective      && "mot+++ collective",
     artist.resident        && "a.Farm resident",
@@ -128,11 +133,16 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           <h1 style={{
             fontSize: "clamp(26px, 4.5vw, 56px)",
             fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.02em",
-            color: "#ffffff",
+            color: isLanAnh ? "rgba(255,255,255,0.7)" : "#ffffff",
+            fontStyle: isLanAnh ? "italic" : "normal",
           }}>
             {artist.name}
           </h1>
-          {artist.origin && (
+          {isLanAnh ? (
+            <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", marginTop: "8px", fontWeight: 300 }}>
+              1993–2020
+            </p>
+          ) : artist.origin && (
             <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.45)", marginTop: "10px", fontWeight: 300 }}>
               {artist.origin}
             </p>
@@ -142,11 +152,26 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
 
       <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "52px 24px 96px" }}>
 
-        {/* breadcrumb */}
-        <div style={{ marginBottom: "52px" }}>
+        {/* breadcrumb + hosting artist badge */}
+        <div style={{ marginBottom: "52px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
           <Link href="/profiles" style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em" }}>
             ← profiles
           </Link>
+          {studio && (
+            <Link
+              href={`/afarm/studios/${studio.slug}`}
+              style={{
+                fontSize: "11px",
+                color: "#ffffff",
+                backgroundColor: "#111111",
+                letterSpacing: "0.08em",
+                padding: "6px 14px",
+                textDecoration: "none",
+              }}
+            >
+              hosting artist — view studio ↗
+            </Link>
+          )}
         </div>
 
         {/* metadata strip */}
@@ -194,6 +219,21 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                 {para.trim()}
               </p>
             ))}
+            {isDavidWillis && (
+              <Link
+                href="/afarm/retreat"
+                style={{
+                  display: "inline-block",
+                  fontSize: "13px",
+                  color: "#111111",
+                  borderBottom: "1px solid #111111",
+                  paddingBottom: "2px",
+                  marginTop: "8px",
+                }}
+              >
+                a.farm saigon artist intensive retreat — aug. 22–28, 2026 →
+              </Link>
+            )}
           </div>
         )}
 
@@ -286,7 +326,14 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           <Link href="/profiles" style={{ fontSize: "13px", color: "#666666" }}>
             ← back to profiles
           </Link>
-          {artist.collective && (
+          {studio ? (
+            <Link
+              href={`/afarm/studios/${studio.slug}`}
+              style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}
+            >
+              view studio ↗
+            </Link>
+          ) : artist.collective && (
             <Link
               href={`/collective#${artist.name.toLowerCase().replace(/\s+/g, "-")}`}
               style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}

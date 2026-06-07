@@ -151,7 +151,7 @@ export default function SearchShell({ artists, studios, events }: Props) {
             {matchedArtists.map(a => (
               <Link
                 key={a.slug}
-                href={a.hasBio ? `/residents/${a.slug}` : `/profiles`}
+                href={`/profiles/${a.slug}`}
                 style={{
                   display: "block",
                   padding: "14px 0",
