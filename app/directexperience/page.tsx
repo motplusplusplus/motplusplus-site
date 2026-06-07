@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "+1 Direct Experience Meditation Residency — MoT+++",
   description:
-    "A one-on-one meditation residency in Ho Chi Minh City. One month in a private penthouse — unstructured, silent, and deeply personal. For artists, writers, and seekers. $10,000/month.",
+    "A one-on-one meditation residency in Ho Chi Minh City. One month in a private penthouse — unstructured, silent, and deeply personal. For artists, writers, and seekers. $20,000/month.",
   openGraph: {
     title: "+1 Direct Experience Meditation Residency — MoT+++",
     description: "A one-on-one meditation residency in a private penthouse in Ho Chi Minh City. Unstructured, silent, and deeply personal.",
@@ -138,7 +138,7 @@ export default function DirectExperiencePage() {
               letterSpacing: "-0.01em",
             }}
           >
-            USD $10,000 / month
+            USD $20,000 / month
           </p>
           <div style={{ fontSize: "14px", color: "#666666", lineHeight: 1.9 }}>
             <p style={{ marginBottom: "4px" }}>one month minimum.</p>
