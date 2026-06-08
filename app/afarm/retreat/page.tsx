@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import Reveal from "@/components/Reveal";
+import Collapsible from "@/components/Collapsible";
 
 const R2 = "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/retreat";
 const APPLY_URL =
@@ -324,6 +325,8 @@ export default function RetreatPage() {
         <ContentBlock maxWidth="720px">
         <p style={eyebrow}>day-by-day program</p>
 
+        <Collapsible label="show full schedule" openLabel="hide full schedule">
+
         <p style={{ ...body, fontWeight: 400, color: "#222222", marginBottom: "8px" }}>
           day 1 — arrival &amp; introductions
         </p>
@@ -405,6 +408,8 @@ export default function RetreatPage() {
           sense of direction, and ongoing connections with fellow artists and the wider
           a.farm and mot+++ community.
         </p>
+
+        </Collapsible>
       </ContentBlock>
       </Reveal>
 
