@@ -369,3 +369,176 @@ render — both curated sets are empty.
 9. **Housekeeping** — delete the stale `sanity-schemas/` copy; extract the
    shared junk-image filename list (currently duplicated in
    `app/profiles/[slug]/page.tsx`).
+
+---
+
+## 8. Sanity schema reference
+
+Canonical schemas live at `~/Documents/motplus-sanity/schemaTypes/`
+(`event.ts`, `artist.ts`, `afarmHost.ts`, `museumLocation.ts`, `trashItem.ts`,
+`inquiry.ts`, wired up in `index.ts`). This section cross-references every
+field against the GROQ field lists in `lib/sanity.ts` (`ARTIST_FIELDS`,
+`EVENT_FIELDS`, `AFARM_HOST_FIELDS`, and the inline lists in
+`getMuseumLocations`/`getTrashItems`).
+
+### `artist`
+
+| Field | Type | Queried? |
+|---|---|---|
+| `name` | string (required) | ✓ |
+| `slug` | slug | ✓ (`slug.current`) |
+| `pronouns` | string | ✓ |
+| `birthYear` | number | ✓ |
+| `nationality` | string | ✓ |
+| `originCity` | string | ✓ |
+| `currentCity` | string | ✓ |
+| `role` | string (free text) | ✓ |
+| `isAfarmResident` | boolean | ✓ |
+| `season` | string (hidden unless resident) | ✓ |
+| `period` | string (hidden unless resident) | ✓ |
+| `residencyStartDate` | date | ✓ |
+| `bio` | text | ✓ — `coalesce(pt::text(bio), bio)` (defensive against a future portable-text migration; field is currently plain text) |
+| `vnBio` | text | ✓ — same coalesce |
+| `instagram` | string | ✓ |
+| `links` | array of `{label,url}` | ✓ |
+| `portrait` | image | ✓ (`.asset->url`) |
+| `uploadedImages` | array of images | ✓ (returned as `images`) |
+| `legacyImageUrls` | array of strings | ✓ |
+| `active` | boolean, default true ("Listed on residents page") | filter only in `getArtists`/`getAllSanityArtistSlugs`. **`getArtistBySlug` does not filter on `active`** — a doc with `active: null`/`false` is invisible to listings and `generateStaticParams`, but still resolvable by direct slug (relevant to `nguyen-thuy-hang`, Task 2). |
+
+Computed, not schema fields (derived via `*[...references(^._id)]`):
+`trashItems[]`, `museumItems[]`.
+
+**Frontend expects but schema lacks `deathYear`** — `app/profiles/[slug]/page.tsx`
+hardcodes a `DECEASED_DATES` map (`lan-anh-le`, `dinh-q-le`) with a `// TODO:
+add deathYear field to Sanity artist schema` comment. Confirmed: no
+`deathYear` field exists anywhere in `artist.ts` (§7 item 6).
+
+### `event`
+
+| Field | Type | Queried? |
+|---|---|---|
+| `slug` | slug (required) | ✓ |
+| `title` | string (required) | ✓ |
+| `vnTitle` | string | ✓ |
+| `dateISO` | date (required) | ✓ |
+| `endDateISO` | date | ✓ |
+| `displayDate` | string | ✓ |
+| `category` | string, `options.list`: `MoT+++`, `+a.Farm`, `MoTSound`, `Performance`, `Collaborative` | ✓ |
+| `location` | string | ✓ |
+| `description` | text | ✓ |
+| `vnDescription` | text | ✓ |
+| `vnAutoTranslated` | boolean | ✗ not queried |
+| `uploadedImages` | array of images, each with an `isPoster` boolean | ✓ as `.asset->url` only — **`isPoster` is never queried**, so there's no way to pin a specific image as the cover/thumbnail; `images[0]` after merge always wins |
+| `legacyImageUrls` | array of strings | ✓ |
+| `videoUrl` | url | ✓ |
+| `bandcampAlbumId` | string | ✓ |
+| `wpLink` | url | ✓ |
+| `artists` | array of references to `artist` | ✓ — dereferenced to `{_id, name, "slug": slug.current}` |
+| `active` | boolean, default true | filter only |
+| `isBioPage` | boolean, default false | ✓ |
+
+**Category taxonomy mismatch**: the Sanity `category` field's `options.list`
+(`MoT+++`, `+a.Farm`, `MoTSound`, `Performance`, `Collaborative`) does not
+match the `categories` export in `lib/events.ts` (`+a.Farm`, `+1 contemporary
+project`, `+1 performance`, `+1 nice place for experimentation`, `MoTsound`,
+`MoT+++`). Sanity string fields with `options.list` don't enforce membership,
+so event docs in practice carry the `lib/events.ts` values; `toSanityEvent`/
+`toEventFromJson` additionally normalize `'+a.farm'` → `'+a.Farm'`. Worth
+reconciling so the Studio dropdown matches reality (`MoTSound` vs `MoTsound`,
+`Performance`/`Collaborative` vs the three `+1 …` categories).
+
+### `afarmHost`
+
+All fields are queried via `AFARM_HOST_FIELDS` — full 1:1 match, grouped in
+the schema as `identity`, `profile_en`, `profile_vi`, `practical`, `images`,
+`settings`:
+
+- identity: `name`, `slug`, `studioName`, `neighbourhood`, `mapLat`, `mapLng`
+- profile_en: `practiceBio`, `welcomeBio`, `collaboration`, `languages`,
+  `availability`, `environment`, `transport`, `amenities`,
+  `livingArrangement`, `residentRoom`, `smoking`, `smokingDetail`, `guests`,
+  `guestsDetail`, `rules`
+- profile_vi: `*Vi` mirrors of the above (except the `smoking`/`guests`
+  booleans, which aren't localized)
+- practical: `floor`, `ac`, `bathrooms`, `privateBathroom`, `kitchenAccess`,
+  `internet`, `petsInResidence`, `laundry`
+- images: `portrait`, `images` (returned as `uploadedImageUrls`), `imageUrls`
+- settings: `visibility` (required, `visible`/`historical`/`hidden`),
+  `hostType`
+
+No unused fields, no missing-but-expected fields.
+
+### `museumLocation`
+
+| Field | Type | Queried? |
+|---|---|---|
+| `active` | boolean, default true | filter only |
+| `locationEnd` | date | filter only (`!defined(locationEnd) \|\| locationEnd >= today`) |
+| `isPast` | boolean, default false | ✓ |
+| `title` | string (required) | ✓ |
+| `titleVi` | string | ✗ not queried |
+| `artistRef` | reference to `artist`, `options.filter: active==true` | ✓ (returned as `artistSlug`) |
+| `artist` | string (required, display name) | ✓ |
+| `medium` | string | ✓ |
+| `year` | number | ✓ |
+| `description` | text | ✓ |
+| `descriptionVi` | text | ✗ not queried |
+| `mainImage` | image (required) | ✓ |
+| `images` | array of images | ✓ |
+| `location` | geopoint (required) | ✓ (returned as `coordinates`) |
+| `hostName` | string | ✓ |
+| `neighbourhood` | string | ✗ not queried directly here — only reached via `trashItem.museumLocationRef->neighbourhood` in `getTrashItems` |
+| `accessType` | enum (required) | ✓ |
+| `accessDetails` | string | ✓ |
+| `hours` | string | ✓ |
+| `contactMethod` | string | ✓ |
+| `hostEmail` | string | ✗ not queried — internal contact field, presumably for a future inquiry-routing flow |
+
+`titleVi`/`descriptionVi` exist for Vietnamese localization but the museum
+map UI never reads them — the same EN/VN gap that events closed (`vnTitle`/
+`vnDescription` **are** queried for events).
+
+### `trashItem`
+
+| Field | Type | Queried? |
+|---|---|---|
+| `active` | boolean, default false (validation requires image + price to publish) | filter only |
+| `sold` | boolean | ✓ |
+| `artistRef` | reference to `artist` | ✓ (returned as `artistSlug`) |
+| `artist` | string (required) | ✓ |
+| `title` | string | ✓ |
+| `medium` | string | ✓ |
+| `year` | number | ✓ |
+| `dimensions` | string | ✓ |
+| `edition` | string | ✓ |
+| `description` | text | ✓ |
+| `images` | array of images | ✓ (returned as `directImageUrls`) |
+| `legacyImageUrls` | array of strings | ✓ |
+| `museumLocationRef` | reference to `museumLocation` | ✓ (returned as `museumLocationId`, plus dereferenced `neighbourhood`) |
+| `workLocation` | string | ✓ |
+| `accessContact` | string | ✓ |
+| `accessNotes` | text | ✓ |
+| `consignmentStart` / `consignmentEnd` / `consignmentNotes` | date / date / text (internal) | `consignmentEnd` used in filter only; the other two intentionally not queried (admin-only) |
+| `soldTo` / `soldPrice` / `soldDate` / `provenanceNotes` | strings/text (internal) | not queried (admin-only, by design) |
+| `price` | string | ✓ |
+| `sortOrder` | number | used in `order()` only, not returned |
+
+**Schema gap (harmless dead query)**: `getTrashItems()` queries
+`uploadedImages[].asset->url` as `uploadedImageUrls`, but `trashItem` has
+**no `uploadedImages` field** — only `images` (queried separately as
+`directImageUrls`). `uploadedImageUrls` is therefore always empty;
+`app/trash/page.tsx` merges `uploadedImageUrls`, `directImageUrls`, and
+`legacyImageUrls` into one `images` array, so the real image source (`images`)
+still renders correctly. Low priority — delete the dead `uploadedImageUrls`
+line whenever `lib/sanity.ts` is next touched.
+
+### `inquiry`
+
+Defines `type` (`trash`/`residency`/`museum`), `status`, `submittedAt`,
+`name`, `email`, `message`, plus type-conditional fields — but **`lib/sanity.ts`
+has no read or write for `inquiry` at all**. All three contact surfaces
+(`/trash`, `/afarm/apply`, `/museum/inquire`) submit via `mailto:` links (§7
+"Completed", commit `299adc5`). The schema exists for a possible future
+Studio-side inquiry inbox but is currently dead on the content side — not a
+bug, just unused.
