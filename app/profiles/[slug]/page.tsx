@@ -87,7 +87,12 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const relatedEvents = [...refEvents, ...nameEvents.filter(e => !refSlugs.has(e.slug))];
 
   const studio = allStudios.find(s => s.hostSlug === slug);
-  const isLanAnh = slug === "lan-anh-le";
+  // TODO: add deathYear field to Sanity artist schema to avoid hardcoding
+  const DECEASED_DATES: Record<string, string> = {
+    "lan-anh-le": "1993–2020",
+    "dinh-q-le": "1968–2024",
+  };
+  const deceasedDates = DECEASED_DATES[slug];
   const isDavidWillis = slug === "david-willis";
   const isCamXanh = slug === "cam-xanh";
 
@@ -147,14 +152,14 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           <h1 style={{
             fontSize: "clamp(26px, 4.5vw, 56px)",
             fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.02em",
-            color: isLanAnh ? "rgba(255,255,255,0.7)" : "#ffffff",
-            fontStyle: isLanAnh ? "italic" : "normal",
+            color: deceasedDates ? "rgba(255,255,255,0.7)" : "#ffffff",
+            fontStyle: deceasedDates ? "italic" : "normal",
           }}>
             {displayName}
           </h1>
-          {isLanAnh ? (
+          {deceasedDates ? (
             <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", marginTop: "8px", fontWeight: 300 }}>
-              1993–2020
+              {deceasedDates}
             </p>
           ) : artist.origin && (
             <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.45)", marginTop: "10px", fontWeight: 300 }}>
