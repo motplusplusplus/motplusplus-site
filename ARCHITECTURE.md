@@ -268,17 +268,16 @@ only the free-text `role`. A proper taxonomy (enum field on the Sanity
 
 | # | Issue | Root cause | Status |
 |---|---|---|---|
-| 1 | **All inquiry forms broken in production** — `POST /submit-inquiry` returns 404 (verified live). Affects `/trash` purchase inquiries, `/afarm/apply`, `/museum/inquire`. | `functions/submit-inquiry.js` uses the Cloudflare **Pages** Functions convention (`onRequestPost`), but the site deploys as a plain **Worker** — that directory is never deployed. `worker.js` has no route for it. | **Open — highest priority.** Fix: handle `POST /submit-inquiry` inside `worker.js` (needs a Sanity write token as a Worker secret), then delete `functions/`. |
-| 2 | Live site silently reverts to older code; pages disappear after deploys. | GitHub Action redeploys `origin/main` on `workflow_dispatch`; local wrangler deploys of unpushed commits get overwritten. | Documented; not mechanically enforced. Extend `npm run deploy` to refuse on dirty tree / unpushed commits. |
-| 3 | 60/136 bios get zero name-matched event links; 3 flagged residents never considered. | Name-matching architecture vs. Vietnamese name corpus (§4). | Mitigated wherever Sanity refs exist; full fix = §4 endgame. |
-| 4 | `sanity-schemas/` in this repo is stale (2 of 6 types). | Schemas moved to the Studio repo; copy never updated. | Delete or replace with pointer. |
-| 5 | Artist queries can hit stale CDN data at build. | `getArtists`/`getArtistBySlug` use the `useCdn: true` client. | Switch to `buildClient`. |
-| 6 | Pages show stale Sanity content after deploy. | `.next/cache` persists fetch responses across builds. | Workaround documented: clean build. |
-| 7 | Large JS chunks intermittently 404 after deploy (museum map broke twice). | Cloudflare Workers Assets bug with files >500KB marked "already uploaded". | Mitigated: `npm run verify-deploy` runs after every deploy; if it fails, touch `components/MuseumMap.tsx`, rebuild, redeploy. |
-| 8 | `/residents/` exact path is a soft meta-refresh redirect, not 301. | Static stub asset shadows the worker (asset-first routing, §1). | Cosmetic/SEO; delete `app/residents/page.tsx` to let the worker 301. |
-| 9 | One orphan profile page (`pug-alex-williams`) exists but is unlisted. | Listing and detail pages use different slug-source unions (§3). | Add to Sanity or `artists-data.json`. |
-| 10 | Curators/researchers displayed as artists. | No taxonomy field; flags not fully surfaced. | Needs design (§5). |
-| 11 | Stale doc counts elsewhere (e.g. "244 events"). | Data has grown: `events-data.json` = 339, Sanity = 216 active. | This file is now the reference. |
+| 1 | Live site silently reverts to older code; pages disappear after deploys. | GitHub Action redeploys `origin/main` on `workflow_dispatch`; local wrangler deploys of unpushed commits get overwritten. | Documented; not mechanically enforced. Extend `npm run deploy` to refuse on dirty tree / unpushed commits. |
+| 2 | Bios get zero name-matched event links. | Name-matching architecture vs. Vietnamese name corpus (§4). | Mitigated wherever Sanity refs exist. **This session (2026-06-11):** punctuation-token strip added to `matchParts` (rescues parenthesized names like `exxonnubile-julia-weiner`, `pug-alex-williams`); the 3 previously-omitted `resident:true` artists (`do-nguyen-lap-xuan`, `alex-williams`, `duong-tu-que`) were added to `BIO_SLUGS`. 64 bios still empty (mostly single short/blocklisted names) — full fix = §4 endgame (explicit refs). |
+| 3 | `sanity-schemas/` in this repo is stale (2 of 6 types). | Schemas moved to the Studio repo; copy never updated. | Delete or replace with pointer. |
+| 4 | Artist queries can hit stale CDN data at build. | `getArtists`/`getArtistBySlug` use the `useCdn: true` client. | Switch to `buildClient`. |
+| 5 | Pages show stale Sanity content after deploy. | `.next/cache` persists fetch responses across builds. | Workaround documented: clean build. |
+| 6 | Large JS chunks intermittently 404 after deploy (museum map broke twice). | Cloudflare Workers Assets bug with files >500KB marked "already uploaded". | Mitigated: `npm run verify-deploy` runs after every deploy; if it fails, touch `components/MuseumMap.tsx`, rebuild, redeploy. |
+| 7 | `/residents/` exact path is a soft meta-refresh redirect, not 301. | Static stub asset shadows the worker (asset-first routing, §1). | Cosmetic/SEO; delete `app/residents/page.tsx` to let the worker 301. |
+| 8 | One orphan profile page (`pug-alex-williams`) exists but is unlisted. | Listing and detail pages use different slug-source unions (§3). | Add to Sanity or `artists-data.json`. |
+| 9 | Curators/researchers displayed as artists. | No taxonomy field; flags not fully surfaced. | Needs design (§5). |
+| 10 | Stale doc counts elsewhere (e.g. "244 events"). | Data has grown: `events-data.json` = 339, Sanity = 216 active. | This file is now the reference. |
 
 ---
 

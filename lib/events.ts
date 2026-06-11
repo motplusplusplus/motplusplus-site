@@ -56,6 +56,9 @@ export const BIO_SLUGS = new Set([
   "arnont-nongyao","bill-nguyen","emmanuelle-huynh","le-mai-anh",
   "nguyen-quoc-chanh","dan-nguyen-demonslayer","tuyp-tran","phung-tien-son",
   "laurent-weyl","pamela-n-corey","map-office","regis-golay",
+  // residents flagged resident:true in artists-data.json but previously absent
+  // from BIO_SLUGS, so getRelatedResidents never considered them (added 2026-06-11)
+  "do-nguyen-lap-xuan","alex-williams","duong-tu-que",
 
 ]);
 
@@ -199,6 +202,10 @@ export function stripDiacritics(s: string): string {
 export function matchParts(title: string): string[] {
   // Strip diacritics then lowercase so "Régis"/"regis" and "phùng"/"phung" compare equal
   const parts = stripDiacritics(title).toLowerCase().split(/\s+/)
+    // Strip leading/trailing punctuation from each token before filtering, so
+    // parenthesized/period-suffixed names ("(Julia", "Weiner)", "Irene.") are
+    // matchable instead of being dropped as punctuation-glued tokens.
+    .map(w => w.replace(/^[^\w]+|[^\w]+$/g, ''))
     .filter(w => w.length >= 4 && !MATCH_BLOCKLIST.has(w));
   // PERMANENT RULE: full-name matching only.
   // Require at least 2 significant parts unless the name is a whitelisted unique single word.
