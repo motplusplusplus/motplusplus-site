@@ -19,7 +19,7 @@ const IMAGES = {
 export const metadata: Metadata = {
   title: "a.Farm Saigon Artist Intensive Retreat",
   description:
-    "A one-week critical intensive for contemporary artists in Ho Chi Minh City. Aug. 22–28, 2026 — individual consultations, group critiques, and exchange with the mot+++ and a.farm communities. USD 3,500 per artist.",
+    "A one-week critical intensive for contemporary artists in Ho Chi Minh City. Aug. 22–28, 2026 — individual consultations, group critiques, and exchange with the mot+++ and a.farm communities. USD 3,000 per artist.",
   openGraph: {
     title: "a.Farm Saigon Artist Intensive Retreat — MoT+++",
     description:
@@ -170,7 +170,7 @@ export default function RetreatPage() {
           communities.
         </p>
         <p style={{ ...body, marginBottom: "32px" }}>
-          total cost: usd 3,500 per artist. includes seven nights accommodation, daily
+          total cost: usd 3,000 per artist. includes seven nights accommodation, daily
           breakfasts and dinners, and all program activities.
         </p>
         <ApplyButton />
@@ -477,7 +477,7 @@ export default function RetreatPage() {
         <ContentBlock maxWidth="720px">
         <p style={eyebrow}>apply</p>
         <p style={{ ...body, fontSize: "17px", color: "#222222" }}>
-          applications are now open. maximum 8 artists. program fee: usd 3,500.
+          applications are now open. maximum 8 artists. program fee: usd 3,000.
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "24px", marginBottom: "32px" }}>
           <ApplyButton />
