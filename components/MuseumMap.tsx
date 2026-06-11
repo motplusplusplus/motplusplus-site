@@ -14,7 +14,7 @@ const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? '';
 // tweak these coordinates by ±0.000001), rebuild with the token set, redeploy, then run
 // npm run verify-deploy to confirm. The coordinate change forces a new content hash so
 // Cloudflare uploads a fresh copy instead of reusing the stale/corrupted cached entry.
-const HCMC_CENTER: [number, number] = [106.700901, 10.776901];
+const HCMC_CENTER: [number, number] = [106.700902, 10.776901];
 
 const ACCESS_LABELS: Record<AccessType, string> = {
   open: 'open access',
