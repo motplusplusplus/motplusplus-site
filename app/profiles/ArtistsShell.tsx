@@ -6,25 +6,37 @@ import Link from "next/link";
 export type ArtistEntry = {
   slug: string;
   name: string;
-  isAfarmResident: boolean;
-  isHostingArtist: boolean;
-  bioPage: boolean;
-  role?: string;
+  primary: string;     // primary identity badge (sub-label + grouping)
+  isFounder: boolean;
+  filters: string[];   // every filter tag this person matches
 };
 
-const FILTERS = ["all", "a.Farm residents", "hosting artists", "other"] as const;
+// Filter bar. "curator/writer/researcher" matches any of those three role tags.
+const FILTERS = [
+  "all",
+  "founder/director",
+  "hosting artist",
+  "a.Farm",
+  "+1",
+  "+1 performance",
+  "MoTSound",
+  "curator/writer/researcher",
+  "+1 collective",
+] as const;
 type Filter = typeof FILTERS[number];
+
+const ROLE_TAGS = ["curator", "writer", "researcher"];
+
+function matchesFilter(a: ArtistEntry, filter: Filter): boolean {
+  if (filter === "all") return true;
+  if (filter === "curator/writer/researcher") return a.filters.some(f => ROLE_TAGS.includes(f));
+  return a.filters.includes(filter);
+}
 
 export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
   const [filter, setFilter] = useState<Filter>("all");
 
-  const visible = filter === "a.Farm residents"
-    ? artists.filter(a => a.isAfarmResident)
-    : filter === "hosting artists"
-    ? artists.filter(a => a.isHostingArtist)
-    : filter === "other"
-    ? artists.filter(a => !a.isAfarmResident && !a.isHostingArtist)
-    : artists;
+  const visible = artists.filter(a => matchesFilter(a, filter));
 
   const groups: Record<string, ArtistEntry[]> = {};
   for (const a of visible) {
@@ -83,16 +95,16 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
                 <Link key={a.slug} href={`/profiles/${a.slug}`} style={{ textDecoration: "none", display: "block" }}>
                   <p style={{
                     fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.4,
-                    fontStyle: a.slug === "lan-anh-le" ? "italic" : "normal",
                   }}>
                     {a.name}
-                    {a.slug === "lan-anh-le" && (
-                      <span style={{ fontSize: "11px", color: "#aaaaaa", marginLeft: "6px" }}>1993–2020</span>
-                    )}
                   </p>
-                  {(a.role || a.isHostingArtist || (a.isAfarmResident && !a.isHostingArtist)) && (
-                    <p style={{ fontSize: "10px", color: "#cccccc", letterSpacing: "0.04em", marginTop: "2px" }}>
-                      {a.role ?? (a.isHostingArtist ? "hosting artist" : "a.Farm resident")}
+                  {a.primary !== "artist" && (
+                    <p style={{
+                      fontSize: "10px",
+                      color: a.isFounder ? "#c0392b" : "#cccccc",
+                      letterSpacing: "0.04em", marginTop: "2px",
+                    }}>
+                      {a.primary}
                     </p>
                   )}
                 </Link>

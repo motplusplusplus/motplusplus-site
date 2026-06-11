@@ -47,6 +47,16 @@ export default {
       return Response.redirect(url.toString(), 301);
     }
 
+    // Consolidated duplicate profiles → canonical profile
+    const PROFILE_REDIRECTS = {
+      '/profiles/pug-alex-williams': '/profiles/alex-williams/',
+    };
+    const canonicalProfile = PROFILE_REDIRECTS[path.replace(/\/$/, '')];
+    if (canonicalProfile) {
+      url.pathname = canonicalProfile;
+      return Response.redirect(url.toString(), 301);
+    }
+
     // Old WordPress URLs: /YYYY/MM/DD/slug → /events/slug
     const wpMatch = path.match(/^\/\d{4}\/\d{2}\/\d{2}\/(.+)$/);
     if (wpMatch) {

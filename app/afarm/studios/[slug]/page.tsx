@@ -100,6 +100,23 @@ export default async function StudioPage({
         <p style={{ fontSize: "14px", color: "#aaaaaa", fontWeight: 300 }}>
           {studio.neighborhood}
         </p>
+        {studio.hostSlug && (
+          <Link
+            href={`/profiles/${studio.hostSlug}`}
+            style={{
+              display: "inline-block",
+              marginTop: "16px",
+              fontSize: "11px",
+              color: "#ffffff",
+              backgroundColor: "#111111",
+              letterSpacing: "0.08em",
+              padding: "6px 14px",
+              textDecoration: "none",
+            }}
+          >
+            hosting artist — view profile ↗
+          </Link>
+        )}
       </div>
 
       {/* portrait pairs (named people with labels) or single portrait */}

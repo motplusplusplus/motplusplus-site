@@ -78,9 +78,10 @@ const ARTIST_FIELDS = `
   isAfarmResident,
   season,
   period,
+  residencyStartDate,
   role,
-  "bio": pt::text(bio),
-  "vnBio": pt::text(vnBio),
+  "bio": coalesce(pt::text(bio), bio),
+  "vnBio": coalesce(pt::text(vnBio), vnBio),
   instagram,
   links,
   "portrait": portrait.asset->url,
@@ -360,6 +361,32 @@ export async function getEventsByArtistRef(artistId: string): Promise<SanityEven
     { artistId }
   );
   return raw.map(toSanityEvent);
+}
+
+/** Map of artist slug → sorted MoTSound edition numbers they performed at.
+ *  Derived from the `artists[]` refs on `mot-sound-*` events (22 of 23 editions
+ *  carry refs; #25 has none). Used to render "MoTSound #n" badges. */
+export async function getMotsoundPerformerEditions(): Promise<Record<string, number[]>> {
+  const raw: { slug: string; performers: (string | null)[] | null }[] = await buildClient.fetch(
+    `*[_type == "event" && active == true && (category match "*sound" || title match "MoT*sound*")]{
+      "slug": slug.current,
+      "performers": artists[]->slug.current
+    }`
+  );
+  const map: Record<string, Set<number>> = {};
+  for (const ev of raw) {
+    // edition number lives in the slug, e.g. "mot-sound-16-..." or "motsound-20"
+    const m = ev.slug.match(/sound-?(\d+)/i);
+    if (!m) continue;
+    const edition = parseInt(m[1], 10);
+    for (const p of ev.performers ?? []) {
+      if (!p) continue;
+      (map[p] ??= new Set()).add(edition);
+    }
+  }
+  const out: Record<string, number[]> = {};
+  for (const [slug, set] of Object.entries(map)) out[slug] = [...set].sort((a, b) => a - b);
+  return out;
 }
 
 /** All event slugs — for generateStaticParams */

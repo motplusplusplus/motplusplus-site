@@ -1,45 +1,46 @@
-import { getArtists } from '@/lib/sanity';
+import { getArtists, getMotsoundPerformerEditions } from '@/lib/sanity';
 import { artistsFromData } from '@/lib/artists';
-import { BIO_SLUGS } from '@/lib/events';
+import { computeBadges } from '@/lib/badges';
 import ArtistsShell, { type ArtistEntry } from './ArtistsShell';
 
-const HOSTING_SLUGS = new Set([
-  "andrew-newell-walther","karlie-ho","le-phi-long","quoc-anh-le",
-  "hoang-nam-viet","nguyen-thuy-hang","thom-nguyen",
-]);
-
+const jsonBySlug = new Map(artistsFromData.map(a => [a.slug, a]));
 // JSON is authoritative for resident status — Sanity isAfarmResident is often not set
 const jsonResidentSlugs = new Set(artistsFromData.filter(a => a.resident).map(a => a.slug));
 
 export default async function ArtistsPage() {
-  const sanityRaw = await getArtists();
+  const [sanityRaw, motsound] = await Promise.all([
+    getArtists(),
+    getMotsoundPerformerEditions(),
+  ]);
   const sanitySlugSet = new Set(sanityRaw.map((a: any) => a.slug as string));
 
   const sanityArtists: ArtistEntry[] = sanityRaw.map((a: any) => {
-    const isHost = HOSTING_SLUGS.has(a.slug);
-    const isResident = !isHost && (a.isAfarmResident || jsonResidentSlugs.has(a.slug));
-    return {
+    const json = jsonBySlug.get(a.slug);
+    // a.Farm membership is driven by residencyStartDate (reliable) rather than the
+    // often-unset isAfarmResident boolean; JSON resident flag is the final fallback.
+    const hasResidency = !!a.residencyStartDate || !!a.isAfarmResident || jsonResidentSlugs.has(a.slug);
+    const b = computeBadges({
       slug: a.slug,
-      name: a.name,
-      isAfarmResident: isResident,
-      isHostingArtist: isHost,
-      bioPage: BIO_SLUGS.has(a.slug) || isHost,
-      role: a.role ?? undefined,
-    };
+      role: a.role,
+      hasResidency,
+      isPerformancePlus: !!json?.performancePlus,
+      motsoundEditions: motsound[a.slug],
+    });
+    return { slug: a.slug, name: a.name, primary: b.primary, isFounder: b.isFounder, filters: b.filters };
   });
 
   // Artists in artists-data.json that aren't in Sanity
   const jsonOnlyArtists: ArtistEntry[] = artistsFromData
     .filter(a => !sanitySlugSet.has(a.slug))
     .map(a => {
-      const isHost = a.studioHost || HOSTING_SLUGS.has(a.slug);
-      return {
+      const b = computeBadges({
         slug: a.slug,
-        name: a.name,
-        isAfarmResident: a.resident && !isHost,
-        isHostingArtist: isHost,
-        bioPage: BIO_SLUGS.has(a.slug) || isHost,
-      };
+        role: a.curator ? 'curator' : null, // JSON-only curator flag stands in for Sanity role
+        hasResidency: a.resident,
+        isPerformancePlus: !!a.performancePlus,
+        motsoundEditions: motsound[a.slug],
+      });
+      return { slug: a.slug, name: a.name, primary: b.primary, isFounder: b.isFounder, filters: b.filters };
     });
 
   const artists = [...sanityArtists, ...jsonOnlyArtists]

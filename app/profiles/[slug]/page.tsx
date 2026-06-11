@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getArtist, getArtistSlugs, getArtistEvents, type Artist } from "@/lib/artists";
-import { getEventBySlug, getAllEvents, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef } from "@/lib/sanity";
+import { getEventBySlug, getAllEvents, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef, getMotsoundPerformerEditions } from "@/lib/sanity";
 import { BIO_SLUGS } from "@/lib/events";
+import { computeBadges } from "@/lib/badges";
 import { allStudios } from "@/lib/studios";
 import ArtistGallery from "./ArtistGallery";
 import type { Metadata } from "next";
@@ -36,10 +37,15 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
 
   // Always fetch Sanity artist (for _id, bio, and Sanity-ref events); fall back to local data
   const isBioSlug = BIO_SLUGS.has(slug);
-  const [sanityArtist, eventEntry, allEvents] = await Promise.all([
+  // Some profiles draw their documentation gallery from a differently-slugged bio
+  // event (consolidated duplicates). Map profile slug → bio-event slug.
+  const BIO_EVENT_SLUG: Record<string, string> = { "alex-williams": "pug-alex-williams" };
+  const bioEventSlug = BIO_EVENT_SLUG[slug] ?? slug;
+  const [sanityArtist, eventEntry, allEvents, motsound] = await Promise.all([
     getArtistBySlug(slug),
-    isBioSlug ? getEventBySlug(slug) : Promise.resolve(null),
+    isBioSlug ? getEventBySlug(bioEventSlug) : Promise.resolve(null),
     getAllEvents(),
+    getMotsoundPerformerEditions(),
   ]);
   if (!localArtist && !sanityArtist) notFound();
 
@@ -84,13 +90,16 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const isLanAnh = slug === "lan-anh-le";
   const isDavidWillis = slug === "david-willis";
 
-  const badges = [
-    artist.collective      && "mot+++ collective",
-    artist.resident        && "a.Farm resident",
-    artist.studioHost      && "hosting artist",
-    artist.curator         && "curator",
-    artist.performancePlus && "+1 performance",
-  ].filter(Boolean) as string[];
+  // Cam Xanh: full name on the bio page, "Cam Xanh" on the listing card.
+  const displayName = slug === "cam-xanh" ? "Tran Thi Thanh Ha (Cam Xanh)" : artist.name;
+
+  const badges = computeBadges({
+    slug,
+    role: (sanityArtist?.role as string | undefined) ?? (artist.curator ? "curator" : null),
+    hasResidency: !!sanityArtist?.residencyStartDate || !!sanityArtist?.isAfarmResident || artist.resident,
+    isPerformancePlus: !!artist.performancePlus,
+    motsoundEditions: motsound[slug],
+  }).bioBadges;
 
   return (
     <>
@@ -118,16 +127,19 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           {/* badges */}
           {badges.length > 0 && (
             <div style={{ display: "flex", gap: "12px", marginBottom: "14px", flexWrap: "wrap" }}>
-              {badges.map(b => (
-                <span key={b} style={{
-                  fontSize: "10px", letterSpacing: "0.1em",
-                  color: "rgba(255,255,255,0.5)",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                  padding: "3px 8px",
-                }}>
-                  {b}
-                </span>
-              ))}
+              {badges.map(b => {
+                const isFounderBadge = b === "founder/director";
+                return (
+                  <span key={b} style={{
+                    fontSize: "10px", letterSpacing: "0.1em",
+                    color: isFounderBadge ? "#ff6b5e" : "rgba(255,255,255,0.5)",
+                    border: isFounderBadge ? "1px solid rgba(255,107,94,0.6)" : "1px solid rgba(255,255,255,0.2)",
+                    padding: "3px 8px",
+                  }}>
+                    {b}
+                  </span>
+                );
+              })}
             </div>
           )}
           <h1 style={{
@@ -136,7 +148,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             color: isLanAnh ? "rgba(255,255,255,0.7)" : "#ffffff",
             fontStyle: isLanAnh ? "italic" : "normal",
           }}>
-            {artist.name}
+            {displayName}
           </h1>
           {isLanAnh ? (
             <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", marginTop: "8px", fontWeight: 300 }}>
