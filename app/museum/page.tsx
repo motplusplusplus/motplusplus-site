@@ -1,3 +1,4 @@
+import { preconnect } from 'react-dom';
 import MuseumMapWrapper from '@/components/MuseumMapWrapper';
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -25,6 +26,11 @@ export const metadata: Metadata = {
 };
 
 export default function MuseumPage() {
+  // Mapbox GL fetches its style/sprite/glyphs/tiles from api.mapbox.com and reports
+  // telemetry to events.mapbox.com — warm both connections ahead of the map's JS load.
+  preconnect("https://api.mapbox.com", { crossOrigin: "anonymous" });
+  preconnect("https://events.mapbox.com", { crossOrigin: "anonymous" });
+
   return (
     <>
       {/* page title */}

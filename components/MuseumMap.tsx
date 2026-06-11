@@ -7,14 +7,10 @@ import { sanityClient } from '@/lib/sanity';
 import { DEMO_LOCATIONS } from '@/lib/demoLocations';
 import { MUSEUM_TO_TRASH } from '@/lib/demoTrashItems';
 import type { MuseumLocation, AccessType } from '@/lib/museumTypes';
+import { HCMC_CENTER, MAP_DEFAULT_ZOOM, getStaticMapUrl } from '@/lib/mapConstants';
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? '';
-// Cloudflare Workers Assets bug: the 1.7MB mapbox-gl chunk can silently 404 after deploy
-// even though wrangler reports "already uploaded". Fix: make any trivial change here (e.g.
-// tweak these coordinates by ±0.000001), rebuild with the token set, redeploy, then run
-// npm run verify-deploy to confirm. The coordinate change forces a new content hash so
-// Cloudflare uploads a fresh copy instead of reusing the stale/corrupted cached entry.
-const HCMC_CENTER: [number, number] = [106.700903, 10.776901];
+const STATIC_MAP_URL = getStaticMapUrl(MAPBOX_TOKEN);
 
 const ACCESS_LABELS: Record<AccessType, string> = {
   open: 'open access',
@@ -48,6 +44,7 @@ export default function MuseumMap() {
   const [selected, setSelected] = useState<MuseumLocation | null>(null);
   const [loading, setLoading] = useState(true);
   const [mapError, setMapError] = useState(false);
+  const [mapVisualReady, setMapVisualReady] = useState(false);
   const [artistFilter, setArtistFilter] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<MuseumLocation | null>(null);
   const [lightboxList, setLightboxList] = useState<MuseumLocation[]>([]);
@@ -155,12 +152,12 @@ export default function MuseumMap() {
       container: mapContainer.current!,
       style: 'mapbox://styles/mapbox/light-v11',
       center: HCMC_CENTER,
-      zoom: 12.5,
+      zoom: MAP_DEFAULT_ZOOM,
     });
 
     mapRef.current = map;
 
-    map.on('load', () => { mapLoaded.current = true; });
+    map.on('load', () => { mapLoaded.current = true; setMapVisualReady(true); });
     map.on('error', () => { if (!mapLoaded.current) setMapError(true); });
 
     // Add user location control (shows dot on map, works on mobile with GPS)
@@ -462,10 +459,29 @@ export default function MuseumMap() {
           }}
         />
 
+        {/* static map snapshot — shown instantly via CDN while the live mapbox-gl map
+            (style, sprite, glyphs, tiles) finishes loading, then fades out */}
+        {STATIC_MAP_URL && !mapError && (
+          <img
+            src={STATIC_MAP_URL}
+            alt=""
+            aria-hidden="true"
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%', objectFit: 'cover',
+              filter: 'grayscale(1)',
+              opacity: mapVisualReady ? 0 : 1,
+              transition: 'opacity 0.4s ease',
+              pointerEvents: 'none',
+              zIndex: 1,
+            }}
+          />
+        )}
+
         {/* map error fallback */}
         {mapError && (
           <div style={{
-            position: 'absolute', inset: 0,
+            position: 'absolute', inset: 0, zIndex: 2,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             backgroundColor: '#f5f5f5', textAlign: 'center', padding: '24px',
           }}>
@@ -478,11 +494,15 @@ export default function MuseumMap() {
         {/* loading */}
         {loading && (
           <div style={{
-            position: 'absolute', inset: 0,
+            position: 'absolute', inset: 0, zIndex: 2,
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            backgroundColor: '#f5f5f5', pointerEvents: 'none',
+            backgroundColor: mapVisualReady ? 'transparent' : '#f5f5f5', pointerEvents: 'none',
           }}>
-            <p style={{ fontSize: '12px', color: '#aaaaaa', letterSpacing: '0.08em' }}>+++loading+++</p>
+            <p style={{
+              fontSize: '12px', color: '#aaaaaa', letterSpacing: '0.08em',
+              backgroundColor: mapVisualReady ? 'rgba(255,255,255,0.85)' : 'transparent',
+              padding: mapVisualReady ? '6px 14px' : 0,
+            }}>+++loading+++</p>
           </div>
         )}
 
