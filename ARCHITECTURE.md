@@ -156,12 +156,14 @@ three places (`lib/sanity.ts`, `app/events/[slug]/page.tsx`,
 - **Profiles listing vs. profile pages disagree on sources.** Detail pages
   build for `artists-data.json ∪ BIO_SLUGS ∪ Sanity`, but the listing only
   shows `Sanity ∪ artists-data.json`. A `BIO_SLUGS` entry in neither source
-  gets an orphan page that exists but is unlisted. Currently exactly one:
-  `pug-alex-williams`.
+  would get an orphan page that exists but is unlisted. The one instance of
+  this (`pug-alex-williams`) is resolved: `lib/artists.ts` excludes it via
+  `CONSOLIDATED_BIO_SLUGS`, and `worker.js` 301s `/profiles/pug-alex-williams`
+  → `/profiles/alex-williams/` (its canonical profile).
 - **Resident-status logic is split:** the listing treats JSON `resident: true`
   as authoritative ("Sanity `isAfarmResident` is often not set") and overlays
-  the hardcoded `HOSTING_SLUGS` set in `app/profiles/page.tsx` (which
-  duplicates the hosting-artist list in CLAUDE.md and `studios-data.json`).
+  the `HOSTING_SLUGS` set in `lib/badges.ts` (which duplicates the
+  hosting-artist list in CLAUDE.md and `studios-data.json`).
 - Next.js caches Sanity responses in `.next/cache` between builds —
   `rm -rf .next && npm run build` after significant Sanity content changes.
 
@@ -196,14 +198,14 @@ checked only when some part is ≥6 chars).
 - `MATCH_BLOCKLIST` blocks generic art-world words plus very common
   Vietnamese name fragments (nguyen, tran, minh, linh, phuong, thanh, trang,
   hong, song, bert, chung, strange) — added to stop false positives.
-- `BIO_SLUGS` (136 slugs in `lib/events.ts`) is the authoritative set of
+- `BIO_SLUGS` (139 slugs in `lib/events.ts`) is the authoritative set of
   event-document slugs that are bio pages, not real events.
 - `getRelatedResidents(event)` = bios whose name matches the event.
   `getRelatedEvents(bio)` / `getArtistEvents(artist)` = the inverse.
 
 ### Verified failure modes (counted 2026-06-11)
 
-**60 of 136 BIO_SLUGS produce zero match parts** → those artists get no
+**64 of 139 BIO_SLUGS produce zero match parts** → those artists get no
 name-matched event links (and contribute no related-resident links):
 
 1. All name parts <4 chars or blocklisted — most short Vietnamese names
@@ -212,28 +214,31 @@ name-matched event links (and contribute no related-resident links):
    matches (`ian-strange`).
 2. Exactly one part survives but isn't whitelisted (`boynton-yue` →
    [boynton], `thom-nguyen` → [thom], `karlie-ho` → [karlie]).
-3. Punctuation glued to tokens makes them unmatchable
-   (`exxonnubile-julia-weiner`, `pug-alex-williams`, `irene-ha`).
-4. Three artists with `resident: true` in `artists-data.json` are absent from
-   `BIO_SLUGS`: `do-nguyen-lap-xuan`, `alex-williams`, `duong-tu-que` —
-   `getRelatedResidents` never considers them.
 
-Additionally, 5 bio-page events have **no corresponding Sanity artist doc**:
-`bert-nguyen-san`, `montez-press`, `nguyen-thuy-hang`, `lap-xuan`,
-`pug-alex-williams` — so explicit-ref linking can't reach them either.
+**Resolved this session (2026-06-11):** punctuation glued to tokens
+(`exxonnubile-julia-weiner`, `irene-ha`, and what was formerly
+`pug-alex-williams`) made them unmatchable — a punctuation-token strip in
+`matchParts` now rescues these parenthesized names. Separately, three artists
+with `resident: true` in `artists-data.json` (`do-nguyen-lap-xuan`,
+`alex-williams`, `duong-tu-que`) were previously absent from `BIO_SLUGS`,
+so `getRelatedResidents` never considered them — all three are now included.
+
+Additionally, 4 bio-page events have **no corresponding Sanity artist doc**:
+`bert-nguyen-san`, `montez-press`, `nguyen-thuy-hang`, `lap-xuan` — so
+explicit-ref linking can't reach them either.
 
 ### Assessment and recommended direction
 
 Name matching is fundamentally the wrong tool for this corpus: Vietnamese
 names are short, share extremely common fragments, and appear inside ordinary
 prose, forcing an arms race of blocklists/whitelists that now silently
-disables linking for 44% of bios. The right model — explicit references — is
+disables linking for 46% of bios. The right model — explicit references — is
 **already built and 95% populated** on the Sanity side. The endgame:
 
 1. Migrate the 82 remaining JSON-only public events into Sanity (script
    pattern exists: `scripts/migrate-events-to-sanity.js`,
    `scripts/create-missing-sanity-events.js`) and set their `artists[]` refs.
-2. Create the 5 missing `artist` docs.
+2. Create the 4 missing `artist` docs.
 3. Make refs the *only* mechanism; delete `matchParts`, `MATCH_BLOCKLIST`,
    `SINGLE_NAME_WHITELIST`, `getRelatedResidents`/`getRelatedEvents`/
    `getArtistEvents` name paths.
@@ -241,26 +246,58 @@ disables linking for 44% of bios. The right model — explicit references — is
    slugs from `/events/` static generation) — or disappear if `isBioPage`
    in Sanity becomes authoritative.
 
-Until then, do **not** "fix" the 60 zero-match bios by loosening matchParts —
+Until then, do **not** "fix" the 64 zero-match bios by loosening matchParts —
 every loosening reintroduces false positives. Add explicit refs instead.
 
 ---
 
-## 5. Profile classification
+## 5. Profile badge taxonomy
 
-A profile's displayed type comes from three overlapping signals:
+`lib/badges.ts` is the single source of truth for which badges and filters a
+profile gets. `computeBadges(p: PersonSignals): BadgeResult` is called from
+both the profiles listing (`app/profiles/page.tsx` → `ArtistsShell.tsx`) and
+the bio page (`app/profiles/[slug]/page.tsx`).
 
-- `BIO_SLUGS` membership (has a bio-page event doc),
-- `HOSTING_SLUGS` (hardcoded in `app/profiles/page.tsx`: the 7 a.Farm hosts),
-- `artists-data.json` flags (`resident`, `studioHost`, `curator`,
-  `collective`, `performancePlus`) and Sanity `isAfarmResident` + free-text
-  `role` string.
+**Inputs (`PersonSignals`)** — assembled per-profile from Sanity + JSON:
 
-The listing filter is resident / hosting artist / other; badges on the detail
-page render the JSON flags. Known gap: curators, researchers, writers etc.
-display as generic artists — the `curator` flag exists in JSON but Sanity has
-only the free-text `role`. A proper taxonomy (enum field on the Sanity
-`artist` doc, surfaced as badges/filters) is wanted but not yet designed.
+- `slug` — checked against the curated sets below.
+- `role` — Sanity free-text `role`, falling back to `"curator"` if the JSON
+  `curator` flag is set.
+- `hasResidency` — `true` if Sanity `residencyStartDate` or
+  `isAfarmResident` is set, or JSON `resident: true`.
+- `isPerformancePlus` — JSON `performancePlus` flag.
+- `motsoundEditions` — edition numbers from `getMotsoundPerformerEditions()`.
+
+**Curated slug sets** (hardcoded — not yet Sanity fields):
+
+- `HOSTING_SLUGS` — current a.Farm studio hosts (7).
+- `COLLECTIVE_SLUGS` — MoT+++ collective members (7, matches `/collective`).
+- `FOUNDER_SLUGS` — founder/director (`cam-xanh` only).
+- `PLUS1_RESIDENCY_SLUGS` — pre-2018 "+1 residency" MoT+++ residents —
+  currently empty; unconfirmed candidates noted in a comment.
+- `PLUS1_MUSEUM_SLUGS` — artists with work placed in the decentralized "+1
+  museum by any other name" collection — currently empty (no `museumLocation`
+  docs with an `artistRef` yet).
+
+**Outputs (`BadgeResult`)**:
+
+- `primary` — single primary identity for the listing sub-label, in priority
+  order: founder/director → hosting artist → curator/writer/researcher (if no
+  residency) → a.Farm → +1 residency → +1 performance → "artist".
+- `isFounder` — drives red founder styling on the bio hero.
+- `isPlus1Museum` — whether this profile has work in the +1 museum collection.
+- `filters[]` — every tag this person matches, consumed by the listing's
+  filter bar (`ArtistsShell.tsx`); a profile can match several at once (e.g.
+  a.Farm + +1 collective + MoTSound).
+- `bioBadges[]` — ordered badges rendered on the bio-page hero; a superset of
+  `filters` in places (e.g. "+1 collective" only appears here, not on the
+  listing card).
+
+**Remaining gaps:** Sanity `role` is still free-text (no enum); the curated
+slug sets above are still hardcoded (relocated here from
+`app/profiles/page.tsx`, not retired); `artists-data.json` flags still feed
+`PersonSignals`. The "+1 residency" and "+1 museum" badges currently never
+render — both curated sets are empty.
 
 ---
 
@@ -268,35 +305,41 @@ only the free-text `role`. A proper taxonomy (enum field on the Sanity
 
 | # | Issue | Root cause | Status |
 |---|---|---|---|
-| 1 | Live site silently reverts to older code; pages disappear after deploys. | GitHub Action redeploys `origin/main` on `workflow_dispatch`; local wrangler deploys of unpushed commits get overwritten. | Documented; not mechanically enforced. Extend `npm run deploy` to refuse on dirty tree / unpushed commits. |
+| 1 | Live site silently reverts to older code; pages disappear after deploys. | GitHub Action redeploys `origin/main` on `workflow_dispatch`; local wrangler deploys of unpushed commits get overwritten. | **Resolved.** `npm run deploy` (`scripts/deploy.js`) now refuses to run if the working tree is dirty or local `main` isn't in sync with `origin/main` (commit `cf7ab9b`). |
 | 2 | Bios get zero name-matched event links. | Name-matching architecture vs. Vietnamese name corpus (§4). | Mitigated wherever Sanity refs exist. **This session (2026-06-11):** punctuation-token strip added to `matchParts` (rescues parenthesized names like `exxonnubile-julia-weiner`, `pug-alex-williams`); the 3 previously-omitted `resident:true` artists (`do-nguyen-lap-xuan`, `alex-williams`, `duong-tu-que`) were added to `BIO_SLUGS`. 64 bios still empty (mostly single short/blocklisted names) — full fix = §4 endgame (explicit refs). |
 | 3 | `sanity-schemas/` in this repo is stale (2 of 6 types). | Schemas moved to the Studio repo; copy never updated. | Delete or replace with pointer. |
 | 4 | Artist queries can hit stale CDN data at build. | `getArtists`/`getArtistBySlug` use the `useCdn: true` client. | Switch to `buildClient`. |
 | 5 | Pages show stale Sanity content after deploy. | `.next/cache` persists fetch responses across builds. | Workaround documented: clean build. |
 | 6 | Large JS chunks intermittently 404 after deploy (museum map broke twice). | Cloudflare Workers Assets bug with files >500KB marked "already uploaded". | Mitigated: `npm run verify-deploy` runs after every deploy; if it fails, touch `components/MuseumMap.tsx`, rebuild, redeploy. |
 | 7 | `/residents/` exact path is a soft meta-refresh redirect, not 301. | Static stub asset shadows the worker (asset-first routing, §1). | Cosmetic/SEO; delete `app/residents/page.tsx` to let the worker 301. |
-| 8 | One orphan profile page (`pug-alex-williams`) exists but is unlisted. | Listing and detail pages use different slug-source unions (§3). | Add to Sanity or `artists-data.json`. |
-| 9 | Curators/researchers displayed as artists. | No taxonomy field; flags not fully surfaced. | Needs design (§5). |
+| 8 | One orphan profile page (`pug-alex-williams`) existed but was unlisted. | Listing and detail pages use different slug-source unions (§3). | **Resolved.** `lib/artists.ts` excludes it from standalone generation via `CONSOLIDATED_BIO_SLUGS`; `worker.js` 301s `/profiles/pug-alex-williams` → `/profiles/alex-williams/`. |
+| 9 | Curators/researchers displayed as artists. | No taxonomy field; flags not fully surfaced. | **Resolved.** `roleCategory()` in `lib/badges.ts` maps Sanity `role` values (`curator`/`writer`/`researcher`) to a primary identity and filter tag (§5). |
 | 10 | Stale doc counts elsewhere (e.g. "244 events"). | Data has grown: `events-data.json` = 339, Sanity = 216 active. | This file is now the reference. |
 
 ---
 
 ## 7. Recommended next steps (priority order)
 
-1. **Fix `/submit-inquiry`** — user-facing forms are silently failing right
-   now. Implement in `worker.js` with a Sanity write-token Worker secret;
-   remove `functions/`.
-2. **Harden the deploy script** — make `npm run deploy` fail if the working
-   tree is dirty or `main` isn't pushed to `origin/main`; never run raw
-   `wrangler deploy` again.
+1. ~~**Fix `/submit-inquiry`**~~ — **Done.** All three contact forms now
+   submit via `mailto:` links instead of a POST endpoint (commit `299adc5`),
+   not the `worker.js` + Sanity write-token approach originally proposed here.
+   `functions/` remains unused but harmless.
+2. ~~**Harden the deploy script**~~ — **Done.** `scripts/deploy.js` now
+   refuses to run if the working tree is dirty or local `main` isn't in sync
+   with `origin/main` (commit `cf7ab9b`).
 3. **Finish the Sanity event migration** — the 82 JSON-only public events →
-   Sanity with `artists[]` refs; create the 5 missing artist docs; ref the one
+   Sanity with `artists[]` refs; create the 4 missing artist docs; ref the one
    unlinked Sanity event (pamela-n-corey talk).
 4. **Delete name-matching** once (3) is done; collapse the dual-source merge
    for events; `events-data.json` becomes archive-only.
 5. **Unify Sanity clients** on `useCdn: false` for all build-time queries.
-6. **Profile taxonomy** — add a role enum to the Sanity `artist` schema,
-   surface as badges/filters; retire the JSON flags and `HOSTING_SLUGS`
-   hardcoding.
+6. **Profile taxonomy** — **Partially done.** Badges/filters now derive from
+   `lib/badges.ts` and `computeBadges()` (§5), covering founder/director,
+   hosting artist, a.Farm, +1 residency, +1 museum, +1 performance, +1
+   collective, MoTSound, and curator/writer/researcher. Still open: add a role
+   enum to the Sanity `artist` schema (role is still free-text); retire the
+   JSON flags (`resident`, `curator`, `performancePlus`, etc.) and the curated
+   slug sets (`HOSTING_SLUGS` etc., relocated to `lib/badges.ts` but not yet
+   retired) in favor of Sanity-modeled data.
 7. **Housekeeping** — delete the stale `sanity-schemas/` copy and the
    `/residents` stub; extract the shared junk-image filename list.

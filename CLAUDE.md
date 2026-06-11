@@ -47,8 +47,10 @@
 - **Profile↔event linking** — two mechanisms: explicit `artists[]` reference
   fields on Sanity events (primary; ~95% populated) and legacy name-matching
   (`matchParts` in `lib/events.ts`, with blocklist/whitelist). Name matching
-  silently fails for 60 of 136 bios — do **not** loosen it to fix a missing
+  silently fails for 64 of 139 bios — do **not** loosen it to fix a missing
   link; add an explicit Sanity reference instead. Long-term plan: refs only.
+- **Badge taxonomy** — lives in `lib/badges.ts`; read before modifying
+  profile display or filters.
 
 ## Cloudflare R2 (images)
 - **Bucket:** `site-general` — lives in the *personal* Cloudflare account,
@@ -93,9 +95,6 @@
 - Do NOT include: Luke Schneider, Tra My, or any removed staff anywhere on the site
 - Lowercase convention throughout all UI text (intentional MoT+++ voice)
 - MoT+++ exact capitalization always
-- Known broken (top fix priority): `POST /submit-inquiry` 404s in production —
-  `functions/` is a Pages-convention folder that never deploys under the
-  Worker. See ARCHITECTURE.md §6.
 
 ## A.Farm studios (afarm page slugs → studios-data.json slugs must match)
 - andrew-newell-walther, le-phi-long, quoc-anh-le, hoang-nam-viet,

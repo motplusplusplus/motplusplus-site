@@ -89,6 +89,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const studio = allStudios.find(s => s.hostSlug === slug);
   const isLanAnh = slug === "lan-anh-le";
   const isDavidWillis = slug === "david-willis";
+  const isCamXanh = slug === "cam-xanh";
 
   // Cam Xanh: full name on the bio page, "Cam Xanh" on the listing card.
   const displayName = slug === "cam-xanh" ? "Tran Thi Thanh Ha (Cam Xanh)" : artist.name;
@@ -100,6 +101,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
     isPerformancePlus: !!artist.performancePlus,
     motsoundEditions: motsound[slug],
   }).bioBadges;
+  if (isCamXanh) badges.push("+1 direct experience");
 
   return (
     <>
@@ -244,6 +246,21 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                 }}
               >
                 a.farm saigon artist intensive retreat — aug. 22–28, 2026 →
+              </Link>
+            )}
+            {isCamXanh && (
+              <Link
+                href="/directexperience"
+                style={{
+                  display: "inline-block",
+                  fontSize: "13px",
+                  color: "#111111",
+                  borderBottom: "1px solid #111111",
+                  paddingBottom: "2px",
+                  marginTop: "8px",
+                }}
+              >
+                +1 direct experience →
               </Link>
             )}
           </div>

@@ -114,7 +114,7 @@ export default async function StudioPage({
               textDecoration: "none",
             }}
           >
-            hosting artist — view profile ↗
+            {studio.hostSlug === "sao-la" ? "partner collective — view profile ↗" : "hosting artist — view profile ↗"}
           </Link>
         )}
       </div>

@@ -18,11 +18,16 @@ export const COLLECTIVE_SLUGS = new Set([
 /** Founder / director — Cam Xanh only (Sanity role "Founder"). */
 export const FOUNDER_SLUGS = new Set(["cam-xanh"]);
 
-// +1 museum residency residents — manually curated. The data does NOT cleanly
-// identify these: "+1 a nice place for experimentation" is a 2017–2025 program
-// series (presenters, not residents) and no bio/record says "+1 residency".
+// +1 residency — pre-2018 MoT+++ residents, manually curated. The data does NOT
+// cleanly identify these: "+1 a nice place for experimentation" is a 2017–2025
+// program series (presenters, not residents) and no bio/record says "+1 residency".
 // Uncertain candidates exhibited in the "+1 museum by any other name" collection
 // (NOT confirmed residents): "dao-tung", "tran-minh-duc". Populate as confirmed.
+export const PLUS1_RESIDENCY_SLUGS = new Set<string>([]);
+
+// +1 museum — artists with work placed in the decentralized "+1 museum by any
+// other name" collection (Sanity museumLocation docs with an artistRef).
+// populated when museumLocation artist refs exist in Sanity — currently empty
 export const PLUS1_MUSEUM_SLUGS = new Set<string>([]);
 
 /** Sanity `role` values that denote a non-artist primary identity. */
@@ -45,17 +50,19 @@ export type PersonSignals = {
 };
 
 export type BadgeResult = {
-  primary: string;     // single primary identity (listing sub-label + grouping)
-  isFounder: boolean;  // for red founder styling
-  filters: string[];   // every filter tag this person matches
-  bioBadges: string[]; // ordered badges for the bio-page hero
+  primary: string;        // single primary identity (listing sub-label + grouping)
+  isFounder: boolean;     // for red founder styling
+  isPlus1Museum: boolean; // has work in the +1 museum collection
+  filters: string[];      // every filter tag this person matches
+  bioBadges: string[];    // ordered badges for the bio-page hero
 };
 
 export function computeBadges(p: PersonSignals): BadgeResult {
   const isHost = HOSTING_SLUGS.has(p.slug);
   const isFounder = FOUNDER_SLUGS.has(p.slug);
   const isCollective = COLLECTIVE_SLUGS.has(p.slug);
-  const isPlus1 = PLUS1_MUSEUM_SLUGS.has(p.slug);
+  const isPlus1Residency = PLUS1_RESIDENCY_SLUGS.has(p.slug);
+  const isPlus1Museum = PLUS1_MUSEUM_SLUGS.has(p.slug);
   const editions = p.motsoundEditions ?? [];
   const roleCat = roleCategory(p.role);
 
@@ -65,7 +72,7 @@ export function computeBadges(p: PersonSignals): BadgeResult {
   else if (isHost) primary = "hosting artist";
   else if (roleCat && !p.hasResidency) primary = roleCat;       // curator/writer/researcher
   else if (p.hasResidency) primary = "a.Farm";
-  else if (isPlus1) primary = "+1";
+  else if (isPlus1Residency) primary = "+1 residency";
   else if (p.isPerformancePlus) primary = "+1 performance";
 
   // Filterable tags — a person can match several.
@@ -73,7 +80,8 @@ export function computeBadges(p: PersonSignals): BadgeResult {
   if (isFounder) filters.push("founder/director");
   if (isHost) filters.push("hosting artist");
   if (p.hasResidency) filters.push("a.Farm");
-  if (isPlus1) filters.push("+1");
+  if (isPlus1Residency) filters.push("+1 residency");
+  if (isPlus1Museum) filters.push("+1 museum");
   if (p.isPerformancePlus) filters.push("+1 performance");
   if (editions.length) filters.push("MoTSound");
   if (roleCat) filters.push(roleCat);
@@ -84,11 +92,12 @@ export function computeBadges(p: PersonSignals): BadgeResult {
   if (isFounder) bioBadges.push("founder/director");
   if (isHost) bioBadges.push("hosting artist");
   if (p.hasResidency) bioBadges.push("a.Farm resident");
-  if (isPlus1) bioBadges.push("+1");
+  if (isPlus1Residency) bioBadges.push("+1 residency");
+  if (isPlus1Museum) bioBadges.push("+1 museum");
   if (p.isPerformancePlus) bioBadges.push("+1 performance");
   for (const n of editions) bioBadges.push(`MoTSound #${n}`);
   if (roleCat) bioBadges.push(roleCat);
   if (isCollective) bioBadges.push("+1 collective");
 
-  return { primary, isFounder, filters, bioBadges };
+  return { primary, isFounder, isPlus1Museum, filters, bioBadges };
 }

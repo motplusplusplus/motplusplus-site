@@ -34,6 +34,13 @@ export default function DirectExperiencePage() {
         <p style={{ fontSize: "15px", color: "#999999", fontWeight: 300 }}>
           a meditative awareness with the art of non doer
         </p>
+        <p style={{ fontSize: "13px", color: "#999999", fontWeight: 300, marginTop: "12px" }}>
+          a program by{" "}
+          <Link href="/profiles/cam-xanh" style={{ color: "#666666", borderBottom: "1px solid #999999", paddingBottom: "1px" }}>
+            cam xanh
+          </Link>
+          {" "}— view profile
+        </p>
       </div>
 
       {/* penthouse image */}
