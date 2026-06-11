@@ -85,12 +85,14 @@
 - `artists-data.json` — artist profiles + flags (resident/studioHost/curator)
 - `studios-data.json` — A.Farm studio supplement (hostSlug, locationKeywords,
   portraitPairs, video URLs)
-- `lib/events.ts` — `AFARM_RESIDENT_SLUGS`, `BIO_SLUGS`, `HIDDEN_SLUGS`
-  (authoritative lists) + name-matching logic
+- `lib/events.ts` — `BIO_SLUGS`, `HIDDEN_SLUGS` (authoritative lists) +
+  name-matching logic
+- `lib/badges.ts` — badge taxonomy and `computeBadges()`; read before
+  modifying profile display or filters
 
 ## Important rules
-- `AFARM_RESIDENT_SLUGS` is sourced from the WP XML export — only add slugs
-  confirmed in that XML
+- `PLUS1_RESIDENCY_SLUGS` (in `lib/badges.ts`) should be sourced from the WP
+  XML export — only add slugs confirmed in that XML
   (`/Volumes/MoT/EXPORTED DATA/wordpress/motplusplusplus.wordpress.com-2026-03-17-04_52_48/`)
 - Do NOT include: Luke Schneider, Tra My, or any removed staff anywhere on the site
 - Lowercase convention throughout all UI text (intentional MoT+++ voice)

@@ -32,7 +32,7 @@ const SKIP_SLUGS = new Set([
   'artist-in-residence-ben-valentine', // if exists
 ]);
 
-// ─── Known A.Farm residents (from AFARM_RESIDENT_SLUGS in lib/events.ts) ─────
+// ─── Known A.Farm residents (manually curated) ───────────────────────────────
 // These map slug → { season, period, residencyStartDate }
 // Partial — editors can fill in the rest in Sanity Studio
 const AFARM_SEASONS = {
