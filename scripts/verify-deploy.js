@@ -60,9 +60,8 @@ async function main() {
     console.error('Cloudflare silently dropped these large files. Fix:');
     console.error('  1. Make a trivial edit to any source file in the failing chunk');
     console.error('     (e.g. tweak a constant in components/MuseumMap.tsx)');
-    console.error('  2. Rebuild:  NEXT_PUBLIC_MAPBOX_TOKEN=<token> npm run build');
-    console.error('  3. Redeploy: CLOUDFLARE_API_TOKEN=<token> CLOUDFLARE_ACCOUNT_ID=f2a86349fa252c2582bc0f478ccdf9ab npx wrangler deploy');
-    console.error('  4. Re-run:   npm run verify-deploy');
+    console.error('  2. Commit and push the change to origin/main');
+    console.error('  3. Re-run: npm run deploy');
     process.exit(1);
   }
 

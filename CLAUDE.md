@@ -12,23 +12,27 @@
   (`worker.js` + assets binding)
 
 ## Deploy — HARD RULES
-- **NEVER run `wrangler deploy` directly. Always use `npm run deploy`.**
-  (It runs the Mapbox-token preflight, `wrangler deploy`, and
-  `verify-deploy`. It does not yet verify git state — that check should be
-  added to the script.)
+- **`npm run deploy` is the only command needed — never run `wrangler deploy`
+  directly.** It (`scripts/deploy.js`):
+  1. Loads `NEXT_PUBLIC_MAPBOX_TOKEN`, `CLOUDFLARE_API_TOKEN`, and
+     `CLOUDFLARE_ACCOUNT_ID` from `.env.local` automatically.
+  2. Aborts with a clear error if the working tree isn't clean or local
+     `main` isn't in sync with `origin/main`.
+  3. Does a clean build (`rm -rf .next && next build`).
+  4. Runs `wrangler deploy`, then `verify-deploy`.
 - **Commit and push to `origin/main` must precede every deploy, without
-  exception.** A GitHub Action (`.github/workflows/deploy.yml`) can be
-  triggered at any time and redeploys whatever is on `origin/main` — any
-  deployed-but-unpushed local commits will be silently reverted on the live
-  site. This has happened before (pages disappeared).
-- Credentials: `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` are **not
-  stored in this file or this repo**. Get them from `.env.local`, your shell
-  environment, or the Cloudflare dashboard (Workers account ≠ R2 account —
-  they are different Cloudflare accounts).
-- After significant Sanity content changes: `rm -rf .next && npm run build`
-  (Next.js caches Sanity fetches between builds).
+  exception** — `npm run deploy` enforces this. A GitHub Action
+  (`.github/workflows/deploy.yml`) can be triggered at any time and
+  redeploys whatever is on `origin/main` — any deployed-but-unpushed local
+  commits would otherwise be silently reverted on the live site. This has
+  happened before (pages disappeared).
+- Credentials: `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` /
+  `NEXT_PUBLIC_MAPBOX_TOKEN` live in `.env.local` (gitignored, not stored in
+  this repo). Workers account ≠ R2 account — they are different Cloudflare
+  accounts; only the Workers account ID belongs in `.env.local` for deploy.
 - If `verify-deploy` fails (Workers Assets large-file 404 bug): make a
-  trivial change to `components/MuseumMap.tsx`, rebuild, redeploy.
+  trivial change to `components/MuseumMap.tsx`, commit, push, and re-run
+  `npm run deploy`.
 
 ## Key systems (details in ARCHITECTURE.md)
 - **Profiles** — canonical artist pages at `/profiles/[slug]`; `/residents/*`
