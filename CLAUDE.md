@@ -7,6 +7,16 @@
 - **GitHub:** `https://github.com/motplusplusplus/motplusplus-site.git`
 - **Framework:** Next.js static export → Cloudflare Workers
 
+### IMPORTANT: always push to origin/main after deploying
+- Some external automation periodically fires `workflow_dispatch` on the "Deploy site"
+  GitHub Action, which checks out `origin/main` and runs `wrangler deploy` — overwriting
+  whatever is currently live.
+- If you `wrangler deploy` locally but don't push the matching commits to `origin/main`,
+  the next automated run will silently revert the live site to the older `origin/main`
+  state (this has happened — pages disappeared after working deploys).
+- **Rule: every local commit that gets deployed via wrangler must also be pushed to
+  `origin/main` in the same session**, so any future automated redeploy ships the same code.
+
 ## Cloudflare R2 (images)
 - **Bucket:** `site-general` (account `31a35595add67ae1366b3f6420432773`)
 - **Public URL:** `https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev`
