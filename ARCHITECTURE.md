@@ -320,26 +320,52 @@ render — both curated sets are empty.
 
 ## 7. Recommended next steps (priority order)
 
-1. ~~**Fix `/submit-inquiry`**~~ — **Done.** All three contact forms now
-   submit via `mailto:` links instead of a POST endpoint (commit `299adc5`),
-   not the `worker.js` + Sanity write-token approach originally proposed here.
-   `functions/` remains unused but harmless.
-2. ~~**Harden the deploy script**~~ — **Done.** `scripts/deploy.js` now
-   refuses to run if the working tree is dirty or local `main` isn't in sync
-   with `origin/main` (commit `cf7ab9b`).
-3. **Finish the Sanity event migration** — the 82 JSON-only public events →
-   Sanity with `artists[]` refs; create the 4 missing artist docs; ref the one
-   unlinked Sanity event (pamela-n-corey talk).
-4. **Delete name-matching** once (3) is done; collapse the dual-source merge
-   for events; `events-data.json` becomes archive-only.
-5. **Unify Sanity clients** on `useCdn: false` for all build-time queries.
-6. **Profile taxonomy** — **Partially done.** Badges/filters now derive from
-   `lib/badges.ts` and `computeBadges()` (§5), covering founder/director,
-   hosting artist, a.Farm, +1 residency, +1 museum, +1 performance, +1
-   collective, MoTSound, and curator/writer/researcher. Still open: add a role
-   enum to the Sanity `artist` schema (role is still free-text); retire the
-   JSON flags (`resident`, `curator`, `performancePlus`, etc.) and the curated
-   slug sets (`HOSTING_SLUGS` etc., relocated to `lib/badges.ts` but not yet
-   retired) in favor of Sanity-modeled data.
-7. **Housekeeping** — delete the stale `sanity-schemas/` copy and the
-   `/residents` stub; extract the shared junk-image filename list.
+### Completed (2026-06-11)
+
+- ~~**Fix `/submit-inquiry`**~~ — **Done.** All three contact forms now
+  submit via `mailto:` links instead of a POST endpoint (commit `299adc5`),
+  not the `worker.js` + Sanity write-token approach originally proposed here.
+  `functions/` remains unused but harmless.
+- ~~**Harden the deploy script**~~ — **Done.** `scripts/deploy.js` now
+  refuses to run if the working tree is dirty or local `main` isn't in sync
+  with `origin/main` (commit `cf7ab9b`).
+- ~~**Profile badge taxonomy**~~ — **Done.** Badges/filters now derive from
+  `lib/badges.ts` and `computeBadges()` (§5), covering founder/director,
+  hosting artist, a.Farm, +1 residency, +1 museum, +1 performance, +1
+  collective, MoTSound, and curator/writer/researcher (commits `5354c73`,
+  `babaea2`). Remaining schema/data work is tracked below.
+- ~~**Orphan profile (`pug-alex-williams`)**~~ — **Resolved**, see §6 issue 8.
+- ~~**Luke Schneider purged**~~ from all pages and data; he should never
+  reappear (commit `5354c73`).
+- ~~**`dinh-q-le` and `sao-la` profiles created**~~, including deceased
+  treatment for Dinh Q. Lê (1968–2024) matching the existing Lan Anh Lê
+  pattern (commits `5354c73`, `752575f`).
+- ~~**Renamed the profiles listing to "MoTcyclopedia"**~~ (commit `83c8444`).
+- ~~**Deleted the `/residents` stub**~~ so the worker's `/residents/*` →
+  `/profiles/*` 301 fires for the exact path too (commit `b89ec98`); see §6
+  issue 7.
+
+### Remaining
+
+1. **Finish the Sanity event migration** — migrate the 82 JSON-only public
+   events to Sanity with `artists[]` refs; create the 4 missing artist docs;
+   ref the one unlinked Sanity event (pamela-n-corey talk). Once done, delete
+   name-matching (`matchParts`) entirely, collapse the dual-source merge for
+   events, and treat `events-data.json` as archive-only.
+2. **Add a Sanity export script** as a backup snapshot, once the migration in
+   (1) is complete and Sanity is the canonical event source.
+3. **Unify Sanity clients** on `useCdn: false` for all build-time queries.
+4. **Populate `PLUS1_RESIDENCY_SLUGS`** (in `lib/badges.ts`) from the WP XML
+   export — pre-2018 MoT+++ residents only.
+5. **Populate `PLUS1_MUSEUM_SLUGS`** once Sanity `museumLocation` documents
+   carry artist refs.
+6. **Add a `deathYear` field to the Sanity `artist` schema** to replace the
+   hardcoded `DECEASED_DATES` map in `app/profiles/[slug]/page.tsx`.
+7. **Add a role enum to the Sanity `artist` schema** — role is still
+   free-text.
+8. **Retire the JSON flags** (`resident`, `curator`, `performancePlus`, etc.)
+   and the curated slug sets in `lib/badges.ts` once Sanity is the sole
+   source of truth for badge data.
+9. **Housekeeping** — delete the stale `sanity-schemas/` copy; extract the
+   shared junk-image filename list (currently duplicated in
+   `app/profiles/[slug]/page.tsx`).
