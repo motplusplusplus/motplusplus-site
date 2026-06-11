@@ -46,6 +46,7 @@ export default function MuseumMap() {
   const [isDemo, setIsDemo] = useState(false);
   const [selected, setSelected] = useState<MuseumLocation | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mapError, setMapError] = useState(false);
   const [artistFilter, setArtistFilter] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<MuseumLocation | null>(null);
   const [lightboxList, setLightboxList] = useState<MuseumLocation[]>([]);
@@ -157,6 +158,8 @@ export default function MuseumMap() {
     });
 
     mapRef.current = map;
+
+    map.on('error', () => setMapError(true));
 
     // Add user location control (shows dot on map, works on mobile with GPS)
     map.addControl(
@@ -282,13 +285,17 @@ export default function MuseumMap() {
     setSelected(loc);
     if (mapRef.current && loc.coordinates) {
       mapSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setTimeout(() => {
-        mapRef.current?.easeTo({
-          center: [loc.coordinates.lng, loc.coordinates.lat],
-          zoom: 15,
-          duration: 700,
-        });
-      }, 400);
+      const map = mapRef.current;
+      const ease = () => map.easeTo({
+        center: [loc.coordinates.lng, loc.coordinates.lat],
+        zoom: 15,
+        duration: 700,
+      });
+      if (map.isStyleLoaded()) {
+        ease();
+      } else {
+        map.once('style.load', ease);
+      }
     }
   }, []);
 
@@ -452,6 +459,19 @@ export default function MuseumMap() {
             backgroundColor: '#f0f0f0',
           }}
         />
+
+        {/* map error fallback */}
+        {mapError && (
+          <div style={{
+            position: 'absolute', inset: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backgroundColor: '#f5f5f5', textAlign: 'center', padding: '24px',
+          }}>
+            <p style={{ fontSize: '13px', color: '#999999', letterSpacing: '0.04em', lineHeight: 1.6 }}>
+              map unavailable — view our locations at motplusplusplus.com/museum
+            </p>
+          </div>
+        )}
 
         {/* loading */}
         {loading && (
