@@ -44,7 +44,7 @@ export async function getTrashItems() {
 }
 
 export async function getMuseumLocations() {
-  return sanityClient.fetch(`
+  return buildClient.fetch(`
     *[_type == "museumLocation" && active == true && (!defined(locationEnd) || locationEnd >= string::split(now(), "T")[0])] {
       _id,
       title,
@@ -107,18 +107,18 @@ const ARTIST_FIELDS = `
 `;
 
 export async function getArtists() {
-  return sanityClient.fetch(`*[_type == "artist" && active == true] | order(name asc) { ${ARTIST_FIELDS} }`);
+  return buildClient.fetch(`*[_type == "artist" && active == true] | order(name asc) { ${ARTIST_FIELDS} }`);
 }
 
 export async function getArtistBySlug(slug: string) {
-  return sanityClient.fetch(
+  return buildClient.fetch(
     `*[_type == "artist" && slug.current == $slug][0] { ${ARTIST_FIELDS} }`,
     { slug }
   );
 }
 
 export async function getAllSanityArtistSlugs(): Promise<string[]> {
-  const results: { slug: string }[] = await sanityClient.fetch(
+  const results: { slug: string }[] = await buildClient.fetch(
     `*[_type == "artist" && active == true]{ "slug": slug.current }`
   );
   return results.map(r => r.slug).filter(Boolean);
