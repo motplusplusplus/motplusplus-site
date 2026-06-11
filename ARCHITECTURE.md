@@ -116,9 +116,9 @@ redirect, not a 301 — deleting the stub would make the worker's 301 take over.
 
 `~/Documents/motplus-sanity/schemaTypes/` (the Studio repo) — six types:
 `event`, `artist`, `afarmHost`, `museumLocation`, `trashItem`, `inquiry`.
-**The site repo's `sanity-schemas/` folder is a stale partial copy** (only
-`inquiry.ts` and `museumLocation.ts`) — do not trust it; consider deleting it
-or replacing it with a pointer file.
+The site repo's `sanity-schemas/` folder (a stale partial copy of two of the
+six types) was deleted (2026-06-12) — see §8 for the full schema reference,
+cross-referenced against `lib/sanity.ts`.
 
 ### The merge pattern (used identically in every context)
 
@@ -307,8 +307,8 @@ render — both curated sets are empty.
 |---|---|---|---|
 | 1 | Live site silently reverts to older code; pages disappear after deploys. | GitHub Action redeploys `origin/main` on `workflow_dispatch`; local wrangler deploys of unpushed commits get overwritten. | **Resolved.** `npm run deploy` (`scripts/deploy.js`) now refuses to run if the working tree is dirty or local `main` isn't in sync with `origin/main` (commit `cf7ab9b`). |
 | 2 | Bios get zero name-matched event links. | Name-matching architecture vs. Vietnamese name corpus (§4). | Mitigated wherever Sanity refs exist. **This session (2026-06-11):** punctuation-token strip added to `matchParts` (rescues parenthesized names like `exxonnubile-julia-weiner`, `pug-alex-williams`); the 3 previously-omitted `resident:true` artists (`do-nguyen-lap-xuan`, `alex-williams`, `duong-tu-que`) were added to `BIO_SLUGS`. 64 bios still empty (mostly single short/blocklisted names) — full fix = §4 endgame (explicit refs). |
-| 3 | `sanity-schemas/` in this repo is stale (2 of 6 types). | Schemas moved to the Studio repo; copy never updated. | Delete or replace with pointer. |
-| 4 | Artist queries can hit stale CDN data at build. | `getArtists`/`getArtistBySlug` use the `useCdn: true` client. | Switch to `buildClient`. |
+| 3 | `sanity-schemas/` in this repo is stale (2 of 6 types). | Schemas moved to the Studio repo; copy never updated. | **Resolved.** Deleted (2026-06-12) — see `~/Documents/motplus-sanity/schemaTypes/` and §8. |
+| 4 | Artist queries can hit stale CDN data at build. | `getArtists`/`getArtistBySlug` use the `useCdn: true` client. | **Resolved.** All build-time queries (`getArtists`, `getArtistBySlug`, `getAllSanityArtistSlugs`, `getMuseumLocations`) switched to `buildClient` (commit `44df4f3`). `sanityClient` retained only for `MuseumMap.tsx`'s runtime client-side fetch. |
 | 5 | Pages show stale Sanity content after deploy. | `.next/cache` persists fetch responses across builds. | Workaround documented: clean build. |
 | 6 | Large JS chunks intermittently 404 after deploy (museum map broke twice). | Cloudflare Workers Assets bug with files >500KB marked "already uploaded". | Mitigated: `npm run verify-deploy` runs after every deploy; if it fails, touch `components/MuseumMap.tsx`, rebuild, redeploy. |
 | 7 | `/residents/` exact path is a soft meta-refresh redirect, not 301. | Static stub asset shadows the worker (asset-first routing, §1). | Cosmetic/SEO; delete `app/residents/page.tsx` to let the worker 301. |
@@ -366,9 +366,9 @@ render — both curated sets are empty.
 8. **Retire the JSON flags** (`resident`, `curator`, `performancePlus`, etc.)
    and the curated slug sets in `lib/badges.ts` once Sanity is the sole
    source of truth for badge data.
-9. **Housekeeping** — delete the stale `sanity-schemas/` copy; extract the
-   shared junk-image filename list (currently duplicated in
-   `app/profiles/[slug]/page.tsx`).
+9. **Housekeeping** — extract the shared junk-image filename list (currently
+   duplicated in `app/profiles/[slug]/page.tsx`). (The stale
+   `sanity-schemas/` copy was deleted 2026-06-12 — see §8.)
 
 ---
 

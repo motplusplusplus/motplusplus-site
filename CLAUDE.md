@@ -66,8 +66,8 @@
 - **Studio URL:** `https://motplusplus.sanity.studio`
 - **Studio repo (canonical schemas):** `~/Documents/motplus-sanity` →
   `schemaTypes/` (`event`, `artist`, `afarmHost`, `museumLocation`,
-  `trashItem`, `inquiry`). The `sanity-schemas/` folder in *this* repo is a
-  stale partial copy — do not trust it.
+  `trashItem`, `inquiry`). See ARCHITECTURE.md §8 for a field-by-field
+  reference cross-checked against `lib/sanity.ts`.
 - **Client config:** `lib/sanity.ts` (use the non-CDN `buildClient` for
   build-time queries).
 - Write tokens: not stored here — see Claude memory / sanity.io manage.
