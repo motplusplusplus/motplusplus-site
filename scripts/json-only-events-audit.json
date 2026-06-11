@@ -1,0 +1,1156 @@
+{
+  "generated": "2026-06-12",
+  "description": "Audit of the 82 JSON-only public events (not in Sanity, not BIO_SLUGS/HIDDEN_SLUGS/-vn) for the eventual Sanity migration. events-data.json has no artists[]/artistSlugs field, so \"artists\" is always [] here.",
+  "total": 82,
+  "categories": {
+    "+a.farm": [
+      {
+        "slug": "chuong-trinh-luu-tru-a-farm-duoc-tai-tro-danh-cho-nghe-si-viet-nam",
+        "title": "Chương trình lưu trú A. Farm được tài trợ dành cho nghệ sĩ Việt Nam",
+        "displayDate": "July 20, 2025",
+        "dateISO": "2025-06-27",
+        "sortDate": "2025-07-20",
+        "description": "Dành cho 1 nghệ sĩ quốc tịch Việt Nam Thời gian lưu trú: 1/9 – 1/12/2025 Hạn chót nộp đơn: 20 tháng 7 năm 2025 A. Farm và Viện Goethe Thành phố Hồ Chí Minh trân trọng gửi Lời mời Ứng tuyển cho Chương trình Lưu trú Sáng tác được tài trợ tại A. Farm Mùa 8 tới các nghệ sĩ người Việt Nam. Trong kì lưu trú kéo dài 3 tháng, từ 1/9 – 1/12/2025, nghệ sĩ sẽ nhận được hỗ trợ tài chính cùng không gian làm việc để sáng tác tác phẩm. Bên cạnh đó, nghệ sĩ lưu trú sẽ có cơ hội tham gia các hoạt động bổ trợ chuyên môn nhằm hỗ trợ quá trình thực hiện dự án cũng như thực hành nghệ thuật như thảo luận, tư vấn, đánh giá nhóm và các buổi tham quan các không gian nghệ thuật lân cận. Khi chương trình kết thúc, nghệ sĩ sẽ có cơ hội trưng bày các tác phẩm được sáng tác trong thời gian lưu trú tại không gian của A. Farm. Cụ thể, trong 3 tháng từ 1/9 đến 1/12/2025, nghệ sĩ sẽ được nhận hỗ trợ như sau: Không gian xưởng riêng Phòng ngủ riêng có kèm phòng tắm và bếp Các không gian chung tại A.Farm để gặp gỡ, nghiên cứu và trưng bày Quỹ sản xuất: 5.000.000 VNĐ/tháng Trợ cấp: 5.500.000 VNĐ/tháng Quỹ di chuyển lên đến 5.600.000 VNĐ Tìm hiểu thêm về chương trình lưu trú và cách tham gia:",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/chuong-trinh-luu-tru-a-farm-duoc-tai-tro-danh-cho-nghe-si-viet-nam/fb-event-2.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/chuong-trinh-luu-tru-a-farm-duoc-tai-tro-danh-cho-nghe-si-viet-nam/vi_loi-moi-ung-tuyen-nghe-si-quoc-tich-viet-nam-mua-8.pdf",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/chuong-trinh-luu-tru-a-farm-duoc-tai-tro-danh-cho-nghe-si-viet-nam/a.farmlogo_500x500-1-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/chuong-trinh-luu-tru-a-farm-duoc-tai-tro-danh-cho-nghe-si-viet-nam/s-1-edited.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/chuong-trinh-luu-tru-a-farm-duoc-tai-tro-danh-cho-nghe-si-viet-nam/amanaki_png-edited.png"
+        ],
+        "artists": []
+      }
+    ],
+    "+a.Farm": [
+      {
+        "slug": "dao-tungs-open-studio-at-18th-street-art-center",
+        "title": "Dao Tung’s Open Studio at 18th Street Arts Center",
+        "displayDate": "",
+        "dateISO": "2017-10-27",
+        "sortDate": "2017-10-27",
+        "description": "Some pictures sent from artist Dao Tung during his residency at 18th Street Arts Center, including series of event happening in one day Oct 14th, 2017 at 18th Street Arts Center: exhibitions, art-making workshops, live music, poetry, open studio by 5 resident artists from Netherlands, Poland, Taiwan, Vietnam and artists based in Los Angeles. Outside Dao Tung’s studio in 18th Street Arts Center",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040776_1024-1-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040777_1024-1-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040773_1024-1-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040774_1024-1-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040775_1024-1-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040767_1024.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_img_1161_1024-300x224.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040766_1024-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040765_1024-1-169x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040778_1024-1-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040779_1024-1-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040773_1024-1-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040774_1024-1-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/dao-tungs-open-studio-at-18th-street-art-center/thumb_p1040775_1024-1-300x169.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "open-studio-ngo-thanh-bac",
+        "title": "Open Studio | Ngô Thành Bắc",
+        "displayDate": "",
+        "dateISO": "2018-07-28",
+        "sortDate": "2018-07-28",
+        "description": "Resident artist Ngô Thành Bắc, a member of Phu Luc (the Appendix Group), will transform MoT+++ exhibition space into his studio from June 22 to August 3, 2018. During this period he will create multi-disciplinary works including sculpture, sound, light and performance. Visitors will have the chance to visit the artist studio – a space of experimentation and creation and often distant from public eyes – and observe Bac’s creative process. Opening hours might vary, so",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/open-studio-ngo-thanh-bac/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "write-off-at-a-farm",
+        "title": "A. Farm | Write-Off",
+        "displayDate": "",
+        "dateISO": "2018-08-23",
+        "sortDate": "2018-08-23",
+        "description": "A. Farm is delighted to invite you to Write-Off!, a series of writing workshops which will take place on the 26th, 27th, 28th and 29th of August. Due to the awesomeness of the events, we are expecting a certain number of participants so please don’t forget to register if you are interested in attending the sessions below. Sunday 26th August, 4-7pm Write-Off #1: Poetics of Place and Landscape – A Poetry Workshop with Maung Day They say you don’t know who you are if you don’t know where you are. But to know where you are can sometimes be a very delicate matter, and a lot of people will say they are not where they want to be or where they are meant to be. With the rapidly changing patterns of land use today, the idea of ‘place’ has also changed. Today’s trends of corporate land use and resource extraction have disrupted the relationship between communities and their land, leading to physical, mental and spiritual discords. Meanwhile, urban areas are evolving and shape shifting, instilling in people a sense of estrangement or even displacement. Over the past few decades, we have been seeing a large number of mass migrations stemming from wars and conflicts. Communities have left their homes leaving behind them a sprawling landscape of despair and scattering towards factories, construction sites, refugee camps and slums. Places also possess strong political characteristics that exert influences on how people think. Is a place something that binds us and a reason for celebration? Or is it something that stares us down sending a chill up our spines? What do we think about when we think about ‘place’ and what do we write about it in our poems? This workshop, led by Myanmar poet Maung Day, aims to look at how we approach, reflect on and wrestle with the concept of ‘place’ and ‘landscape’ through reading and writing exercises and discussions. The workshop will be in English with Vietnamese translation assistance. Registration is limited to 20 participants only. Maung Day is a Myanmar-born poet, artist, translator and development worker. He has published seven books of poetry in Myanmar language and one chapbook in English. His poems have appeared in literary journals such as The Wolf, The Awl, Guernica, Shampoo, International Poetry Review, Bengal Lights and Asymptote. He has translated the works of a number of poets including Adonis, John Ashbery, RobertKelly, Russell Edson, Tomas Transtromer, Ilya Kaminsky and Kim Addonizio, as well as the work of Myanmar poets such as Aung Cheimt, Khin Aung Aye, Yoe Myay, Moe Way, Mae Yway, Eindra and Tha Gount Thar. He is an honorary fellow in writing at the University of Iowa. He has also shown his artworks internationally and is currently a resident artist at A.Farm in Ho Chi Minh City. Maung’s chapbook Gasoline will be available for sale at this poetry workshop. Registration link: http://bit.ly/2Ms4b93 *** Monday 27th August, from 3pm until we run out of words. Write-Off #2: Scrabble tournament We were going to organize a workshop on translation but then decided ‘scrap that, let’s have fun instead. For those of you who wish to escape work, celebrate the start of the week or have lots of spare time, please join us as we battle to the end in a giant scrabble tournament in teams. No registration necessary, just show up with your fabulous selves. On a side note: all languages welcome! *** Tuesday 28th and Wednesday 29th August, 2-5pm. Write-Off #3 and #4: Art Criticism Workshop – Ben Valentine and Lee Weng Choy To conclude this series, art critics Ben Valentine and Lee Weng Choy will be conducting two back-to-back sessions on art writing dedicated to a wide range of art professionals. Looking at works by Nguyen Thai Tuan (Vietnam), Araya Rasdjarmrearnsook (Thailand) and Ho Tzu Nyen (Singapore), the workshop will mirror how both critics think through a work and begin to organize their ideas, slowly gathering the participants’ critique into a final collective essay. The workshop will be in English with Vietnamese translation assistance. Registration is limited to 10 participants only. Please note that participants are expected to attend both sessions. Registration link: http://bit.ly/2MpVDzj",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/write-off-at-a-farm/woff-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/write-off-at-a-farm/woff-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-buy-bay-buy",
+        "title": "A. Farm | Buy . Bay . Buy",
+        "displayDate": "December 8, 2018",
+        "dateISO": "2018-12-08",
+        "sortDate": "2018-12-08",
+        "description": "A. Farm presents bye, bay, buy, an end-of-year celebration concluding the very first residency experiments at a. farm. as this cycle comes to an end, season 0 artists maung day, trâm lương, nguyễn kim duy, phương giò, john edmond smyth (ed smyth), lại diệu hà, luca lum, latthapon korkiatarkul, and cian duggan present the culmination of their residency work. bye . bay . buy also features photographic prints by maxime brygo of southern vietnamese landscapes and monuments, the result of a three-month residency at a. farm. this is an opportunity to say farewell to season 0 artists and welcome season 1 arrivals. exhibition re-opens monday december 10 and remains on view for two weeks. location: A. Farm, 96/1 tan thoi nhat 6, district 12, ho chi minh city. free entrance.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-buy-bay-buy/bbb-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-buy-bay-buy/bbb-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "in-progress-2-open-studios",
+        "title": "A. Farm | In Progress #2",
+        "displayDate": "",
+        "dateISO": "2019-02-17",
+        "sortDate": "2019-02-17",
+        "description": "A. Farm would like to invite you to IN PROGRESS #2, an open-studio event introducing the works of our Season 1 artists Tuyen Nguyen, Alisa Chunchue, Lem Trag, Lananh Le, and Karen Thao La, Scott Anderson and Cora & Tilman. Occurring each Season, IN PROGRESS engages with the development of the artist’s practice rather than their final product. By opening the artist’s studio, both artist and audience are provided a moment for reflection and opportunity to engage in a wider dialogue surrounding the artist’s work. Audiences are invited from 4-7pm on Sunday 17th February to see A. Farm’s Season 1 artists’ work-in-progress. Starting at 5pm, each artist will make a short presentation in their studio where they will discuss their work and progression of ideas. This is also the opportunity to welcome you all back to our space, introduce our amazing artists, and spend the afternoon hanging out and sipping on beers and coconuts in the courtyard. Don’t make you Sunday a bore, and come join us for an afternoon of art and conversation!",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/in-progress-2-open-studios/ip-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/in-progress-2-open-studios/ip-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/in-progress-2-open-studios/ip-3.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "krossing-over-a-farm",
+        "title": "A. Farm | Krossing Over | In Situ: Tree of Life & Lub Qhov Rooj",
+        "displayDate": "",
+        "dateISO": "2019-04-07",
+        "sortDate": "2019-04-07",
+        "description": "A. Farm is proud to host two of the most outstanding performances at Krossing Over Arts Festival on April 7, 2019: Tree Of Life Choreographer: John Huy Trần & Nguyễn Vũ Hoàng Minh ÂMusic Composer: Benoît Bottex Dancers: UDG Vietnam Tree of Life is a tribute to life itself. As a tree grows old, its branches break then bears the seeds that contain its essence, through which it finds its way to life again, sprouting, endlessly growing and thriving in a way that seems immortal. Lub Qhov Rooj Choreographer: Nguyễn Phúc Hùng Music Composer: Hans Zimmer Dancers: Đặng Minh Hiển, Phan Thái Bình, Phan Tiểu Ly, Sùng A Lùng Poetry: Chinh Ba Visual Artist: Sandrine Llouquet Based on Sung A Lung’s life, Lub Qhov Rooj (“Door” in H’mong language) is about Lung’s struggle for being born into a man’s body. Like William Blake’s character Albion in the poem Four Zoas, Lung finds his four components, performed by four dancers. In this journey of collecting and reconciling the pieces, he discovers his true self. Saturday, April 7 6:30-7:00 pm: Reception 7:00-8:30 pm: Performance Location: A. Farm, 96/1 Tan Thoi Nhat 6, District 12, TP. HCMC, Vietnam Ticket: https://ticketbox.vn/event/krossing-over-in-situ-tree-of-life-lub-qhov-rooj-75059/52174 # capacity: Limited For more information, visit krossingover.com",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/krossing-over-a-farm/ko-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/krossing-over-a-farm/ko-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/krossing-over-a-farm/ko-3.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-solo-sans-solo",
+        "title": "A. Farm | solo-sans-solo",
+        "displayDate": "",
+        "dateISO": "2019-05-10",
+        "sortDate": "2019-05-10",
+        "description": "A. Farm Season 1 Festival As we near the end of Season 1 and the one-year anniversary when our residency and collaborative experiments all began, A. Farm would like to invite you to solo-sans-solo, an end of season festival celebrating the projects developed by our artists over the last five months. The event will feature works by Tuyen Nguyen, Karen Thao La, Alisa Chunchue and Scott Anderson. Newly-arrived artist Natalia Ludmila will present her current research in an open-studio format, while Lem Trag will use her studio space as site for performance. Finally, invited Swiss artists Studio z1 will create an immersive sound experience in the gallery in a final performance to end the evening. Additional lures range from carefully-curated cocktails from 289e, to karaoke battles on our main stage, so come celebrate with us in full glory! Opening: Saturday May 18, 2019 from 5 – 10:30pm Exhibition on view: Sunday, May 19 – Wednesday, May 22 (inclusive) from 11am – 7pm Location: A. Farm | 96/1 Tan Thoi Nhat 6, D.12, HCMC Free entrance Established in 2018, A. Farm is a hub for artists, cultural workers, events and exhibitions. Located in a converted factory at the edge of Ho Chi Minh City, A. Farm is collaboratively managed by the arts organizations Nguyen Art Foundation , MoT+++ and Sàn Art",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-solo-sans-solo/san-art-logo_square.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-solo-sans-solo/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-season-3-resident-presentations-at-motplus",
+        "title": "A. Farm | Season 3 Resident Presentations",
+        "displayDate": "",
+        "dateISO": "2020-03-05",
+        "sortDate": "2020-03-05",
+        "description": "A. Farm Season 3 Resident Presentations Thursday March 12, 2020 3pm @ MoT+++, Saigon Domaine we would like to take the opportunity to introduce to them to Saigon art community at the start of their residency, giving audiences a chance to see their work develop over the next few months at the upcoming open studio and end of season celebration events. artist presentations will come from our current residents and guest artist: Nghia Dang, Trang Ly, Chu Hao Pei, Claire Bloomfield, Kayla Kirin, Yeonjeong, Saverio Tonili and Keen Souhlal (Villa Saigon). presentations will be in English.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-season-3-resident-presentations-at-motplus/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-season-3-open-studio-23-5",
+        "title": "A. Farm | Season 3 Open Studio [+23.5°]",
+        "displayDate": "",
+        "dateISO": "2020-06-16",
+        "sortDate": "2020-06-16",
+        "description": "A. Farm is pleased to invite you to our Season 3 open-studios featuring the projects developed by our resident artists over the last 4 months. This year has been quite a whirlwind and soon A. Farm will be embarking on a new chapter of its history in another location. It is an auspicious coincidence that our event takes place on a solstice, the highest culmination of the sun just as we have culminated in a 2-year journey of hard work and residents complete their artistic experiments at our space. With incredible resident artists, a programme of special guests, a temporary farewell and a summer solstice at hand we hope that you can all join us for a final gathering in the spirit of A. Farm on Saturday 20th and Sunday 21st of June 2020 . Season 3 open-studios will feature Nghia Dang’s surgical deconstruction of fantasies and mindscapes with a series of drawings, an immersive installation on the performativity of time by Chu Hao Pei, and Trang Ly’s sonic reflections on urban development and narratives of displacement. Saverio Tonoli’s ongoing explorations of sublime tapestries made of ink and paper will dialogue with Claire Bloomfield semi-digital collages, numerical tapestries of their own. Finally, Yeonjeong and Sikarnt Skoolisariyaporn, both abroad, will be present through video performances recorded at A. Farm and in Bangkok respectively. Le Phi Long, artist-in-residence of the Réciprocité programme (Institut français) will also be joining A. Farm’s residents with an installation developed during his stay at la Cité des Arts in Paris. Of course, as an ongoing tradition 289e artist bar will be taking care of beverages but this time with a literary twist as we turn the kitchen into a poetry corner with works by Mrbambii and writer-in-residence Kayla Kurin. In memory of Season 1 A. Farm resident and MoT+++ collective member Lananh Le, we will show a full 12-hour screening of one digital painting from her last show. There will also be performances from Kim Trang, Dat Nguyen, and Ian Richter to end the evening. Finally on Sunday we will go for a full-blown midsommar celebration to say goodbye to our space with a solstice livestream, a videoclub featuring 1970s art-house films organised by Tu (Nai Cinema) and Mary (Sàn Art), and sound / dance performances by Doan Toan, Trang Ly and Dat Nguyen. Established in 2018, A. Farm is a hub for artists, cultural workers, events and exhibitions. Located in a converted factory at the edge of Ho Chi Minh City, A. Farm is collaboratively managed by the arts organizations Nguyen Art Foundation , MoT+++ and Sàn Art . Location: A. Farm, 96/1 Tan Thoi Nhat 6, District 12, HCMC. Saturday 20th June | 5pm – 11pm • Open-studios • 289e + poetry bar • 12h Frozen Data • Performance by Sikarnt Skoolisariyaporn (projection) • Performances by Dat Nguyen, Kim Trang, Danh Tuong & Ian Richter",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-season-3-open-studio-23-5/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "one-word",
+        "title": "A. Farm | One Word",
+        "displayDate": "",
+        "dateISO": "2020-09-17",
+        "sortDate": "2020-09-17",
+        "description": "The quick spread of Covid-19 highlighted the world’s complex connectivity and the border closures and travel restrictions forced countries, estates and cities into isolation. This sui generis situation caught millions of travellers outside their home countries, with few or no options to return. A. Farm, an international art residence located in Ho Chi Minh City, Vietnam was also affected by both the global pandemic and national lockdown and one wonders how this unprecedented situation might have impacted the flow of the residency. Some artists left, others prolonged their stay, projects were halted or changed, and yet within this tumult, residents were able to take refuge in their studios, using this as an opportunity to reflect, investigate their practice but also create stronger bonds with one another ranging from late-night karaoke to blackjack sessions. Season 3, running from January to June 2020 concluded with open-studios held on the 20th and 21st of June. The event happened during a relatively tranquil period in Vietnam’s pandemic trajectory, after about 2 months without local transmission and just before the second wave hit the country. The open studios featured Nghia Dang’s surgical deconstruction of fantasies and mindscapes with a series of drawings; an immersive installation on the performativity of time by Chu Hao Pei; and Ly Trang’s sonic reflections on urban development and narratives of displacement. Saverio Tonoli’s ongoing explorations of sublime tapestries made of ink and paper. Le Phi Long, artist-in-residence of the Réciprocité programme (Institut français) also joined A. Farm’s residents with an installation musing on religious faith that was developed during his stay at la Cité des Arts in Paris, also under the pandemic. MoT+++ collective artist Cian Duggan spent time with the residents during the lockdown and produced some works responding to the crises. One World virtual exhibition brings the artists’ reflections on their experience of working under disruptive circumstances. How the pandemic affected their work, what were the tactics used to make like easier during the lockdown and how was the experience of having to share the time with a multinational, multicultural group of people? The contrast between connection and isolation raises questions about the fragility of our networks and highlights our common identity as humans. Six artists, five different nationalities, one world. Chu Hao Pei Cian Duggan Le Phi Long Lý Trang Nghia Dang Saverio Tonoli",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/one-word/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-reopening",
+        "title": "A. Farm Reopening",
+        "displayDate": "",
+        "dateISO": "2023-11-24",
+        "sortDate": "2023-11-24",
+        "description": "After a 3-year break, A. Farm international art residency reopens in Thao Dien, Ho Chi Minh City. A traditional 500-square-meter wooden house (Mango Tree House) will host five studio spaces and one workshop. In the adjacent building, Amanaki Thao Dien Hotel’s floor 6 will provide exhibition space and room for screenings, performances, and other events. The Goethe-Institut Ho Chi Minh City will join A. Farm as funding and managing partner. The exhibition girl in red , featuring artworks by Vietnamese and International artists, including A. Farm past residents, will celebrate the reopening: Friday, November 24, 2023 6:30pm – 9:00pm 6th floor, Amanaki Thao Dien Hotel 10 Nguyen Dang Giai, Thao Dien, Thu Duc, HCMC girl in red participant artists: Bang Nhat Linh Bert Ackley Cam Xanh Carl Stone Chinh Ba Do Thien Huong Hoang Vu Kim Duy Lap Xuan Le Quoc Anh Mr. Bambii Nguyen Duc Huy Nguyen Khanh Phuc Ton Nu Van Anh (Bo) Ton That Minh Nhat Wu Chi Tsung",
+        "images": [],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-artist-presentation",
+        "title": "A. Farm | Artist Presentation",
+        "displayDate": "",
+        "dateISO": "2023-12-03",
+        "sortDate": "2023-12-03",
+        "description": "Please join us for the A. Farm Artist Presentation featuring 5 artists including A. Farm season 4 residents Ton Nu Van Anh (Bo), Espen Iden (Norway) and Bert Ackley (USA); Girl in Red exhibiting artist Khanh Phuc (Vietnam) and, visiting German artist Markus Heinsdorff. Sunday, December 3, 2023 3pm – 6pm location: 6th floor Amanaki Thao Dien Hotel, 10 Nguyen Dang Giai, Thao Dien, Thu Duc, HCMC",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-artist-presentation/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-sip-and-paint-workshop",
+        "title": "A. Farm | Sip and Paint Workshop",
+        "displayDate": "",
+        "dateISO": "2023-12-30",
+        "sortDate": "2023-12-30",
+        "description": "Welcome to an evening of drinking and painting! Bring a photo on your phone that you would like to paint. We will use it as a map of colors and the host, A. Farm resident artist Espen Iden, will guide you as to where to begin an expressionist painting. Bring your own drinks to share and enjoy the challenge. It’s not about the result, but about the process. Materials and equipment will be provided but you are welcome to bring your own paints, brushes, palettes",
+        "images": [],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-season-4-open-studio",
+        "title": "A. Farm | Season 4 Open Studio",
+        "displayDate": "",
+        "dateISO": "2023-12-30",
+        "sortDate": "2023-12-30",
+        "description": "A. Farm is pleased to host the season 4 Open Studio featuring artists in residency Bert Ackley, Espen Iden, Châu Kim Sanh and Anh Vo. Saturday December 30, 2023 Location: A. Farm Studios @ Tree House, 6/4 Nguyen Dang Giai, Thao Dien, Thu Duc, Ho Chi Minh City Schedule: 10 am – 11 am : Contemporary Dance Performance by Kim Sanh Chau and Vo Quoc Anh 10 am – 12 pm : A. Farm Open Studio 2 pm – 9:30 pm : Yard sale 6:30 pm – 9:30 pm : Painting Workshop with Espen Iden ( registration here )",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-season-4-open-studio/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-interactive-workshop-about-listening",
+        "title": "A. Farm | Interactive Workshop about Listening",
+        "displayDate": "",
+        "dateISO": "2024-01-16",
+        "sortDate": "2024-01-16",
+        "description": "Join composer and performer Marijana Janevska on an Interactive Workshop about Listening. Listening is not merely a passive activity but an interactive process that involves both the listener and the sound. The mind and body are dynamically connected during the act of listening, influencing perception and experience. Participants will dive into the psycho-physical aspect of listening. The auditory system captures sound waves and the brain interprets them as meaningful information. Music, speech, or environmental sounds can evoke a range of emotions, influencing moods and mental states. The body also responds to sound through changes in heart rate, blood pressure, or hormone levels. During the workshop, they will go more deeply into the concepts of ‘quantum listening’ and ‘deep listening’, developed by Pauline Oliveros. Marijana Janevska will guide the participants through one of Pauline Oliveros‘ ‘Sonic Meditations’, where they will be encouraged to produce sounds with the voice and/or the body while emphasizing the role of listening and the exploration of sonic spaces. Eventually, the experiences and insights from the ‘Sonic Meditation’ will be discussed to apply to daily life. Tuesday January 16, 2024 7 pm – 9 pm 6th floor, Amanaki Thao Dien Hotel 10 Nguyen Dang Giai, Thao Dien, Thu Duc, HCMC Free RSVP here",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-interactive-workshop-about-listening/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-interactive-workshop-about-listening/goethe-institut_logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-season-4-open-studio-ii",
+        "title": "A. Farm | Season 4 Open Studio II",
+        "displayDate": "",
+        "dateISO": "2024-01-17",
+        "sortDate": "2024-01-17",
+        "description": "Take a trip back to the Vietnamese sounds and images of the 1980s and 90s with guest artist Dan Nguyen (Demonslayer) and A. Farm artist-in-residency Bert Ackley. Dan Nguyen (Demonslayer) i s music producer, DJ and visual artist who has been unearthing obscure relics and archiving the sights and sounds of Vietnamese New Wave (Vwave), a subculture which flourished amongst the Vietnamese community of Little Saigon in Orange County, California in the 1980s-90s. The open studio will mark the opening of the exhibition California Dreaming: the nearly forgotten subculture of Vietnamese New Wave 1980s-90s from Little Saigon, California . Rare photos, visually stunning cassettes and treasured VHS rips are digitized and scanned; marking them safe from being lost forever to the hands of time. A mini artbook will be available at the exhibition, containing rare imagery from Dan’s personal collection of cassettes, VHS screen caps and more. A. Farm artist-in-residency Bert Ackley will show the work in progress of his ongoing Vinatapes project , which archives Vietnamese media, focusing on home videos recorded on analog camcorders. He prepares his visual work using media and gear found at junk markets and uses CRT TVs and a 1990s video mixer to provide a base for various types of feedback effects combined with different input sources. Wednesday, 17 January 2024 (6pm – 10pm) Location: A. Farm Studios @ Tree House, 6/4 Nguyen Dang Giai, Thao Dien, Thu Duc, Ho Chi Minh City California Dreaming runs until February 2, 2024 . read more",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-season-4-open-studio-ii/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-talk-making-an-artist-portfolio",
+        "title": "A. Farm | Talk: Making An Artist Portfolio",
+        "displayDate": "",
+        "dateISO": "2024-03-08",
+        "sortDate": "2024-03-08",
+        "description": "In this talk, A. Farm resident critic and curator David Willis will cover the basics of how to create an art portfolio. Looking at examples from professional artists around the world, we will discuss different ways of photographing art works, approaches to formatting, and relevant data to include when sharing one’s work with galleries or curators. The talk will be followed by Q&A session. English with Vietnamese translation. Friday, 8 March 2024 7 pm location: 6th floor Amanaki Thao Dien Hotel, 10 Nguyen Dang Giai, Thao Dien, Thu Duc, HCMC seating is limited. first-come, first-served basis. register here to guarantee your seat . about David Willis This event has the support of Aura Contemporary Art Foundation",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-talk-making-an-artist-portfolio/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-farm-talk-how-to-discuss-your-artwork",
+        "title": "A. Farm | Talk: How To Discuss Your Artwork",
+        "displayDate": "",
+        "dateISO": "2024-03-21",
+        "sortDate": "2024-03-21",
+        "description": "This discussion, aimed at young and emerging artists, is designed to help you develop clear, compelling language to describe your artwork and your creative practice. A. Farm critic-in-residence, Blake Palmer, will use examples from established artists working in Southeast Asia to illustrate how powerful, descriptive communication can help you connect with galleries, curators, writers, and collectors. The talk will be followed by Q&A session. English with Vietnamese translation. Thursday, 21 March 2024 7 pm location: 6th floor Amanaki Thao Dien Hotel, 10 Nguyen Dang Giai, Thao Dien, Thu Duc, HCMC seating is limited. first-come, first-served basis. register here to guarantee your seat about Blake Palmer This event has the support of Aura Contemporary Art Foundation",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-farm-talk-how-to-discuss-your-artwork/logo.png"
+        ],
+        "artists": []
+      }
+    ],
+    "+1 nice place for experimentation": [
+      {
+        "slug": "artist-talk-arnont-nonguao-diy-sound-art-strategies",
+        "title": "DIY Sound Art Strategies | artist presentation | Arnont Nonguao",
+        "displayDate": "",
+        "dateISO": "2018-03-11",
+        "sortDate": "2018-03-11",
+        "description": "Arnont Nongyao is a Thai artist based in Chiang Mai, Thailand. Arnont works in different media including sound, video, and installation. His primary research interest is sound, with a concentration on vibration. Arnont’s diverse experimental projects, site-specific installations and public art search for the value of vibration derived from connected things, such as human beings, objects, and society. He mixes sound, light and moving image, and often invites audience participation. In this talk, Arnont Nongyao shared his creative process regarding DIY processes for sound production, including introductions to kinetic percussion, homemade synthesizers, and photoreceptors. English with Vietnamese translation. Sunday, March 11 4:00 pm to 5:30 pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-talk-arnont-nonguao-diy-sound-art-strategies/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "artist-presentation-perrine-lievens",
+        "title": "Artist Presentation | Perrine Lievens",
+        "displayDate": "",
+        "dateISO": "2018-06-24",
+        "sortDate": "2018-06-24",
+        "description": "Perrine Lievens is a French visual artist based in Paris. Her work uses familiar objects, challenging their perceived function to create imaginary and poetic realities. In doing so she offers an insightful replay of reality and invites the viewer to experience a reinvented world. Often fragile and ephemeral, her sculptural installations expose her to real technical challenges which she considers as acts of resistance: to be able to retain fragile and ephemeral aspects of materials; do not let them faint; to allow them to enter the life of art without destroying them. In this talk, Perrine will share insights into her practice and talk about her experiences and inspiration resulted from her 3-month residence at Villa Saigon, an artist residency program run by the French Institute Vietnam. Sunday, June 24 4:00 – 6:00 pm The talk will be in English with Vietnamese translation.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-perrine-lievens/perrine_website.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "artist-presentation-phu-luc-the-appendix-group",
+        "title": "Artist Presentation | Phụ Lục (The Appendix Group)",
+        "displayDate": "",
+        "dateISO": "2018-09-09",
+        "sortDate": "2018-09-09",
+        "description": "Phụ Lục (The Appendix Group) will conclude MoT+++’s six-month performance plus programme with an artist presentation at the MoT+++ space in Binh Thanh. Following B10.05, an installation depicting their performative interactions with the Saigon River at their studio in Thao Dien on Saturday, September 8, the group will give a presentation about their latest work and residency experience. Sunday, September 9 4pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-phu-luc-the-appendix-group/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "artist-presentation-phung-tien-son",
+        "title": "artist presentation | Phùng Tiến Sơn",
+        "displayDate": "",
+        "dateISO": "2019-04-18",
+        "sortDate": "2019-04-18",
+        "description": "Hanoi-based artist Phùng Tiến Sơn will return to Saigon on Thursday April 18 for an artist presentation at MoT+++. the presentation marks the last week of his sound installation, Soundtracks , which is on view at MoT+++ until April 23, and will discuss the over six-month process behind the work. “we set foot in Vi Xuyen martyrs’ cemetery, which had 1768 (until July 2013) graves of the deceased from 1979 to the beginning of 1990, especially in 1984 and 1988. i recorded all the information about these 1768 people, which were etched on their tombstones. from the information i collected, i used Google Maps to draw connecting paths from their hometowns to Vi Xuyen (where they sacrificed their lives and their remaining corpses were concentrated). i separated these paths from the maps, for all that’s left are the cold and meaningless lines. in other words, we can only see 1768 winding strokes. is there anything left but 1768 routes which all lead to death at the same place?” – Phùng Tiến Sơn about the artist: Phùng Tiến Sơn is a multimedia visual artist and university dropout from Hanoi, Vietnam. music is a continuing feature of Sơn’s practice, and he cites sound and technology as important influences in his work. past exhibitions include group shows as an ongoing member of the Nhà Sàn Collective, the Hanoi Collective Orchestra in 2015 and 2016, and Utopia Land at Hanoi’s Heritage Space in 2017. in 2018, Sơn performed in Big Day of Performances – Happy Birthday Billas part of MoT+++’s six-month performance plus programme. Soundtracks was first exhibited in the Nhà Sàn Collective show Mise en Scene in 2016. Thursday, April 18 7pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-phung-tien-son/phung-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-phung-tien-son/phung-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-phung-tien-son/phung-3.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "book-launch-workshop-thoth-tarot",
+        "title": "Book Launch & Workshop | Paintings by Lady Frieda Harris 1938 – 1943",
+        "displayDate": "",
+        "dateISO": "2024-02-25",
+        "sortDate": "2024-02-25",
+        "description": "A. Farm and Galleri Memphis welcome you to the launch of the art book “Paintings by Lady Frieda Harris 1938 – 1943”, featuring reprints of the Thoth Tarot deck on a larger scale, and an introduction text by painter and Tarot reader Cara Lien. The Thoth Tarot deck was designed by famous occultist Aleister Crowley. The artist behind the paintings on the deck, Lady Frieda Harris (1877-1962), remains much less known. She was a symbolist painter whose works most audiences have only seen in card-size. Copies of the book will be available for viewing and sale. Painting workshop with artist-in-residence Espen Iden The participants will draw a Tarot, interpret the symbols, colors and/or name of the card using their intuition, then create their painting using oil on a canvas. After finishing painting, participants may present the painting and talk about their choices (optional). Workshop fee: VND 500,000 Registration required: link here Tarot readings Throughout the day, Tarot reader Cindy will be available for readings using the Thoth Tarot deck.",
+        "images": [],
+        "artists": []
+      }
+    ],
+    "+1 performance": [
+      {
+        "slug": "artist-talk-phu-luc-the-appendix-group-discussing-performance-art-ii",
+        "title": "Artist Talk & Performance: Phu Luc (The Appendix Group) | Discussing Performance Art II",
+        "displayDate": "",
+        "dateISO": "2018-03-05",
+        "sortDate": "2018-03-05",
+        "description": "Resident artists Phu Luc (The Appendix Group) will further insights into their practice. Appendix Group member Vu Duc Toan will present a performance piece. Hanoi based performance art group Phu Luc (The Appendix) was founded in 2010 by six artists and is currently made up by four core members: Nguyễn Huy An, Vũ Đức Toàn, Nguyễn Song and Ngô Thành Bắc. From March to August, they will be based at MoT+++, acting as an anchor for performance plus. Artists Cam Xanh and Mai Anh Le will present the performance piece sàn! before the talk. Discussing Performance Art II Sunday, March 25 5:00 pm to 7:00 pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-talk-phu-luc-the-appendix-group-discussing-performance-art-ii/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-san",
+        "title": "Trình diễn | Performance: Cam Xanh & Lê Mai Anh | sàn!",
+        "displayDate": "",
+        "dateISO": "2018-03-06",
+        "sortDate": "2018-03-06",
+        "description": "Sàn is a Vietnamese word that translates to English as floor or platform, and it is the title for the collaboration between Vietnamese artists Cam Xanh and Lê Mai Anh. Lê Mai Anh is a dancer and choreographer graduate of Rencontres Internationales de Danse Contemporaine in Paris. She has presented conceptual performances incorporating dance and poetry. Cam Xanh is a conceptual artist working with visual as well as performance art. She has a particular interest in language especially slam poetry. The two artists will be presenting independent, simultaneous performances pieces sharing the platform (sàn). The shared space and time might open the possibility for interaction, or not! A talk by resident artists Phu Luc will follow. Sunday, March 25 4:00 pm to 5:00 pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-san/performance-san-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-san/performance-san-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "artist-talk-phu-luc-the-appendix-group-discussing-performance-art-i",
+        "title": "Discussing Performance Art I | Thảo luận về nghệ thuật trình diễn | Aliansyah Caniago & Phụ Lục",
+        "displayDate": "",
+        "dateISO": "2018-03-17",
+        "sortDate": "2018-03-17",
+        "description": "Resident artists Aliansyah Caniago and Phu Luc (The Appendix Group) shared insights into their practices following with a panel discussion. Aliansyah Caniago is a painter and performance artist concerned with activism and social realism in public space. Based in Bandung, Indonesia, Caniago will be staying in Saigon for one month; during this time he will complete a durational performance, the details of which will be announced at his talk. Hanoi based performance art group Phu Luc (The Appendix) was founded in 2010 by six artists and is currently made up by four core members: Nguyễn Huy An, Vũ Đức Toàn, Nguyễn Song and Ngô Thành Bắc. From March to August, they will be based at MoT+++, acting as an anchor for the performance plus program. Saturday, March 17 4:00 pm to 7:00 pm English and Vietnamese with translation.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-talk-phu-luc-the-appendix-group-discussing-performance-art-i/phu-luc-talk-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-talk-phu-luc-the-appendix-group-discussing-performance-art-i/phu-luc-talk-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "collaborative-performance-artists-talk",
+        "title": "Collaborative Performance | Artists Talk",
+        "displayDate": "",
+        "dateISO": "2018-03-20",
+        "sortDate": "2018-03-20",
+        "description": "For this performance artists Aliansyah Caniago and Cam Xanh will collaborate with other artists working in any discipline. Artists are invited to gather at MoT+++ and encouraged to talk simultaneously about their practice or any issues they are passionate about. Any established or self-claimed artist is welcome to participate upon RSVP to info@motplus.xyz Non-participants are welcome to watch the performance through the window. If you are interested in taking part please contact us at info@motplus.xyz.com Sunday, April 1 4:00 pm to 6:00 pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/collaborative-performance-artists-talk/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-workshop-phu-luc",
+        "title": "Phụ Lục | performance workshop | performance plus 2018",
+        "displayDate": "",
+        "dateISO": "2018-04-07",
+        "sortDate": "2018-04-07",
+        "description": "MoT+++ artists in residence Phụ Lục (The Appendix group) conducted a workshop in performance art practices, including discussions and illustrations of how to use everyday objects to create novel situations, lead by Phụ Lục member Huy An. The workshop was open to all and free of charge; no prior experience or knowledge of performance art was necessary for participation. Saturday, April 7 4:00 pm to 6:00 pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-workshop-phu-luc/phu-luc-workshop-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-workshop-phu-luc/phu-luc-workshop-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "researcher-in-residence-maria-sowter",
+        "title": "researcher-in-residence | Maria Sowter",
+        "displayDate": "May 1 – 31, 2018",
+        "dateISO": "2018-05-01",
+        "sortDate": "2018-05-01",
+        "description": "for the month of may, former MoT+++ staff writer maria sowter returns to take on a new role in the performance 'researcher-in-residence'. maria utilizes the MoT+++ space as a base from which to confront questions concerning the lack of criticality in writing about vietnamese contemporary art. she writes, researches, and investigates from the MoT+++ space daily. members of the public are welcome to drop in and engage her in conversation and debate throughout may 2018. location: ground floor, saigon domaine, 1057 bình quới, ward 28, bình thạnh district, saigon.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/researcher-in-residence-maria-sowter/maria-sowter-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/researcher-in-residence-maria-sowter/maria-sowter-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-bill-nguyen-cam-xanh-happy-birthday-bill",
+        "title": "Big Day of Performances | Happy Birthday Bill | performance plus 2018",
+        "displayDate": "",
+        "dateISO": "2018-05-06",
+        "sortDate": "2018-05-06",
+        "description": "Marking the half-way point of performance plus ( our 6-month performance art program) Happy Birthday Bill will be a celebration of performance art in all of its varied forms. The event will consist of a series of simultaneous performances by Vietnamese and international artists, which will take place inside and around the MoT+++ main space and garden, including performances by Bill Nguyen, Cam Xanh, Nguyen Dinh Phuong, resident artists Phu Luc (The Appendix Group) from Hanoi, and resident artist Enkhbold Togmidiirshev from Mongolia and a poetry reading outside on the lawn, featuring Quyen Nguyen, Maria Sowter, and David Willis (more readers TBA). Sunday, May 6 4:00 pm to 7:00 pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-bill-nguyen-cam-xanh-happy-birthday-bill/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-bill-nguyen-cam-xanh-happy-birthday-bill/hbb-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-bill-nguyen-cam-xanh-happy-birthday-bill/hbb-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-bill-nguyen-cam-xanh-happy-birthday-bill/hbb-3.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-bill-nguyen-cam-xanh-happy-birthday-bill/hbb-4.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-bill-nguyen-cam-xanh-happy-birthday-bill/hbb-5.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-bless-you-hold-me-cam-xanh-bill-nguyen",
+        "title": "Cam Xanh & Bill Nguyen | Bless You Hold Me | performance | performance plus 2018",
+        "displayDate": "",
+        "dateISO": "2018-05-06",
+        "sortDate": "2018-05-06",
+        "description": "The performance titled “Bless You Hold Me” by Cam Xanh and Bill Nguyen happened at MoT+++ main space and opened Big Day of Performances | Happy Birthday Bill. Curator and artist Bill Nguyen tattooed a poem by Cam Xanh (titled “Abuse/Mày”) onto his right thigh, while Xanh sat across from him and repeatedly applied red lipstick, only to then remove it using Bless You Hold Me brand tissues, which accumulated in a pile at her feet. Nguyen also used Bless You Hold Me tissues to wipe the excess ink from his thigh. The performance took place upon artist Bill Nguyen’s 30th birthday and incorporated an installation, consisting of Cam Xanh’s poem “Abuse/Mày” suspended in pink neon between the two performers, who sat across from each other at a pair of pink-fur-covered plastic tables and stools. The title of the work emphasized the tender friendship between the two artists, which also touched upon the agonistic nature of gifting, the confrontation of one’s own mortality, and the inextricable relationship between pleasure and pain. The performance lasted about 4 hours and came to a close when Nguyen completed his tattoo and was presented with a birthday cake bearing the words “ It’s not a cake, its a f ****** piece of art ”, a playful acknowledgment of the fact that this was not your typical birthday party. Cam Xanh and Quyen D. Pham, read poems in homage to Bill Nguyen, with Xanh reading her poem “Abuse/Mày,” and with Pham reading the poem “As I Began To Love Myself” (written by the actor Charlie Chaplin on the occasion of his 70th birthday. During their collaborative performance titled “Bless You Hold Me,” Cam Xanh repeatedly puts on lipstick and imparts lip-shaped smudges on tissue papers while Bill Nguyen manifests another act of mark-making: tattooing his thigh with a poem by Cam Xanh. The poem, written with words that all begin with the letter ‘m,’ sonically resembles a merry nursery rhyme or playful tongue twister while in fact, the content is a series of defamations. An unidentified speaker is hurling vile mockeries at an equally anonymous subject, using swear words that target the body such as “pale lips,” “flat face,” “catty nose,” “askew mouth,” “pus-filled ass” or “sightless eyes.” As Cam Xanh, the author of these callous curses, carries out the nonchalant application of lipstick and lightweight production of rouge-stained tissues, the audience of the performance are intentionally confounded by the light-hearted appearance of her gesture and the intense contempt contained in the poem. Whether Cam Xanh identifies with the perpetrator or the victim of this (non)fictional verbal abuse, which she admits she would never audibly utter due to the constraints of her proper upbringing, the act suggests an opposite resolution to violent language. Using the titular brand of tissues “Bless You Hold Me,” the performer works with soft, almost weightless paper, gently mouthing the letter ‘m’ but instead of uttering yet another ‘m’-initiated blaspheme, she simply marks the silky tissues with an afterimage of a kiss, and allows the the airy papers to float away. The repetition of the act suggests a deliberately feminine declaration of self-love, a process of lightening past vulnerabilities and caring for the body that remains. The remaining body inevitably harbors scars. Bill Nguyen’s approach to the poem does not let cruel language silently evaporate with each outbreath like Cam Xanh’s but instead, immortalizes and physicalizes the derision on his skin. I remember the artist once open-endedly divulging that the poem speaks to his fraught relationship with his family and to a larger extent, a series of former injuries. The abrasive words of the poem and their biting appearance on his body perhaps commemorate unsaid agonies. The loud mechanic buzz periodically whirred by the tattoo gun accentuates the violence of his act, and yet the self-infliction of pain seems nearly meditative to the artist and captivating to his viewers. There might be an oddly therapeutic dimension to tattooing. The present endurance numbs out previous hurt and the oozing blood carries an outflow of internal torment. There emerges an invisible harmony between Cam Xanh’s choice to make a poem out of vituperations and Bill Nguyen’s decision to inscribe himself with the same indignities. Both artists unapologetically expose their personal release, linguistically, psychologically and bodily, by making a spectacle out of their frustrated inscriptions. The central prop to their parallel acts is a graceful chandelier constructed out of pink neon lights shaped as the poem’s disassembled words. Under a mesmerizing cascade of reddish hues and blurred letters, the two artists co-independently perform an exorcism of private demons while methodically, tenderly arriving at serenity. The performance happens on the Bill Nguyen’s birthday, but perhaps the real celebration is the artists’ personal ways of making do with profanities, the oft-tabooed breed of language that serves as forceful channels of innermost woes and momentary vessels of memorable liberation. Nguyễn Hoàng Quyên This performance was part of Big Day of Performances | Happy Birthday Bill",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-bless-you-hold-me-cam-xanh-bill-nguyen/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-nam-mo-a-di-da-phat-phu-luc-the-appendix-group",
+        "title": "Phu Lục (The Appendix Group) | Nam mô a di đà Phật | performance | performance plus 2018",
+        "displayDate": "",
+        "dateISO": "2018-05-06",
+        "sortDate": "2018-05-06",
+        "description": "MoT+++ resident artists from Hanoi Phu Lục (The Appendix Group) started preparing for their performance in the foyer of exhibition space a few hours earlier, by covering the floor with a layer of insulation foam. Once the foam had solidified, they began to engage in various activities, with three members performing inside the MoT+++ foyer, and one performing in the lobby outside. Ngo Than Bac, squatting and crawling on his hands and knees, pressed shapes into the foam using letters of the alphabet made from nails and wood. Vu Duc Toan stood at the table, his shirt open to reveal a belt made out of small audio-players designed to play Buddhist mantra recordings, which he loaded with batteries and activated one by one. Huy An also stood at the table, and dragged a white plaster sculpture of a hand and forearm across its surface, as if tracing some invisible drawing or text, eroding the fingers of the sculpture in the process. Meanwhile, Nguyen Song stood on his own out in the lobby, with a string of Buddhist prayer beads in his hand, methodically pulling them off of their string and flinging them at the glass doors through which his colleagues were visible. By occupying the liminal space of the foyer and rendering it unusable as a passageway, The Appendix Group called into question the way in which space is used, echoing the seedpod performance by Nguyen Dinh Phương in the office; additionally, their unconventional objects taps into our sense of the uncanny, giving voice to the latent violence of everyday life (with Bac’s act of pressing the alphabet into the foam with nails evoking the oppressive educational model of rote memorization, An’s ghostly hand resembling both a manikin and a cadaver, and Toan’s suicide belt of mantra machines and Song’s act of throwing prayer beads against the door hinting at the more subtle types of psychological violence enacted in the name of religion. This performance was part of Big Day of Performances | Happy Birthday Bill",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-nam-mo-a-di-da-phat-phu-luc-the-appendix-group/phu-luc-perf-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-nam-mo-a-di-da-phat-phu-luc-the-appendix-group/phu-luc-perf-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-salting-the-pongour-cam-xanh",
+        "title": "Cam Xanh | Cry for Father on Mother’s day – Salting the Pongour | @ Da Lat | performance | performance plus 2018",
+        "displayDate": "",
+        "dateISO": "2018-05-13",
+        "sortDate": "2018-05-13",
+        "description": "Cry for Father on Mother’s day – Salting the Pongour is deeply personal work in response to the premature death of the artist’s father, aged 40. The performance marked the artist’s first visit to Da Lat, a place noted for its waterfalls and ghosts. It was a place her father spoke of but never reached, becoming an emblem for unaccomplished life plans and alternative histories. In the documentation we see a lone figure gesturing upwards in the rain—too young at the time to fully understand the gravity of loss, Cam Xanh threw salt into the rain to form the tears she never cried for her father’s death. The trip, part pilgrimage, part exorcism, was a chance for Cam Xanh to confront the personal tragedy of losing her father, and the burden of her mother’s sorrow alongside her own. Cry for Father on Mother’s day – Salting the Pongour opens the possibility for us to question how significant events in our own pasts might inform our later lives, and opens the thought of how those absent from our lives might still have presence. By adding salt to a fresh water source that runs throughout southern Vietnam before joining the South China Sea, Cam Xanh creates her own purifying ritual, drawn in-part from her father’s Catholic religion, and shares it, through joining the water cycle, with the rest of the world. From a place of quiet solitude, Cam Xanh uses the medium of performance to reach out for the oceanic feeling that bonds us to each other and the universe in its whole. location: Pongour Waterfall, Da Lat, Lam Dong Province, Vietnam",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-salting-the-pongour-cam-xanh/salt-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-salting-the-pongour-cam-xanh/salt-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "da-lat-performance-enkhbold-togmidshiirev",
+        "title": "Enkhbold Togmidshiirev | @ Da Lat | performance | performance plus 2018",
+        "displayDate": "",
+        "dateISO": "2018-05-14",
+        "sortDate": "2018-05-14",
+        "description": "In April and May 2018, Enkhbold was stationed as a resident artist at MoT+++ as part of the performance plus performance art program, in which time he conducted an artist presentation and staged multiple performances in Da Lat and Ho Chi Minh City. Far more than merely a portable dwelling, all the individual components of the ger are loaded with symbolic meaning. This ger, which he personally constructed and brought from Mongolia, is unconventional in that it was made from bamboo—an excellent, lightweight building material common in South East Asia but less so on in Mongolia, and hence, never used in ger construction—thereby enacting a fusion of Vietnamese and Mongolian craft traditions. In this Dalat performance at the Pongour Falls, Enkhbold set up his ger at the foot of a waterfall, before an audience of a few MoT staff and more than thirty amused and bewildered tourists who happened to be at the falls that day. Once the ger was up, Enkhbold attached one end of a rope to the center beam and the other end to a large rock, which he threw up in to the waterfall, energetically connecting the ger and the falls. He then stripped down to his boxers, and lit a fire of dried horse dung in the center of the ger, and from the center beam he hung another large stone over the fire. Placing this stone on the nape of his neck, he held it there with the smoke wafting up into his face, before extricating himself and tying an avocado on top of the stone, winding it up by running around the inside of the ger in a tight circle, then releasing the wound up stone and avocado and allowing them to spin in the center of the ger. Horse dung is a material of much significance in Mongolia’s traditionally nomadic, horse reliant culture; accordingly, Enkhbold often uses dried horse dung in his performances, paintings and installations. Avocados, by contrast, are not indigenous to Mongolia, and hence were a novelty for the artist on his trip to Vietnam. By creating a physical continuum from the earth below, to the fire and smoke made from the locally gathered horse dung, to the human body of the artist, to the stone on his neck, to the avocado, to the ger, to the falls, the artist symbolically situated himself as just one of many natural elements that coalesce together to create a harmonic whole. Leaving the ger, Enkhbold entered the waterfall, where he crawled inside a large burlap sack and allowed the water the crash over him while screaming wordlessly into the falls—an ancient practice of the zen Buddhist tradition. Finally, kneeling in the burlap sack amidst the falls, he messily ate the avocado with his bare hands as if consummating some primal rite, and with that, the performance came to a close. location: Pongour Falls, Da Lat, Lam Dong Province, Vietnam about the artist Enkhbold Togmidshiirev is one of Mongolia’s leading contemporary artists, and has represented his country at the 56th International Art Exhibition, la Biennale di Venezia, in 2015, marking Mongolia’s first participation at the Biennale. His practice draws inspiration on the traditional Mongolian nomadic life and uses the ger (a portable hut) as a central feature of his performance art practice. Additionally, organic materials such as horse dung, ash, rust, leather and wood are often found in his paintings and installations, referencing humans’ relationship with nature.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/da-lat-performance-enkhbold-togmidshiirev/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-enkhbold-togmidshiirev",
+        "title": "Enkhbold Togmidshiirev | performance | performance plus 2018",
+        "displayDate": "",
+        "dateISO": "2018-05-19",
+        "sortDate": "2018-05-19",
+        "description": "For this performance, resident artist Enkhbold Togmidshiirev will present a multi-media installation in the MoT+++ exhibition space featuring a Mongolian Ger (traditional tent) made by the artist using bamboo (a material never before used in Mongolia for this purpose) accompanied by a soundscape evoking the Gobi Desert at night. Enkhboldis one of Mongolia’s leading contemporary artists and has represented his country at the 56th International Art Exhibition, la Biennale di Venezia, in 2015, marking Mongolia’s first participation at the Biennale. His practice draws inspiration on the traditional Mongolian nomadic life and uses the Ger (a portable hut) as a metaphor for the universe. Organic materials such as horse dung, ash, rust, leather and wood are often found in his installations, referencing humans’ relationship with nature. Saturday, May 19 6:30 – 8:00 pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-enkhbold-togmidshiirev/enk-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-enkhbold-togmidshiirev/enk-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-nhan-duyen-predestined-karma-huong",
+        "title": "Karma Hương | Predestined | performance | performance plus 2018",
+        "displayDate": "",
+        "dateISO": "2018-06-03",
+        "sortDate": "2018-06-03",
+        "description": "This is the first personal show of Karma Huong after a 7-year journey of finding a way to performing her own art in Saigon. Through her spiritual practices, she has come to see life as being comprised of multiple predestined lives woven together throughout a lifetime, with all of our karmic relationships evolving out of ideas implanted during our past and present lives. She has lived in a Buddhist temple for the past three years and will use the temple’s spiritual items for the performance. One of the items that she will use is an old drum that dates back several decades, from when her temple’s founding monk was still alive. Photographing the pages of the seminal text written by the master teacher himself, Karma Huong will use these scriptures to create Tibetan-style flags. She will also use 100 “predestined eggs” made of glass, which contains stones and materials related to feng shui, and singing bowls to create healing vibration sounds. Please note: to achieve the maximum effect for yourself, you should keep quiet during the performance. The best method is a sitting, meditating with eyes closed to keep a relaxed mind and limited movement. Also, please put your phones on silent mode. Performance will last 1 to 1.5 hours. Sunday, June 3 6:30 pm – 8:00 pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-nhan-duyen-predestined-karma-huong/karma-perf-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-nhan-duyen-predestined-karma-huong/karma-perf-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "lap-xuan-artist-presentation-performance-plus-2018",
+        "title": "Lap Xuan | artist presentation | performance plus 2018",
+        "displayDate": "June 10, 2018",
+        "dateISO": "2018-06-10",
+        "sortDate": "2018-06-10",
+        "description": "ho chi minh city based artist lapxuan donguyen gives a presentation of her practice, which comprises performance, installation, video and painting. often using durational performance as a point of departure, lap xuan takes a minimalist formal approach to explore the tensions between the individual and collective experience. she holds an MA from UNSW art & design and a BA from nanyang university of fine art and has exhibited and performed extensively in vietnam and internationally. this informal presentation lasts 45 minutes and is presented in vietnamese with english interpretation. sunday, june 10, 5:30pm – 7:00pm. free entrance.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/lap-xuan-artist-presentation-performance-plus-2018/lap-1.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "maria-sowter-performance-performance-plus-2018",
+        "title": "Maria Sowter | performance | performance plus 2018",
+        "displayDate": "June 10, 2018",
+        "dateISO": "2018-06-10",
+        "sortDate": "2018-06-10",
+        "description": "to conclude her month-long 'researcher-in-residence' performance at MoT+++, maria sowter opens her MA thesis to the public as a collaborative editing session. audience members are invited to read and redraft maria's thesis in a further effort to collaboratively produce knowledge about vietnamese contemporary art. the audience is invited to visit the MoT+++ space to read and edit as they wish. sunday, june 10, 4:00pm – 5:30pm. free entrance.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/maria-sowter-performance-performance-plus-2018/maria-1.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "halffullhalfempty-lapxuan",
+        "title": "Performance | Half Full Half Empty | Lap Xuan",
+        "displayDate": "",
+        "dateISO": "2018-06-23",
+        "sortDate": "2018-06-23",
+        "description": "LapXuan’s performance Half Full Half Empty is a test of limitations, undertaken in the realm of the everyday. The 378 half-cups of water she attempts to drink throughout the two-hour duration of the performance make up a total approximate to 11 litres. Water intoxication can begin to occur when consuming as little as three to four litres in an hour. When translating the word ‘water’ in Google we are given the word ‘nước’; when translating the word ‘nước’ we are given the word ‘country’. For some Vietnamese, these two definitions are inseparable, whilst for a foreign audience the subtly is undetectable. Although LapXuanacknowledges the dual meaning, she rejects the political in favour of a human/being focus and interpretation of her work. Half Full Half Empty is a performance-study of state-changes, thresholds and liminality. In the adage, it is our subjective perception of the cups that renders them half full or empty. The cups exist in an in-between state that transgresses clear definition. The artist’s refusal to distinguish between the two states suggests the possibility that both might coexist. Lap Xuan is not interested in establishing dichotomies, but rather exploring borderlines. In pursuing the disorientating effects of water intoxication the artist actively seeks out the ambiguities associated with transition stages. Watching the artist forced to make choices, the work becomes a live visual documentation of the consciousness of being. Despite Lap Xuan’s progress through the piece, her condition only worsens. As a result, we are able to see the conflict between our knowledge of our environment and our decision-making processes. Half Full Half Empty makes up part of the artist’s on-going social experiment practice in relation to her PhD research on liminality, marginalisation and community recalibration. Half Full Half Empty was part of all animals are equal , a group exhibition celebrating the soft opening of A. Farm .",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/halffullhalfempty-lapxuan/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "big-day-of-performances-2-performance-plus-2018",
+        "title": "big day of performances #2 | performance plus 2018",
+        "displayDate": "July 22, 2018",
+        "dateISO": "2018-07-22",
+        "sortDate": "2018-07-22",
+        "description": "following the success of happy birthday bill, MoT+++ presents big day of performances #2 as part of the six-month performance plus program. the line-up includes resident artists nguyen song, ngo thanh bac, and hoang minh duc from phụ lục (the appendix group), le nam dy, thuy tien, and duc flying. performances take place across MoT+++'s main exhibition space, garden, and project room. sunday, july 22, 4:00pm to 7:00pm. location: ground floor, saigon domaine, 1057 bình quới, ward 28, bình thạnh district. free of charge.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/big-day-of-performances-2-performance-plus-2018/bdp2-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/big-day-of-performances-2-performance-plus-2018/bdp2-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-plus-2018",
+        "title": "performance plus 2018",
+        "displayDate": "March – September 2018",
+        "dateISO": "2018-03-01",
+        "sortDate": "2018-09-01",
+        "description": "MoT+++ presents performance plus, a six-month performance art program running from march to september 2018. MoT+++ becomes a home for vietnam's contemporary performance art scene, hosting local and international artists. phụ lục (the appendix group) from hanoi serve as artists in residence throughout the six-month period, acting as an anchor for the program. aliansyah caniago completes a durational performance during his one-month residence. enkhbold togmidshiirev from mongolia and psyper lab from hanoi are stationed at MoT+++ for residencies of three and two weeks respectively. other participating artists include lại diệu hà, bill nguyễn, cam xanh, nguyễn thuỷ tiên, karma hương, and lap xuan. the program includes performances, workshops, and artist talks.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-plus-2018/pp18-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-plus-2018/pp18-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "phu-luc-artist-presentation-performance-plus-2018",
+        "title": "phụ lục (the appendix group) | artist presentation | performance plus 2018",
+        "displayDate": "September 9, 2018",
+        "dateISO": "2018-09-09",
+        "sortDate": "2018-09-09",
+        "description": "phụ lục (the appendix group) concludes MoT+++'s six-month performance plus programme with an artist presentation at MoT+++. the presentation marks the end of their extended residency at MoT+++ during which they served as the anchor artists of the program. sunday, september 9, 4:00pm. free of charge.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/phu-luc-artist-presentation-performance-plus-2018/phu-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/phu-luc-artist-presentation-performance-plus-2018/phu-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-plus-2019-spoken-words",
+        "title": "performance plus 2019 | spoken words",
+        "displayDate": "",
+        "dateISO": "2019-10-18",
+        "sortDate": "2019-10-18",
+        "description": "long before writing, oral tradition conveyed information. rhythm, rhymes, repetition and attitude transform words into performance art medium. poetry readings, poetry slams, jazz poetry, prose, monologues… if you have what to say and want to join spoken words November 28 7:00 pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-plus-2019-spoken-words/pp-sw-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-plus-2019-spoken-words/pp-sw-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-plus-2019-tuesday-movie-night",
+        "title": "performance plus 2019 | tuesday movie night",
+        "displayDate": "",
+        "dateISO": "2019-10-20",
+        "sortDate": "2019-10-20",
+        "description": "after hours fun: performance art movies, documentaries and informal discussions every Tuesday night at MoT+++. follow our facebook page for content update. session #1 T uesday, November 26 7:00 pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/performance-plus-2019-tuesday-movie-night/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "artist-presentation-tuan-mami",
+        "title": "Tuan Mami & Cam Xanh | artist presentations | performance plus 2019",
+        "displayDate": "",
+        "dateISO": "2019-11-29",
+        "sortDate": "2019-11-29",
+        "description": "artist presentations | Cam Xanh & Tuan Mami 5- 8pm, Friday November 29, 2019 performance plus 2019 @ MoT+++ presentations from two conceptual artists, sharing their experiences in performance art. artist presentations of Tuan Mami and Cam Xanh is part of performance plus 2019, MoT+++’s five-week program on the performance medium. Cam Xanh 5 – 6pm Q&A 30 mins Cam Xanh’s genesis as an artist came as a three month durational performance. she has continued to experiment with performance as integral to her practice. Tuan Mami 6:30 – 7:30pm Q&A. 30 mins Tuan Mami’s work has used performance, alongside other experiments with conceptual installation and video art, to create new dialogues exploring our social interactions and exchanges. about the artists : Tuan Mami (b.1981, Vietnam) creates experimental installation, video and performance works that mediate on the interactions and processes at work in society. In 2006 he graduated from Hanoi Fine Art University. In 2012 he founded MAC-Hanoi, a Mobile Art Center, and co-founded Nha San Collective Art Space in Hanoi, Vietnam in 2013, which he has been the creative manager of since. His work spans both the public and private space and often utilises site-specificity to introduce people and objects into his artistic process. He has exhibited widely across Asia, the USA and Europe. Cam Xanh is the pseudonym of conceptual artist Tran Thanh Ha (b.1977, Vietnam). Translated as Green Orange from Vietnamese, it is the first of many playful departures from the expected that characterise her work. Her physical works are often based on texts and poetry, or developed from previous performances by the artist, and branch across multiple mediums including installation, sculpture, painting and video, often with elements only activated by audience participation. Her work can be found in the collection of the Singapore Art Museum (SAM) , and she was a speaker for the ASIA YOUNG 36 exhibition at the Jeonbuk Museum of Art in Seoul, Korea in 2016. She founded independent art space MoT+++ in 2015 in Ho Chi Minh City, Vietnam, which she continues to collaboratively run with a small team and other members of the MoT+++ artist collective. In 2018 she co-founded the Nguyen Art Foundation and A. Farm , an international art residency. performance plus 2019 is supported by Asia-Europe Foundation – ASEF Mobility First!, Norwegian Crafts and the Norwegian Ministry of Foreign Affairs in partnership with A. Farm.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-tuan-mami/apt-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-tuan-mami/apt-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-presentation-tuan-mami/apt-3.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "performance-do-you-believe-in-love-after-life",
+        "title": "Performance | Do you believe in love after life?",
+        "displayDate": "",
+        "dateISO": "2024-02-24",
+        "sortDate": "2024-02-24",
+        "description": "Sự tích trái thơm / Ang Alamat ng Pinya (“the legend of the pineapple”) is on the move, like it has been for centuries. Originally cultivated as Hoyriri by the Tupinambá people in present-day Brazil and Paraguay, the pineapple’s uprootings through Portuguese colonization of South America have left traces in Southeast Asian mythology, motherly sermons and memories of a million eyes that shall remember what they see. The hybrid performance “Do you believe in love after life?” will take place in Sài Gòn (Việt Nam) and Köln (Germany) at the same time, departing from slippery confines of time, space and body into the possibilities of their ruptures. Anika Baluran Schäfer, Thủy-Tiên Nguyễn, Quang Nguyễn-Xuân and Việt Đức Phạm, four queer performance artists with Southeast Asian heritage in Germany, telling stories through performance, poetry, moving images, karaoke and video art. Saturday, 24 February 2024 7:30 pm location: 6th floor Amanaki Thao Dien Hotel, 10 Nguyen Dang Giai, Thao Dien, Thu Duc, HCMC Entrance Fee: pay as you can. Registration required: link here If you are in Cologne, Germany, the performance will take place at the Comedia Theater Köln at 1:30 pm with the support of the Goethe-Intitut Ho Chi Minh City",
+        "images": [],
+        "artists": []
+      }
+    ],
+    "+1 contemporary project": [
+      {
+        "slug": "howdy-cowboy",
+        "title": "howdy cowboy",
+        "displayDate": "",
+        "dateISO": "2015-10-29",
+        "sortDate": "2015-10-29",
+        "description": "howdy cowboy is a mixed story built from random fragments of happenings and experiences which are random – improvisation but in a whole create links from fragmentation and harsh regulations that nature and human has framed on each other. Coming to Ho Chi Minh City, Mat puts his reluctant steps in the traffic and also has them footprinted on works he creates inspired by his sense of the smell the speed the heat of this city. From his endless short time conversations with the people, past, present along with the link of reality and vagueness started to grow. The experimental works of his polish the window bar frame he bought from the junk yard and make them the new halo; the luxury of Queen Mary and the whale take their surfs with the magical orange pottery shines and plastic buckle. We see the whole poetic sultry skyline in his bonsai series that comes with objects in elastic rubber ropes and serially bended metal bars. With the same look on nature and human pressure, Đào Tùng uses video language to speak on behalf of the ant the bamboo stick and the circle of shadow. The fierce punishment that the stick puts on the little ant smells like a metaphorical hand of power. Are we the human or the ant? Are we the stick or the hand with the rod? Are we all those in our own circle of darkness? Đức once again brings his boring oldies narrated to the viewer. His dreamy memories about ice cream sticks of wish and out of expiry date sweetened condensed milk is told with the arid materials and confusing scary visuals. The ugly construction bricks are used by Duc to make a rectangle and with falling apart words from the U.S, Ohio State, Kent and a person named Jeffrey Miller. Duc covers them sweet with his pink dreams, brand new Ông Thọ condensed milk cans and Thuỷ Tạ ice cream. Nor he forgot to put a flower upon all, along with an old song. Where have all the flowers gone? howdy cowboy is inaugurated by San Art. Artists: Matt Logan, Tran Minh Đức, Dao Duy Tung Location: 103 Dong Khoi, District 1, Ho Chi Minh City",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/howdy-cowboy/motdsc09461_duc-detail-2-300x200.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "group8",
+        "title": "Architecture as a Theater",
+        "displayDate": "",
+        "dateISO": "2015-12-09",
+        "sortDate": "2015-12-09",
+        "description": "Architecture as a Theater is a cooperative exhibition between Swiss photographer Régis Golay from Geneva-based Federal Studio and architecture studio group8asia. This innovative collaboration explores the magic that takes place behind architectural project developments. The photos reflect details of major projects developed by group8asia in Punggol, Singapore seen through the eyes of Régis Golay: workers in action, concrete structures, and other details often hidden from public eyes. The images show a glimpse of what happens far from the public eyes, like a peek behind theater’s curtains. Born in Geneva, Switzerland in 1978, Régis Golay graduated from the world-famous Art and Design College of Lausanne. Since he joined Federal Studio in 2005, he has developed an aesthetic vision with appeal both to the art connoisseur and to his customers from the corporate world to fulfill the wish of blurring the boundaries between contemporary art, architecture, and luxury marketing, among others. Group8 is a Swiss-owned company specializing in architectural design, urban planning, and interior design. Founded in 2000, the company has gained extensive experience in cooperating with public project owners such as International Committee of the Red Cross (ICRC), United Nations Office (UNO), World Trade Organization (WTO), while also carrying out many private projects. In 2007, group8 opened its Asian branch group8asia in Hanoi before opening an office in Singapore. Under the patronage of the General Consulate of Switzerland in Ho Chi Minh City. Location: 103 Dong Khoi, District 1, Ho Chi Minh City",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/group8/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/group8/motgroup81-300x200.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "the-vacant-chair",
+        "title": "The Vacant Chair | Chiếc ghế trống",
+        "displayDate": "",
+        "dateISO": "2015-12-18",
+        "sortDate": "2015-12-18",
+        "description": "“The vacant chair” is a solo exhibition of artist Bang Nhat Linh. Bang Nhat Linh is a visual artist who is also a collector of war memorabilia. The primary concerns and inspiration for his artistic practice is human beings. This exhibition is part of Linh’s long term practice, in which, the whole process reflects “the surveys into the depths of memories, history, submerged psychological spaces, and of oblivion…”, in which “war memorabilia are taken from their original contexts to be placed within a new context, or they are positioned in a relationship with human as communicable and interactive objects…” “The vacant chair” is a multi-layered video installation. It is an intimate narrative, whereby social issues derived from modern history of a turbulent Vietnam are unveiled: the wounds, tolerance, optimism, as well as the special relationship amongst those who remain. From a broader angle, it suggests an universal sense of existence and death, particularly the limited nature of the human race…On the other hand, through the act of transforming a powerful symbol of war into a symbol of love and loss, the work steps out of its geographical context to tell a universal story of all humanity. “The vacant chair”, therefore, is a song of humanity, and for humanity… *“The vacant chair” is a popular song during the American Civil War written by George F. Root in 1861 based on a poem by Henry S. Washburn. The song signifies the loss and emptiness of those who lost their loved ones in the Civil War, it specially gained empathy from both the North and the South of the United States during the war. This is version 2/2 of the artwork, currently on display in this show after exhibiting at Nha San Collective (Hanoi) in September, 2015 (curated by Le Thuan Uyen). Version 1/2 was presented in Exhibition “Mien Meo Mieng” at Builmusset, Umea, Sweden (curated by Tran Luong). Location: 103 Dong Khoi, Dist. 1, Ho Chi Minh City",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-vacant-chair/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "chaoart",
+        "title": "CháoArt | ArtChao",
+        "displayDate": "",
+        "dateISO": "2016-01-11",
+        "sortDate": "2016-01-11",
+        "description": "ChaoArt|ArtChao Cam Xanh January 11 – 17, 2016 Lunch & Dinner at DiaProjects Dong Khoi Cháo/Art is an intriguing event created by Cam Xanh. The gathering unfolds in a magical space where a group of artists (including Cam Xanh herself along with fellow artists, writers and curators) cook and serve plain cháo, the most basic type of Vietnamese rice porridge, to customers, guests of honours, tourists, neighbours, voyeurs, vagabonds, as well as those unable to pay at all. As the happening’s pièce de résistance, the simple cháo fulfils a two-fold mission: to detoxify as well as fortify the participants’ body and mind. In recent years, as the Vietnamese middle- and upper- class get exposed to a proliferation of fast food chains and high-end culinary imports, many have seen their health deteriorate due to indiscriminate overindulgence. In response, the new fad for health-conscious consumers is to follow “detox” diet formulas to eliminate intoxicants and recharge the body. This shift away from junk food and exorbitant eateries results in a return to elementary dishes such as cháo. A light bowl of rice porridge, once perceived as food merely for the poor, sick, elderly or infantile, is now back in vogue. Cam Xanh not only capitalizes on this new surge of public interest in “detox” diets but notices another function of cháo in Vietnamese society: its healing power. Cháo has always been the go-to nourishment for the impoverished during extreme famines as well as the ill or injured during recovery periods. Often served in familial or communal settings, cháo strengthens the body and reinvigorates the spirit despite its unadorned nature. Sociologically speaking, Cháo/Art might well be an disarming tale about artists and the poor in Vietnam surviving on the most basic food while the middle- and upper-class enjoy the freedom to purchase the same food for detoxifying and rejuvenating purposes (or companionship, or entertainment, or an opportunity to see and be seen – all possible motives for visitors to enter the Cháo/Art space). On the other hand, we are not obliged to read Cam Xanh’s happening as a grand metaphor for class struggles or the state of the arts and humanities in a rapidly industrializing country. Imagine walking by an open space in which unlikely cooks calmly stir huge pots of boiling porridge and sit among piles of ceramic bowls, ready to serve hungry, curious and/or amused customers who might or might not pay, but are willing to help and play along. Cooks vs. customers, performers vs. spectators, and artists vs. patrons are boundaries that are blurred once we enter Cháo/Art. Normative assumptions are flipped: the main delicacy is simple and unfussy instead of ostentatious or classy; the patrons give on a pay-as-you-wish basis (think of Cháo/Art as a bizarre fundraising event with a surrealist bend); the artists make art not by furiously dripping paint on canvas, installing oversized sculpture or shocking the audience with post-",
+        "images": [],
+        "artists": []
+      },
+      {
+        "slug": "ke-statement",
+        "title": "kể — statement",
+        "displayDate": "February 2016",
+        "dateISO": "2016-02-29",
+        "sortDate": "2016-02-01",
+        "description": "",
+        "images": [],
+        "artists": []
+      },
+      {
+        "slug": "psyche",
+        "title": "Psyche",
+        "displayDate": "",
+        "dateISO": "2016-04-08",
+        "sortDate": "2016-04-08",
+        "description": "Tuyp Tran (Tran Quoc Huy, b. 1988) is a self-trained Vietnamese visual artist. His oeuvre encompasses food, sex and spirituality among various other topics. What connects these seemingly disparate subject matters, according to Tuyp, is the human psyche. In Ramen Girl, similar to Tuyp’s other cuisine-themed pieces, a savory meal is placed at the centre. A vertical cascade of noodles bridges between the girl’s gobbling mouth and her appetizing noodle bowl. The power of Tuyp’s work lies in not only the mundane choice of subject matter but the obsessive level of detail. Discerning viewers could notice the punctilious details around the fringe of the ramen bowl, such as images of birds in flight, dancing girls with elaborate headwear or floating koinobori (Japanese carp streamer) among other motifs and symbols. At the bottom, curved roofs appear in a horizontal skyline of ancient Vietnamese houses, gates and temples. Is there a deliberate juxtaposition between the humble architecture of the provincial past and a modern diner of the global present? What about the patterns in the background are they derived from Vietnamese ethnic minorities' textiles or some foreign design? Why does most of the girl’s body bleed, if not disappear, into the background, leaving only the chopstick- holding hand, robotic-looking arm and gorging mouth visible? Tuyp’s illustrations certainly evoke more questions than answers. Besides the presentation and consumption of delectable food, Tuyp also revels in flavors of human bodies. In Tropical Fever we have a circular band of five faceless females standing, kneeling and crouching erotically. Supposedly inspired by ”a night in Bangkok” according to the artist, the image of women dancing in stilettos and swimming in buzzing colors brings to mind the familiar night-club decadence of urban society. At first glance, the scene might be construed simply as a male fantasy but the female bodies might represent something beyond sexual imaginings. The women pose in a circle among images of birds and fish, trees and reeds, which creates a playful space in which the female body harmonizes with nature’s feverish vitality, instead of being objectified by the male gaze. Tuyp tends to not romanticize but intensify female power. Commenting on Vortex Pussy, Tuyp argues it is female sexuality that could “destroy the world of man.” The vagina is portrayed as a vortex of bivalves, attracting a whirling mass of phallic shapes. The female body could either be the epitome of vivacious life or a destructive black hole that endlessly ingests men. Tuyp bypasses gender politics and turns to provocative and sensual figures to compulsively visualize concepts and questions drifting in his restless mind. Tuyp’s collection is reminiscent of a young man’s acid trip into the recesses of the subconscious. From afar, his works resemble a baffling explosion of vivid colours and intertwined designs. Claiming no ready made meaning each detail a",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/psyche/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/psyche/mot-psyche-by-tuyp-tran.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/psyche/mot-psyche-by-tuyp-tran-300x200.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "hat-tim",
+        "title": "Hạt | Tim",
+        "displayDate": "",
+        "dateISO": "2016-05-13",
+        "sortDate": "2016-05-13",
+        "description": "Le Hien Minh and Cam Xanh’s duo installation take place in two neighboring rooms, each of which presents a different altar. Cam Xanh constructs a scene with a lone cross and Hien Minh, a Northern Vietnamese altar. No recognizable saints, ancestors or incense is in sight. The two artists’ attitude towards the conventional fixtures of worship departs from veneration and slides towards playfulness. Hien Minh’s “balls” (or “hạt” in Vietnamese, the title of her work) are made from Vietnamese traditional Dó paper, which she crumples into shriveled little spheres. Dyed with pigment, these seemingly innocuous pickled-plum- like balls evoke a wrinkled and stale image of masculine pride. Hien Minh’s ball-filled jar parodies the “rượu thuốc” (medicinal liquor) jar commonly found in many Vietnamese males’ living room. Liquor made with animal parts like cobra heads or tiger testicles is traditionally believed to be a powerful organic Viagra for men. Though made by distilling dead beings, a method considered ghastly by some, medicinal liquor is highly regarded as an effective supplement of masculinity. Hien Minh looks at the eerie implication of masculinity, and her work explores what vanity and virility might look like to an observer of the patriarchy in Vietnam. The sheer number of hand-sculpted balls (numbering over 20,000) creates a scene of overwhelming abundance and power. Beyond gender, viewers are invited to meditate on the private process of the artistic maker and the astonishing amount of labor and time behind each work of art. In the room next door, Cam Xanh unsettles Christian history by playing with form and language in her installation Tim (the Vietnamese word for ‘heart’). Her objects are minimalist – a human-sized cross and a prayer table, both made of plexiglass. There is no bible. The only texts to be seen are poems ethereally suspended between the layers of plexiglass along the cross and table surface. The rhythmic quality of Cam Xanh’s poetry, together with cloud-like patches of sheepskin scattered across the floor, fill the godless room with strange comfort. But in other ways, her plexiglass chapel remains inscrutable. Lines from her poem describe a fictional ending of the love story between the Son of God and Mary Magdalene (or the woman from Magdala in old Palestinian). The love affair which is not discussed in the Gospels has now been highlighted as the main act. In this reinvented \"Last Temptation of Christ\" episode, the artist switches the roles of the martyr and the disciple, envisioning a new religion in which love is disseminated in the form of stem-cells. These two artists’ altars are atypical as they are not about reverence but liberation from the revered. Cam Xanh fabricates bold fictions on the identity of the martyred, while Hien Minh makes a canny altar for (or against) mythical heritage and virility. By re-examining and reinventing religious objects such as the acrylic glass cross or the altar br",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/hat-tim/mot_hat-tim-6-1024x683.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/hat-tim/p11.-hat-_-tim-1024x683.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/hat-tim/p11.-hat-_-tim1-1024x683.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/hat-tim/p11.-hat-_-tim3-1024x683.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/hat-tim/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/hat-tim/mot_hat-tim-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/hat-tim/mot_hat-tim-1-300x200.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "she-nang",
+        "title": "She | Nàng",
+        "displayDate": "",
+        "dateISO": "2016-07-30",
+        "sortDate": "2016-07-30",
+        "description": "‘She’, an international arts collaboration exploring the construct of femininity among 3 separate art spaces across 3 continents: Sweet ‘Art (London, UK) – Sao La (Saigon, Việt Nam) – Little Pink Monster (Texas, USA), is a project inaugurated and organized by Sao La. A part of SHE, a project initiated by Sweet ‘Art, the exhibition showcases outcomes of an artistic international exchange, where replications of same curated artworks will simultaneously be displayed in SHE exhibitions at partnering galleries: Sweet ‘ Art in London, UK and the LPM Gallery, Texas, USA, together with collaborative works between artists from UK and Vietnam and original works by Saigon-based artists. ‘She’ appears in a sudden wink, not to define or enforce but to feel and experience Femininity through self-meditation. Artists in Vietnam: Ngô Đình Bảo Châu . Nguyễn Thúy Hằng . Lêna Bùi . Nguyễn Vương Phương Thảo . Nguyễn Hữu Trâm Kha . Nguyễn Uyên Minh . Xuân Hạ . Trần Phương Thảo . Đỗ Nguyễn Lập Xuân . Nguyễn Kim Tố Lan . Nguyễn Hiền . Karma Huong . Duc Flyingbay . Huỳnh Công Nhớ She is on 30th (Saturday) and 31st (Sunday) of July * July 30th 18h: opening reception 19h: performance “it’s great to be a girl” by 3xu.tattoo và Duc Flyingbay * July 31st 21h: intimately launching LAN, a short film by Huynh Cong Nho 22h: online meeting and interacting with Sweet ‘ Art and Little Pink Monster Learn more about SHE: http:// www.wearesweetart.com/ With the support of Sweet ‘Art and Corrina Eastwood in initializing and linking Sao La to such a great project. Location: 103 Dong Khoi, District 1, Ho Chi Minh City",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motnguyễn-vương-phương-thảo-__-famaleo.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/mot20160731_141523-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motbailey-phillips-__-golden-tears-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motbông-quệ00-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motbông-quệ01-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motbông-quệ02-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motbùi-lêna-__-loá_radient00-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motbùi-lêna-__-mênh-mang_borderless00-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motbùi-lêna-__-mênh-mang_borderless01-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motdianne-murphy-__-spend-spend-spent-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motđỗ-nguyễn-lập-xuân-__-thêm-một-cuộc-trò-chuyện_just-another-conversation00-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motđỗ-nguyễn-lập-xuân-__-thêm-một-cuộc-trò-chuyện_just-another-conversation01-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motđỗ-nguyễn-lập-xuân-__-thêm-một-cuộc-trò-chuyện_just-another-conversation02-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motđỗ-nguyễn-lập-xuân-__-thêm-một-cuộc-trò-chuyện_just-another-conversation03-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motđức-flyingbay-_-3xu-tattoo-__-là-con-gái-thật-tuyệt_it-is-great-to-be-a-girl00-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motđức-flyingbay-_-3xu-tattoo-__-là-con-gái-thật-tuyệt_it-is-great-to-be-a-girl01-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motlisa-evans-__-baked-beans-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motnguyễn-hữu-trâm-kha-__-ẩn-dụ_the-metaphor00-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motnguyễn-hữu-trâm-kha-__-ẩn-dụ_the-metaphor01-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motnguyễn-hữu-trâm-kha-__-ẩn-dụ_the-metaphor02-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motnguyễn-hữu-trâm-kha-__-ẩn-dụ_the-metaphor03-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motnguyễn-hữu-trâm-kha-__-ẩn-dụ_the-metaphor04-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motnguyễn-hữu-trâm-kha-__-ẩn-dụ_the-metaphor05-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motnguyễn-uyên-minh-__-_no_-touch00-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motp12.-she_nàng00-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motp12.-she_nàng01-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motp12.-she_nàng04-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motp12.-she_nàng05-225x300.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motp12.-she_nàng07-300x225.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/she-nang/motthe-hermit-the-waif-the-witch-and-the-queen-225x300.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-material-history-of-man-and-animal",
+        "title": "A material history of man and animal",
+        "displayDate": "",
+        "dateISO": "2016-09-11",
+        "sortDate": "2016-09-11",
+        "description": "By RICHARD STREITMATTER-TRAN This exhibition features both new and existing artworks. The exhibition title is a follow up on his 2013 solo exhibition in Korea, Material Turn, where the artist begins to fully commit to a reconfigured studio practice working directly with the materials and objects he creates rather than having works completely fabricated or existing entirely in the conceptual area. By returning to the fundamentals of craft through slow deliberate learning, the artist has assembled a variety of objects both small and massive to speak about the recent but irreversible impact of the human species on earth in what is known in terms of geologic eras as the Anthropocene, or, the Age of Humans. Location: 103 Dong Khoi St, Dist. 1, 2nd Floor, HCMC, Vietnam",
+        "images": [],
+        "artists": []
+      },
+      {
+        "slug": "diaphuong-local-liti",
+        "title": "địa/phương ~ local-liti",
+        "displayDate": "",
+        "dateISO": "2016-10-01",
+        "sortDate": "2016-10-01",
+        "description": "“At any place, with/out a name.” “địa/phương ~ local-liti” is a group exhibition inaugurated by Sao La and also to kick-start Art Walk part deux through 10 art studios in Ho Chi Minh City with many other activities throughout the month of October. “địa/phương ~ local-liti” opens up a space that is familiar yet strange, inviting the visitors to experience and explore deeper into the existing surface of each work; where, next to the messages and personal stories, the works are all directly or indirectly evoke the notion of “place”, beyond the geographical boundaries. “địa/phương ~ local-liti” can be considered as a suggestive theme for this year’s “Art Walk” program, which aims to broaden the concept of interaction between exhibition space and the viewers Participating artists: Trần Văn Thảo Hoàng Tường Minh Trần Việt Hưng Ngô Đình Bảo Châu Chicko Nguyễn Văn Đủ Lưu Chữ Lê Phi Long Lu Nguyen Đào Tùng Sto Len Đỗ Nguyễn Lập Xuân Sao La ** Music performers: Datmaniac Nguyễn Hồng Giang (Art Walk 2016 is kindly funded by CDEF)",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/diaphuong-local-liti/diaphuonglocaliti-7-300x200.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "vang-rong-true-gold",
+        "title": "True gold | Vàng ròng",
+        "displayDate": "",
+        "dateISO": "2016-11-05",
+        "sortDate": "2016-11-05",
+        "description": "“The entire Vietnamese people are determined to mobilize all their physical and mental strength, to sacrifice their lives and property in order to safeguard their independence and liberty .” – ‘Declaration of Vietnamese Independence’, Ho Chi Minh, Hanoi 1945. Le Quy Tong is a child of modern Vietnam; born in 1977 in Hanoi, two years after the fall of Saigon to Viet Cong troops marked the beginning of the Vietnam’s reunification. He is part of the first generation of Vietnamese in over 150 years to have suffered neither colonial rule nor war, so it is no wonder his work deals with the legacies of this struggle. Tong’s latest exhibition True Gold , comes after the success of his comeback show True Blue . Following a period of depression, his return to Vietnam’s contemporary art scene marks a new era for the artist in both style and subject. Sourcing images from mass media and archives, Tong’s latest works transcends time and dissolves borders in a global study of political discord. Chronologically, True Gold begins with the triumphant 1945 August Revolution in Vietnam and ends with a dissident protestor at the 2014 Hong Kong Umbrella Revolution. The intermediate images reflect a widening gyre of unrest and revolutionary sentiment spanning the last seventy years, including photographs from the 1968 international anti-war protests and Total Freedom / anti-globalisation protest at the 2007 G8 summit. They appear faded, emphasising this passing through time and our removal from the original experience. Tong’s manipulations of each image create heavy distortions and eschew any clear reading of events. What we are left with is our own interpretation. Detached from their separate narratives, Tong re-contextualises the photographs in a unified presentation of disparate movements. Splotches and stains accentuate the exhibition’s historical tone, while fluid patterns and recurring geometric grids emerge to give a sense of movement and flux. Layers of oil paint become a visual representation for the layers of meaning observers can read into his work, and ultimately compound a feeling of confusion. Texts throughout the work are reversed and pixelated, suggestive of information, true or false, filtering at first through people, then generations, and finally into the present. Identities of people in the photographs are obliterated, and large groups reduced to expressive shapes and lines, as Tong’s focus rests not on the individual but the effectiveness of our collective power. In this manner, Tong’s new works address themes of memory, trauma and false truths; together they ask us to reexamine the contemporary, posing the question of what has been lost and gained with each fight. The words ‘freedom’ and ‘peace’ recur throughout the exhibition, not only encouraging us to consider a true meaning for each term, but, included alongside the recurring motif of gold, to also weigh up what sacrifices they are worth. Location: Saigon Domaine, Ground Flo",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/vang-rong-true-gold/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/vang-rong-true-gold/mot-truegold_lequytong-1-300x200.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-closing-notice-masturbation-triologies",
+        "title": "A “Closing” Notice: Masturbation Trilogies",
+        "displayDate": "",
+        "dateISO": "2017-01-14",
+        "sortDate": "2017-01-14",
+        "description": "Cam Xanh – collector, trader and maker of art – is a trilogy in herself. With this solo, brashly entitled Masturbation Trilogies , the artist embraces the hat-trick with a series of old and new works, each presented in a set of three. Three acrylic planets contain the leftover plain porridge (chao) she co-cooked with local fellow artists during her Art/Chao performance in 2016. Three handmade knock-off Birkin bags feature images of Western art in a shameless celebration of kitsche. Three tinted acrylic urinals hang on a pink wall like a whimsical set of decorations, alluding to both Duchamp and Gober. Three canvases bear silk cocoons engraved with Vietnamese golden values ” freedom – independence – happiness”. What does it mean to reveal in self-pleasure, which the artist admits to be a public act of masturbation in a private gallery? Is this what the climax looks like – an explosion of uninhibited desire and concealed self-deprecation? What aren’t we seeing? Is narcissistic pleasure the ultimate reward of art, or is it mixed with an undertone of pain? The video installation “chain – chance – change”, an opening/end scene of a 3months (24/7) duration performance, is definitely an interesting knot to be un-tight. And last but not least, a triptych prints of the word “interesting” itself, lightened up from its own blacked-out version is an open-end of the solo.. By Quyen Nguyen",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-closing-notice-masturbation-triologies/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "skylines-with-flying-people",
+        "title": "Skylines with flying people 3 | Những chân trời có người bay 3",
+        "displayDate": "",
+        "dateISO": "2017-03-03",
+        "sortDate": "2017-03-03",
+        "description": "I cryfor skylines which do not have flying people cry again for flying people who do not have skylines. – Trần Dần, 1987 Inspired by the boundless creativity and fierce spirit of Trần Dần – a prominent figure in Vietnamese literature – and his desire for creative freedom, the young artists of Nhà Sàn Collective started the serial art program ‘Skylines with flying people’ (hereafter SKYLINES). In its 3 rd edition, the program was realized in the form of 11 sub-art projects, 6 solo, duo and group exhibitions and a seminar series with the participation of both local and international scholars, which crisscrossed Hà Nội’s landscape in various locations from the second half of 2016 to January 2017. If SKYLINES 1 (2010), held in London, was perceived as Nhà Sàn Collective’s attempt at continuing the poet’s legacy, then SKYLINES 2 (2012) was launched at a critical time, out of the need for a working space from a group of outcast artists who were nurtured by Nhà Sàn Studio – one of North Việt Nam’s first and most important artist-run initiatives which was forced to close down in 2010. By transforming the garden area of the Japan Foundation in Hà Nội into a mega artist studio, SKYLINE 2 followed the model of a pop-up art laboratory, where a temporary creative space focusing on public interaction was formed, and where the artists’ working process and experimentation were carried out in front of the public, with the public. With SKYLINES 3 (2014-2017), territories, geographical limits and a general enquiry into the nature and role of practicing art in Việt Nam continue to be the topics of interest for the participating artists. Flying out of their comfort zones and into terra incognita, the artists began their journeys of exploration, through which a contemporary map of Việt Nam through the lens of a group of artists who grew up after Đổi Mới was sketched out. Whether it is a journey of self-reflection, or one that deals with boarder matters regarding the country’s contested history, each artist’s journey and project in SKYLINES 3 has continued to question existing predominant socio-political discourses, and shed light on alternative geographic narratives, from which issues of migration, exploitation of humans and nature, urbanization etc. are opened up and discussed. Forming a part of SKYLINES 3, the group exhibition by Nguyễn Trần Nam, Nguyễn Ban Ga and Appendix group now travels to and is introduced at Địa Project in Hồ Chí Minh City. The artists (re)imagine Việt Nam as a geographical body with all its fragmentations and conflicts, existing in between while at the same time trespassing and cross-pollinating borders of times, spaces and narratives.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/skylines-with-flying-people/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "president-hotel",
+        "title": "President Hotel – a book launch and solo show by | Giới thiệu sách và triển lãm ảnh của Laurent Weyl",
+        "displayDate": "",
+        "dateISO": "2017-04-13",
+        "sortDate": "2017-04-13",
+        "description": "VIETNAM, SAIGON, PRESIDENT HOTEL: A CITY WITHIN THE CITY An imposing structure built for the US army in the 70’s, the Hotel President was for years the biggest and most modern building in Saigon. Up to 2500 people lived in it at its peak. This witness to the last half century of Vietnamese history, this decaying architectural carcass, will soon be destroyed to make room for new projects, thus turning and erasing a page of History. Time runs layer after layer in this building. « These dilapidated walls hold signs of past lives, visually inspiring memories, moods, and emotions. The fragments of the last inhabitants’ lives seem frozen in time and yet, in the hallways, shadows play games, re-animating the past. » (Sabrina Rouillé, journalist) « Through the history of this building and the stories of its inhabitants I wanted to reveal fifty years of Viet Nam History » (Laurent Weyl, photographer) Representative photographs from the book « President Hotel » will be exhibited on the opening night in the presence of the photographer Laurent Weyl and the writer Sabrina Rouillé. For this body of work Laurent Weyl received two prestigious prizes in 2014 : – The Prix documentaire VIPA (Vienna International Photo Award), professional category – Noticed portfolio for the Scam Roger Pic Prize (France) The book and the exhibition are carried out with the support of Institut Français du Vietnam under the high patronage of the Consulate General of France in Ho Chi Minh City.",
+        "images": [],
+        "artists": []
+      },
+      {
+        "slug": "figures-forms-contraptions",
+        "title": "figures, forms, contraptions | diện, dạng, cơ giới sơ đẳng",
+        "displayDate": "",
+        "dateISO": "2017-05-11",
+        "sortDate": "2017-05-11",
+        "description": "A duo show by Thy Tran and Regis Golay This show, which is the second part of the five-month focus on contemporary photography in 2017, features a video/photo collaboration between Regis Golay and Thy Trần. Australian-Vietnamese photographer Thy Tran focuses on people but rarely uses them as such. She refrains from presuming that placing a camera before a face will accurately and responsibly portray a model, friend, or oneself. Seldom do her subjects and observers regard one another. This absent gaze is made more evident by an interplay of revealed bodies and concealed identities. We are drawn to look but are unsure of what to look for. There are human figures but no stories, at least that we are made privy to. Swiss photography artist Regis Golay’s work both confronts and accepts a relationship between clients and photographers. Human bodies appear in a dispassionate and often subservient relation to the surrounding products: peering out, being consumed, or passively serving as framing devices. In his videos, objects are mobile or formidable, interacting with static or impotent bodies. The ability to instantly capture a subject, and the photograph’s tendency, more so than other art- works, to attach this representation to its entire referent, is deliberate and problematic. We don’t imagine ourselves as condensable into one image, yet we carry totemic images of others in our wallets or on our phones, standing in for and compromising the person’s whole. figures, forms, contraptions emphasizes this selective portrayal, extracting visual and narrative distortions from an apparently non-fictive medium. The show is under the patronage of the Consulate General of Switzerland in Ho Chi Minh City.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/figures-forms-contraptions/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/figures-forms-contraptions/mot-figures_-forms_-contraptions4-300x200.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "the-picture-will-still-exist",
+        "title": "The Picture Will Still Exist | Bức hình vẫn còn đó",
+        "displayDate": "",
+        "dateISO": "2017-06-22",
+        "sortDate": "2017-06-22",
+        "description": "The Picture Will Still Exist* is a group show featuring photographs, paintings and video works selected from Post Vidai Collection. The exhibition showcases eight established and emerging Vietnamese artists and collective, including Dinh Q. Le, Hoang Duong Cam, Howard Henry Chen, Le Quy Tong, Ngoc Nau, Phuong Linh, The Propeller Group and Vo An Khanh. A number of artworks, such as Dinh Q. Le’s WTC in four moments (2014), The Propeller Group’s AK-47 vs. M16 (2015) and Phuong Linh’s Sanctified Clouds (2012-2015), will be on display for the first time to Vietnamese public. Referring to photography, once a photograph is captured, it freezes a moment. It is the moment, which will forever represents an angle of reality that the camera holder determined to shoot. Susan Sontag has argued that photographs are ‘memento mori’ – mortality, when they ‘testify to time’s relentless melt’. Indeed visual artists have been using this medium as a way to reflect, analyze, fictionalize and even corrupt the reality. The Picture Will Still Exist showcases how diversely artists can treat photography – metaphorically and physically. The politics of photography becomes visible through its aesthetics and the process creating such aesthetics: for example stretching an instant of less than one second of an terrorist image into six minutes; deliberately distorting a historic photograph to erase its original context; or preserving the trice of two flying bullets in a flesh-alike gel block. The Picture Will Still Exist demonstrates the prolificacy of Post Vidai, when one medium, photography, can be appreciated in multiple aspects of the collection. It hopes to bring the viewers distinct and poetic worldviews from limitless extension of photography in particular and visual arts in general. The exhibition is curated by Arlette Quỳnh-Anh Trần, Director and Curator of Post Vidai. * The title is a phrase quoted from the first chapter ‘In Plato’s Cave’ from Susan Sontag’s book ‘On Photography’.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist3-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist5-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist6-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist9-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist12-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist15-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist89-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist90-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist91-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist92-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist93-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist95-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist97-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist98-1024x682.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist9-300x200.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist12-300x200.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist15-300x200.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist89-300x200.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist90-300x200.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist91-300x200.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist92-300x200.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist97-300x200.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist99-300x200.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/the-picture-will-still-exist/mot-the-picture-will-still-exist103-300x200.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "bugs-birds-equations-of-the-future",
+        "title": "bugs, birds.. equations of the future",
+        "displayDate": "",
+        "dateISO": "2017-10-13",
+        "sortDate": "2017-10-13",
+        "description": "bugs, birds.. equations of the future a duo show by Lê Hiền Minh and Cam Xanh Exhibition Dates: October 13 th 2017 – January 5 th 2018 Opening Reception: Friday, October 13 th from 6:00pm – 9:00pm L = L = L = What does L equal? L = life, L = love, L = liberty, laughter, loss, language, legacy… By leaving the end of the equation blank, the audience is asked to decide what L might mean to them. That L also equals L only emphasises how there is not one correct answer – there is no hegemony in this world of the future. These ideas represent the two central themes of the duo exhibition between Cam Xanh and Lê Hiền Minh: freedom and femininity. In Vietnamese, L could also refer to Lai (moths) which are nocturnal insects similar to butterflies. Put together, the silkworms contributed by Cam Xanh and the sculptural worms and birds produced by Lê Hiền Minh create their own bug and bird story, whilst simultaneously retaining their autonomy as artworks by their separate installations. Cam Xanh’s performance occurs in its own cocoon – drapes of sheer white cloth enclosing both the audience and artist in a soft, womb-like room. A comforting yet confining space, the silkworms cannot escape their perimeters, just as they are unable to free themselves from their role as silk producers. Audience like artist are complicit in the stunting of these worms’ lifecycles. The worm, with its feminine quality of the power to create, is confined to its single role that is manipulated to serve the economic goals of their owner. Their dream of flying stays merely a dream, a baited promise. Lê Hiền Minh’s worms are similarly captured, dangling from a single tense, taught rope, hanging in a net from which the oversized worms seem to attempting to free themselves. The worms bulge, twisted as if in pain and crushed together, unable to escape from their suspended prison, weighted down by a stone statue. The statue is inspired by ancient sculptures of women that date back to as early as 25,000 BCE. Historically contextualised, the stone woman subsequently becomes an emblem for all the women that have succeeded her. The burden she carries becomes the burden of the female role in society: traditionally to be pure for marriage, to be a good wife, to make a baby, but now also to have a successful career, to make money, to fulfil all the expectations of this role. History and tradition are both inescapable for her and yet something she holds on to. The worms embody this inner turmoil, whilst the rope reveals the tension between our individual desires and external pressures. Lê Hiền Minh’s birds fill the remaining gallery space, over five hundred individual sculptures almost identical to each other. Like an army they are poised ready, protective of the worm populations who are confined by the borders of walls, ceilings and nets equally as unnatural as the geopolitical boundaries that define countries. But natural law would see birds eating bugs; the story the exhibitio",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/image-for-invitation-ll-1024x390.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170299-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170303-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170347-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170362-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170363-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170412-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170445-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170446-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170451-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170459-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170468-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170471-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170479-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170497-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170499-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170501-2-1024x576.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170379-2-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170395-2-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170446-2-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170451-2-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170459-2-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170468-2-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170471-2-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170479-2-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170497-2-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170499-2-300x169.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/bugs-birds-equations-of-the-future/l1170501-2-300x169.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "ceramic-exhibition-by-poet-nguyen-quoc-chanh",
+        "title": "Guerilla Tactics | Mốt Du Kích | Nguyen Quoc Chanh",
+        "displayDate": "",
+        "dateISO": "2018-01-11",
+        "sortDate": "2018-01-11",
+        "description": "Guerilla Tactics – a solo by Nguyễn Quốc Chánh Curated by Dinh Q. Le MoT+++ and Sàn Art are pleased to present Guerilla Tactics , the first solo exhibition of ceramics by Vietnamese artist Nguyễn Quốc Chánh. Nguyễn Quốc Chánh is an acclaimed poet, admired by his peers and audiences in Vietnam and overseas. His first collection of poems was published in 1990 and his work has been translated into many languages. His lesser-known ceramic work caught the eyes of Vietnamese artist Dinh Q. Le for its play between traditional techniques and materials and contemporary form. Attentive to the position of Biên Hoà ceramics in global and nationalist imaginings, Chánh writes in his artist’s statement, “Rather than nostalgic reproductions or subcontracted production, I make use of local clay, glazes, and techniques to evoke Biên Hòa’s eclectic tendencies blurring the boundaries between artisanal craft and art, between sentiment and concept”. For Nguyễn Quốc Chánh to align his latest series of ceramic sculptures with the idea of a ‘Guerilla’ mentality, is to place them firmly within Vietnamese history and cultural memory. To understand this process, just swap the image of a jungle soldier, living opportunistically within their environment and replace it with an artist whose materials are found and requisitioned. What emerges are assemblages that fuse multiple symbols, removing them of their positions in conventions that produce individual hegemonic meanings. At a glance, it seems chaotic, but the Guerrilla is always forced to deal in chaos until balance is reached. As Chánh himself suggests, balance is the mouse that skitters between conventional lines and the cat is yet to swallow it. If the pieces tell a story, then it is one that transcends the confinements of genre and style. We can see that the moulds have diverse influences: folkloric symbols in Đông Hồ woodcut paintings, the serene faces of The Bayon at Angkor Thom and Easter Island. Often, they are not made by Chánh himself, but were found – gathering dust in his adopted studio in Biên Hòa. In this way, the pieces proceed from multiple histories and are shaped by generations of artisans in different cultural and political contexts. In Chánh’s Guerrilla operation, they now become material for new purposes, positioned alongside more contemporary symbols on a shared substrate: casts of credit cards, face molds of football-playing children and images borrowed from the facets of Bến Thành Market. In collecting these tools, Chánh acts as a gatherer and a disruptor. The recognisable motifs must exist in relation to each other and are rendered unfamiliar in a state of disorder and uncertainty. A surreal and alluring effect is achieved. The pieces take on two main structural forms. Many of them have an outline we can discern easily: a large pot, a car’s tyre or Cham Lingus. These stand in contrast to more surrealist shapes. Bulging and unrecognisable, they express a powerful conception of poet",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/ceramic-exhibition-by-poet-nguyen-quoc-chanh/ceramic-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/ceramic-exhibition-by-poet-nguyen-quoc-chanh/ceramic-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "krossing-over-arts-festival-2018",
+        "title": "Krossing Over Arts Festival",
+        "displayDate": "",
+        "dateISO": "2018-04-19",
+        "sortDate": "2018-04-19",
+        "description": "MoT+++ hosted day 4 of the 2018 edition of Krossing Over Arts Festival. Organised by Kerman in collaboration with The French Institute in Vietnam, the festival featured more than 20 interactive, multi-disciplinary performances mixing dance and other arts. Presented by artists from Vietnam, France and beyond, the day 4 program featured the following: A Tale of Two Cities, 10 mins; Film by Linh Pham and Nick Fernandez The relentless march of time sees communities rise and fall. Progress and development seem like a given, but despite the proof of history, humans forget that any civilization can fall. Thu Thiem is nestled on a bend in the Saigon river, facing the new, towering city centre—it was once bustling with the kind of street life for which Vietnam is famous—but it is now a ghost town. Few said she was beautiful but many called her home. Tableaux, 12 mins; Film by Maïté Jeannolin, Charlotte Marchal Inspired by a mystical ceremony, Tableaux, mainly shot in Morocco, is a contemporary re-appropriation of a rite of passage, a symbolical journey through the colors of a trance night. If the body is a vehicle that moves, it’s to move its environment, to embody the landscape. ORE, 12 mins; Film by Kim-Sanh Châu, Ray Lavers ORE is blue, gleaming, fragile and powerful. This screen-dance project, shot in Saigon (Vietnam), follows 11 dancers in this rich and chaotic city. Believing in a deep and visceral body language, Kim-Sanh Châu & Ray Lavers’s creation is intimate and assumes its own subjectivity. Their work is anchored within space, as well as rhythm. ORE is their second screen-dance shot in Vietnam, following Inner Smoke, which was awarded Best Direction 2017 by Festival Quartiers Danses – Cinémathèque Québécoise (Canada). Cities & Eyes: Valdrada 15 mins; Performance by Nhung Hong Vo, Florian Nguyen, and five dancers Cities & Eyes: Valdrada is divided into two chapters: the first part describes a city constructed on the shores of a lake, whose houses and streets face towards the water; the second part conceptualizes the mirror image of that city beneath the surface and how they both coexist and reflect the other but still retain their individual stories.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/krossing-over-arts-festival-2018/krossing-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/krossing-over-arts-festival-2018/krossing-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "1-museum-by-any-other-name-it-seems-to-be-dao-tung",
+        "title": "+1 museum by any other name | It seems to be | Dao Tung",
+        "displayDate": "",
+        "dateISO": "2018-08-21",
+        "sortDate": "2018-08-21",
+        "description": "the installation of ‘It seems to be’, a video work by Dao Tung at Hoàng Thị- phân đà Mùa Hè Tan Nát Coffee Shop marks MoT+++’s first +1 museum by any other name. up the banyan, the ant climbs alas, dead-end, futile crawl up the peach tree, the ant creeps broken branches, to-and-fro (artist’s statement) about the artist Dao Tung (b. 1983, Ho Chi Minh City, Vietnam). his work experiments with sound, installation and video mediums that draw from his practice as a music composer and sound artist. a graduate of the University of Economics in Ho Chi Minh City, Dao Tung has gone on to collaborate on performances at home in Vietnam, as well as in Korea and the USA. MoT+++’s +1 museum by any other name is a project of multiples. it exhibits single works in separate locations across the globe, for a minimum of one year. a durational experience, +1 museum by any other name examines the relationship between work, audience and environment and uses the extended period of time to challenge the experience of each component. thank you to our sponsors the Nguyen Art Foundation for loaning the artwork, and to Hoàng Thị- phân đà Mùa Hè Tan Nát for donating the space. location: Hoang Thi Coffee Shop, 14 Ton That Dam, D1, HCMC check Hoàng Thị- phân đà Mùa Hè Tan Nát for opening hours",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-by-any-other-name-it-seems-to-be-dao-tung/museumbyanyothername_daotung_hoangthi_website.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "installation-room-b19-05-phu-luc-the-appendix-group",
+        "title": "installation room b19.05 | phu luc (the appendix group)",
+        "displayDate": "September 2018",
+        "dateISO": "2018-09-08",
+        "sortDate": "2018-09-01",
+        "description": "",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/installation-room-b19-05-phu-luc-the-appendix-group/inst-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/installation-room-b19-05-phu-luc-the-appendix-group/inst-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "1-museum-by-any-other-name-entrances-cian-duggan",
+        "title": "+1 museum by any other name | entrances | Cian Duggan",
+        "displayDate": "",
+        "dateISO": "2018-11-23",
+        "sortDate": "2018-11-23",
+        "description": "“entrances'” by Cian Duggan opened as MoT+++ third +1 museum by any other name on Friday November 23, 2018. as pair of works on a busy highway in Saigon one ‘entrance’ had already collapsed by the time of the opening. the second ‘entrance’ closed unfortunately the next day. part 2 “exit” will appear at an unforseen time in the future. sent floating into the sea at Hue, anyone that ‘entered’ via any one of Duggan’s works could eventually ‘exit’ in an unknown place and at an unknown time. Duggan’s abstract forms appear otherworldly, they hover with a static tension that animates them, as extra-terrestrial life forms, or portals to another dimension. yet they coexist with their surroundings, rather than overtake it. somewhere between memory and imagination, primitive and futuristic, organic and digital.. the evocation of the familiar rendered unfamiliar lending the forms their oddness. part 1 of Duggan’s +1 museum by any other name materialises as multiple “entrances”; gateways suggesting disruptive possibilities to the linearity of time and space. their incongruity makes them strangely recognisable as they allude to the many other similar “entrances” hidden in plain sight amongst Saigon’s streets. although there is the possibility that old entrances may close, consumed by the rapidly developing urban environment, Duggan’s compulsion to paint means that new entrances are continually, if only briefly, emerging, waiting to be found. the “entrances” diptych is part 1 of Duggan’s work for MoT+++’s +1 museum by any other name. part 2 “exit” is a singular piece planned for an unforeseen time in the future—a yet to be realised second half of the work that will join other floating artworks in the sea off the coast of Hue, in a venture organised by fellow +1 museum artist Dao Tung. one year after its construction, part 2 will be untethered and released into the ocean creating an unknowable “exit”, drifting in both time and space. Maria Sowter",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-by-any-other-name-entrances-cian-duggan/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-by-any-other-name-entrances-cian-duggan/47323000_2109609225773244_530230050746793984_n-300x225.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "mountains-and-rivers-of-the-an-in-studio-conversation-of-bang-nhat-linh-wu-chi-tsung",
+        "title": "mountains and rivers of the.. | Bang Nhat Linh & Wu Chi-Tsung",
+        "displayDate": "",
+        "dateISO": "2018-12-14",
+        "sortDate": "2018-12-14",
+        "description": "mountains and rivers of the.. Bang Nhat Linh & Wu Chi-Tsung opening: Friday, December 14, 2018 @ 6pm on view: December 14, 2018 – February 1, 2019 following a two-month residency at MoT+++ , Wu Chi-Tsung’s studio will be opened to the public and placed in conversation with the installation work ‘Summer Grasses’ by Bang Nhat Linh. visitors are welcome to MoT+++ to see the interactions between works from the two artists. originating from Hanoi and Taipei respectively, Bang Nhat Linh and Wu Chi-Tsung’s artworks sensitively respond to centuries of geopolitical tensions in the region, as well as the personal histories of each of the artists. ‘Summer Grasses’ by Bang Nhat Linh is a commission by the Nguyen Art Foundation. about Bang Nhat Linh: Bang Nhat Linh was born in 1983 in Hanoi. Working primarily as a visual artist, Bang Nhat Linh is also known as a collector of war memorabilia—an interest that has formed the basis for earlier works such as The Vacant Chair, which showed previously at MoT+++ in 2015 as well as The Mori Art Museum, Tokyo as part of the 2017 ‘SUNSHOWER: Contemporary Art from Southeast Asia 1980s to Now’ show. Bang Nhat Linh cites human beings as a primary concern and inspiration for his artistic practice. His work carries themes of memory, history, submerged psychological spaces, and oblivion. about Wu Chi-Tsung: Wu Chi-Tsung was born in 1981 in Taipei. Wu received his Bachelor of Fine Arts from the Taipei National University of the Arts in 2004. He currently lives and works in Taipei, Taiwan and Berlin, Germany. His work, in which he devotes great attention to the methods used in producing and interpreting images, spans across different media, including photography, video, installation art, painting, and set design. He combines traditions and contemporary art forms from the East and the West. Daily objects and phenomena are of great inspiration for his work, and what he transforms into poetic imagery. Wu Chi-Tsung received the top prize of the Taipei Arts Award (2003), short-listed for the “Artes Mundi” (2006), received “WRO Media Art Biannual” (2013) – Award of Critics and Editors of Art Magazines”, and short-listed for the “Prudential Eye Awards” (2015). download the booklet: mountains and rivers of the.. | Bang Nhat Ninh & Wu Chi-Tsung [/tab] [/tabgroup]",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/mountains-and-rivers-of-the-an-in-studio-conversation-of-bang-nhat-linh-wu-chi-tsung/mountains-and-rivers-of-the..-wu-chi-tsung-and-bang-nhat-ling-exhibiton-text_141218.pdf",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/mountains-and-rivers-of-the-an-in-studio-conversation-of-bang-nhat-linh-wu-chi-tsung/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/mountains-and-rivers-of-the-an-in-studio-conversation-of-bang-nhat-linh-wu-chi-tsung/bnl-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/mountains-and-rivers-of-the-an-in-studio-conversation-of-bang-nhat-linh-wu-chi-tsung/both-1.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "soundtracks-ky-am-phung-tien-son",
+        "title": "Soundtracks | Ký Âm | Phùng Tiến Sơn",
+        "displayDate": "",
+        "dateISO": "2019-02-23",
+        "sortDate": "2019-02-23",
+        "description": "Soundtracks a sound installation by Phùng Tiến Sơn from February 23rd to April 23rd 2019 MoT+++ will present the sound installation Soundtracks from the artist Phùng Tiến Sơn. the work builds on the artist’s history as a musical composer, as well as his interest in technology thanks to its use of commonly found and customised software. through the digital manipulation of sound, the artist forms a space for quiet reflection from his audience, leaving them to contemplate, among other things, the overarching sense of futility with which the work engages. “we set foot in Vi Xuyen martyrs’ cemetery, which had 1768 (until July 2013) graves of the deceased from 1979 to the beginning of 1990, especially in 1984 and 1988. i recorded all the information about these 1768 people, which were etched on their tombstones. from the information i collected, i used Google Maps to draw connecting paths from their hometowns to Vi Xuyen (where they sacrificed their lives and their remaining corpses were concentrated). i separated these paths from the maps, for all that’s left are the cold and meaningless lines. in other words, we can only see 1768 winding strokes. is there anything left but 1768 routes which all lead to death at the same place in North Vietnam?” – Phùng Tiến Sơn the installation will take place alongside multiple MoT sound events in the months of March and April 2019 that focus on the element of sound across as range of artistic practices. MoT sound is an experimental project that gives artists the freedom to explore the textural and performative aspects of their work, unfettered by genre-based preconditions. it is an investigation into and out from our daily auditory experiences, that challenges our relation to the audible world and how that relationship might change when experienced collectively. about the artist: Phùng Tiến Sơn is a multimedia visual artist and university dropout from Hanoi, Vietnam. music is a continuing feature of Sơn’s practice, and he cites sound and technology as important influences in his work. past exhibitions include group shows as an ongoing member of the Nhà Sàn Collective, the Hanoi Collective Orchestra in 2015 and 2016, and Utopia Land at Hanoi’s Heritage Space in 2017. in 2018, Sơn performed in Big Day of Performances – Happy Birthday Bill as part of MoT+++’s six-month performance plus programme. Soundtracks was first exhibited in the Nhà Sàn Collective show Mise en Scene in 2016. February 23 – April 23, 2019 opening: Saturday February 23, 2019 from 6:00pm – 9:00pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/soundtracks-ky-am-phung-tien-son/pts-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/soundtracks-ky-am-phung-tien-son/pts-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/soundtracks-ky-am-phung-tien-son/pts-3.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "1-museum-flowers-tran-minh-duc",
+        "title": "+1 museum by any other name | flowers | Tran Minh Duc",
+        "displayDate": "",
+        "dateISO": "2019-04-03",
+        "sortDate": "2019-04-03",
+        "description": "the song ‘ Where have all the flowers gone?’ by Pete Seeger, heard on repeat as part of the flowers artwork, is listed as one of the top 20 most influencing political songs and an anti-war song from the 60s era. it is inspired by Mikhail Sholokhov’s novel The Quiet Flows the Don, and by three lines of an Ukrainian folk song: ‘where are the flowers, the girls have plucked them. where are the girls, they’ve all taken husbands. where are the men, they’re all in the army.’ composed of the word ‘flowers’ in rose coloured neon light writing mounted on the simple cardboard box of a popular Vietnamese instant noodle brand, the work exudes a gentle and tender air. the noodle box is nostalgic and humble, an allusion to childhood years in the subsidized period, when the artist’s mother sold coffee and food to earn a living in hard times. coming out from the box, a small set of headphones play the song like an echo; its sound creating a heady audio essence that emanates from within. together, in a modest ode, these elements accentuate the interchange between the physical and intangible factors at play in the work, and slowly unfurl the complex notions of beauty and peace. about the artist: Tran Minh Duc (b.1982, Vietnam) is a visual artist based in Ho Chi Minh City, Vietnam working with the mediums of performance, photography, collage and installation. through a multidisciplinary approach, Duc seeks to explore collective memory and cultural archives by investigating historical narratives, the effects of colonialism and imperialism, and the lasting impacts of war and migration. he is interested in the interactions between the collective and individual, and the local and the foreign; his work forms a personal interrogation of what it means to be Vietnamese in the intricate fabric of contemporaneity. Duc graduated with a BA in painting from the College of Culture and Arts of Ho Chi Minh City, and has since exhibited widely in Vietnam and internationally. in 2017, he received a fellowship from the Asian Cultural Council to be in residence at Art in General in New York City, USA. his artwork flowers was previously exhibited with MoT+++ in 2015, and is part of the Post Vidai, a Vietnamese Art Collection. April 2019 – April 2020 location: Padma de Fleur, 55/6 Le Thi Hong Gam, p. Nguyen Thai Binh, D1, HCMC, Vietnam hours: Tue – Sun from 9am til 10pm Padma de Fleur flowers is on loan from Post Vidai collection",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/opening_flowers_padma_2-1024x766.jpeg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/opening_flowers_padma_6.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/opening_flowers_padma_11-768x1024.jpeg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/opening_flowers_padma_12-768x1024.jpeg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/opening_flowers_padma_7-766x1024.jpeg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/opening_flowers_padma_10-766x1024.jpeg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/opening_flowers_padma_13-576x1024.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/yes_img_1516-1024x768.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/yes_66717595-f768-46ed-a917-bc4495568d49-768x1024.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/yes_img_1522-e1557477276319-768x1024.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/1-museum-flowers-tran-minh-duc/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "a-close-studio-cam-xanh",
+        "title": "close studio | Cam Xanh",
+        "displayDate": "",
+        "dateISO": "2019-05-02",
+        "sortDate": "2019-05-02",
+        "description": "MoT+++ will host the close studio of Cam Xanh until Friday July 5, 2019. we welcome visitors most days, please message us prior to arrange. / facebook: @motplusplusplus /",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-close-studio-cam-xanh/cx-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-close-studio-cam-xanh/cx-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/a-close-studio-cam-xanh/cx-3.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "cam-xanh-open-close-studio",
+        "title": "MoT Doi Gai | A Beach Life | Cam Xanh",
+        "displayDate": "",
+        "dateISO": "2019-06-22",
+        "sortDate": "2019-06-22",
+        "description": "MoT Doi Gai | A Beach Life Cam Xanh opening: Saturday June 22, 2019 @ 6.30pm on view: June 22 – July 5, 2019 often known as the world’s oldest profession, Cam Xanh’s MoT Doi Gai | A Beach Life explores the theme of prostitution at a conceptual level. starting with a quote from Gore Vidal that “we are all prostitutes in one sense or another, ethically if not sexually”, the exhibition goes on to investigate the contemporary relationships between feminism, love and sexuality, art, beauty, power, economics, and the potential for exploitation that emerges at their intersections.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/cam-xanh-open-close-studio/mot-doi-gai-_-a-beach-life-cam-xanh-2019.pdf",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/cam-xanh-open-close-studio/logo.png"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "studio-kim-duy",
+        "title": "studio | Kim Duy",
+        "displayDate": "",
+        "dateISO": "2019-06-30",
+        "sortDate": "2019-06-30",
+        "description": "from July 15, 2019 collective member Kim Duy will begin his occupation of the MoT+++ space. over the course of two months Kim Duy will develop new works and invites the audience to observe his ongoing art marking processes. his studio will last until September 19, 2019. Kim Duy’s open studio is the third in a series of occupations of the gallery space from the MoT+++ collective. please message us if you would like to visit. about the artist: through a multidisciplinary practice, Kim Duy questions the changing conditions of time and space in art and language, the reading of history through visual art and the performative nature existing behind still images. his artworks use modest materials such as paper to explore his interests in minimalism, experimentation and abstraction. Kim Duy was born in Hanoi, Vietnam in 1987. he studied painting at the University of Fine Arts, Hanoi from 2005 to 2008 before moving to Germany in 2010. he graduated in 2014 from the Academy of Fine Arts, Nuremberg, where he was under the instruction of Professor Jochen Flinzer who awarded him Meisterschüler. in 2018 Kim Duy was selected as an A. Farm residency artist for the July to December season in Ho Chi Minh City, Vietnam and joined the MoT+++ artist collective. his work can be found in the Post Vidai and the Nguyen Art Foundation collections.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/studio-kim-duy/kd-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/studio-kim-duy/kd-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/studio-kim-duy/kd-3.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/studio-kim-duy/kd-4.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "open-studio-kim-duy",
+        "title": "rainy season | mùa mưa | Kim Duy studio",
+        "displayDate": "",
+        "dateISO": "2019-08-28",
+        "sortDate": "2019-08-28",
+        "description": "from September 6-14, 2019, MoT+++ collective member Kim Duy presented new works developed over the course of his two months occupation of the MoT+++ space. Kim Duy’s studio is the third in a series of occupations of the gallery space from the MoT+++ collective. the exploration of individual subjectivity as the nexus for meaning resonates throughout Kim Duy’s studio. his resulting works detail a journey away from the possibility of objectivity, establishing a distance informed by both western critical theory and eastern Buddhist teaching, and excavates instead a notion of being that is relational and interdependent. they reject a trend for participation from the audience in order to situate the mind, rather than body, as the key mediator of experience. together they provide a kaleidoscopic view of shifting perceptions that locate the individual and its position in the current moment as the lens of interpretation through which meaning is generated. using the works not as a tool but rather a stimulus, Duy invites his audience to contemplate the construct of the self through concepts of language, relativity, truth and understanding. about the artist: through a multidisciplinary practice, Kim Duy questions the reading of history through visual art practice and the performative nature existing behind still images. his work often uses modest materials, such as paper, to explore interests in minimalism, experimentation and abstraction. Kim Duy was born in Hanoi, Vietnam in 1987. he studied painting at the University of Fine Arts, Hanoi from 2005 to 2008 before moving to Germany in 2009. he graduated in 2014 from the Academy of Fine Arts, Nuremberg. in 2018 Kim Duy was selected as an A. Farm resident artist for the July to December season in Ho Chi Minh City, Vietnam and joined the MoT+++ artist collective. his work can be found in the Post Vidai and the Nguyen Art Foundation collections. on view: September 6-14, 2019 (Tue – Sat: 2:00 – 6:00pm) closing party: Thursday September 12, 2019 at 7:00pm",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/open-studio-kim-duy/osk-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/open-studio-kim-duy/osk-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/open-studio-kim-duy/osk-3.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "studio-cian-duggan",
+        "title": "studio | Cian Duggan",
+        "displayDate": "",
+        "dateISO": "2019-09-18",
+        "sortDate": "2019-09-18",
+        "description": "Cian Duggan studio @ MoT+++ Sep 18 – Nov 10, 2019 opening: Friday October 25, 2019 @ 7pm on view: October 26 – November 10, 2019 hours: Tuesday to Saturday, 2-6pm MoT+++ collective member Cian Duggan will use the gallery space as his studio from September 18 – November 10, 2019. during this time he will develop a body of work using materials new to his practice. his studio will open to the public from 7pm on Friday October 25, 2019. please message us before this if you would like to visit. Cian is the fourth member of the collective to occupy the MoT+++ space. about the artist: Cian Duggan (b.1990, Ireland) renders the familiar unfamiliar in his painting and drawing practice, which combines organic yet alien shapes with human and figurative elements. the results are abstract forms that appear otherworldly, and hover as if animated with static tension. after working at an artist residency in Ireland, Cian moved first to London and then Ho Chi Minh City, Vietnam in 2017. his works can be found on streets and walls across various cities worldwide and often are often in dialogue with a specific site or location. Cian reverses this process in his studio practice by using found objects or materials, such as metal or wood, as his canvas, responding instead to the nature of the material. in 2018, Cian joined the A. Farm international art residency as a Season 0 artist, and became a member of the MoT+++ collective.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/studio-cian-duggan/logo.png",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/studio-cian-duggan/doc-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/studio-cian-duggan/doc-2.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/studio-cian-duggan/doc-3.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/studio-cian-duggan/doc-4.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/studio-cian-duggan/doc-5.jpg"
+        ],
+        "artists": []
+      }
+    ],
+    "MoT+++": [
+      {
+        "slug": "ke",
+        "title": "Kệ",
+        "displayDate": "February 29 – March 31, 2016",
+        "dateISO": "2016-02-29",
+        "sortDate": "2016-03-31",
+        "description": "with the idea of artist books, artwork in this exhibition express a new mindset. the artists asked questions: what is 'publication,' 'distribution,' or 'archive'? le hien minh's 'hạt' are made from vietnamese traditional dó paper, crumpled into shriveled little balls and cast in resin, each object sealed within its own small display stand. in the room next door, cam xanh unsettles christian history by playing with form and language in her installation 'tim' (the vietnamese word for 'heart'). these two artists' altars are atypical as they are not about reverence but liberation from the revered. a review by quyen nguyen.",
+        "images": [],
+        "artists": []
+      },
+      {
+        "slug": "exchange-dao-tung-to-los-angeles",
+        "title": "exchange | Dao Tung to Los Angeles",
+        "displayDate": "October 2 – 30, 2017",
+        "dateISO": "2017-10-02",
+        "sortDate": "2017-10-02",
+        "description": "multimedia artist đào tùng (dao duy tung) traveled to los angeles to take part in an artist residency at 18th street arts center from october 2 – 30, 2017. tung is among the first vietnamese artists to participate in an exchange residency through MoT+++. born and raised in vietnam, his artworks are concerned with urban society, political issues, and identity, using many kinds of art practice as materials to express ideas: video, performance, installation, photography, and collaborative projects. this exchange was facilitated through MoT+++'s ongoing collaboration with 18th street arts center.",
+        "images": [],
+        "artists": []
+      },
+      {
+        "slug": "artist-in-residence-lai-dieu-ha",
+        "title": "artist-in-residence | Lại Diệu Hà",
+        "displayDate": "June – July 2018",
+        "dateISO": "2018-06-20",
+        "sortDate": "2018-07-01",
+        "description": "lại diệu hà, founder of the hanoi-based performance art collective psyper lab, is stationed at MoT+++ for a residency from june 20 to july 4, 2018, as part of the performance plus program. both in her performances with psyper lab and in her independent practice — encompassing performance, painting, installation, and video — lại diệu hà engages with the themes of sexuality and the body. she is known for her acclaimed performance 'fly away' at nha san collective in 2010. dieu ha performs at the event 'all animals are equal' at a. farm on june 23rd and gives an artist presentation at MoT+++ on june 28th.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-in-residence-lai-dieu-ha/lai-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/artist-in-residence-lai-dieu-ha/lai-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "round-table-creative-influences-in-contemporary-art",
+        "title": "round-table discussion | creative influences in contemporary art",
+        "displayDate": "October 1, 2018",
+        "dateISO": "2018-10-01",
+        "sortDate": "2018-10-01",
+        "description": "when does taking inspiration from another artist's work become stealing? at what point does an art historical reference become plagiarism? as part of a conclusion to its six-month performance plus programme, MoT+++ hosts a round-table discussion on artistic influences, with a specific focus on the contemporary vietnamese art context. monday, october 1, 7:00pm – 9:00pm. location: ground floor, saigon domaine, 1057 bình quới, ward 28, bình thạnh district, saigon. free of charge.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/round-table-creative-influences-in-contemporary-art/rt-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/round-table-creative-influences-in-contemporary-art/rt-2.jpg"
+        ],
+        "artists": []
+      },
+      {
+        "slug": "exchange-le-quoc-thanh-to-seoul",
+        "title": "exchange | Le Quoc Thanh to Seoul",
+        "displayDate": "November 1 – December 1, 2018",
+        "dateISO": "2018-11-01",
+        "sortDate": "2018-12-01",
+        "description": "le quoc thanh took part in a residency exchange with baik art in seoul, south korea, as part of MoT+++'s ongoing exchange collaboration with baik art. le quoc thanh was stationed at baik art's space in seoul from november 1 to december 1, 2018.",
+        "images": [
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/exchange-le-quoc-thanh-to-seoul/exch-1.jpg",
+          "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/exchange-le-quoc-thanh-to-seoul/exch-2.jpg"
+        ],
+        "artists": []
+      }
+    ]
+  }
+}
