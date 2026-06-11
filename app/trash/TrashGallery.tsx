@@ -4,23 +4,6 @@ import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import type { TrashItem } from '@/lib/demoTrashItems';
 
-function buildFallbackEmail(item: TrashItem) {
-  const subject = encodeURIComponent(
-    `+1 trash — inquiry: ${item.title} by ${item.artist}`
-  );
-  const body = encodeURIComponent(
-    `Hello,\n\nI am writing to inquire about the following work:\n\n` +
-    `Artist: ${item.artist}\n` +
-    `Title: ${item.title}\n` +
-    `Medium: ${item.medium}\n` +
-    `Year: ${item.year}\n` +
-    (item.dimensions ? `Dimensions: ${item.dimensions}\n` : '') +
-    (item.edition ? `Edition: ${item.edition}\n` : '') +
-    `\nI would like to learn more about its availability and price.\n\nThank you.`
-  );
-  return `mailto:motplusplusplus@gmail.com?subject=${subject}&body=${body}`;
-}
-
 function shuffleArray<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -33,14 +16,13 @@ function shuffleArray<T>(arr: T[]): T[] {
 type SortOption = 'random' | 'date' | 'artist';
 type Props = { items: TrashItem[]; unlocked?: boolean };
 
-type InquiryState = 'idle' | 'submitting' | 'success' | 'error';
+type InquiryState = 'idle' | 'success';
 
 function InquiryModal({ item, onClose }: { item: TrashItem; onClose: () => void }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<InquiryState>('idle');
-  const [errorMsg, setErrorMsg] = useState('');
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,34 +31,19 @@ function InquiryModal({ item, onClose }: { item: TrashItem; onClose: () => void 
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('submitting');
-    try {
-      const res = await fetch('/submit-inquiry', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'trash',
-          name,
-          email,
-          message,
-          artworkTitle: item.title,
-          artworkId: item._id,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStatus('success');
-      } else {
-        throw new Error(data.error || 'submission failed');
-      }
-    } catch (err) {
-      // fallback to mailto
-      window.location.href = buildFallbackEmail(item);
-      setStatus('error');
-      setErrorMsg('could not submit — opening email client instead');
-    }
+
+    const subject = `artwork inquiry: ${item.title}`;
+    const body =
+      `name: ${name}\n` +
+      `email: ${email}\n` +
+      `artwork: ${item.title}\n\n` +
+      message;
+
+    window.location.href = `mailto:motplusplusplus@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    setStatus('success');
   };
 
   const inputStyle: React.CSSProperties = {
@@ -129,7 +96,7 @@ function InquiryModal({ item, onClose }: { item: TrashItem; onClose: () => void 
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
             <p style={{ fontSize: '16px', color: '#111', marginBottom: '8px' }}>inquiry sent</p>
             <p style={{ fontSize: '13px', color: '#888', lineHeight: 1.6 }}>
-              we'll be in touch about <em>{item.title}</em>.
+              your email client should open with this inquiry pre-filled. if it doesn't open automatically, email us directly at motplusplusplus@gmail.com.
             </p>
             <button
               onClick={onClose}
@@ -192,21 +159,16 @@ function InquiryModal({ item, onClose }: { item: TrashItem; onClose: () => void 
                 />
               </div>
 
-              {errorMsg && (
-                <p style={{ fontSize: '12px', color: '#cc4444', marginBottom: '16px' }}>{errorMsg}</p>
-              )}
-
               <button
                 type="submit"
-                disabled={status === 'submitting'}
                 style={{
                   width: '100%', fontSize: '13px', color: '#fff',
-                  backgroundColor: status === 'submitting' ? '#888' : '#111',
-                  border: 'none', padding: '12px', cursor: status === 'submitting' ? 'not-allowed' : 'pointer',
+                  backgroundColor: '#111',
+                  border: 'none', padding: '12px', cursor: 'pointer',
                   fontFamily: 'inherit', letterSpacing: '0.03em',
                 }}
               >
-                {status === 'submitting' ? 'sending…' : 'send inquiry'}
+                send inquiry
               </button>
             </form>
           </>

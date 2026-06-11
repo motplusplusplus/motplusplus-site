@@ -40,9 +40,7 @@ function ApplyForm() {
   const [email, setEmail] = useState("");
   const [portfolio, setPortfolio] = useState("");
   const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     if (preselectedStudio) setStudio(preselectedStudio);
@@ -50,10 +48,8 @@ function ApplyForm() {
 
   const monthOptions = getMonthOptions();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    setSubmitError("");
 
     const studioLabel =
       studioOptions.find((o) => o.value === studio)?.label || studio;
@@ -62,32 +58,21 @@ function ApplyForm() {
     const durationLabel =
       durationOptions.find((o) => o.value === duration)?.label || duration;
 
-    try {
-      const res = await fetch("/submit-inquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "residency",
-          name,
-          email,
-          message: message || `preferred studio: ${studioLabel}\npreferred start: ${monthLabel}\nduration: ${durationLabel}`,
-          studioType: studioLabel,
-          startMonth: month,
-          duration: durationLabel,
-          portfolioUrl: portfolio || undefined,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setSubmitted(true);
-      } else {
-        throw new Error(data.error || "submission failed");
-      }
-    } catch {
-      setSubmitError("something went wrong — please try again or email a.farm.saigon@gmail.com directly.");
-    } finally {
-      setSubmitting(false);
-    }
+    const subject = `a.farm residency application: ${name}`;
+    const body = [
+      `studio preference: ${studioLabel}`,
+      `start month: ${monthLabel}`,
+      `duration: ${durationLabel}`,
+      `name: ${name}`,
+      `email: ${email}`,
+      portfolio ? `portfolio: ${portfolio}` : null,
+      "",
+      message,
+    ].filter((line) => line !== null).join("\n");
+
+    window.location.href = `mailto:a.farm.saigon@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    setSubmitted(true);
   };
 
   const inputStyle = {
@@ -133,7 +118,7 @@ function ApplyForm() {
             inquiry received
           </h1>
           <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8, maxWidth: "480px" }}>
-            thank you, {name}. we'll be in touch about your residency inquiry at a.Farm.
+            your email client should open with this inquiry pre-filled. if it doesn't open automatically, email us directly at a.farm.saigon@gmail.com.
           </p>
         </div>
       </div>
@@ -274,29 +259,22 @@ function ApplyForm() {
             />
           </div>
 
-          {submitError && (
-            <p style={{ fontSize: "13px", color: "#cc4444", marginBottom: "20px", lineHeight: 1.6 }}>
-              {submitError}
-            </p>
-          )}
-
           <button
             type="submit"
-            disabled={submitting}
             style={{
               fontSize: "15px",
               fontWeight: 400,
               color: "#ffffff",
-              backgroundColor: submitting ? "#888888" : "#111111",
+              backgroundColor: "#111111",
               border: "none",
               padding: "16px 40px",
-              cursor: submitting ? "not-allowed" : "pointer",
+              cursor: "pointer",
               fontFamily: "inherit",
               display: "block",
               width: "100%",
             }}
           >
-            {submitting ? "sending…" : "send inquiry"}
+            send inquiry
           </button>
 
         </form>

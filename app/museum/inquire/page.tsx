@@ -60,11 +60,8 @@ const content = {
       { value: "none", label: "none" },
     ],
     submit: "send inquiry",
-    submitting: "sending…",
     successHeading: "inquiry received",
-    successMessage: (name: string, location: string) =>
-      `thank you, ${name}. we'll be in touch about hosting a work in ${location || "your space"}.`,
-    error: "something went wrong — please try again or email motplusplusplus@gmail.com directly.",
+    successMessage: "your email client should open with this inquiry pre-filled. if it doesn't open automatically, email us directly at motplusplusplus@gmail.com.",
     optional: "(optional)",
   },
   vi: {
@@ -124,11 +121,8 @@ const content = {
       { value: "none", label: "không có" },
     ],
     submit: "gửi yêu cầu",
-    submitting: "đang gửi…",
     successHeading: "đã nhận yêu cầu",
-    successMessage: (name: string, location: string) =>
-      `cảm ơn bạn, ${name}. chúng tôi sẽ liên lạc về việc lưu trú tác phẩm tại ${location || "không gian của bạn"}.`,
-    error: "đã xảy ra lỗi — vui lòng thử lại hoặc email motplusplusplus@gmail.com trực tiếp.",
+    successMessage: "email của bạn sẽ tự động mở với yêu cầu này đã được điền sẵn. nếu không tự động mở, vui lòng email trực tiếp cho chúng tôi tại motplusplusplus@gmail.com.",
     optional: "(không bắt buộc)",
   },
 };
@@ -148,14 +142,10 @@ export default function MuseumInquirePage() {
   const [light, setLight] = useState("");
   const [website, setWebsite] = useState("");
   const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [submitError, setSubmitError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    setSubmitError("");
 
     const spaceLabel = t.spaceTypes.find((s) => s.value === spaceType)?.label || spaceType;
     const sizeLabel = t.sizes.find((s) => s.value === size)?.label || size;
@@ -163,40 +153,24 @@ export default function MuseumInquirePage() {
     const securityLabel = t.securityOptions.find((s) => s.value === security)?.label || security;
     const lightLabel = t.lightOptions.find((s) => s.value === light)?.label || light;
 
-    const details = [
-      spaceType     ? `space type: ${spaceLabel}` : null,
-      numSpaces     ? `number of spaces: ${numSpaces}` : null,
-      size          ? `size: ${sizeLabel}` : null,
-      climate       ? `climate controlled: ${climateLabel}` : null,
-      security      ? `security: ${securityLabel}` : null,
-      light         ? `natural light: ${lightLabel}` : null,
-      message       ? `\n${message}` : null,
-    ].filter(Boolean).join("\n");
+    const subject = `+1 museum by any other name — space inquiry: ${name}`;
+    const body = [
+      `${t.fields.name}: ${name}`,
+      `${t.fields.email}: ${email}`,
+      `${t.fields.location}: ${location}`,
+      spaceType ? `${t.fields.spaceType}: ${spaceLabel}` : null,
+      numSpaces ? `${t.fields.numSpaces}: ${numSpaces}` : null,
+      size ? `${t.fields.size}: ${sizeLabel}` : null,
+      climate ? `${t.fields.climate}: ${climateLabel}` : null,
+      security ? `${t.fields.security}: ${securityLabel}` : null,
+      light ? `${t.fields.light}: ${lightLabel}` : null,
+      website ? `${t.fields.website}: ${website}` : null,
+      message ? `\n${message}` : null,
+    ].filter((line) => line !== null).join("\n");
 
-    try {
-      const res = await fetch("/submit-inquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "museum",
-          name,
-          email,
-          locationName: location,
-          message: details || "no additional details provided",
-          portfolioUrl: website || undefined,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setSubmitted(true);
-      } else {
-        throw new Error(data.error || "submission failed");
-      }
-    } catch {
-      setSubmitError(t.error);
-    } finally {
-      setSubmitting(false);
-    }
+    window.location.href = `mailto:motplusplusplus@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    setSubmitted(true);
   };
 
   const inputStyle = {
@@ -235,7 +209,7 @@ export default function MuseumInquirePage() {
             {t.successHeading}
           </h1>
           <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8, maxWidth: "480px" }}>
-            {t.successMessage(name, location)}
+            {t.successMessage}
           </p>
         </div>
       </div>
@@ -394,29 +368,22 @@ export default function MuseumInquirePage() {
               style={{ ...inputStyle, resize: "vertical" }} />
           </div>
 
-          {submitError && (
-            <p style={{ fontSize: "13px", color: "#cc4444", marginBottom: "20px", lineHeight: 1.6 }}>
-              {submitError}
-            </p>
-          )}
-
           <button
             type="submit"
-            disabled={submitting}
             style={{
               fontSize: "15px",
               fontWeight: 400,
               color: "#ffffff",
-              backgroundColor: submitting ? "#888888" : "#111111",
+              backgroundColor: "#111111",
               border: "none",
               padding: "16px 40px",
-              cursor: submitting ? "not-allowed" : "pointer",
+              cursor: "pointer",
               fontFamily: "inherit",
               display: "block",
               width: "100%",
             }}
           >
-            {submitting ? t.submitting : t.submit}
+            {t.submit}
           </button>
 
         </form>
