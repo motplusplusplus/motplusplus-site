@@ -1,74 +1,101 @@
 # MoT+++ Next.js Site — Claude Code Reference
 
-## Site
-- **Live:** `https://motplusplus-site.motplusplusplus.workers.dev`
-- **Future domain:** `https://motplusplus.com`
-- **Deploy:** `CLOUDFLARE_API_TOKEN=y79s_aim-QtIrziq-JT92jGFrdUc-UcbBS5ELulv CLOUDFLARE_ACCOUNT_ID=f2a86349fa252c2582bc0f478ccdf9ab npx wrangler deploy` (run from this directory)
-- **GitHub:** `https://github.com/motplusplusplus/motplusplus-site.git`
-- **Framework:** Next.js static export → Cloudflare Workers
+> **Before making any changes to profiles, events, matching logic, Sanity
+> schema, or routing: read `ARCHITECTURE.md` in full.** It is the single
+> source of truth for how this site works.
 
-### IMPORTANT: always push to origin/main after deploying
-- Some external automation periodically fires `workflow_dispatch` on the "Deploy site"
-  GitHub Action, which checks out `origin/main` and runs `wrangler deploy` — overwriting
-  whatever is currently live.
-- If you `wrangler deploy` locally but don't push the matching commits to `origin/main`,
-  the next automated run will silently revert the live site to the older `origin/main`
-  state (this has happened — pages disappeared after working deploys).
-- **Rule: every local commit that gets deployed via wrangler must also be pushed to
-  `origin/main` in the same session**, so any future automated redeploy ships the same code.
+## Site
+- **Live:** `https://motplusplusplus.com` (+ `www.`, and
+  `motplusplus-site.motplusplusplus.workers.dev` as fallback)
+- **GitHub:** `https://github.com/motplusplusplus/motplusplus-site.git`
+- **Framework:** Next.js static export (`out/`) → Cloudflare Worker
+  (`worker.js` + assets binding)
+
+## Deploy — HARD RULES
+- **NEVER run `wrangler deploy` directly. Always use `npm run deploy`.**
+  (It runs the Mapbox-token preflight, `wrangler deploy`, and
+  `verify-deploy`. It does not yet verify git state — that check should be
+  added to the script.)
+- **Commit and push to `origin/main` must precede every deploy, without
+  exception.** A GitHub Action (`.github/workflows/deploy.yml`) can be
+  triggered at any time and redeploys whatever is on `origin/main` — any
+  deployed-but-unpushed local commits will be silently reverted on the live
+  site. This has happened before (pages disappeared).
+- Credentials: `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` are **not
+  stored in this file or this repo**. Get them from `.env.local`, your shell
+  environment, or the Cloudflare dashboard (Workers account ≠ R2 account —
+  they are different Cloudflare accounts).
+- After significant Sanity content changes: `rm -rf .next && npm run build`
+  (Next.js caches Sanity fetches between builds).
+- If `verify-deploy` fails (Workers Assets large-file 404 bug): make a
+  trivial change to `components/MuseumMap.tsx`, rebuild, redeploy.
+
+## Key systems (details in ARCHITECTURE.md)
+- **Profiles** — canonical artist pages at `/profiles/[slug]`; `/residents/*`
+  and `/artists/*` are legacy namespaces 301-redirected by `worker.js`.
+  Pages are built from the union of Sanity `artist` docs,
+  `artists-data.json`, and `BIO_SLUGS` stubs; Sanity is primary, JSON fills
+  gaps and supplies resident/host/curator flags.
+- **Events** — `/events/[slug]` built from Sanity `event` docs merged with
+  `events-data.json` (Sanity wins on slug collision; JSON fills events not
+  yet migrated). Bio-page event docs (`BIO_SLUGS` / `isBioPage`) are excluded
+  from event generation and listings.
+- **Profile↔event linking** — two mechanisms: explicit `artists[]` reference
+  fields on Sanity events (primary; ~95% populated) and legacy name-matching
+  (`matchParts` in `lib/events.ts`, with blocklist/whitelist). Name matching
+  silently fails for 60 of 136 bios — do **not** loosen it to fix a missing
+  link; add an explicit Sanity reference instead. Long-term plan: refs only.
 
 ## Cloudflare R2 (images)
-- **Bucket:** `site-general` (account `31a35595add67ae1366b3f6420432773`)
+- **Bucket:** `site-general` — lives in the *personal* Cloudflare account,
+  not the Workers account. Account ID and upload token: see `.env.local`
+  / Claude memory / Cloudflare dashboard (not stored here).
 - **Public URL:** `https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev`
-- **Upload token:** `0y5cIePwh8kUz1aBnCZmYIuFJF1IVarrr7RDvWrD`
-- **MUST pass** `CLOUDFLARE_ACCOUNT_ID=31a35595add67ae1366b3f6420432773` for R2 wrangler commands (NOT for `wrangler deploy` — Workers uses account `f2a86349fa252c2582bc0f478ccdf9ab`)
-- Image upload settings: max 1600px, quality 85, JPEG
+- R2 wrangler commands must target the R2 account; `wrangler deploy` targets
+  the Workers account.
+- Image upload settings: max 1600px, quality 85, JPEG.
 
 ## Sanity CMS
-- **Project ID:** `t5nsm79o`
+- **Project ID:** `t5nsm79o`, dataset `production`
 - **Studio URL:** `https://motplusplus.sanity.studio`
-- **Studio local:** `~/Documents/motplus-sanity` → `npm run dev`
-- **Client config:** `lib/sanity.ts`
-- **Schemas folder:** `sanity-schemas/`
-- See full Sanity details in `~/Documents/motplus-sanity/CLAUDE.md`
+- **Studio repo (canonical schemas):** `~/Documents/motplus-sanity` →
+  `schemaTypes/` (`event`, `artist`, `afarmHost`, `museumLocation`,
+  `trashItem`, `inquiry`). The `sanity-schemas/` folder in *this* repo is a
+  stale partial copy — do not trust it.
+- **Client config:** `lib/sanity.ts` (use the non-CDN `buildClient` for
+  build-time queries).
+- Write tokens: not stored here — see Claude memory / sanity.io manage.
 
 ## Mapbox (+1 Museum map)
-- **Token:** stored in `NEXT_PUBLIC_MAPBOX_TOKEN` env var (see memory for value)
-- Restricted to: `https://motplusplus.com`, `https://motplusplus-site.motplusplusplus.workers.dev`
+- Token in `NEXT_PUBLIC_MAPBOX_TOKEN` (`.env.local`); restricted to the
+  production domains. Required for `npm run build` — the build fails without it.
+- **Never** apply CSS `filter` (incl. `grayscale`) to
+  `.mapboxgl-canvas-container` or any ancestor of the map container — it
+  blanks the WebGL canvas in all browsers. Correct pattern:
+  `filter: grayscale(1)` directly on `.mapboxgl-canvas`.
 
 ## Key data files
-- `events-data.json` — 244 events (do NOT edit manually, use scripts/)
-- `studios-data.json` — A.Farm studio profiles + images
-- `artists-data.json` — all artist profiles
-- `lib/events.ts` — AFARM_RESIDENT_SLUGS, BIO_SLUGS, HIDDEN_SLUGS (authoritative lists)
-
-## Known gotchas
-
-### Stale build cache (Next.js + Sanity)
-- Next.js caches Sanity fetch responses between builds in `.next/cache`
-- If pages show missing images/data after a deploy, the cache is stale
-- Fix: `rm -rf .next && npm run build` before deploying
-- Always do a clean build after significant Sanity content changes
-
-### Mapbox GL + CSS filter (MuseumMap.tsx)
-- **Never** apply `filter` (including `grayscale`) to `.mapboxgl-canvas-container` or any ancestor of the map container div
-- CSS `filter` on an ancestor of a WebGL canvas forces a compositing group — the WebGL output goes blank in all major browsers (pins/markers survive because they're DOM elements, not WebGL)
-- **Correct pattern:** `filter: grayscale(1)` applied directly to `.mapboxgl-canvas` — post-processes the canvas output without touching the WebGL pipeline
+- `events-data.json` — 339 legacy events (do NOT edit manually, use `scripts/`)
+- `artists-data.json` — artist profiles + flags (resident/studioHost/curator)
+- `studios-data.json` — A.Farm studio supplement (hostSlug, locationKeywords,
+  portraitPairs, video URLs)
+- `lib/events.ts` — `AFARM_RESIDENT_SLUGS`, `BIO_SLUGS`, `HIDDEN_SLUGS`
+  (authoritative lists) + name-matching logic
 
 ## Important rules
-- `AFARM_RESIDENT_SLUGS` in lib/events.ts is sourced from WP XML export — only add slugs confirmed in that XML
-- WP XML at: `/Volumes/MoT/EXPORTED DATA/wordpress/motplusplusplus.wordpress.com-2026-03-17-04_52_48/`
+- `AFARM_RESIDENT_SLUGS` is sourced from the WP XML export — only add slugs
+  confirmed in that XML
+  (`/Volumes/MoT/EXPORTED DATA/wordpress/motplusplusplus.wordpress.com-2026-03-17-04_52_48/`)
 - Do NOT include: Luke Schneider, Tra My, or any removed staff anywhere on the site
 - Lowercase convention throughout all UI text (intentional MoT+++ voice)
 - MoT+++ exact capitalization always
+- Known broken (top fix priority): `POST /submit-inquiry` 404s in production —
+  `functions/` is a Pages-convention folder that never deploys under the
+  Worker. See ARCHITECTURE.md §6.
 
 ## A.Farm studios (afarm page slugs → studios-data.json slugs must match)
-- andrew-newell-walther
-- le-phi-long
-- quoc-anh-le
-- hoang-nam-viet
-- karlie-ho
-- thom-nguyen
+- andrew-newell-walther, le-phi-long, quoc-anh-le, hoang-nam-viet,
+  karlie-ho, thom-nguyen
 
 ## External drive
 - WD drive mounts at `/Volumes/MoT`
