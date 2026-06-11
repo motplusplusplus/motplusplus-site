@@ -55,7 +55,7 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
           fontWeight: 300, lineHeight: 1.1,
           letterSpacing: "-0.02em", marginBottom: "20px",
         }}>
-          artists
+          MoTcyclopedia
         </h1>
         <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8, marginBottom: "12px" }}>
           everyone MoT+++ has worked with — residents, collective members, exhibition artists, performers, collaborators.
