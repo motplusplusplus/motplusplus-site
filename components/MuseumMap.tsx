@@ -41,6 +41,7 @@ export default function MuseumMap() {
   const markersRef = useRef<any[]>([]);
   const markerDotsRef = useRef<Map<string, HTMLElement>>(new Map());
   const mapSectionRef = useRef<HTMLDivElement>(null);
+  const mapLoaded = useRef(false);
 
   const [locations, setLocations] = useState<MuseumLocation[]>([]);
   const [isDemo, setIsDemo] = useState(false);
@@ -159,7 +160,8 @@ export default function MuseumMap() {
 
     mapRef.current = map;
 
-    map.on('error', () => setMapError(true));
+    map.on('load', () => { mapLoaded.current = true; });
+    map.on('error', () => { if (!mapLoaded.current) setMapError(true); });
 
     // Add user location control (shows dot on map, works on mobile with GPS)
     map.addControl(
