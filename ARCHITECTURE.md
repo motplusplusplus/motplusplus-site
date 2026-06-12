@@ -223,9 +223,12 @@ with `resident: true` in `artists-data.json` (`do-nguyen-lap-xuan`,
 `alex-williams`, `duong-tu-que`) were previously absent from `BIO_SLUGS`,
 so `getRelatedResidents` never considered them — all three are now included.
 
-Additionally, 4 bio-page events have **no corresponding Sanity artist doc**:
-`bert-nguyen-san`, `montez-press`, `nguyen-thuy-hang`, `lap-xuan` — so
-explicit-ref linking can't reach them either.
+Additionally, 2 bio-page events have **no corresponding Sanity artist doc**:
+`bert-nguyen-san`, `montez-press` — so explicit-ref linking can't reach them
+either. (`nguyen-thuy-hang` and `lap-xuan` were also in this list as of
+2026-06-11 but now have docs: `nguyen-thuy-hang`'s `active: null` was fixed,
+and the artist doc formerly slugged `do-nguyen-lap-xuan` was renamed to
+`lap-xuan` — both 2026-06-12.)
 
 ### Assessment and recommended direction
 
@@ -238,7 +241,8 @@ disables linking for 46% of bios. The right model — explicit references — is
 1. Migrate the 82 remaining JSON-only public events into Sanity (script
    pattern exists: `scripts/migrate-events-to-sanity.js`,
    `scripts/create-missing-sanity-events.js`) and set their `artists[]` refs.
-2. Create the 4 missing `artist` docs.
+2. Create the 2 remaining missing `artist` docs (`bert-nguyen-san`,
+   `montez-press`).
 3. Make refs the *only* mechanism; delete `matchParts`, `MATCH_BLOCKLIST`,
    `SINGLE_NAME_WHITELIST`, `getRelatedResidents`/`getRelatedEvents`/
    `getArtistEvents` name paths.

@@ -58,7 +58,7 @@ export const BIO_SLUGS = new Set([
   "laurent-weyl","pamela-n-corey","map-office","regis-golay",
   // residents flagged resident:true in artists-data.json but previously absent
   // from BIO_SLUGS, so getRelatedResidents never considered them (added 2026-06-11)
-  "do-nguyen-lap-xuan","alex-williams","duong-tu-que",
+  "alex-williams","duong-tu-que",
 
 ]);
 
