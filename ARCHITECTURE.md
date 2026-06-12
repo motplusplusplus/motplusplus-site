@@ -363,8 +363,9 @@ render — both curated sets are empty.
    export — pre-2018 MoT+++ residents only.
 5. **Populate `PLUS1_MUSEUM_SLUGS`** once Sanity `museumLocation` documents
    carry artist refs.
-6. **Add a `deathYear` field to the Sanity `artist` schema** to replace the
-   hardcoded `DECEASED_DATES` map in `app/profiles/[slug]/page.tsx`.
+6. **Populate the new `deathYear` field** (added 2026-06-12) for `lan-anh-le`
+   and `dinh-q-le`, query it in `lib/sanity.ts`, and replace the hardcoded
+   `DECEASED_DATES` map in `app/profiles/[slug]/page.tsx`.
 7. **Add a role enum to the Sanity `artist` schema** — role is still
    free-text.
 8. **Retire the JSON flags** (`resident`, `curator`, `performancePlus`, etc.)
@@ -409,14 +410,16 @@ field against the GROQ field lists in `lib/sanity.ts` (`ARTIST_FIELDS`,
 | `uploadedImages` | array of images | ✓ (returned as `images`) |
 | `legacyImageUrls` | array of strings | ✓ |
 | `active` | boolean, default true ("Listed on residents page") | filter only in `getArtists`/`getAllSanityArtistSlugs`. **`getArtistBySlug` does not filter on `active`** — a doc with `active: null`/`false` is invisible to listings and `generateStaticParams`, but still resolvable by direct slug. (`nguyen-thuy-hang` had `active: null`; fixed to `true` 2026-06-12.) |
+| `deathYear` | number | ✗ not yet queried — field added 2026-06-12 (§7 item 6), not yet populated or consumed |
 
 Computed, not schema fields (derived via `*[...references(^._id)]`):
 `trashItems[]`, `museumItems[]`.
 
-**Frontend expects but schema lacks `deathYear`** — `app/profiles/[slug]/page.tsx`
-hardcodes a `DECEASED_DATES` map (`lan-anh-le`, `dinh-q-le`) with a `// TODO:
-add deathYear field to Sanity artist schema` comment. Confirmed: no
-`deathYear` field exists anywhere in `artist.ts` (§7 item 6).
+**`deathYear` field added to schema (2026-06-12)** — `artist.ts` now has a
+`deathYear` number field alongside `birthYear`. `app/profiles/[slug]/page.tsx`
+still hardcodes the `DECEASED_DATES` map (`lan-anh-le`, `dinh-q-le`);
+populating `deathYear`/`birthYear` for those two docs, querying it in
+`lib/sanity.ts`, and removing the hardcoded map remains outstanding (§7 item 6).
 
 ### `event`
 
@@ -428,7 +431,7 @@ add deathYear field to Sanity artist schema` comment. Confirmed: no
 | `dateISO` | date (required) | ✓ |
 | `endDateISO` | date | ✓ |
 | `displayDate` | string | ✓ |
-| `category` | string, `options.list`: `MoT+++`, `+a.Farm`, `MoTSound`, `Performance`, `Collaborative` | ✓ |
+| `category` | string, `options.list`: `MoT+++`, `+a.Farm`, `MoTsound`, `+1 contemporary project`, `+1 performance`, `+1 nice place for experimentation` | ✓ |
 | `location` | string | ✓ |
 | `description` | text | ✓ |
 | `vnDescription` | text | ✓ |
@@ -442,15 +445,20 @@ add deathYear field to Sanity artist schema` comment. Confirmed: no
 | `active` | boolean, default true | filter only |
 | `isBioPage` | boolean, default false | ✓ |
 
-**Category taxonomy mismatch**: the Sanity `category` field's `options.list`
-(`MoT+++`, `+a.Farm`, `MoTSound`, `Performance`, `Collaborative`) does not
-match the `categories` export in `lib/events.ts` (`+a.Farm`, `+1 contemporary
-project`, `+1 performance`, `+1 nice place for experimentation`, `MoTsound`,
-`MoT+++`). Sanity string fields with `options.list` don't enforce membership,
-so event docs in practice carry the `lib/events.ts` values; `toSanityEvent`/
-`toEventFromJson` additionally normalize `'+a.farm'` → `'+a.Farm'`. Worth
-reconciling so the Studio dropdown matches reality (`MoTSound` vs `MoTsound`,
-`Performance`/`Collaborative` vs the three `+1 …` categories).
+**Category taxonomy reconciled (2026-06-12)**: the Sanity `category` field's
+`options.list` now matches the `categories` export in `lib/events.ts` exactly
+(`+a.Farm`, `+1 contemporary project`, `+1 performance`, `+1 nice place for
+experimentation`, `MoTsound`, `MoT+++`). Previously the list had `MoTSound`
+(capital S, 0 docs), `Performance` (3 `isBioPage:true` docs), and
+`Collaborative` (0 docs), and was missing the three `+1 …` values used by 72
+of 216 active event docs. Fix: removed `MoTSound`/`Collaborative` from
+`options.list`, added the three `+1 …` values, and retagged the 3
+`category:"Performance"` bio-page docs (`ngo-thanh-bac`, `lap-xuan`,
+`enkhbold-togmidshiirev` — all performance plus 2018–2019 program artists) to
+`+1 performance`. `toSanityEvent`/`toEventFromJson` still normalize
+`'+a.farm'` → `'+a.Farm'` for the ~103 docs using lowercase `+a.farm`; left
+as-is since runtime normalization already handles it and bulk-editing those
+docs' raw values is a separate low-priority cleanup.
 
 ### `afarmHost`
 
