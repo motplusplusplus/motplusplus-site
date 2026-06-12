@@ -87,12 +87,13 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const relatedEvents = [...refEvents, ...nameEvents.filter(e => !refSlugs.has(e.slug))];
 
   const studio = allStudios.find(s => s.hostSlug === slug);
-  // TODO: add deathYear field to Sanity artist schema to avoid hardcoding
-  const DECEASED_DATES: Record<string, string> = {
-    "lan-anh-le": "1993–2020",
-    "dinh-q-le": "1968–2024",
-  };
-  const deceasedDates = DECEASED_DATES[slug];
+  // Deceased dates come from the Sanity artist's deathYear/birthYear fields.
+  // Shows "birthYear–deathYear" when both exist, or just the death year alone.
+  const deathYear = sanityArtist?.deathYear as number | undefined;
+  const birthYear = sanityArtist?.birthYear as number | undefined;
+  const deceasedDates = deathYear
+    ? (birthYear ? `${birthYear}–${deathYear}` : `${deathYear}`)
+    : undefined;
   const isDavidWillis = slug === "david-willis";
   const isCamXanh = slug === "cam-xanh";
 

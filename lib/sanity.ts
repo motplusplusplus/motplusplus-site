@@ -72,6 +72,7 @@ const ARTIST_FIELDS = `
   name,
   pronouns,
   birthYear,
+  deathYear,
   nationality,
   originCity,
   currentCity,
