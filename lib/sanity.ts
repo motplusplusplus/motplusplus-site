@@ -1,4 +1,9 @@
 import { createClient } from '@sanity/client';
+// events-data.json is now a LEGACY ARCHIVE — all public events have been migrated
+// into Sanity (the source of truth). It is retained only as a backup snapshot and
+// to supply legacy image URLs for slug-merging. Do not edit it manually.
+// (A comment cannot live inside the JSON itself — it is a top-level array that is
+// imported and iterated — so the archive notice lives here and in events-data.ARCHIVE.md.)
 import eventsDataRaw from '../events-data.json';
 
 export const sanityClient = createClient({

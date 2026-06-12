@@ -81,7 +81,10 @@
   `filter: grayscale(1)` directly on `.mapboxgl-canvas`.
 
 ## Key data files
-- `events-data.json` — 339 legacy events (do NOT edit manually, use `scripts/`)
+- `events-data.json` — **LEGACY ARCHIVE** (339 events). All public events now
+  live in Sanity (sole source of truth). Retained only as a backup snapshot and
+  to supply legacy image URLs during the slug merge. Do NOT edit manually. See
+  `events-data.ARCHIVE.md`.
 - `artists-data.json` — artist profiles + flags (resident/studioHost/curator)
 - `studios-data.json` — A.Farm studio supplement (hostSlug, locationKeywords,
   portraitPairs, video URLs)
