@@ -43,3 +43,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# sanity backup exports (machine-generated, see scripts/export-sanity-backup.mjs)
+/sanity-backup/

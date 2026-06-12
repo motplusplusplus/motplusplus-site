@@ -92,6 +92,8 @@
   name-matching logic
 - `lib/badges.ts` — badge taxonomy and `computeBadges()`; read before
   modifying profile display or filters
+- Run `node scripts/export-sanity-backup.mjs` periodically to create a local
+  backup of all Sanity data. Output goes to `sanity-backup/` (gitignored).
 
 ## Important rules
 - `PLUS1_RESIDENCY_SLUGS` (in `lib/badges.ts`) should be sourced from the WP
