@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getArtist, getArtistSlugs, getArtistEvents, type Artist } from "@/lib/artists";
-import { getEventBySlug, getAllEvents, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef, getMotsoundPerformerEditions } from "@/lib/sanity";
+import { getArtist, getArtistSlugs, type Artist } from "@/lib/artists";
+import { getEventBySlug, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef, getMotsoundPerformerEditions } from "@/lib/sanity";
 import { BIO_SLUGS } from "@/lib/events";
 import { computeBadges } from "@/lib/badges";
 import { allStudios } from "@/lib/studios";
@@ -41,10 +41,9 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   // event (consolidated duplicates). Map profile slug → bio-event slug.
   const BIO_EVENT_SLUG: Record<string, string> = { "alex-williams": "pug-alex-williams" };
   const bioEventSlug = BIO_EVENT_SLUG[slug] ?? slug;
-  const [sanityArtist, eventEntry, allEvents, motsound] = await Promise.all([
+  const [sanityArtist, eventEntry, motsound] = await Promise.all([
     getArtistBySlug(slug),
     isBioSlug ? getEventBySlug(bioEventSlug) : Promise.resolve(null),
-    getAllEvents(),
     getMotsoundPerformerEditions(),
   ]);
   if (!localArtist && !sanityArtist) notFound();
@@ -77,14 +76,8 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
     return !SKIP_PATTERNS.some(s => filename.toLowerCase().includes(s));
   });
 
-  // Merge Sanity-ref events (explicit) with name-matched events, deduplicate by slug
   const sanityArtistId = sanityArtist?._id as string | undefined;
-  const [refEvents, nameEvents] = await Promise.all([
-    sanityArtistId ? getEventsByArtistRef(sanityArtistId) : Promise.resolve([]),
-    Promise.resolve(getArtistEvents(artist, allEvents)),
-  ]);
-  const refSlugs = new Set(refEvents.map(e => e.slug));
-  const relatedEvents = [...refEvents, ...nameEvents.filter(e => !refSlugs.has(e.slug))];
+  const relatedEvents = sanityArtistId ? await getEventsByArtistRef(sanityArtistId) : [];
 
   const studio = allStudios.find(s => s.hostSlug === slug);
   // Deceased dates come from the Sanity artist's deathYear/birthYear fields.

@@ -56,8 +56,6 @@ export const BIO_SLUGS = new Set([
   "arnont-nongyao","bill-nguyen","emmanuelle-huynh","le-mai-anh",
   "nguyen-quoc-chanh","dan-nguyen-demonslayer","tuyp-tran","phung-tien-son",
   "laurent-weyl","pamela-n-corey","map-office","regis-golay",
-  // residents flagged resident:true in artists-data.json but previously absent
-  // from BIO_SLUGS, so getRelatedResidents never considered them (added 2026-06-11)
   "alex-williams","duong-tu-que",
 
 ]);
@@ -162,91 +160,6 @@ export function getAdjacentEvents(slug: string, listingEvents: Event[]): { prev:
   };
 }
 
-// Generic art-world words that must not serve as sole match identifiers
-const MATCH_BLOCKLIST = new Set([
-  'studio', 'open', 'with', 'from', 'work', 'artist', 'residency',
-  'workshop', 'talk', 'film', 'reading', 'screening', 'performance',
-  'discussion', 'exhibition', 'event', 'session', 'practice', 'project',
-  'gallery', 'space', 'collective', 'center', 'centre', 'house', 'room',
-  // Common Vietnamese words that appear in event titles/slugs
-  'chung', // viết chung = "write together"; would falsely match Lê Đ. Chung
-  // Extremely common Vietnamese surname/given name parts — too ambiguous to use as match keys.
-  // RULE: never use single common name parts as match identifiers; full name matching only.
-  'nguyen', // most common Vietnamese surname; appears in nearly every event description
-  'tran',   // common surname; also appears inside English words: "transcend", "translate"
-  'minh',   // very common given name; appears in "Ho Chi Minh", "Hoàng Tường Minh", etc.
-  'linh',   // very common given name; appears in "Bang Nhat Linh", "Phuong Linh", slug fragments
-  'phuong', // common given name (Phương); also means "ward/direction" in Vietnamese text
-  'thanh',  // common name part; appears in many Vietnamese descriptions and artist names
-  'trang',  // common name part (Trang); appears in event slugs and Vietnamese text
-  'hong',   // common Vietnamese name (Hồng); also appears in "Hong Kong" in descriptions
-  'song',   // common English word ("a song of…") and Vietnamese surname
-  'bert',   // short name; "bert" appears in Bert Ackley events, causing false Bert Nguyễn San matches
-  // Common English words that happen to be artist surnames
-  'strange', // Ian Strange — "strange" appears as an adjective in many event descriptions
-]);
-
-/**
- * True single-word artist names that are genuinely unique and may be matched on their own.
- * MUST be explicitly listed here; all other artists require ≥2 significant name parts.
- */
-const SINGLE_NAME_WHITELIST = new Set(['kaki', 'coco', 'yeonjeong']);
-
-/** Strip diacritical marks from a string for robust cross-diacritic matching.
- *  "Régis" → "regis", "phùng" → "phung". Used so that inconsistent diacritic
- *  usage in event text doesn't prevent valid name matches. */
 export function stripDiacritics(s: string): string {
   return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
-
-export function matchParts(title: string): string[] {
-  // Strip diacritics then lowercase so "Régis"/"regis" and "phùng"/"phung" compare equal
-  const parts = stripDiacritics(title).toLowerCase().split(/\s+/)
-    // Strip leading/trailing punctuation from each token before filtering, so
-    // parenthesized/period-suffixed names ("(Julia", "Weiner)", "Irene.") are
-    // matchable instead of being dropped as punctuation-glued tokens.
-    .map(w => w.replace(/^[^\w]+|[^\w]+$/g, ''))
-    .filter(w => w.length >= 4 && !MATCH_BLOCKLIST.has(w));
-  // PERMANENT RULE: full-name matching only.
-  // Require at least 2 significant parts unless the name is a whitelisted unique single word.
-  // This prevents any single common word (linh, phuong, song, bert, …) from triggering a match.
-  if (parts.length <= 1) {
-    if (parts.length === 1 && SINGLE_NAME_WHITELIST.has(parts[0])) return parts;
-    return [];
-  }
-  return parts;
-}
-
-/** For a given event, find bio entries whose artist name appears in the event's title/slug/description */
-export function getRelatedResidents(event: Event, allEvents: Event[]): Event[] {
-  return allEvents
-    .filter(bio => BIO_SLUGS.has(bio.slug) || bio.isBioPage)
-    .filter(bio => {
-      const nameParts = matchParts(bio.title);
-      if (nameParts.length === 0) return false;
-      const titleSlug = stripDiacritics(event.title + ' ' + event.slug).toLowerCase();
-      if (nameParts.every(w => titleSlug.includes(w))) return true;
-      // Also check description, but only when at least one name part is ≥6 chars (distinctive enough).
-      // Two short 4-5 char parts can both appear in unrelated descriptions → only title/slug for those.
-      const safeToCheckDesc = nameParts.some(w => w.length >= 6);
-      if (!safeToCheckDesc) return false;
-      const desc = stripDiacritics(event.description || '').toLowerCase();
-      return nameParts.every(w => desc.includes(w));
-    });
-}
-
-/** For a given resident bio, find real events that mention the artist */
-export function getRelatedEvents(bio: Event, allEvents: Event[]): Event[] {
-  const nameParts = matchParts(bio.title);
-  if (nameParts.length === 0) return [];
-  const safeToCheckDesc = nameParts.some(w => w.length >= 6);
-  return getListingEvents(allEvents)
-    .filter(event => {
-      const titleSlug = stripDiacritics(event.title + ' ' + event.slug).toLowerCase();
-      if (nameParts.every(w => titleSlug.includes(w))) return true;
-      if (!safeToCheckDesc) return false;
-      const desc = stripDiacritics(event.description || '').toLowerCase();
-      return nameParts.every(w => desc.includes(w));
-    })
-    .sort((a, b) => b.sortDate.localeCompare(a.sortDate));
 }

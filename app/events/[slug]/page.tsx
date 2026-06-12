@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getAllEvents, getAllEventSlugs, getEventBySlug, getAllEventsFromJson } from "@/lib/sanity";
-import { getListingEvents, getRelatedResidents, getAdjacentEvents, isPast, BIO_SLUGS } from "@/lib/events";
+import { getListingEvents, getAdjacentEvents, isPast, BIO_SLUGS } from "@/lib/events";
 import EventContent from "@/components/EventContent";
 
 export async function generateStaticParams() {
@@ -38,11 +38,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   const allEvents = [...sanityAllEvents, ...jsonOnly];
 
   const listing = getListingEvents(allEvents);
-  const nameResidents = getRelatedResidents(event, allEvents);
-  // Merge explicit Sanity artist refs with name-matched residents, deduplicate by slug
-  const explicitArtists = (event.artists ?? []).map(a => ({ slug: a.slug, title: a.name }));
-  const explicitSlugs = new Set(explicitArtists.map(a => a.slug));
-  const relatedResidents = [...explicitArtists, ...nameResidents.filter(r => !explicitSlugs.has(r.slug))];
+  const relatedResidents = (event.artists ?? []).map(a => ({ slug: a.slug, title: a.name }));
   const { prev, next } = getAdjacentEvents(slug, listing);
   const past = isPast(event);
 

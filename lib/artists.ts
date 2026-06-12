@@ -1,5 +1,5 @@
 import artistsRaw from '../artists-data.json';
-import { BIO_SLUGS, matchParts, stripDiacritics, getListingEvents, type Event } from './events';
+import { BIO_SLUGS, type Event } from './events';
 
 export type Artist = {
   slug:           string;
@@ -23,6 +23,7 @@ export const artistsFromData: Artist[] = artistsRaw as Artist[];
 // excluded from /events, but no standalone /profiles page is generated for them.
 export const CONSOLIDATED_BIO_SLUGS = new Set<string>([
   'pug-alex-williams', // → alex-williams ("Alex Williams (Pug)")
+  'baby-reni',         // → irene-ha ("Baby Reni (Irene Ha)")
 ]);
 
 // Build stub entries for residents not in artists-data.json so their pages are generated.
@@ -53,21 +54,3 @@ export function getArtistSlugs(): string[] {
   return allArtists.map(a => a.slug);
 }
 
-/** For a given artist, find listing events that mention them by name.
- *  Uses the same matchParts/blocklist logic as getRelatedEvents — requires ALL
- *  significant name parts to match, and blocks common Vietnamese name fragments. */
-export function getArtistEvents(artist: Artist, events: Event[]): Event[] {
-  const nameParts = matchParts(artist.name);
-  if (nameParts.length === 0) return [];
-  const safeToCheckDesc = nameParts.some(w => w.length >= 6);
-  return getListingEvents(events)
-    .filter(event => {
-      if (event.slug === artist.slug) return false; // skip the artist's own bio entry
-      const titleSlug = stripDiacritics(event.title + ' ' + event.slug).toLowerCase();
-      if (nameParts.every(w => titleSlug.includes(w))) return true;
-      if (!safeToCheckDesc) return false;
-      const desc = stripDiacritics(event.description || '').toLowerCase();
-      return nameParts.every(w => desc.includes(w));
-    })
-    .sort((a, b) => b.sortDate.localeCompare(a.sortDate));
-}
