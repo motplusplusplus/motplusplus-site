@@ -404,7 +404,7 @@ field against the GROQ field lists in `lib/sanity.ts` (`ARTIST_FIELDS`,
 | `portrait` | image | ✓ (`.asset->url`) |
 | `uploadedImages` | array of images | ✓ (returned as `images`) |
 | `legacyImageUrls` | array of strings | ✓ |
-| `active` | boolean, default true ("Listed on residents page") | filter only in `getArtists`/`getAllSanityArtistSlugs`. **`getArtistBySlug` does not filter on `active`** — a doc with `active: null`/`false` is invisible to listings and `generateStaticParams`, but still resolvable by direct slug (relevant to `nguyen-thuy-hang`, Task 2). |
+| `active` | boolean, default true ("Listed on residents page") | filter only in `getArtists`/`getAllSanityArtistSlugs`. **`getArtistBySlug` does not filter on `active`** — a doc with `active: null`/`false` is invisible to listings and `generateStaticParams`, but still resolvable by direct slug. (`nguyen-thuy-hang` had `active: null`; fixed to `true` 2026-06-12.) |
 
 Computed, not schema fields (derived via `*[...references(^._id)]`):
 `trashItems[]`, `museumItems[]`.
