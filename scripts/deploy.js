@@ -124,7 +124,10 @@ function main() {
   // Clean both .next AND out so a stale export can never ship — out/ is what wrangler uploads.
   rmSync(join(ROOT, '.next'), { recursive: true, force: true });
   rmSync(join(ROOT, 'out'), { recursive: true, force: true });
-  run('npx next build');
+  // --webpack: Next 16 defaults `next build` to Turbopack, which does not inline
+  // NEXT_PUBLIC_* env vars the way webpack does — leaves process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+  // unresolved at runtime (resolves to "" in the browser), silently breaking the museum map.
+  run('npx next build --webpack');
   run('npx wrangler deploy');
   purgeCache(); // purge BEFORE verify so verify-deploy validates the post-purge state
   run('node scripts/verify-deploy.js');
