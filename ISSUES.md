@@ -6,15 +6,39 @@ Claude Code should read this file at the start of every session and flag any ope
 
 ### [ISSUE-001] Alec Schachner profile corrections
 **Reported:** 2026-06-12
+**Updated:** 2026-06-13
 **Priority:** medium
-**Status:** partially blocked — awaiting correct bio text and curator event list from artist
+**Status:** partially resolved — awaiting final bio text and confirmation of curator credits from artist
 
-Known issues:
-- Display name should be "Alec Schachner (Scobi Wan)"
-- Bio text is currently wrong — correct version pending from artist
-- Missing curator credits on events he curated (specific events TBD — artist to confirm)
-- Lee Wen workshop connection is incorrect — he did not attend, remove this association
-- Search all data sources for existing bio text before updating (artists-data.json, events-data.json, CONTENT-ARCHIVE.md, Sanity)
+Resolved 2026-06-13 (commit see `fix: Alec Schachner display name and data cleanup`):
+- Display name set to "Alec Schachner (Scobi Wan)".
+- Discovered + consolidated a DUPLICATE: two Sanity artist docs existed for the
+  same person — `scobi-wan` (active, 6 MoTsound event refs, but holding a
+  corrupted bio that was actually a mashup of three OTHER artists' bios) and
+  `alec-schachner` (inactive stub, accurate bio, 0 refs). Canonical is now
+  `alec-schachner` (active, correct bio). All 6 event refs re-pointed to it.
+  `scobi-wan` retired (active:false, wrong bio cleared) + worker.js 301
+  `/profiles/scobi-wan` → `/profiles/alec-schachner`.
+- Lee Wen workshop connection removed. Root cause: it was never an event ref —
+  "lee wen (singapore)" was a fragment of Aliansyah Caniago's bio wrongly
+  stitched into the `scobi-wan` bio, then surfaced via the old name-matching.
+  Name-matching is deleted (RESOLVED-004) and the corrupted bio is cleared, so
+  the association is fully gone.
+- Bio source: used the accurate bio already on the stub (nothing+ trio, ếch ếch
+  studios, 97 water bottles, saigon→hanoi). Confirmed in event copy too
+  (mot-sound-13 desc: "Scobi Wan, aka Alec Schachner, ongoing curator…").
+
+Still open (blocked on artist):
+- Final/authoritative bio text — current bio is accurate but may be superseded
+  by the artist's own copy.
+- Missing curator/performer credits. He is NOT in artists-data.json (Sanity-only).
+  Candidate Sanity events that name him but do NOT yet ref his doc, pending
+  artist confirmation before adding `artists[]` refs:
+  - `mot-sound-5` — performer (Nothing+ trio, with ben-litwicki + van-thanh-trung)
+  - `mot-sound-7` — named in event copy
+  - `mot-sound-16-poetry-plus-vol-3` — credited as MoTsound curator
+- Currently connected events (all correct, none flagged): mot-sound-1, -2, -4,
+  -9-aconvergence, -10-anoise, -13-amoment.
 
 ### [ISSUE-002] R2 bucket migration
 **Reported:** 2026-06-12
