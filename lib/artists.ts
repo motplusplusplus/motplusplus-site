@@ -45,6 +45,7 @@ const residentArtists: Artist[] = Array.from(BIO_SLUGS)
   }));
 
 export const allArtists: Artist[] = [...artistsFromData, ...residentArtists]
+  .filter(a => !CONSOLIDATED_BIO_SLUGS.has(a.slug))
   .sort((a, b) => a.name.localeCompare(b.name));
 
 export function getArtist(slug: string): Artist | undefined {
