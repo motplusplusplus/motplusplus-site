@@ -57,11 +57,18 @@ Once the new MoT+++ bucket public URL is confirmed:
 
 ### [ISSUE-003] PLUS1_RESIDENCY_SLUGS empty
 **Reported:** 2026-06-12
+**Updated:** 2026-06-14
 **Priority:** low-medium
-**Status:** open — requires WP XML scan
+**Status:** open — BLOCKED on external drive `/Volumes/MoT` being mounted
 
 PLUS1_RESIDENCY_SLUGS in lib/badges.ts is empty so the "+1 residency" badge never renders. Populate from WordPress XML export at:
 /Volumes/MoT/EXPORTED DATA/wordpress/motplusplusplus.wordpress.com-2026-03-17-04_52_48/
+
+**2026-06-14 (overnight):** attempted the scan but `/Volumes/MoT` is **not mounted**
+(WD external drive offline), so the WP XML export is inaccessible. Task skipped.
+Re-attempt once the drive is mounted. Note also `lib/badges.ts` already flags two
+*unconfirmed* candidates in a comment (`dao-tung`, `tran-minh-duc`) that appear in the
+"+1 museum" collection but are NOT confirmed residents — do not add without XML confirmation.
 
 ### [ISSUE-004] deathYear field not wired
 **Reported:** 2026-06-12
