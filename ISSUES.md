@@ -70,13 +70,6 @@ Re-attempt once the drive is mounted. Note also `lib/badges.ts` already flags tw
 *unconfirmed* candidates in a comment (`dao-tung`, `tran-minh-duc`) that appear in the
 "+1 museum" collection but are NOT confirmed residents — do not add without XML confirmation.
 
-### [ISSUE-004] deathYear field not wired
-**Reported:** 2026-06-12
-**Priority:** low
-**Status:** open
-
-deathYear field added to Sanity schema and populated for lan-anh-le and dinh-q-le but check whether it is being queried by ARTIST_FIELDS in lib/sanity.ts and rendering correctly on bio pages.
-
 ### [ISSUE-005] Sanity role enum
 **Reported:** 2026-06-12
 **Priority:** low
@@ -225,6 +218,15 @@ Fixed: 2026-06-11 — consolidated into alex-williams with 301 redirect (commit 
 
 ### [RESOLVED-006] Luke Schneider in site data
 Fixed: 2026-06-11 — purged from all site-facing sources (commit 5354c73)
+
+### [RESOLVED-008] deathYear wired from Sanity (ISSUE-004)
+Verified 2026-06-14 — fully wired, no code change required. `deathYear` and
+`birthYear` are both in `ARTIST_FIELDS` (`lib/sanity.ts`); `getArtistBySlug`
+returns them (no `active` filter, so deceased docs resolve);
+`app/profiles/[slug]/page.tsx` renders `birthYear–deathYear` from the Sanity
+fields (`deceasedDates`, lines 85–89) with no hardcoded `DECEASED_DATES` map.
+Sanity values confirmed: `lan-anh-le` 1993–2020, `dinh-q-le` 1968–2024. Live
+bio pages render the dates correctly (HTTP 200, italic deceased treatment).
 
 ### [RESOLVED-007] Systematic bio corruption across artist docs (ISSUE-008)
 Fixed: 2026-06-13 — Categories A, B, and C all cleared/replaced (commit "fix: clear corrupted bios, all categories A/B/C (ISSUE-008)")
