@@ -31,7 +31,6 @@ const dropdownSections = [
   {
     heading: "organization",
     items: [
-      { label: "profiles", href: "/profiles" },
       { label: "about", href: "/about" },
       { label: "press", href: "/press" },
       { label: "contact", href: "/contact" },
@@ -39,6 +38,8 @@ const dropdownSections = [
     ],
   },
 ];
+
+const featuredDropdownItem = { label: "MoTcyclopedia", href: "/profiles" };
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -330,12 +331,30 @@ export default function Header() {
               maxWidth: "1400px",
               margin: "0 auto",
               padding: "48px 24px 64px",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "48px",
             }}
             onClick={(e) => e.stopPropagation()}
           >
+            <Link
+              href={featuredDropdownItem.href}
+              onClick={() => setMenuOpen(false)}
+              style={{
+                display: "block",
+                fontSize: "20px",
+                fontWeight: 300,
+                color: "#111111",
+                lineHeight: 1.2,
+                marginBottom: "32px",
+              }}
+            >
+              {featuredDropdownItem.label}
+            </Link>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "48px",
+              }}
+            >
             {dropdownSections.map((section) => (
               <div key={section.heading}>
                 <p
@@ -373,6 +392,7 @@ export default function Header() {
                 </nav>
               </div>
             ))}
+            </div>
           </div>
         </div>
       )}
