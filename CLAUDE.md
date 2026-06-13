@@ -96,6 +96,7 @@
   backup of all Sanity data. Output goes to `sanity-backup/` (gitignored).
 
 ## Important rules
+- Read ISSUES.md at the start of every session and flag any open items relevant to current work.
 - `PLUS1_RESIDENCY_SLUGS` (in `lib/badges.ts`) should be sourced from the WP
   XML export — only add slugs confirmed in that XML
   (`/Volumes/MoT/EXPORTED DATA/wordpress/motplusplusplus.wordpress.com-2026-03-17-04_52_48/`)
