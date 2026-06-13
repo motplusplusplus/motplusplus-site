@@ -53,6 +53,7 @@ export default {
       '/profiles/do-nguyen-lap-xuan': '/profiles/lap-xuan/',
       '/profiles/scobi-wan': '/profiles/alec-schachner/',
       '/profiles/writher': '/profiles/nguyen-hong-giang/',
+      '/profiles/dan-nguyen-demonslayer': '/profiles/dan-nguyen/',
     };
     const canonicalProfile = PROFILE_REDIRECTS[path.replace(/\/$/, '')];
     if (canonicalProfile) {

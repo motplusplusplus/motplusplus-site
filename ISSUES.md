@@ -111,7 +111,7 @@ Their `bio` field is now empty (unset) pending text supplied by the artist:
 **Reported:** 2026-06-13
 **Updated:** 2026-06-13
 **Priority:** medium
-**Status:** partially resolved — writher/nguyen-hong-giang done; dan-nguyen pair still open
+**Status:** resolved — both consolidations complete
 
 Discovered while researching real bio text for ISSUE-008 Category B.
 
@@ -127,16 +127,16 @@ Resolved 2026-06-13:
   scobi-wan/alec-schachner precedent (RESOLVED-005-style consolidation under
   ISSUE-001).
 
-Still open — needs human confirmation before retiring/redirecting:
-
-- **`dan-nguyen` vs `dan-nguyen-demonslayer`** — `dan-nguyen` is a Sanity
-  `artist` doc (_id=89c1428d-b8f0-4b3d-af80-22f43a336c3f, now carries the real
-  "Dan Nguyen (Demonslayer)" bio recovered from `artists-data.json`).
-  Separately, `dan-nguyen-demonslayer` is in `BIO_SLUGS` (`lib/events.ts`) with
-  its own `artists-data.json` entry holding the *same* bio text, which (per
-  ARCHITECTURE.md) generates its own `/profiles/dan-nguyen-demonslayer` page —
-  likely a second page for the same person. Needs confirmation + consolidation
-  (or a redirect) once a maintainer confirms these are the same person.
+- **`dan-nguyen` vs `dan-nguyen-demonslayer`** — confirmed same person (Dan
+  Nguyen aka Demonslayer, Vietnamese-American Vwave producer/DJ/visual
+  artist). Canonical is `dan-nguyen` (Sanity `artist` doc,
+  _id=89c1428d-b8f0-4b3d-af80-22f43a336c3f, active:true, 3 event refs
+  2017–2024, carries the real "Dan Nguyen (Demonslayer)" bio).
+  `dan-nguyen-demonslayer` (BIO_SLUGS/artists-data.json-only, no Sanity doc,
+  0 event history) added to `CONSOLIDATED_BIO_SLUGS` in `lib/artists.ts` to
+  exclude its standalone `/profiles/dan-nguyen-demonslayer` page, plus a
+  worker.js 301 `/profiles/dan-nguyen-demonslayer` → `/profiles/dan-nguyen/`,
+  mirroring the `pug-alex-williams` precedent (RESOLVED-005).
 
 ## Resolved
 
