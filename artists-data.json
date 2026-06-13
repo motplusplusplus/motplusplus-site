@@ -544,7 +544,7 @@
   {
     "slug": "montez-press",
     "name": "Montez Press",
-    "collective": true,
+    "collective": false,
     "resident": false,
     "studioHost": false,
     "origin": "New York",
@@ -607,7 +607,7 @@
   {
     "slug": "phu-luc",
     "name": "Phụ Lục",
-    "collective": true,
+    "collective": false,
     "resident": false,
     "studioHost": false,
     "performancePlus": true,
@@ -963,7 +963,7 @@
   {
     "slug": "map-office",
     "name": "MAP Office",
-    "collective": true,
+    "collective": false,
     "resident": false,
     "studioHost": false,
     "performancePlus": false,
