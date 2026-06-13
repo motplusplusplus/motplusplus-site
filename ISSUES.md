@@ -87,6 +87,59 @@ resident, curator, performancePlus flags in artists-data.json still feed compute
 
 hostSlug, locationKeywords, portraitPairs, video URLs still live in studios-data.json. Requires Sanity schema additions for afarmHost type before migrating.
 
+### [ISSUE-008] Systematic bio corruption across artist docs
+**Reported:** 2026-06-13
+**Priority:** high
+**Status:** open — needs human/artist verification before rewriting (do NOT bulk-auto-fix)
+
+The defect that hit scobi-wan/alec-schachner (see ISSUE-001 / RESOLVED-004 lineage)
+is widespread. A batch/migration process populated many `bio` fields with the WRONG
+content — either another artist's biography verbatim, or raw event/participant-list
+text. Found via read-only scan `scripts/scan-bios.mjs` (226 active docs, 219 with
+bios). ~34 docs affected (plus the 2 already fixed). Re-run that script after fixes.
+
+**A. MISASSIGNED — bio field holds a DIFFERENT named artist's biography (verbatim, confirmed):**
+- `sonar-lee` ← Aliansyah Caniago's old bio (the "Bandung Institute / Lee Wen /
+  Melati Suryodarmo" text — the *same* leak that was on scobi-wan)
+- `nguyen-giao-xuan` ← Đỗ Nguyễn Lập Xuân's bio
+- `sto-len` ← Đỗ Nguyễn Lập Xuân's bio
+- `kin` ← Trần Minh Đức's bio (after a stray opening sentence)
+- `anh-tran` ← Trần Minh Đức's bio
+- `hien-tran` ← Trần Minh Đức's bio
+- `mai-thi-tran` ← Trần Minh Đức's bio
+- `thy-tran` ← Trần Minh Đức's bio
+- `llama-olo` ← Trần Minh Đức's bio
+- `espen-iden` ← contains Ngô Thành Bắc's bio
+- (`anh-vo` ← opens with season-4 open-studio event text; one real sentence at the end)
+- Source docs `lap-xuan`, `tran-minh-duc`, `ngo-thanh-bac`, `aliansyah-caniago` are
+  themselves correct — only the copies leaked.
+
+**B. EVENT-TEXT-AS-BIO — bio field holds an event description / participant roster, not a personal bio:**
+- "farm past residents / girl in red reopening" roster: `lu-nguyen`, `hoang-vu`,
+  `carl-stone`, `dan-nguyen`, `duy-nguyen`, `vuong-thien`, `bill-nguyen`,
+  `nguyen-hoa`, `tran-van-thao`, `nguyen-hong-giang`, `ngo-dinh-bao-chau`
+- "địa/phương ~ local-liti art walk" roster: `chicko`, `nguyen-van-du`
+- "performance plus 2019 artists:" roster: `mathieu-dufourg`, `tobias-ahlbrecht`, `nguyen-chung`
+- amanaki / other event rosters: `annie-thao-phan`, `ken-ueno`, `ho-tuong-danh`, `ayano-otani`
+- one-line event mention as bio: `duy-bao` ("mot sound #20 featured …")
+
+**C. STITCHED / PRONOUN-SWITCH fragments (performance text about other people):**
+- `fad-plastic`, `lys-bui`
+
+**Remediation:** clear the wrong text and re-source real bios (artist-supplied or from
+authoritative archive), one at a time with verification. Likely root cause: the same
+auto-population step that produced the scobi-wan corruption (grabbed nearby event text
+or matched the wrong person).
+
+**Known FALSE POSITIVES the scan also flags — do NOT touch (bios are correct):** legit
+third-person bios that simply don't restate the artist's name (`felipe-calderon-nurmi`,
+`van-thanh-trung`, `nic-ford`, `doan-thanh-toan`, `nguyen-thuy-tien`, `quoc-anh-le`,
+`tran-kim-ngoc`, `mr-bambii`, `luu-chu`, `douglas-schmidt`, `attiss-ngo`, `hoai-anh`,
+`mai-anh`, `chinh-ba`, `nguyen-do-minh-quan`, `vu-duc-toan`, `pamela-n-corey`,
+`aliansyah-caniago`, `bagus-mazasupa-anwarridwan`, `tanya-amador`); real duo bio
+(`z1-studio`); residency/foreign-geo mentions (`le-phi-long`, `truong-tan`); and the
+intentional `[stub …]` placeholders (`tran-phuong-thao`, `que`).
+
 ## Resolved
 
 ### [RESOLVED-001] All inquiry forms broken
