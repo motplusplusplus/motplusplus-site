@@ -1,4 +1,6 @@
 /**
+ * Migration complete 2026-06-12. Retained for reference only. Do not re-run.
+ *
  * migrate-json-only-events.mjs
  * Migrates the JSON-only public events (from scripts/json-only-events-audit.json)
  * into Sanity. Uses the audit as the authoritative slug+category list, and pulls

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getAllEvents, getAllEventSlugs, getEventBySlug, getAllEventsFromJson } from "@/lib/sanity";
 import { getListingEvents, getAdjacentEvents, isPast, BIO_SLUGS } from "@/lib/events";
 import EventContent from "@/components/EventContent";
+import { isJunkImage } from "@/lib/junk-images";
 
 export async function generateStaticParams() {
   const [sanitySlugs, jsonEvents] = await Promise.all([
@@ -13,13 +14,6 @@ export async function generateStaticParams() {
   const allSlugs = [...sanitySlugs, ...jsonOnlySlugs];
   return allSlugs.filter(slug => !BIO_SLUGS.has(slug)).map(slug => ({ slug }));
 }
-
-const SKIP = [
-  'logomot', 'a.farmlogo', 's-1-edited', 'amanaki_png', 'artboard',
-  'web-e1760', 'web-1-e1760', '3nam-2', 'ajar', 'artrepublik', 'codesurfing',
-  'formapubli', 'kirti', 'marg1n', 'matca', 'nbs', 'rr-1', 'vanguard', 'wdg',
-  'logo',
-];
 
 export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -42,10 +36,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   const { prev, next } = getAdjacentEvents(slug, listing);
   const past = isPast(event);
 
-  const galleryImages = event.images.filter(url => {
-    const filename = url.split('/').pop() || '';
-    return !SKIP.some(s => filename.toLowerCase().includes(s));
-  });
+  const galleryImages = event.images.filter(url => !isJunkImage(url));
 
   const AFARM_LOGO = 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg';
   const MOT_LOGO = '/motpluspluspluslogo.jpg';

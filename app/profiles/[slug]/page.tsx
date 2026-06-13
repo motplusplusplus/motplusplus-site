@@ -4,6 +4,7 @@ import { getArtist, getArtistSlugs, type Artist } from "@/lib/artists";
 import { getEventBySlug, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef, getMotsoundPerformerEditions } from "@/lib/sanity";
 import { BIO_SLUGS } from "@/lib/events";
 import { computeBadges } from "@/lib/badges";
+import { isJunkImage } from "@/lib/junk-images";
 import { allStudios } from "@/lib/studios";
 import ArtistGallery from "./ArtistGallery";
 import type { Metadata } from "next";
@@ -66,15 +67,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const displayDate = eventEntry?.displayDate || "";
 
   // Gallery images from the bio event entry (documentation photos), junk-filtered
-  const SKIP_PATTERNS = [
-    'logomot', 'a.farmlogo', 's-1-edited', 'amanaki_png', 'artboard',
-    'web-e1760', 'web-1-e1760', '3nam-2', 'ajar', 'artrepublik', 'codesurfing',
-    'formapubli', 'kirti', 'marg1n', 'matca', 'nbs', 'rr-1', 'vanguard', 'wdg', 'logo',
-  ];
-  const eventGallery = (eventEntry?.images ?? []).filter(url => {
-    const filename = url.split('/').pop() || '';
-    return !SKIP_PATTERNS.some(s => filename.toLowerCase().includes(s));
-  });
+  const eventGallery = (eventEntry?.images ?? []).filter(url => !isJunkImage(url));
 
   const sanityArtistId = sanityArtist?._id as string | undefined;
   const relatedEvents = sanityArtistId ? await getEventsByArtistRef(sanityArtistId) : [];

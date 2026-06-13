@@ -5,6 +5,7 @@ import { createClient } from '@sanity/client';
 // (A comment cannot live inside the JSON itself — it is a top-level array that is
 // imported and iterated — so the archive notice lives here and in events-data.ARCHIVE.md.)
 import eventsDataRaw from '../events-data.json';
+import { isJunkImage } from './junk-images';
 
 export const sanityClient = createClient({
   projectId: 't5nsm79o',
@@ -24,7 +25,7 @@ const buildClient = createClient({
 
 export async function getTrashItems() {
   return buildClient.fetch(`
-    *[_type == "trashItem" && active == true && (count(images) > 0 || count(uploadedImages) > 0 || count(legacyImageUrls) > 0) && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(sortOrder asc, artist asc) {
+    *[_type == "trashItem" && active == true && (count(images) > 0 || count(legacyImageUrls) > 0) && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(sortOrder asc, artist asc) {
       _id,
       artist,
       "artistSlug": artistRef->slug.current,
@@ -34,7 +35,6 @@ export async function getTrashItems() {
       dimensions,
       edition,
       description,
-      "uploadedImageUrls": uploadedImages[].asset->url,
       "directImageUrls": images[].asset->url,
       legacyImageUrls,
       "museumLocationId": museumLocationRef->._id,
@@ -174,23 +174,14 @@ export type SanityEvent = {
   artists: LinkedArtist[];
 };
 
-// Filenames that are logos/brand assets — never valid event images
-const JUNK_STEMS = [
-  'a.farmlogo', 'logomot', 's-1-edited', 'amanaki_png', 'artboard',
-  'web-e1760', 'web-1-e1760', '3nam-2', 'ajar', 'artrepublik',
-  'codesurfing', 'formapubli', 'kirti', 'marg1n', 'matca', 'nbs',
-  'rr-1', 'vanguard', 'wdg',
-];
-function isJunk(url: string): boolean {
-  const filename = url.split('/').pop()?.toLowerCase() ?? '';
-  return JUNK_STEMS.some(s => filename.includes(s));
-}
+// Junk/logo filename filtering lives in lib/junk-images.ts (isJunkImage), shared
+// with the event/profile pages.
 
 // Slug → ALL images from events-data.json (R2 CDN URLs), junk filtered
 const legacyImages: Record<string, string[]> = {};
 for (const e of eventsDataRaw as Array<{ slug: string; images?: string[] }>) {
   if (e.slug && e.images?.length) {
-    legacyImages[e.slug] = e.images.filter(u => !isJunk(u));
+    legacyImages[e.slug] = e.images.filter(u => !isJunkImage(u));
   }
 }
 
@@ -222,7 +213,7 @@ function dedupImages(urls: string[]): string[] {
 function toSanityEvent(e: RawEvent): SanityEvent {
   const uploaded = e.uploadedImageUrls ?? [];
   // Filter junk from Sanity legacyImageUrls (logos, brand assets mixed in during migration)
-  const legacy   = (e.legacyImageUrls ?? []).filter(u => !isJunk(u));
+  const legacy   = (e.legacyImageUrls ?? []).filter(u => !isJunkImage(u));
   const jsonImages = legacyImages[e.slug] ?? [];
   // Merge all sources then deduplicate — handles same photo uploaded to EN+VN folders in R2
   const images = dedupImages([...uploaded, ...legacy, ...jsonImages]);
