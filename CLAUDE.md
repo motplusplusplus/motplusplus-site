@@ -57,11 +57,11 @@
   `events-data.json` (Sanity wins on slug collision; JSON fills events not
   yet migrated). Bio-page event docs (`BIO_SLUGS` / `isBioPage`) are excluded
   from event generation and listings.
-- **Profile↔event linking** — two mechanisms: explicit `artists[]` reference
-  fields on Sanity events (primary; ~95% populated) and legacy name-matching
-  (`matchParts` in `lib/events.ts`, with blocklist/whitelist). Name matching
-  silently fails for 64 of 139 bios — do **not** loosen it to fix a missing
-  link; add an explicit Sanity reference instead. Long-term plan: refs only.
+- **Profile↔event linking** — **explicit `artists[]` reference fields on Sanity
+  events only**. Legacy name-matching (`matchParts`) was deleted 2026-06-12
+  (RESOLVED-004); see ARCHITECTURE.md §4. To fix a missing profile↔event link,
+  add an explicit `artists[]` ref on the event in Sanity — never reintroduce
+  fuzzy matching.
 - **Badge taxonomy** — lives in `lib/badges.ts`; read before modifying
   profile display or filters.
 
@@ -101,8 +101,8 @@
 - `artists-data.json` — artist profiles + flags (resident/studioHost/curator)
 - `studios-data.json` — A.Farm studio supplement (hostSlug, locationKeywords,
   portraitPairs, video URLs)
-- `lib/events.ts` — `BIO_SLUGS`, `HIDDEN_SLUGS` (authoritative lists) +
-  name-matching logic
+- `lib/events.ts` — `BIO_SLUGS`, `HIDDEN_SLUGS` (authoritative lists),
+  category list + date/listing helpers (name-matching removed 2026-06-12)
 - `lib/badges.ts` — badge taxonomy and `computeBadges()`; read before
   modifying profile display or filters
 - Run `node scripts/export-sanity-backup.mjs` periodically to create a local

@@ -127,6 +127,8 @@ Their `bio` field is now empty (unset) pending text supplied by the artist:
 `annie-thao-phan`, `ken-ueno`, `ho-tuong-danh`, `ayano-otani`, `duy-bao`,
 `fad-plastic`, `lys-bui`.
 
+## Resolved
+
 ### [ISSUE-010] Likely duplicate artist profiles
 **Reported:** 2026-06-13
 **Updated:** 2026-06-13
@@ -218,8 +220,6 @@ token is created in the Cloudflare dashboard and pasted in, `npm run deploy`
 prints a skip warning (harmless: `verify-deploy` still catches stale HTML). The
 zone "Cache Everything" rule could also be narrowed to not Cache-Everything
 `text/html`, but `must-revalidate` already keeps HTML fresh, so this is optional.
-
-## Resolved
 
 ### [RESOLVED-001] All inquiry forms broken
 Fixed: 2026-06-11 — replaced POST /submit-inquiry with mailto on all three forms (commit 299adc5)
