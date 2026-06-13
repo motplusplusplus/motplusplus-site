@@ -8,7 +8,15 @@ Claude Code should read this file at the start of every session and flag any ope
 **Reported:** 2026-06-12
 **Updated:** 2026-06-13
 **Priority:** medium
-**Status:** partially resolved — awaiting final bio text and confirmation of curator credits from artist
+**Status:** partially resolved — awaiting final bio text from artist
+
+Resolved 2026-06-13:
+- Added missing `artists[]` refs to `alec-schachner` for three events that
+  name him in their copy but didn't yet reference his doc: `mot-sound-5`
+  (performer, Nothing+ Trio with ben-litwicki + van-thanh-trung),
+  `mot-sound-7` (named as Hanoi-based sound artist in collaboration with
+  Alex McCarl), and `mot-sound-16-poetry-plus-vol-3` (credited as MoTsound
+  curator). `alec-schachner` now has 9 event refs total (was 6).
 
 Resolved 2026-06-13 (commit see `fix: Alec Schachner display name and data cleanup`):
 - Display name set to "Alec Schachner (Scobi Wan)".
@@ -31,14 +39,10 @@ Resolved 2026-06-13 (commit see `fix: Alec Schachner display name and data clean
 Still open (blocked on artist):
 - Final/authoritative bio text — current bio is accurate but may be superseded
   by the artist's own copy.
-- Missing curator/performer credits. He is NOT in artists-data.json (Sanity-only).
-  Candidate Sanity events that name him but do NOT yet ref his doc, pending
-  artist confirmation before adding `artists[]` refs:
-  - `mot-sound-5` — performer (Nothing+ trio, with ben-litwicki + van-thanh-trung)
-  - `mot-sound-7` — named in event copy
-  - `mot-sound-16-poetry-plus-vol-3` — credited as MoTsound curator
+- He is NOT in artists-data.json (Sanity-only) — low priority, profile already
+  renders fully from Sanity.
 - Currently connected events (all correct, none flagged): mot-sound-1, -2, -4,
-  -9-aconvergence, -10-anoise, -13-amoment.
+  -5, -7, -9-aconvergence, -10-anoise, -13-amoment, -16-poetry-plus-vol-3.
 
 ### [ISSUE-002] R2 bucket migration
 **Reported:** 2026-06-12
