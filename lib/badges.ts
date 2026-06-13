@@ -41,12 +41,31 @@ export function roleCategory(role?: string | null): string | null {
   return CURATOR_ROLES.has(r) ? r : null;
 }
 
+// ─── JSON-flag → Sanity migration status (audited 2026-06-14, ISSUE-006) ──────────
+// computeBadges still depends on three artists-data.json flags because Sanity does NOT
+// yet reliably cover them. Verified by cross-referencing every JSON flag against live
+// Sanity (`role` / `residencyStartDate` / `isAfarmResident`):
+//   • resident        — 72 JSON-flagged; 60 covered by Sanity, but 12 have NO Sanity
+//                       residencyStartDate AND no isAfarmResident: perrine-lievens,
+//                       celina-huynh, lai-dieu-ha, maxime-brygo, phuong-gio,
+//                       bang-nhat-linh, ngo-thanh-bac, weston-teruya, baby-reni,
+//                       enkhbold-togmidshiirev, lap-xuan, duong-tu-que. Dropping the
+//                       JSON fallback would remove their a.Farm badge → KEEP until those
+//                       12 get a residencyStartDate (or isAfarmResident) set in Sanity.
+//   • performancePlus — 43 JSON-flagged; Sanity has NO equivalent field at all → KEEP
+//                       until a Sanity boolean (e.g. isPerformancePlus) is added (§ISSUE-005-ish).
+//   • curator         — 3 JSON-flagged (karlie-ho, linh-le, david-willis); Sanity `role`
+//                       covers linh-le + david-willis, but karlie-ho's Sanity role is
+//                       empty and her curator status can't be independently verified →
+//                       KEEP until her Sanity role is set.
+// Retire each flag from the assembly sites (app/profiles/page.tsx and
+// app/profiles/[slug]/page.tsx) only AFTER the matching Sanity gap above is closed.
 export type PersonSignals = {
   slug: string;
-  role?: string | null;        // Sanity free-text role
-  hasResidency: boolean;       // defined(residencyStartDate) || isAfarmResident || JSON resident
-  isPerformancePlus: boolean;  // JSON performancePlus
-  motsoundEditions?: number[]; // editions performed at (from event refs)
+  role?: string | null;        // Sanity free-text role (JSON `curator` flag is the fallback — see audit above)
+  hasResidency: boolean;       // defined(residencyStartDate) || isAfarmResident || JSON resident (12 rely only on JSON)
+  isPerformancePlus: boolean;  // JSON performancePlus only — no Sanity field exists
+  motsoundEditions?: number[]; // editions performed at (from Sanity event refs — fully Sanity-sourced)
 };
 
 export type BadgeResult = {

@@ -79,10 +79,30 @@ Sanity artist role field is still free-text. Adding an enum would prevent typos 
 
 ### [ISSUE-006] Retire JSON flags from computeBadges
 **Reported:** 2026-06-12
+**Updated:** 2026-06-14
 **Priority:** low
-**Status:** open
+**Status:** open — audited; blocked on Sanity data gaps (no flag safely retirable yet)
 
 resident, curator, performancePlus flags in artists-data.json still feed computeBadges(). Once Sanity has reliable role/badge data these should be removed and badge logic reads purely from Sanity.
+
+**Audit 2026-06-14** (cross-referenced every JSON flag against live Sanity;
+findings also recorded inline in `lib/badges.ts` above `PersonSignals`):
+- **resident** — 72 JSON-flagged; **12** have NO Sanity `residencyStartDate`/
+  `isAfarmResident` (`perrine-lievens`, `celina-huynh`, `lai-dieu-ha`,
+  `maxime-brygo`, `phuong-gio`, `bang-nhat-linh`, `ngo-thanh-bac`,
+  `weston-teruya`, `baby-reni`, `enkhbold-togmidshiirev`, `lap-xuan`,
+  `duong-tu-que`). **Exit criteria:** set a residency signal on these 12 in
+  Sanity, then drop the `jsonResidentSlugs`/`artist.resident` fallback.
+- **performancePlus** — 43 JSON-flagged; **no Sanity field exists**. **Exit
+  criteria:** add an `isPerformancePlus` boolean to the `artist` schema +
+  backfill, then drop the JSON flag.
+- **curator** — only 3 JSON-flagged (`karlie-ho`, `linh-le`, `david-willis`);
+  Sanity `role` already covers `linh-le` + `david-willis`; **`karlie-ho`** has
+  an empty Sanity role and empty bio (curator status unverifiable). **Exit
+  criteria:** set `karlie-ho`'s Sanity `role` (if confirmed curator), then drop
+  the `artist.curator ? "curator" : null` fallback at both call sites.
+
+No flag was removed this session — each still covers cases Sanity does not.
 
 ### [ISSUE-007] studios-data.json migration
 **Reported:** 2026-06-12
