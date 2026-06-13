@@ -52,6 +52,7 @@ export default {
       '/profiles/pug-alex-williams': '/profiles/alex-williams/',
       '/profiles/do-nguyen-lap-xuan': '/profiles/lap-xuan/',
       '/profiles/scobi-wan': '/profiles/alec-schachner/',
+      '/profiles/writher': '/profiles/nguyen-hong-giang/',
     };
     const canonicalProfile = PROFILE_REDIRECTS[path.replace(/\/$/, '')];
     if (canonicalProfile) {

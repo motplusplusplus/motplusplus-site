@@ -105,24 +105,25 @@ Their `bio` field is now empty (unset) pending text supplied by the artist:
 
 ### [ISSUE-010] Likely duplicate artist profiles
 **Reported:** 2026-06-13
+**Updated:** 2026-06-13
 **Priority:** medium
-**Status:** open — needs consolidation (same pattern as ISSUE-001/RESOLVED-005)
+**Status:** partially resolved — writher/nguyen-hong-giang done; dan-nguyen pair still open
 
-Discovered while researching real bio text for ISSUE-008 Category B. No
-changes made to `writher` or `dan-nguyen-demonslayer` in this pass — both need
-human confirmation before retiring/redirecting.
+Discovered while researching real bio text for ISSUE-008 Category B.
 
+Resolved 2026-06-13:
 - **`nguyen-hong-giang` vs `writher`** — two Sanity `artist` docs for the same
-  person (Writher / Nguyễn Hồng Giang). `nguyen-hong-giang`
-  (_id=6143fbfe-5a8f-405a-876a-4558d1e0d449, 31 event refs spanning his whole
-  history) is clearly canonical and now carries the real "Writher (Nguyen Hong
-  Giang) is a Vietnamese producer…" bio (recovered from mot-sound-25).
-  `writher` (_id=d0fd76ff-6ca7-40d2-9ff7-fa1eb63b507a, active, 1 event ref:
-  mot-sound-25, bio is a truncated fragment of the same source text) looks
-  like the duplicate to retire — re-point its 1 ref to `nguyen-hong-giang`,
-  set `active:false`, and add a worker.js 301 `/profiles/writher` →
-  `/profiles/nguyen-hong-giang`, following the scobi-wan/alec-schachner
-  precedent (RESOLVED-005-style consolidation under ISSUE-001).
+  person (Writher / Nguyễn Hồng Giang). Consolidated into canonical
+  `nguyen-hong-giang` (_id=6143fbfe-5a8f-405a-876a-4558d1e0d449, now 32 event
+  refs spanning his whole history, including mot-sound-25). `writher`
+  (_id=d0fd76ff-6ca7-40d2-9ff7-fa1eb63b507a) had its 1 event ref
+  (mot-sound-25) re-pointed to `nguyen-hong-giang`, set to `active:false`,
+  and had its (truncated-fragment) bio cleared. Added worker.js 301
+  `/profiles/writher` → `/profiles/nguyen-hong-giang/`, following the
+  scobi-wan/alec-schachner precedent (RESOLVED-005-style consolidation under
+  ISSUE-001).
+
+Still open — needs human confirmation before retiring/redirecting:
 
 - **`dan-nguyen` vs `dan-nguyen-demonslayer`** — `dan-nguyen` is a Sanity
   `artist` doc (_id=89c1428d-b8f0-4b3d-af80-22f43a336c3f, now carries the real
