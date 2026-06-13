@@ -138,6 +138,67 @@ Resolved 2026-06-13:
   worker.js 301 `/profiles/dan-nguyen-demonslayer` → `/profiles/dan-nguyen/`,
   mirroring the `pug-alex-williams` precedent (RESOLVED-005).
 
+### [ISSUE-011] Live site served stale (April 2026) build for months — stale asset manifest + edge cache
+**Reported:** 2026-06-13
+**Updated:** 2026-06-13
+**Priority:** ~~critical~~ → resolved (primary); one low-priority follow-up open
+**Status:** RESOLVED 2026-06-13 — site now serves the current build. One optional hardening item remains (cache-purge token).
+
+What looked like an edge-cache problem was actually **two compounding layers**.
+Full diagnosis + fix in ARCHITECTURE.md §9.
+
+**Layer 1 (primary, was invisible): stale static-asset manifest.** The worker
+*script* updated on every deploy (301 redirects always reflected the latest
+`worker.js`), but the deployed version kept serving the **April build's static
+assets**. Proof: build-id-specific asset URLs — which cannot be edge-cache
+artifacts — 404'd on the live site (`/_next/static/<NEW_BUILD_ID>/_buildManifest.js`
+→ 404) while April chunks → 200. Two causes:
+  1. **wrangler 4.68.0 asset-manifest bug** — `wrangler deploy` reported
+     success ("Uploaded N files … Total Upload: 3.37 KiB") but the deployed
+     version's asset manifest did not advance to the new build.
+  2. **GitHub Action race** — the "Deploy site" workflow (fired by the Sanity
+     Studio deploy button via `workflow_dispatch`, and `repository_dispatch`)
+     re-deployed `origin/main` seconds after local deploys, and could clobber a
+     good local deploy with a stale asset set (the asset-layer twin of
+     RESOLVED-002's deploy-reversion hazard).
+
+**Layer 2 (secondary, masking): zone "Cache Everything" rule.** HTML served
+with `cf-cache-status: HIT` even with a random `?cb=` query (cache key ignores
+query string) and `cache-control` rewritten from the worker's `private,no-store`
+to `public, max-age=0, must-revalidate`. Because of `must-revalidate` the edge
+revalidates each request, so once Layer 1 was fixed the HTML self-corrected —
+which is why earlier "Purge Everything" attempts seemed not to help (they were
+fighting Layer 1, the asset manifest, which a purge can't touch).
+
+**Resolution (2026-06-13):**
+- **Disabled the "Deploy site" GitHub Action** (`gh workflow disable` → state
+  `disabled_manually`) so automation can no longer race/clobber deploys.
+  ⚠️ Side effect: the Sanity Studio "deploy" button no longer triggers a build
+  until the workflow is re-enabled. Re-enable only after the workflow is made
+  safe (e.g. it deploys exactly the pushed `origin/main` and can't run stale).
+- **Upgraded wrangler 4.68.0 → 4.100.0** (`devDependencies`). After the upgrade,
+  a clean `rm -rf .next out && next build && wrangler deploy` made the asset
+  manifest advance: new build-id assets now return **200** and the live
+  homepage embeds the new BUILD_ID. Verified live = byte-identical to the local
+  build (`/trash/`, `/profiles/dan-nguyen/`, homepage).
+- **Rewrote `scripts/verify-deploy.js`** so this can never silently regress: it
+  now fails loudly if the live site isn't serving the just-built BUILD_ID
+  (fetches `/_next/static/<BUILD_ID>/_buildManifest.js` and checks the live
+  homepage HTML embeds the BUILD_ID) **before** the existing >500 KB chunk
+  checks.
+- **Wired an edge-cache purge into `scripts/deploy.js`** (runs after deploy,
+  before verify) gated on `CLOUDFLARE_ZONE_ID` + `CLOUDFLARE_CACHE_PURGE_TOKEN`
+  from `.env.local`; warns and skips if not set.
+
+**Remaining (low priority):** the deploy token still lacks `Zone > Cache Purge`
+(API returns auth error 10000) and can't read/modify the zone cache ruleset
+(needs `Zone > Cache Rules`). `CLOUDFLARE_ZONE_ID` is set in `.env.local` and
+`CLOUDFLARE_CACHE_PURGE_TOKEN` is present but **blank** — until a Cache-Purge
+token is created in the Cloudflare dashboard and pasted in, `npm run deploy`
+prints a skip warning (harmless: `verify-deploy` still catches stale HTML). The
+zone "Cache Everything" rule could also be narrowed to not Cache-Everything
+`text/html`, but `must-revalidate` already keeps HTML fresh, so this is optional.
+
 ## Resolved
 
 ### [RESOLVED-001] All inquiry forms broken

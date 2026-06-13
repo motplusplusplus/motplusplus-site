@@ -18,14 +18,19 @@
      `CLOUDFLARE_ACCOUNT_ID` from `.env.local` automatically.
   2. Aborts with a clear error if the working tree isn't clean or local
      `main` isn't in sync with `origin/main`.
-  3. Does a clean build (`rm -rf .next && next build`).
-  4. Runs `wrangler deploy`, then `verify-deploy`.
+  3. Does a clean build (`rm -rf .next out && next build`).
+  4. Runs `wrangler deploy`, purges the edge cache (if a purge token is set),
+     then `verify-deploy` — which now FAILS if the live site isn't serving the
+     just-built BUILD_ID (catches the stale-asset-manifest bug; ISSUE-011 / §9).
 - **Commit and push to `origin/main` must precede every deploy, without
   exception** — `npm run deploy` enforces this. A GitHub Action
   (`.github/workflows/deploy.yml`) can be triggered at any time and
   redeploys whatever is on `origin/main` — any deployed-but-unpushed local
   commits would otherwise be silently reverted on the live site. This has
-  happened before (pages disappeared).
+  happened before (pages disappeared). **The Action is currently
+  `disabled_manually`** (2026-06-13) — it was racing local deploys and
+  re-shipping a stale asset manifest (ISSUE-011 / ARCHITECTURE.md §9), so the
+  Sanity Studio deploy button is inert until the workflow is re-enabled safely.
 - Credentials: `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` /
   `NEXT_PUBLIC_MAPBOX_TOKEN` live in `.env.local` (gitignored, not stored in
   this repo). Workers account ≠ R2 account — they are different Cloudflare
@@ -33,6 +38,14 @@
 - If `verify-deploy` fails (Workers Assets large-file 404 bug): make a
   trivial change to `components/MuseumMap.tsx`, commit, push, and re-run
   `npm run deploy`.
+- **Edge-cache purge is wired into `npm run deploy`** but is **inert until a
+  token is set**: add a `Zone > Cache Purge > Purge` token as
+  `CLOUDFLARE_CACHE_PURGE_TOKEN` in `.env.local` (`CLOUDFLARE_ZONE_ID` is already
+  there). Until then deploy prints a skip warning; `verify-deploy` still fails
+  loudly on stale HTML. To purge manually: Cloudflare dashboard →
+  motplusplusplus.com → Caching → Configuration → Purge Cache. The zone uses
+  `must-revalidate`, so HTML self-corrects once assets are correct. See
+  ISSUE-011 / ARCHITECTURE.md §9.
 
 ## Key systems (details in ARCHITECTURE.md)
 - **Profiles** — canonical artist pages at `/profiles/[slug]`; `/residents/*`

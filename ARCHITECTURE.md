@@ -529,3 +529,85 @@ has no read or write for `inquiry` at all**. All three contact surfaces
 "Completed", commit `299adc5`). The schema exists for a possible future
 Studio-side inquiry inbox but is currently dead on the content side — not a
 bug, just unused.
+
+---
+
+## 9. Deploy pipeline — known issues and mitigations
+
+The deploy path is **asset-first** (§1): a matching static asset in the deployed
+worker version is served *before* `worker.js` runs. That makes two failure modes
+possible where the **worker code looks updated (redirects work) but pages are
+stale**, because pages come from the asset layer, not the worker. Both bit
+production hard (the live site served an April 2026 build for ~2 months — see
+ISSUE-011). What follows is the durable understanding and the guardrails now in
+place.
+
+### 9.1 Stale static-asset manifest (the severe one)
+
+**Symptom:** `worker.js` redirects reflect the latest code, but every static
+page serves an old build. **Tell-tale check:** a build-id-specific asset URL —
+which *cannot* be an edge-cache artifact because the URL is unique per build —
+404s on the live site:
+
+```
+curl -s -o /dev/null -w "%{http_code}" \
+  "https://motplusplusplus.com/_next/static/$(cat .next/BUILD_ID)/_buildManifest.js"
+# 200 = new assets are live; 404 = deployed version is serving an OLD asset manifest
+```
+
+**Root causes seen:**
+- **Outdated wrangler.** wrangler `4.68.0`'s `wrangler deploy` reported success
+  but did not advance the deployed version's asset manifest to the new build
+  ("Uploaded N files … Total Upload: 3.37 KiB" with the new build 404ing live).
+  Upgrading to `4.100.0` fixed it. **Keep wrangler current.**
+- **The GitHub Action race (asset-layer twin of the §1 reversion hazard).** The
+  "Deploy site" workflow (`.github/workflows/deploy.yml`) is triggered by the
+  Sanity Studio deploy button (`workflow_dispatch`) and `repository_dispatch`.
+  It can fire seconds after a local deploy and re-deploy `origin/main`,
+  clobbering a good local deploy with a stale asset set. **It is currently
+  `disabled_manually`** (`gh workflow disable "Deploy site"`). Re-enable only
+  after making it safe; while disabled, the Studio deploy button does nothing.
+
+**Note on "Total Upload: 3.37 KiB".** This is *normal* and not the bug:
+Workers Assets is content-addressed, so files whose content is unchanged across
+builds (e.g. `_buildManifest.js` when chunks didn't change) are "already
+uploaded" even though their build-id *path* is new. What matters is whether the
+version's **path manifest** resolves the new paths — verify by fetching the new
+build-id asset (above), not by reading the upload byte count.
+
+### 9.2 Zone "Cache Everything" rule (the masking one)
+
+A zone Cache rule caches HTML: responses show `cf-cache-status: HIT` even with a
+random `?cb=` query (cache key ignores query string), and `cache-control` is
+rewritten from the worker's `private, no-store` to `public, max-age=0,
+must-revalidate`. Because of `must-revalidate` the edge revalidates each request
+against origin, so HTML self-corrects once the asset layer is right — which is
+why "Purge Everything" appeared not to help during the incident (it was fighting
+§9.1, which a purge cannot fix). The rule is a latent risk; it could be narrowed
+to exclude `text/html`, but `must-revalidate` currently keeps HTML fresh.
+
+### 9.3 Guardrails now in place
+
+- **`scripts/verify-deploy.js` (rewritten 2026-06-13)** fails loudly if the live
+  site is not serving the just-built `BUILD_ID`: it fetches
+  `/_next/static/<BUILD_ID>/_buildManifest.js` (must be 200) and checks the live
+  homepage HTML embeds the `BUILD_ID`, *before* the original >500 KB chunk
+  checks. The old version only checked large chunks and gave false confidence
+  for months.
+- **`scripts/deploy.js`** now cleans `out/` as well as `.next/`, and after
+  `wrangler deploy` purges the edge cache (`purge_everything`) when
+  `CLOUDFLARE_ZONE_ID` + `CLOUDFLARE_CACHE_PURGE_TOKEN` are set in `.env.local`,
+  then runs `verify-deploy`.
+
+### 9.4 Cache-purge token setup (one manual step, optional)
+
+The Workers deploy token (`CLOUDFLARE_API_TOKEN`) cannot purge cache or read the
+cache ruleset (API auth error 10000). To enable automatic post-deploy purging:
+
+1. Cloudflare dashboard → My Profile → API Tokens → Create Token → permission
+   **Zone › Cache Purge › Purge**, scoped to `motplusplusplus.com`.
+2. Paste it into `.env.local` as `CLOUDFLARE_CACHE_PURGE_TOKEN=` (the
+   `CLOUDFLARE_ZONE_ID=4ddf948a61d4b4884144efee58d821b0` line is already there).
+
+Until then `npm run deploy` prints a skip warning and relies on the HTML
+`must-revalidate` behavior (§9.2) plus `verify-deploy` catching any stale HTML.
