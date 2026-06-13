@@ -87,58 +87,51 @@ resident, curator, performancePlus flags in artists-data.json still feed compute
 
 hostSlug, locationKeywords, portraitPairs, video URLs still live in studios-data.json. Requires Sanity schema additions for afarmHost type before migrating.
 
-### [ISSUE-008] Systematic bio corruption across artist docs
+### [ISSUE-009] Empty bios pending artist-supplied content
 **Reported:** 2026-06-13
-**Priority:** high
-**Status:** open — needs human/artist verification before rewriting (do NOT bulk-auto-fix)
+**Priority:** low
+**Status:** open — content gathering, not a defect
 
-The defect that hit scobi-wan/alec-schachner (see ISSUE-001 / RESOLVED-004 lineage)
-is widespread. A batch/migration process populated many `bio` fields with the WRONG
-content — either another artist's biography verbatim, or raw event/participant-list
-text. Found via read-only scan `scripts/scan-bios.mjs` (226 active docs, 219 with
-bios). ~34 docs affected (plus the 2 already fixed). Re-run that script after fixes.
+As part of the ISSUE-008 cleanup (see RESOLVED-007), the docs below had
+corrupted/misassigned bio text removed, and no real replacement text could be
+found in `events-data.json`, `artists-data.json`, or `CONTENT-ARCHIVE.md`.
+Their `bio` field is now empty (unset) pending text supplied by the artist:
 
-**A. MISASSIGNED — bio field holds a DIFFERENT named artist's biography (verbatim, confirmed):**
-- `sonar-lee` ← Aliansyah Caniago's old bio (the "Bandung Institute / Lee Wen /
-  Melati Suryodarmo" text — the *same* leak that was on scobi-wan)
-- `nguyen-giao-xuan` ← Đỗ Nguyễn Lập Xuân's bio
-- `sto-len` ← Đỗ Nguyễn Lập Xuân's bio
-- `kin` ← Trần Minh Đức's bio (after a stray opening sentence)
-- `anh-tran` ← Trần Minh Đức's bio
-- `hien-tran` ← Trần Minh Đức's bio
-- `mai-thi-tran` ← Trần Minh Đức's bio
-- `thy-tran` ← Trần Minh Đức's bio
-- `llama-olo` ← Trần Minh Đức's bio
-- `espen-iden` ← contains Ngô Thành Bắc's bio
-- (`anh-vo` ← opens with season-4 open-studio event text; one real sentence at the end)
-- Source docs `lap-xuan`, `tran-minh-duc`, `ngo-thanh-bac`, `aliansyah-caniago` are
-  themselves correct — only the copies leaked.
+`sonar-lee`, `nguyen-giao-xuan`, `sto-len`, `kin`, `anh-tran`, `hien-tran`,
+`mai-thi-tran`, `thy-tran`, `llama-olo`, `espen-iden`, `lu-nguyen`,
+`carl-stone`, `tran-van-thao`, `ngo-dinh-bao-chau`, `chicko`, `nguyen-van-du`,
+`annie-thao-phan`, `ken-ueno`, `ho-tuong-danh`, `ayano-otani`, `duy-bao`,
+`fad-plastic`, `lys-bui`.
 
-**B. EVENT-TEXT-AS-BIO — bio field holds an event description / participant roster, not a personal bio:**
-- "farm past residents / girl in red reopening" roster: `lu-nguyen`, `hoang-vu`,
-  `carl-stone`, `dan-nguyen`, `duy-nguyen`, `vuong-thien`, `bill-nguyen`,
-  `nguyen-hoa`, `tran-van-thao`, `nguyen-hong-giang`, `ngo-dinh-bao-chau`
-- "địa/phương ~ local-liti art walk" roster: `chicko`, `nguyen-van-du`
-- "performance plus 2019 artists:" roster: `mathieu-dufourg`, `tobias-ahlbrecht`, `nguyen-chung`
-- amanaki / other event rosters: `annie-thao-phan`, `ken-ueno`, `ho-tuong-danh`, `ayano-otani`
-- one-line event mention as bio: `duy-bao` ("mot sound #20 featured …")
+### [ISSUE-010] Likely duplicate artist profiles
+**Reported:** 2026-06-13
+**Priority:** medium
+**Status:** open — needs consolidation (same pattern as ISSUE-001/RESOLVED-005)
 
-**C. STITCHED / PRONOUN-SWITCH fragments (performance text about other people):**
-- `fad-plastic`, `lys-bui`
+Discovered while researching real bio text for ISSUE-008 Category B. No
+changes made to `writher` or `dan-nguyen-demonslayer` in this pass — both need
+human confirmation before retiring/redirecting.
 
-**Remediation:** clear the wrong text and re-source real bios (artist-supplied or from
-authoritative archive), one at a time with verification. Likely root cause: the same
-auto-population step that produced the scobi-wan corruption (grabbed nearby event text
-or matched the wrong person).
+- **`nguyen-hong-giang` vs `writher`** — two Sanity `artist` docs for the same
+  person (Writher / Nguyễn Hồng Giang). `nguyen-hong-giang`
+  (_id=6143fbfe-5a8f-405a-876a-4558d1e0d449, 31 event refs spanning his whole
+  history) is clearly canonical and now carries the real "Writher (Nguyen Hong
+  Giang) is a Vietnamese producer…" bio (recovered from mot-sound-25).
+  `writher` (_id=d0fd76ff-6ca7-40d2-9ff7-fa1eb63b507a, active, 1 event ref:
+  mot-sound-25, bio is a truncated fragment of the same source text) looks
+  like the duplicate to retire — re-point its 1 ref to `nguyen-hong-giang`,
+  set `active:false`, and add a worker.js 301 `/profiles/writher` →
+  `/profiles/nguyen-hong-giang`, following the scobi-wan/alec-schachner
+  precedent (RESOLVED-005-style consolidation under ISSUE-001).
 
-**Known FALSE POSITIVES the scan also flags — do NOT touch (bios are correct):** legit
-third-person bios that simply don't restate the artist's name (`felipe-calderon-nurmi`,
-`van-thanh-trung`, `nic-ford`, `doan-thanh-toan`, `nguyen-thuy-tien`, `quoc-anh-le`,
-`tran-kim-ngoc`, `mr-bambii`, `luu-chu`, `douglas-schmidt`, `attiss-ngo`, `hoai-anh`,
-`mai-anh`, `chinh-ba`, `nguyen-do-minh-quan`, `vu-duc-toan`, `pamela-n-corey`,
-`aliansyah-caniago`, `bagus-mazasupa-anwarridwan`, `tanya-amador`); real duo bio
-(`z1-studio`); residency/foreign-geo mentions (`le-phi-long`, `truong-tan`); and the
-intentional `[stub …]` placeholders (`tran-phuong-thao`, `que`).
+- **`dan-nguyen` vs `dan-nguyen-demonslayer`** — `dan-nguyen` is a Sanity
+  `artist` doc (_id=89c1428d-b8f0-4b3d-af80-22f43a336c3f, now carries the real
+  "Dan Nguyen (Demonslayer)" bio recovered from `artists-data.json`).
+  Separately, `dan-nguyen-demonslayer` is in `BIO_SLUGS` (`lib/events.ts`) with
+  its own `artists-data.json` entry holding the *same* bio text, which (per
+  ARCHITECTURE.md) generates its own `/profiles/dan-nguyen-demonslayer` page —
+  likely a second page for the same person. Needs confirmation + consolidation
+  (or a redirect) once a maintainer confirms these are the same person.
 
 ## Resolved
 
@@ -159,3 +152,46 @@ Fixed: 2026-06-11 — consolidated into alex-williams with 301 redirect (commit 
 
 ### [RESOLVED-006] Luke Schneider in site data
 Fixed: 2026-06-11 — purged from all site-facing sources (commit 5354c73)
+
+### [RESOLVED-007] Systematic bio corruption across artist docs (ISSUE-008)
+Fixed: 2026-06-13 — Categories A, B, and C all cleared/replaced (commit "fix: clear corrupted bios, all categories A/B/C (ISSUE-008)")
+
+**A. MISASSIGNED bios** (another artist's bio verbatim) — bio unset for
+`sonar-lee`, `nguyen-giao-xuan`, `sto-len`, `kin`, `anh-tran`, `hien-tran`,
+`mai-thi-tran`, `thy-tran`, `llama-olo`, `espen-iden`. `anh-vo` kept its one
+real sentence ("anh vo is a vietnamese choreographer and writer based in
+brooklyn, ny.") with the leaked season-4 open-studio roster text removed.
+Source docs `lap-xuan`, `tran-minh-duc`, `ngo-thanh-bac`, `aliansyah-caniago`
+were confirmed correct and left untouched.
+
+**B. EVENT-TEXT-AS-BIO** — real personal bio recovered from
+`events-data.json` / `artists-data.json` and written in for: `hoang-vu`,
+`dan-nguyen`, `duy-nguyen`, `vuong-thien`, `bill-nguyen`, `nguyen-hoa`,
+`nguyen-hong-giang`, `mathieu-dufourg`, `tobias-ahlbrecht`, `nguyen-chung`. No
+real bio text could be found for `lu-nguyen`, `carl-stone`, `tran-van-thao`,
+`ngo-dinh-bao-chau`, `chicko`, `nguyen-van-du`, `annie-thao-phan`, `ken-ueno`,
+`ho-tuong-danh`, `ayano-otani`, `duy-bao` — bio unset (see ISSUE-009).
+
+**C. STITCHED/PRONOUN-SWITCH fragments** — no real personal bio found for
+`fad-plastic` or `lys-bui`; bio unset (see ISSUE-009).
+
+Re-ran `scripts/scan-bios.mjs` after all fixes: none of the above slugs appear
+in the corrupted/event-blurb output anymore. Two of the new real bios
+(`dan-nguyen`, `bill-nguyen`) now trigger OWN-NAME-ABSENT / OWN-NAME-LATE —
+same false-positive pattern as `aliansyah-caniago` (legit third-person bio
+that doesn't restate the subject's name up front).
+
+**Known FALSE POSITIVES the scan also flags — do NOT touch (bios are
+correct):** legit third-person bios that simply don't restate the artist's
+name (`felipe-calderon-nurmi`, `van-thanh-trung`, `nic-ford`,
+`doan-thanh-toan`, `nguyen-thuy-tien`, `quoc-anh-le`, `tran-kim-ngoc`,
+`mr-bambii`, `luu-chu`, `douglas-schmidt`, `attiss-ngo`, `hoai-anh`, `mai-anh`,
+`chinh-ba`, `nguyen-do-minh-quan`, `vu-duc-toan`, `pamela-n-corey`,
+`aliansyah-caniago`, `bagus-mazasupa-anwarridwan`, `tanya-amador`,
+`dan-nguyen`, `bill-nguyen`); real duo bio (`z1-studio`); residency/foreign-geo
+mentions (`le-phi-long`, `truong-tan`); and the intentional `[stub …]`
+placeholders (`tran-phuong-thao`, `que`).
+
+Two likely duplicate artist profiles were discovered during Category B
+research (`writher`/`nguyen-hong-giang` and `dan-nguyen`/`dan-nguyen-demonslayer`)
+— tracked separately as ISSUE-010, not fixed here.
