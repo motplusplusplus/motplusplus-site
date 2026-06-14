@@ -93,6 +93,42 @@
   blanks the WebGL canvas in all browsers. Correct pattern:
   `filter: grayscale(1)` directly on `.mapboxgl-canvas`.
 
+## CRITICAL: Museum Map / Mapbox Token
+
+The museum map WILL silently break if any of these rules are violated:
+
+1. **Always use `npm run deploy`** — never `npx wrangler deploy` or
+   `wrangler deploy` directly. The deploy script loads `.env.local`, which
+   bakes `NEXT_PUBLIC_MAPBOX_TOKEN` into the build at compile time. Without
+   this, the token resolves to `""` and `MuseumMap.tsx` silently returns early
+   (no error, no map).
+
+2. **Always build with webpack.** Next.js 16 defaults `next build` to
+   Turbopack, which does NOT inline `NEXT_PUBLIC_*` env vars the way webpack
+   does. Both the `build` script (`package.json`: `next build --webpack`) and
+   `scripts/deploy.js` (`npx next build --webpack`) force webpack for this
+   reason — do not remove the flag.
+
+3. **GitHub Actions secret.** `.github/workflows/deploy.yml` reads
+   `NEXT_PUBLIC_MAPBOX_TOKEN` from `secrets.NEXT_PUBLIC_MAPBOX_TOKEN` and fails
+   the build loudly if it's unset. As of 2026-06-14 this secret has NOT been
+   added to the repo. Until it is, do not re-enable the push trigger in
+   `deploy.yml` (currently commented out / `disabled_manually` — see
+   "Deploy — HARD RULES" above). Once the secret is added, the push trigger can
+   safely be re-enabled.
+
+4. **Verifying a deploy fixed the map** — after any deploy, run:
+   ```
+   curl -s https://motplusplusplus.com/museum/ \
+     | grep -oE '/_next/static/chunks/app/museum/page-[a-f0-9]+\.js' | head -1
+   ```
+   then fetch that path (prefixed with `https://motplusplusplus.com`) and grep
+   for `pk.eyJ` — if present, the token is inlined correctly.
+
+Root cause history: this issue recurred multiple times (2026-05 through
+2026-06) because each repair used `wrangler deploy` or bare `next build`
+without `--webpack`, stripping the token again on the next deploy.
+
 ## Key data files
 - `events-data.json` — **LEGACY ARCHIVE** (339 events). All public events now
   live in Sanity (sole source of truth). Retained only as a backup snapshot and

@@ -32,8 +32,10 @@ talks to Sanity at request time.
 
 ### Deploy pipeline
 
-1. `npm run build` → static export to `out/` (fails without
-   `NEXT_PUBLIC_MAPBOX_TOKEN`, kept in `.env.local`).
+1. `npm run build` (= `next build --webpack`) → static export to `out/` (fails
+   without `NEXT_PUBLIC_MAPBOX_TOKEN`, kept in `.env.local`). **Must use
+   webpack** — Turbopack (the Next.js 16 default for `next build`) does not
+   inline `NEXT_PUBLIC_*` env vars at build time; see §9.5.
 2. `npm run deploy` → `predeploy` token check → `wrangler deploy` →
    `verify-deploy` (checks large JS chunks are actually served — Workers
    Assets has a known bug silently 404ing files >500KB; this broke the museum
@@ -611,3 +613,30 @@ cache ruleset (API auth error 10000). To enable automatic post-deploy purging:
 
 Until then `npm run deploy` prints a skip warning and relies on the HTML
 `must-revalidate` behavior (§9.2) plus `verify-deploy` catching any stale HTML.
+
+### 9.5 Mapbox token must be inlined at build time (webpack, not Turbopack)
+
+`NEXT_PUBLIC_MAPBOX_TOKEN` is a **build-time** secret: Next.js inlines
+`NEXT_PUBLIC_*` env vars into the client JS bundle when `next build` runs, so
+`MuseumMap.tsx` (and the `+1 Museum` map it renders) reads it from
+`process.env.NEXT_PUBLIC_MAPBOX_TOKEN` baked into the static export — there is
+no runtime injection on this static-export site (§1).
+
+- **Turbopack does not do this inlining.** Next.js 16 makes Turbopack the
+  default `next build` engine, but it does not substitute `NEXT_PUBLIC_*`
+  references the way webpack does. A Turbopack build ships `""` for the
+  token, and `MuseumMap.tsx` silently returns early — no error, just a blank
+  map.
+- **Mitigation:** both `package.json`'s `build` script (`next build --webpack`)
+  and `scripts/deploy.js` (`npx next build --webpack`) force the webpack
+  compiler. Do not remove `--webpack` from either.
+- **Token source:**
+  - Local builds/deploys: `.env.local` (gitignored), loaded by
+    `scripts/deploy.js` via `@next/env`.
+  - CI (`deploy.yml`): `secrets.NEXT_PUBLIC_MAPBOX_TOKEN` — the workflow's
+    build step fails loudly if this secret is unset. As of 2026-06-14 it has
+    not been added to the repo's Actions secrets (the push trigger is also
+    disabled — see §9.3).
+- **Verifying the token is live:** fetch the museum page's JS chunk
+  (`/_next/static/chunks/app/museum/page-<hash>.js`) and grep for `pk.eyJ` —
+  its presence confirms the token was inlined correctly.
