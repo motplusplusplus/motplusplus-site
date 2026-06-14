@@ -16,7 +16,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'artist\'s studio',
     neighbourhood: 'District 5',
     coordinates: { lat: 10.76217, lng: 106.670231 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/bougie-bapteme-ceremonie-personnalisable-20140724112548.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/bougie-bapteme-ceremonie-personnalisable-20140724112548.jpg',
   },
   {
     _id: 'demo-2',
@@ -32,7 +32,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'small hotel lobby',
     neighbourhood: 'District 6',
     coordinates: { lat: 10.747944, lng: 106.645411 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dsc01147.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dsc01147.jpg',
   },
   {
     _id: 'demo-3',
@@ -49,7 +49,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.791801, lng: 106.728221 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn3017-thumb-250x187-5044.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn3017-thumb-250x187-5044.jpg',
   },
   {
     _id: 'demo-4',
@@ -65,7 +65,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'District 7',
     coordinates: { lat: 10.72775, lng: 106.721288 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_29_2.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_29_2.jpg',
   },
   {
     _id: 'demo-5',
@@ -83,7 +83,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.801469, lng: 106.65373 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/4915-a0945c0a8325cb25d0ec9e18acb953e2.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/4915-a0945c0a8325cb25d0ec9e18acb953e2.jpg',
   },
   {
     _id: 'demo-6',
@@ -99,7 +99,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'tailor\'s shop',
     neighbourhood: 'Phú Nhuận',
     coordinates: { lat: 10.806278, lng: 106.676243 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/tranchée_des_baïonnettes_-_reste_de_fusil.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/tranchée_des_baïonnettes_-_reste_de_fusil.jpg',
   },
   {
     _id: 'demo-7',
@@ -116,7 +116,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'neighbourhood café',
     neighbourhood: 'District 5',
     coordinates: { lat: 10.759367, lng: 106.666762 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_3_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_3_.jpg',
   },
   {
     _id: 'demo-8',
@@ -133,7 +133,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.768304, lng: 106.699878 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/102_0295_1_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/102_0295_1_.jpg',
   },
   {
     _id: 'demo-9',
@@ -150,7 +150,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'corner pharmacy',
     neighbourhood: 'District 6',
     coordinates: { lat: 10.755532, lng: 106.632394 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/original.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/original.jpg',
   },
   {
     _id: 'demo-10',
@@ -167,7 +167,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'small hotel lobby',
     neighbourhood: 'District 3',
     coordinates: { lat: 10.775601, lng: 106.688743 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/pict0126.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/pict0126.jpg',
   },
   {
     _id: 'demo-11',
@@ -184,7 +184,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'roof garden',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.790832, lng: 106.746994 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_11_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_11_.jpg',
   },
   {
     _id: 'demo-12',
@@ -201,7 +201,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'District 6',
     coordinates: { lat: 10.744063, lng: 106.631667 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/vize-antik-14b.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/vize-antik-14b.jpg',
   },
   {
     _id: 'demo-13',
@@ -218,7 +218,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.817636, lng: 106.717386 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_33_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_33_.jpg',
   },
   {
     _id: 'demo-14',
@@ -235,7 +235,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'printing house',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.790699, lng: 106.740076 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/telhas-4-est.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/telhas-4-est.jpg',
   },
   {
     _id: 'demo-15',
@@ -251,7 +251,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'District 4',
     coordinates: { lat: 10.758021, lng: 106.707596 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/visok11g.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/visok11g.jpg',
   },
   {
     _id: 'demo-16',
@@ -268,7 +268,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'fabric market stall',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.789791, lng: 106.739445 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_66_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_66_.jpg',
   },
   {
     _id: 'demo-18',
@@ -286,7 +286,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'Phú Nhuận',
     coordinates: { lat: 10.808568, lng: 106.687035 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_20_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_20_.jpg',
   },
   {
     _id: 'demo-19',
@@ -303,7 +303,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'photo studio',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.769687, lng: 106.696387 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_4_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_4_.jpg',
   },
   {
     _id: 'demo-20',
@@ -320,7 +320,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.778279, lng: 106.696588 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_12_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_12_.jpg',
   },
   {
     _id: 'demo-21',
@@ -336,7 +336,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.774042, lng: 106.702024 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/p6030002.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/p6030002.jpg',
   },
   {
     _id: 'demo-22',
@@ -354,7 +354,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'printing house',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.819166, lng: 106.71693 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/b7282f191ff077343997fdba2b02ceb4.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/b7282f191ff077343997fdba2b02ceb4.jpg',
   },
   {
     _id: 'demo-23',
@@ -371,7 +371,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'Phú Nhuận',
     coordinates: { lat: 10.796732, lng: 106.687905 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_1_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_1_.jpg',
   },
   {
     _id: 'demo-24',
@@ -389,7 +389,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'tailor\'s shop',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.804848, lng: 106.719292 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imag0030_zoe001.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imag0030_zoe001.jpg',
   },
   {
     _id: 'demo-25',
@@ -406,7 +406,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.80812, lng: 106.71184 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/10602-1217677717.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/10602-1217677717.jpg',
   },
   {
     _id: 'demo-26',
@@ -423,7 +423,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'bookshop',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.808386, lng: 106.655032 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imag0026_8_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imag0026_8_.jpg',
   },
   {
     _id: 'demo-29',
@@ -439,7 +439,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.805092, lng: 106.712167 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/20111022_2c6e1ca369ccca1be585yop1po1i4s1t.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/20111022_2c6e1ca369ccca1be585yop1po1i4s1t.jpg',
   },
   {
     _id: 'demo-30',
@@ -456,7 +456,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'District 5',
     coordinates: { lat: 10.759915, lng: 106.672312 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn2841_3_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn2841_3_.jpg',
   },
   {
     _id: 'demo-31',
@@ -474,7 +474,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.766912, lng: 106.69664 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imgp0086s.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imgp0086s.jpg',
   },
   {
     _id: 'demo-32',
@@ -491,7 +491,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'tailor\'s shop',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.808436, lng: 106.74437 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/102_0268.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/102_0268.jpg',
   },
   {
     _id: 'demo-33',
@@ -507,7 +507,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'neighbourhood café',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.807019, lng: 106.738823 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/102_0295_2_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/102_0295_2_.jpg',
   },
   {
     _id: 'demo-34',
@@ -523,7 +523,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'artist\'s studio',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.803988, lng: 106.721891 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imag0027.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imag0027.jpg',
   },
   {
     _id: 'demo-35',
@@ -540,7 +540,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.814841, lng: 106.710847 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn2137.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn2137.jpg',
   },
   {
     _id: 'demo-36',
@@ -556,7 +556,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.775441, lng: 106.703008 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/42227894dscn0817-jpg.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/42227894dscn0817-jpg.jpg',
   },
   {
     _id: 'demo-37',
@@ -572,7 +572,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'small hotel lobby',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.76404, lng: 106.700208 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/vandalismo_padroeira.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/vandalismo_padroeira.jpg',
   },
   {
     _id: 'demo-38',
@@ -590,7 +590,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.811981, lng: 106.650535 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_46_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_46_.jpg',
   },
   {
     _id: 'demo-39',
@@ -606,7 +606,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'District 10',
     coordinates: { lat: 10.779711, lng: 106.669836 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imag0024.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imag0024.jpg',
   },
   {
     _id: 'demo-40',
@@ -623,7 +623,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'District 5',
     coordinates: { lat: 10.75583, lng: 106.662811 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_18_2.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_18_2.jpg',
   },
   {
     _id: 'demo-41',
@@ -641,7 +641,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.778429, lng: 106.706375 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/thorne,_sarah_alice_bibbee,_2_death_cert.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/thorne,_sarah_alice_bibbee,_2_death_cert.jpg',
   },
   {
     _id: 'demo-42',
@@ -659,7 +659,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'District 10',
     coordinates: { lat: 10.786443, lng: 106.66346 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/102_0256_1_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/102_0256_1_.jpg',
   },
   {
     _id: 'demo-44',
@@ -675,7 +675,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.798409, lng: 106.75762 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imag0026_4_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imag0026_4_.jpg',
   },
   {
     _id: 'demo-45',
@@ -691,7 +691,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.811321, lng: 106.712973 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_45_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_45_.jpg',
   },
   {
     _id: 'demo-46',
@@ -708,7 +708,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'neighbourhood café',
     neighbourhood: 'District 6',
     coordinates: { lat: 10.749448, lng: 106.642965 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_28_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_28_.jpg',
   },
   {
     _id: 'demo-47',
@@ -724,7 +724,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'corner pharmacy',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.790292, lng: 106.752925 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_21_2.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_21_2.jpg',
   },
   {
     _id: 'demo-48',
@@ -741,7 +741,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'tailor\'s shop',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.804065, lng: 106.742284 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imgp0086_4_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imgp0086_4_.jpg',
   },
   {
     _id: 'demo-49',
@@ -757,7 +757,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'corner pharmacy',
     neighbourhood: 'District 3',
     coordinates: { lat: 10.782792, lng: 106.684941 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imag0020.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imag0020.jpg',
   },
   {
     _id: 'demo-50',
@@ -774,7 +774,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'printing house',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.810159, lng: 106.742248 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/81658.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/81658.jpg',
   },
   {
     _id: 'demo-51',
@@ -790,7 +790,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'photo studio',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.804938, lng: 106.713935 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/s-pict0498.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/s-pict0498.jpg',
   },
   {
     _id: 'demo-52',
@@ -808,7 +808,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'bookshop',
     neighbourhood: 'District 3',
     coordinates: { lat: 10.784067, lng: 106.682149 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/img5615a62dmjd7tc.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/img5615a62dmjd7tc.jpg',
   },
   {
     _id: 'demo-53',
@@ -824,7 +824,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'District 7',
     coordinates: { lat: 10.730972, lng: 106.704907 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscf1421_1_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscf1421_1_.jpg',
   },
   {
     _id: 'demo-54',
@@ -840,7 +840,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'corner pharmacy',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.766162, lng: 106.706935 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_49_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_49_.jpg',
   },
   {
     _id: 'demo-55',
@@ -856,7 +856,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'printing house',
     neighbourhood: 'District 5',
     coordinates: { lat: 10.759312, lng: 106.668098 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/20110619100229172.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/20110619100229172.jpg',
   },
   {
     _id: 'demo-56',
@@ -872,7 +872,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'Phú Nhuận',
     coordinates: { lat: 10.810086, lng: 106.682783 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn0817.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn0817.jpg',
   },
   {
     _id: 'demo-57',
@@ -889,7 +889,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'small hotel lobby',
     neighbourhood: 'District 6',
     coordinates: { lat: 10.758956, lng: 106.643935 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_25_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_25_.jpg',
   },
   {
     _id: 'demo-58',
@@ -907,7 +907,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.769377, lng: 106.699891 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_19_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_19_.jpg',
   },
   {
     _id: 'demo-59',
@@ -924,7 +924,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'bookshop',
     neighbourhood: 'District 4',
     coordinates: { lat: 10.757293, lng: 106.703894 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_58_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_58_.jpg',
   },
   {
     _id: 'demo-60',
@@ -942,7 +942,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'District 7',
     coordinates: { lat: 10.738497, lng: 106.71168 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/mg_1856.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/mg_1856.jpg',
   },
   {
     _id: 'demo-61',
@@ -958,7 +958,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'Phú Nhuận',
     coordinates: { lat: 10.799666, lng: 106.684187 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imgp0086_2_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imgp0086_2_.jpg',
   },
   {
     _id: 'demo-62',
@@ -974,7 +974,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'photo studio',
     neighbourhood: 'District 4',
     coordinates: { lat: 10.759385, lng: 106.706106 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_27_2.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_27_2.jpg',
   },
   {
     _id: 'demo-63',
@@ -992,7 +992,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.813722, lng: 106.655298 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/universidad_de_salamanca_020.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/universidad_de_salamanca_020.jpg',
   },
   {
     _id: 'demo-64',
@@ -1010,7 +1010,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'bookshop',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.797742, lng: 106.643775 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn3017s.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn3017s.jpg',
   },
   {
     _id: 'demo-65',
@@ -1026,7 +1026,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'District 7',
     coordinates: { lat: 10.742063, lng: 106.71676 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/post-190613-1315916405_thumb.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/post-190613-1315916405_thumb.jpg',
   },
   {
     _id: 'demo-66',
@@ -1043,7 +1043,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.772049, lng: 106.700277 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imag0026_2_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imag0026_2_.jpg',
   },
   {
     _id: 'demo-67',
@@ -1060,7 +1060,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'District 6',
     coordinates: { lat: 10.747576, lng: 106.641202 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/picture-1-300x295.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/picture-1-300x295.jpg',
   },
   {
     _id: 'demo-68',
@@ -1076,7 +1076,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'artist\'s studio',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.778939, lng: 106.694858 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_33_2.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_33_2.jpg',
   },
   {
     _id: 'demo-69',
@@ -1093,7 +1093,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'Phú Nhuận',
     coordinates: { lat: 10.807633, lng: 106.691028 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_54_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_54_.jpg',
   },
   {
     _id: 'demo-70',
@@ -1109,7 +1109,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'neighbourhood café',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.796415, lng: 106.756418 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/yahoofallssnake240.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/yahoofallssnake240.jpg',
   },
   {
     _id: 'demo-71',
@@ -1127,7 +1127,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'tailor\'s shop',
     neighbourhood: 'District 6',
     coordinates: { lat: 10.752962, lng: 106.630211 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_15_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_15_.jpg',
   },
   {
     _id: 'demo-72',
@@ -1144,7 +1144,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'artist\'s studio',
     neighbourhood: 'District 3',
     coordinates: { lat: 10.785788, lng: 106.681867 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imgp0035.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imgp0035.jpg',
   },
   {
     _id: 'demo-73',
@@ -1161,7 +1161,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'neighbourhood café',
     neighbourhood: 'District 3',
     coordinates: { lat: 10.77669, lng: 106.67701 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn3017_7_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn3017_7_.jpg',
   },
   {
     _id: 'demo-74',
@@ -1178,7 +1178,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'printing house',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.797363, lng: 106.708777 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/thamnophis_frog_a.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/thamnophis_frog_a.jpg',
   },
   {
     _id: 'demo-75',
@@ -1195,7 +1195,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'ground-floor workshop',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.799508, lng: 106.713069 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/post-10876-0-24698200-1376311459_thumb.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/post-10876-0-24698200-1376311459_thumb.jpg',
   },
   {
     _id: 'demo-76',
@@ -1212,7 +1212,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'ground-floor workshop',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.787023, lng: 106.748797 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/bb657a66_dscn2841.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/bb657a66_dscn2841.jpg',
   },
   {
     _id: 'demo-77',
@@ -1228,7 +1228,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'Phú Nhuận',
     coordinates: { lat: 10.804951, lng: 106.686819 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/yama57.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/yama57.jpg',
   },
   {
     _id: 'demo-78',
@@ -1245,7 +1245,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'neighbourhood café',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.799281, lng: 106.716632 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/pict0089_2_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/pict0089_2_.jpg',
   },
   {
     _id: 'demo-79',
@@ -1262,7 +1262,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'fabric market stall',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.804429, lng: 106.736002 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/pict0142.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/pict0142.jpg',
   },
   {
     _id: 'demo-80',
@@ -1279,7 +1279,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.765448, lng: 106.704821 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn0792.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn0792.jpg',
   },
   {
     _id: 'demo-81',
@@ -1296,7 +1296,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'fabric market stall',
     neighbourhood: 'District 6',
     coordinates: { lat: 10.74919, lng: 106.647317 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_16_2.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_16_2.jpg',
   },
   {
     _id: 'demo-82',
@@ -1314,7 +1314,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'corner pharmacy',
     neighbourhood: 'Phú Nhuận',
     coordinates: { lat: 10.798812, lng: 106.675948 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_15_2.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_15_2.jpg',
   },
   {
     _id: 'demo-83',
@@ -1332,7 +1332,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'artist\'s studio',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.817882, lng: 106.648371 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn3016.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn3016.jpg',
   },
   {
     _id: 'demo-84',
@@ -1350,7 +1350,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'District 5',
     coordinates: { lat: 10.755441, lng: 106.669102 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_30_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_30_.jpg',
   },
   {
     _id: 'demo-85',
@@ -1367,7 +1367,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'ground-floor workshop',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.790036, lng: 106.742395 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn3017_6_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn3017_6_.jpg',
   },
   {
     _id: 'demo-86',
@@ -1385,7 +1385,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'small hotel lobby',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.797177, lng: 106.709426 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_18_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_18_.jpg',
   },
   {
     _id: 'demo-87',
@@ -1403,7 +1403,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'artist\'s studio',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.806507, lng: 106.6585 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/rtaimage.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/rtaimage.jpg',
   },
   {
     _id: 'demo-88',
@@ -1420,7 +1420,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.804278, lng: 106.643419 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_13_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_13_.jpg',
   },
   {
     _id: 'demo-89',
@@ -1437,7 +1437,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'District 4',
     coordinates: { lat: 10.756655, lng: 106.704859 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_35_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_35_.jpg',
   },
   {
     _id: 'demo-90',
@@ -1454,7 +1454,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.771649, lng: 106.707495 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imgp0030.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imgp0030.jpg',
   },
   {
     _id: 'demo-91',
@@ -1470,7 +1470,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'small hotel lobby',
     neighbourhood: 'District 3',
     coordinates: { lat: 10.784869, lng: 106.674206 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_9_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_9_.jpg',
   },
   {
     _id: 'demo-92',
@@ -1487,7 +1487,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'printing house',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.812666, lng: 106.719877 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/104-0451_img.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/104-0451_img.jpg',
   },
   {
     _id: 'demo-93',
@@ -1505,7 +1505,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'ground-floor workshop',
     neighbourhood: 'District 5',
     coordinates: { lat: 10.754296, lng: 106.659786 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imgp0106-puente_milenio.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imgp0106-puente_milenio.jpg',
   },
   {
     _id: 'demo-94',
@@ -1522,7 +1522,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'Bình Thạnh',
     coordinates: { lat: 10.815212, lng: 106.720126 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_61_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_61_.jpg',
   },
   {
     _id: 'demo-95',
@@ -1538,7 +1538,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'corner pharmacy',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.765553, lng: 106.707386 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/catching-hell-tv-show.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/catching-hell-tv-show.jpg',
   },
   {
     _id: 'demo-96',
@@ -1554,7 +1554,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'tailor\'s shop',
     neighbourhood: 'District 4',
     coordinates: { lat: 10.754691, lng: 106.703591 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imag0026_3_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imag0026_3_.jpg',
   },
   {
     _id: 'demo-97',
@@ -1572,7 +1572,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'fabric market stall',
     neighbourhood: 'District 4',
     coordinates: { lat: 10.754314, lng: 106.702076 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/west_franfort_1.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/west_franfort_1.jpg',
   },
   {
     _id: 'demo-98',
@@ -1588,7 +1588,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'fabric market stall',
     neighbourhood: 'Phú Nhuận',
     coordinates: { lat: 10.810585, lng: 106.679584 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/town11n-4-web.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/town11n-4-web.jpg',
   },
   {
     _id: 'demo-99',
@@ -1605,7 +1605,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.772384, lng: 106.703296 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn0827.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn0827.jpg',
   },
   {
     _id: 'demo-100',
@@ -1621,7 +1621,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'fabric market stall',
     neighbourhood: 'District 5',
     coordinates: { lat: 10.762414, lng: 106.663784 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_36_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_36_.jpg',
   },
   {
     _id: 'demo-101',
@@ -1637,7 +1637,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'small hotel lobby',
     neighbourhood: 'District 3',
     coordinates: { lat: 10.778845, lng: 106.68561 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/resize_of_dscn3006.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/resize_of_dscn3006.jpg',
   },
   {
     _id: 'demo-102',
@@ -1654,7 +1654,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'Gò Vấp',
     coordinates: { lat: 10.847215, lng: 106.679737 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/m_pict0089-ba8c3.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/m_pict0089-ba8c3.jpg',
   },
   {
     _id: 'demo-103',
@@ -1672,7 +1672,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.819179, lng: 106.653823 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/img373dbc2bzikezj.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/img373dbc2bzikezj.jpg',
   },
   {
     _id: 'demo-104',
@@ -1689,7 +1689,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'ground-floor workshop',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.806578, lng: 106.649792 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/imag0026_6_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/imag0026_6_.jpg',
   },
   {
     _id: 'demo-105',
@@ -1706,7 +1706,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'tailor\'s shop',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.81016, lng: 106.748765 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/2146e70a_66074_dscn3017.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/2146e70a_66074_dscn3017.jpg',
   },
   {
     _id: 'demo-106',
@@ -1722,7 +1722,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'ground-floor workshop',
     neighbourhood: 'District 3',
     coordinates: { lat: 10.780687, lng: 106.688143 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_50_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_50_.jpg',
   },
   {
     _id: 'demo-107',
@@ -1738,7 +1738,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'bookshop',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.77153, lng: 106.696772 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_57_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_57_.jpg',
   },
   {
     _id: 'demo-108',
@@ -1756,7 +1756,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.774721, lng: 106.698365 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn3017.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn3017.jpg',
   },
   {
     _id: 'demo-109',
@@ -1772,7 +1772,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'family restaurant',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.767839, lng: 106.706359 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_25_2.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_25_2.jpg',
   },
   {
     _id: 'demo-110',
@@ -1788,7 +1788,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'District 4',
     coordinates: { lat: 10.752915, lng: 106.697716 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_48_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_48_.jpg',
   },
   {
     _id: 'demo-111',
@@ -1804,7 +1804,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private collector',
     neighbourhood: 'District 6',
     coordinates: { lat: 10.752145, lng: 106.629329 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_59_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_59_.jpg',
   },
   {
     _id: 'demo-112',
@@ -1820,7 +1820,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'roof garden',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.801215, lng: 106.733698 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/dscn2137_1_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/dscn2137_1_.jpg',
   },
   {
     _id: 'demo-113',
@@ -1836,7 +1836,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'corner pharmacy',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.771891, lng: 106.701117 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/104-0451_img_1_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/104-0451_img_1_.jpg',
   },
   {
     _id: 'demo-114',
@@ -1853,7 +1853,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'District 1',
     coordinates: { lat: 10.769803, lng: 106.698973 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/web_dscf2159.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/web_dscf2159.jpg',
   },
   {
     _id: 'demo-115',
@@ -1870,7 +1870,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'printing house',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.796602, lng: 106.648398 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/ursprung5.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/ursprung5.jpg',
   },
   {
     _id: 'demo-116',
@@ -1886,7 +1886,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'printing house',
     neighbourhood: 'Tân Bình',
     coordinates: { lat: 10.818477, lng: 106.641777 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/pict0144.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/pict0144.jpg',
   },
   {
     _id: 'demo-117',
@@ -1902,7 +1902,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'bookshop',
     neighbourhood: 'District 6',
     coordinates: { lat: 10.750762, lng: 106.648782 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/h543701c_h543701c_pgs_201-241_rd_page_19.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/h543701c_h543701c_pgs_201-241_rd_page_19.jpg',
   },
   {
     _id: 'demo-118',
@@ -1919,7 +1919,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'private residence',
     neighbourhood: 'District 3',
     coordinates: { lat: 10.779641, lng: 106.685493 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/7fc4588a4eb11e91bcdb518c5afdc399.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/7fc4588a4eb11e91bcdb518c5afdc399.jpg',
   },
   {
     _id: 'demo-119',
@@ -1937,7 +1937,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'bookshop',
     neighbourhood: 'District 2',
     coordinates: { lat: 10.810781, lng: 106.736849 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/folk61sf82eu7gf.medium.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/folk61sf82eu7gf.medium.jpg',
   },
   {
     _id: 'demo-120',
@@ -1954,7 +1954,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'community library',
     neighbourhood: 'District 10',
     coordinates: { lat: 10.778819, lng: 106.660782 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/th_34_.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/th_34_.jpg',
   },
   {
     _id: 'demo-121',
@@ -1971,7 +1971,7 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'artist\'s studio',
     neighbourhood: 'District 5',
     coordinates: { lat: 10.751508, lng: 106.671181 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/whatcolor_isblack.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/whatcolor_isblack.jpg',
   },
   {
     _id: 'demo-122',
@@ -1988,6 +1988,6 @@ export const DEMO_LOCATIONS: MuseumLocation[] = [
     hostName: 'corner pharmacy',
     neighbourhood: 'Phú Nhuận',
     coordinates: { lat: 10.811197, lng: 106.67657 },
-    mainImage: 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo/большой-ашутастинский-крест.jpg',
+    mainImage: 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo/большой-ашутастинский-крест.jpg',
   },
 ];

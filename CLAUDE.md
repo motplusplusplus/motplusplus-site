@@ -66,13 +66,13 @@
   profile display or filters.
 
 ## Cloudflare R2 (images)
-- **Bucket:** `site-general` — lives in the *personal* Cloudflare account,
-  not the Workers account. Account ID and upload token: see `.env.local`
-  / Claude memory / Cloudflare dashboard (not stored here).
-- **Public URL:** `https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev`
-- R2 wrangler commands must target the R2 account; `wrangler deploy` targets
-  the Workers account.
+- **Bucket:** `mot-assets` — lives in the MoT+++ Cloudflare account (same
+  account as Workers).
+- **Public URL:** `https://pub-136b7c559e56403eb674c24e717611c6.r2.dev`
+- **Account ID:** `f2a86349fa252c2582bc0f478ccdf9ab` (same as Workers account)
 - Image upload settings: max 1600px, quality 85, JPEG.
+- Credentials: see `.env.local` (`R2_BUCKET`, `R2_ACCOUNT_ID`, `R2_PUBLIC_URL`,
+  `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`).
 
 ## Sanity CMS
 - **Project ID:** `t5nsm79o`, dataset `production`

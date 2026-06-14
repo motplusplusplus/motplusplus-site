@@ -69,11 +69,11 @@ export default function AdvisoryPage() {
             {[
               {
                 name: "Post Vidai",
-                img: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/advisory/post-vidai.jpg",
+                img: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/advisory/post-vidai.jpg",
               },
               {
                 name: "The Nguyen Art Foundation",
-                img: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/advisory/nguyen-art-foundation.jpg",
+                img: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/advisory/nguyen-art-foundation.jpg",
               },
             ].map((c) => (
               <div key={c.name} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>

@@ -1,4 +1,4 @@
-const D = 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/museum/demo';
+const D = 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo';
 
 export type TrashItem = {
   _id: string;

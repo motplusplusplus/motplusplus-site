@@ -44,17 +44,6 @@ Still open (blocked on artist):
 - Currently connected events (all correct, none flagged): mot-sound-1, -2, -4,
   -5, -7, -9-aconvergence, -10-anoise, -13-amoment, -16-poetry-plus-vol-3.
 
-### [ISSUE-002] R2 bucket migration
-**Reported:** 2026-06-12
-**Priority:** medium — not urgent but needed for clean separation
-**Status:** blocked — new MoT+++ R2 bucket created but not yet configured
-
-All MoT+++ image URLs currently point to the personal walther.website R2 bucket (pub-1a24c863e9654cf59be6136420ba1770.r2.dev).
-Once the new MoT+++ bucket public URL is confirmed:
-- Copy all MoT+++ images to new bucket
-- Update all Sanity event and artist docs with new URLs
-- Update any hardcoded references in codebase
-
 ### [ISSUE-003] PLUS1_RESIDENCY_SLUGS empty
 **Reported:** 2026-06-12
 **Updated:** 2026-06-14
@@ -232,6 +221,33 @@ Fixed: 2026-06-12 — all events migrated, events-data.json is now archive (comm
 
 ### [RESOLVED-004] matchParts name-matching
 Fixed: 2026-06-12 — deleted entirely, all profile↔event links now via explicit Sanity refs (commit b75bc83)
+
+### [RESOLVED-009] R2 bucket migration (ISSUE-002)
+Fixed: 2026-06-14 — migrated all MoT+++ images from the personal
+walther.website R2 bucket (`site-general`, pub-1a24c863e9654cf59be6136420ba1770.r2.dev)
+to the dedicated `mot-assets` bucket on the MoT+++ Cloudflare account
+(pub-136b7c559e56403eb674c24e717611c6.r2.dev).
+
+- Audited 2,686 unique referenced object keys across 335 Sanity docs (249
+  events, 83 artists, 3 afarmHosts), the three legacy JSON data files, and 13
+  app/lib code files (2,371 + 4,329 + 203 URL instances respectively).
+- Copied 2,371 objects that exist in the old bucket to `mot-assets`,
+  preserving keys (`scripts/r2-migration-copy.mjs`); verified 10 sample paths
+  return 200 on the new public URL.
+- 315 referenced keys were already missing from the old bucket
+  (pre-existing broken links, mostly from the `events-data.json` archive,
+  e.g. `s-1-edited.png` vs the actual `.jpg`) — hostname swapped for
+  consistency but still 404, unchanged by this migration
+  (`scripts/r2-migration-missing.json`).
+- Patched all 335 Sanity docs (`legacyImageUrls`/`imageUrls`) via
+  `scripts/r2-migration-sanity-update.mjs`, batches of 20, each batch
+  verified.
+- Updated `events-data.json`, `artists-data.json`, `studios-data.json`, and
+  hardcoded URLs in `app/`/`lib/` (incl. `lib/demoLocations.ts` museum-map
+  fallback data) to the new host.
+- `.env.local` now has `R2_*` vars for `mot-assets`; `CLAUDE.md` and
+  `ARCHITECTURE.md` updated to reference the new bucket, personal-bucket
+  references removed.
 
 ### [RESOLVED-005] pug-alex-williams orphan
 Fixed: 2026-06-11 — consolidated into alex-williams with 301 redirect (commit 5354c73)

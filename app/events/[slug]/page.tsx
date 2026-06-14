@@ -38,7 +38,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
 
   const galleryImages = event.images.filter(url => !isJunkImage(url));
 
-  const AFARM_LOGO = 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg';
+  const AFARM_LOGO = 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg';
   const MOT_LOGO = '/motpluspluspluslogo.jpg';
   const isAfarm = event.category?.toLowerCase().includes('a.farm');
 

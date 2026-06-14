@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Reveal from "@/components/Reveal";
 import Collapsible from "@/components/Collapsible";
 
-const R2 = "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/retreat";
+const R2 = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/retreat";
 const APPLY_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSd6NHVpUFh7YOPGhACxrJtQgrfsrD1_daf4F__OvK0ZJP85wg/viewform?usp=sharing&ouid=113890478710303560056";
 

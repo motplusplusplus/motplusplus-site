@@ -1,7 +1,7 @@
 import Link from "next/link";
 import artistsData from "@/artists-data.json";
 
-const R2 = "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/performance";
+const R2 = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/performance";
 
 const photos = [
   { src: `${R2}/performance-plus-2019.png`, alt: "Performance Plus 2019" },

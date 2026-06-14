@@ -1,13 +1,13 @@
 import Link from "next/link";
 
-const R2 = "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/contemporary";
+const R2 = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/contemporary";
 
 const exhibitions = [
   {
     title: "SHOW|off",
     artist: "Cam Xanh & Andrew Newell Walther",
     dates: "January 22, 2026",
-    img: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-01.jpg",
+    img: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/show-off-cam-xanh-andrew-newell-walther/show-off-01.jpg",
     slug: "show-off-cam-xanh-andrew-newell-walther",
   },
   {

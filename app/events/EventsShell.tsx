@@ -371,7 +371,7 @@ function EventCard({ event }: { event: Event }) {
         <div className="evt-card-img" style={{ width: "100%", aspectRatio: "4/3", backgroundColor: "#111111" }}>
           <img
             src={event.thumbnail || (event.category?.toLowerCase().includes('a.farm')
-              ? 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg'
+              ? 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg'
               : '/motpluspluspluslogo.jpg')}
             alt={event.title}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -404,7 +404,7 @@ function PastRow({ event }: { event: Event }) {
         <div style={{ width: "80px", height: "60px", overflow: "hidden", backgroundColor: "#111111", flexShrink: 0 }}>
           <img
             src={event.thumbnail || (event.category?.toLowerCase().includes('a.farm')
-              ? 'https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg'
+              ? 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg'
               : '/motpluspluspluslogo.jpg')}
             alt=""
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: "saturate(0.5)" }}

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     description:
       "Live and work alongside a local artist in Ho Chi Minh City. International residency pairing residents with hosting artists across Saigon studios. From $3,000/month.",
     url: "https://motplusplusplus.com/afarm",
-    images: [{ url: "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05503.jpg", width: 1600, height: 1067 }],
+    images: [{ url: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/studios/hoang-nam-viet/ass05503.jpg", width: 1600, height: 1067 }],
   },
   alternates: { canonical: "https://motplusplusplus.com/afarm" },
 };
@@ -362,7 +362,7 @@ export default async function AFarmPage() {
         }}
       >
         <img
-          src="https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/studios/hoang-nam-viet/ass05503.jpg"
+          src="https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/studios/hoang-nam-viet/ass05503.jpg"
           alt="+a.Farm"
           style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block", opacity: 0.72 }}
         />

@@ -10,7 +10,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const OG_IMAGE = "https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev/motplus/general/homepage-programs.jpg";
+const OG_IMAGE = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/general/homepage-programs.jpg";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://motplusplusplus.com"),

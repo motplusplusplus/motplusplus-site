@@ -15,7 +15,7 @@
 | Hosting | Cloudflare **Worker** (`worker.js`) with an `[assets]` binding serving `out/` | `wrangler.toml`, account `f2a86349…` (see dashboard) |
 | Domains | `motplusplusplus.com` + `www.` (custom domains on the Worker), plus `motplusplus-site.motplusplusplus.workers.dev` | `wrangler.toml` routes |
 | CMS | Sanity, project `t5nsm79o`, dataset `production` | Studio repo: `~/Documents/motplus-sanity` (live: motplusplus.sanity.studio) |
-| Images | Cloudflare R2 bucket `site-general` (separate personal account) | public URL `https://pub-1a24c863e9654cf59be6136420ba1770.r2.dev` |
+| Images | Cloudflare R2 bucket `mot-assets` (MoT+++ account, same as Workers) | public URL `https://pub-136b7c559e56403eb674c24e717611c6.r2.dev` |
 | Legacy data | `events-data.json`, `artists-data.json`, `studios-data.json` | repo root |
 
 **Critical hosting detail — asset-first routing.** `wrangler.toml` does not set
