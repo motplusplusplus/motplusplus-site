@@ -9,7 +9,11 @@
  * Resumable: completed keys are appended to
  * scripts/r2-migration-copy-done.json and skipped on rerun.
  *
- * Run: node scripts/r2-migration-copy.mjs
+ * Requires env vars (see .env.local): OLD_R2_ACCOUNT_ID, OLD_R2_ACCESS_KEY_ID,
+ * OLD_R2_SECRET_ACCESS_KEY (source bucket), and R2_ACCOUNT_ID,
+ * R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY (destination bucket).
+ *
+ * Run: node --env-file=.env.local scripts/r2-migration-copy.mjs
  */
 
 import { S3Client, GetObjectCommand, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
@@ -17,19 +21,19 @@ import fs from 'fs';
 
 const OLD = new S3Client({
   region: 'auto',
-  endpoint: 'https://31a35595add67ae1366b3f6420432773.r2.cloudflarestorage.com',
+  endpoint: `https://${process.env.OLD_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
-    accessKeyId: '83343e12beb2f0aed8d48bc3047814a2',
-    secretAccessKey: '8d3e7535a2e3ed492102802160c1a51cb94ee306c6f95cecb9cb3fa537c3ca56',
+    accessKeyId: process.env.OLD_R2_ACCESS_KEY_ID,
+    secretAccessKey: process.env.OLD_R2_SECRET_ACCESS_KEY,
   },
 });
 
 const NEW = new S3Client({
   region: 'auto',
-  endpoint: 'https://f2a86349fa252c2582bc0f478ccdf9ab.r2.cloudflarestorage.com',
+  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
-    accessKeyId: '747bda2b507d120f95792a93b9576ec4',
-    secretAccessKey: '84d764a2f5f9f343e7f59f8c055ae47b322f5f0653c111b38db843fe74b475e3',
+    accessKeyId: process.env.R2_ACCESS_KEY_ID,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
   },
 });
 

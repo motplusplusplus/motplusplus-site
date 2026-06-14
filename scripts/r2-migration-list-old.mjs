@@ -5,7 +5,10 @@
  * (site-general) and cross-checks against scripts/r2-migration-manifest.json
  * (the set of keys actually referenced by MoT+++ data).
  *
- * Run: node scripts/r2-migration-list-old.mjs
+ * Requires env vars (see .env.local): OLD_R2_ACCOUNT_ID, OLD_R2_ACCESS_KEY_ID,
+ * OLD_R2_SECRET_ACCESS_KEY (source bucket).
+ *
+ * Run: node --env-file=.env.local scripts/r2-migration-list-old.mjs
  */
 
 import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
@@ -13,10 +16,10 @@ import fs from 'fs';
 
 const OLD = new S3Client({
   region: 'auto',
-  endpoint: 'https://31a35595add67ae1366b3f6420432773.r2.cloudflarestorage.com',
+  endpoint: `https://${process.env.OLD_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
-    accessKeyId: '83343e12beb2f0aed8d48bc3047814a2',
-    secretAccessKey: '8d3e7535a2e3ed492102802160c1a51cb94ee306c6f95cecb9cb3fa537c3ca56',
+    accessKeyId: process.env.OLD_R2_ACCESS_KEY_ID,
+    secretAccessKey: process.env.OLD_R2_SECRET_ACCESS_KEY,
   },
 });
 
