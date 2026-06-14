@@ -248,6 +248,18 @@ to the dedicated `mot-assets` bucket on the MoT+++ Cloudflare account
 - `.env.local` now has `R2_*` vars for `mot-assets`; `CLAUDE.md` and
   `ARCHITECTURE.md` updated to reference the new bucket, personal-bucket
   references removed.
+- Deployed (285fa43) and verified: build output for `/trash/`,
+  `/profiles/cam-xanh/`, and `/afarm/` all contain 0 references to the old
+  host and the expected count of new-host URLs. `/afarm/` was still serving
+  a **stale edge-cached copy** live (ISSUE-011 cache-purge gap — no
+  `CLOUDFLARE_CACHE_PURGE_TOKEN` set) at verification time; it will
+  self-correct once Cloudflare revalidates, or can be fixed immediately via
+  a manual cache purge for `/afarm/` in the Cloudflare dashboard.
+- Follow-up (131cd6e): `r2-migration-copy.mjs` and `r2-migration-list-old.mjs`
+  briefly committed hardcoded R2 credentials for both buckets (285fa43) —
+  switched to env vars. **Both R2 API tokens (old `site-general-mot-plus` and
+  new `mot-assets`) should be rotated**, since this is a public repo and the
+  secrets were live in history for one commit.
 
 ### [RESOLVED-005] pug-alex-williams orphan
 Fixed: 2026-06-11 — consolidated into alex-williams with 301 redirect (commit 5354c73)
