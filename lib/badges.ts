@@ -94,12 +94,13 @@ export function computeBadges(p: PersonSignals): BadgeResult {
   else if (isPlus1Residency) primary = "+1 residency";
   else if (p.isPerformancePlus) primary = "+1 performance";
 
-  // Filterable tags — a person can match several.
+  // Filterable tags — a person can match several. "founder/director" and
+  // "+1 residency" are intentionally excluded: founder/director has only one
+  // member (the badge still renders via primary/bioBadges) and +1 residency
+  // has no data (PLUS1_RESIDENCY_SLUGS is empty) — neither is a useful filter.
   const filters: string[] = [];
-  if (isFounder) filters.push("founder/director");
   if (isHost) filters.push("hosting artist");
   if (p.hasResidency) filters.push("a.Farm");
-  if (isPlus1Residency) filters.push("+1 residency");
   if (isPlus1Museum) filters.push("+1 museum");
   if (p.isPerformancePlus) filters.push("+1 performance");
   if (editions.length) filters.push("MoTSound");

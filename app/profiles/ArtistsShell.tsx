@@ -14,10 +14,8 @@ export type ArtistEntry = {
 // Filter bar. "curator/writer/researcher" matches any of those three role tags.
 const FILTERS = [
   "all",
-  "founder/director",
   "hosting artist",
   "a.Farm",
-  "+1 residency",
   "+1 museum",
   "+1 performance",
   "MoTSound",
