@@ -9,7 +9,7 @@ import { MUSEUM_TO_TRASH } from '@/lib/demoTrashItems';
 import type { MuseumLocation, AccessType } from '@/lib/museumTypes';
 import { HCMC_CENTER, MAP_DEFAULT_ZOOM, getStaticMapUrl } from '@/lib/mapConstants';
 
-// chunk-rehash nudge (Workers Assets large-file 404 workaround)
+// chunk-rehash nudge (Workers Assets large-file 404 workaround, 2026-06-15)
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? '';
 const STATIC_MAP_URL = getStaticMapUrl(MAPBOX_TOKEN);
 
