@@ -333,24 +333,39 @@ render — both curated sets are empty.
   queries use `buildClient`; the CDN `sanityClient` remains only for
   `MuseumMap.tsx`'s runtime fetch (commit `44df4f3`; §6 issue 4).
 
+### Completed (2026-06-14)
+
+- ~~**Populate `deathYear`/`birthYear`**~~ — **Done.** Both fields are in
+  `ARTIST_FIELDS` (`lib/sanity.ts`), `getArtistBySlug` returns them with no
+  `active` filter (so deceased docs resolve), and
+  `app/profiles/[slug]/page.tsx` derives `deceasedDates` directly from
+  `sanityArtist.deathYear`/`birthYear` — no hardcoded `DECEASED_DATES` map
+  remains. Verified live for `lan-anh-le` (1993–2020) and `dinh-q-le`
+  (1968–2024). See RESOLVED-008.
+- ~~**Housekeeping**~~ — **Done.** The junk-image filename list now lives in
+  `lib/junk-images.ts` (`JUNK_IMAGE_STEMS`/`isJunkImage`), shared by
+  `lib/sanity.ts`, `app/profiles/[slug]/page.tsx`, and
+  `app/events/[slug]/page.tsx` — no longer duplicated. `getTrashItems()` has
+  no dead `uploadedImageUrls` field (it returns `directImageUrls`, which
+  `app/trash/page.tsx` consumes); the `uploadedImageUrls` fields elsewhere in
+  `lib/sanity.ts` belong to `EVENT_FIELDS`/`AFARM_HOST_FIELDS` and are live.
+
 ### Remaining
 
 1. **Populate `PLUS1_RESIDENCY_SLUGS`** (in `lib/badges.ts`) from the WP XML
-   export — pre-2018 MoT+++ residents only.
+   export — pre-2018 MoT+++ residents only. Blocked: `/Volumes/MoT` not
+   mounted (re-confirmed 2026-06-15) — see ISSUE-003.
 2. **Populate `PLUS1_MUSEUM_SLUGS`** once Sanity `museumLocation` documents
-   carry artist refs.
-3. **Populate the new `deathYear` field** (added 2026-06-12) for `lan-anh-le`
-   and `dinh-q-le`, query it in `lib/sanity.ts`, and replace the hardcoded
-   `DECEASED_DATES` map in `app/profiles/[slug]/page.tsx`.
-4. **Add a role enum to the Sanity `artist` schema** — role is still
-   free-text.
-5. **Retire the JSON flags** (`resident`, `curator`, `performancePlus`, etc.)
+   carry artist refs. Confirmed 2026-06-15: Sanity currently has **zero**
+   `museumLocation` documents (the live map renders `DEMO_LOCATIONS` with
+   `isDemo=true` by design until real docs are added) — this item has no
+   data to consume yet.
+3. **Add a role enum to the Sanity `artist` schema** — role is still
+   free-text. See ISSUE-005.
+4. **Retire the JSON flags** (`resident`, `curator`, `performancePlus`, etc.)
    and the curated slug sets in `lib/badges.ts` once Sanity is the sole
-   source of truth for badge data.
-6. **Housekeeping** — extract the shared junk-image filename list (currently
-   duplicated in `app/profiles/[slug]/page.tsx`) and delete the dead
-   `uploadedImageUrls` query line in `getTrashItems()` (§8). (The stale
-   `sanity-schemas/` copy was deleted 2026-06-12 — see §8.)
+   source of truth for badge data. See ISSUE-006 (audited 2026-06-14, not yet
+   retirable).
 
 ---
 

@@ -46,7 +46,7 @@ Still open (blocked on artist):
 
 ### [ISSUE-003] PLUS1_RESIDENCY_SLUGS empty
 **Reported:** 2026-06-12
-**Updated:** 2026-06-14
+**Updated:** 2026-06-15
 **Priority:** low-medium
 **Status:** open — BLOCKED on external drive `/Volumes/MoT` being mounted
 
@@ -58,6 +58,10 @@ PLUS1_RESIDENCY_SLUGS in lib/badges.ts is empty so the "+1 residency" badge neve
 Re-attempt once the drive is mounted. Note also `lib/badges.ts` already flags two
 *unconfirmed* candidates in a comment (`dao-tung`, `tran-minh-duc`) that appear in the
 "+1 museum" collection but are NOT confirmed residents — do not add without XML confirmation.
+
+**2026-06-15:** re-checked (`ls /Volumes/MoT`) — still **not mounted**. No further
+action possible from this machine; re-attempt next session once the drive is
+connected and mounted.
 
 ### [ISSUE-005] Sanity role enum
 **Reported:** 2026-06-12
@@ -115,6 +119,60 @@ Their `bio` field is now empty (unset) pending text supplied by the artist:
 `carl-stone`, `tran-van-thao`, `ngo-dinh-bao-chau`, `chicko`, `nguyen-van-du`,
 `annie-thao-phan`, `ken-ueno`, `ho-tuong-danh`, `ayano-otani`, `duy-bao`,
 `fad-plastic`, `lys-bui`.
+
+### [ISSUE-012] 315 R2 keys referenced but missing from source (follow-up to RESOLVED-009)
+**Reported:** 2026-06-15
+**Priority:** see breakdown — 1 HIGH (unresolved), 19 MEDIUM, 267 LOW
+**Status:** partially resolved — 28/29 HIGH-priority items fixed 2026-06-15
+
+During RESOLVED-009's migration audit, 315 of 2,686 referenced R2 keys were
+already missing from the old `site-general` bucket — pre-existing broken
+links unchanged by the migration (`scripts/r2-migration-missing.json`). Each
+was classified by where it's referenced and how visible the breakage is:
+
+**HIGH (29) — event thumbnails/cards, rendered on listing pages.** All 29
+checked against `site-general` for an alternate filename (different
+extension/case, same stem).
+
+- **28/29 resolved 2026-06-15:** `.jpg`/`.jpeg` alternates with matching stems
+  found in `site-general`, copied to `mot-assets` under the exact missing key
+  name (e.g. `.../fb-event.jpg` → `.../fb-event.png`), `ContentType:
+  image/jpeg`. Verified `.../fb-event.png` for
+  `april-open-studio-virginie-tan-aylin-derya-stahl` returns HTTP 200 with
+  correct content from `pub-136b7c559e56403eb674c24e717611c6.r2.dev`.
+- **1/29 unresolved:** `motplus/events/studio-kim-duy/kd-1.jpg` — no plausible
+  alternate exists in `site-general` (directory has 146 unrelated files:
+  DSCF0764–0822, IMG_3834–3945, doc-1..4, logo.png — nothing matching the "kd"
+  stem). Needs a real photo sourced from elsewhere (e.g. `/Volumes/MoT`) or
+  the thumbnail field cleared on the `studio-kim-duy` event.
+
+**MEDIUM (19) — event gallery images, all from 2024–2025 events**
+(`between-land-sea-ink-rock-paintings-by-saverio-tonoli` ×5,
+`eta-estimated-time-of-arrival-film-screening` ×2, `living-today-for-tomorrow`
+×1, `may-open-studio` ×5, `minimal-prayer-duy-nguyen` ×1,
+`nhap-vai-ky-uc-mot-buoi-viet-chung-cung-tam-do` ×1,
+`saigon-dreaming-open-studio-by-ania-reynolds` ×1,
+`sombras-nada-mas-shadows-nothing-more` ×2, `while-the-soil-slumbers-linh-san`
+×1). Not on listing pages — gallery-only, so broken only if a visitor opens
+the event's image gallery. Left open; same remediation pattern (check
+`site-general` for alternates) would apply if prioritized.
+
+**LOW (267) — not user-impacting:**
+- 145 — junk-image stems (`isJunkImage()` in `lib/junk-images.ts`) — filtered
+  out of every gallery, never rendered regardless.
+- 89 — `studios-data.json` "images" field — confirmed dead data; live studio
+  pages read from Sanity `afarmHost.imageUrls` (already migrated), not this
+  JSON field. Candidate for cleanup under ISSUE-007.
+- 21 — slug has no corresponding `events-data.json` entry (orphaned
+  reference, likely a removed/renamed event).
+- 8 — event gallery images for events dated 2019 (pre-2020, low traffic).
+- 3 — bare path prefixes (e.g. `motplus/contemporary`) extracted from a code
+  constant, not real object keys — false positives.
+- 1 — unrecognized path shape.
+
+Full per-key data in `scripts/r2-migration-missing.json` (315 keys,
+unchanged); classification breakdown was done in a scratch script, not
+checked into the repo.
 
 ## Resolved
 
