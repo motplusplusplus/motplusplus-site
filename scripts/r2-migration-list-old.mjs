@@ -7,6 +7,8 @@
  *
  * Requires env vars (see .env.local): OLD_R2_ACCOUNT_ID, OLD_R2_ACCESS_KEY_ID,
  * OLD_R2_SECRET_ACCESS_KEY (source bucket).
+ * Note: the mot-assets (R2_*) token was rotated 2026-06-14 after the
+ * original credentials were briefly committed in plaintext (285fa43).
  *
  * Run: node --env-file=.env.local scripts/r2-migration-list-old.mjs
  */
