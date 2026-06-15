@@ -64,9 +64,34 @@ async function status(url, method = 'HEAD') {
   }
 }
 
+// 0. The Mapbox token must be inlined as a literal in the built chunks. A build produced
+//    without --webpack (Next 16 defaults to Turbopack) leaves
+//    process.env.NEXT_PUBLIC_MAPBOX_TOKEN unresolved → "" in the browser → the museum map
+//    renders a silent gray box. BUILD_ID/chunk-reachability checks all pass for such a build,
+//    so this is the only guard that catches it. Grep the built chunks for the literal token.
+function checkTokenInlined() {
+  let files;
+  try {
+    files = readdirSync(CHUNKS_DIR, { recursive: true })
+      .filter((f) => typeof f === 'string' && f.endsWith('.js'));
+  } catch {
+    console.error(`\nCannot read ${CHUNKS_DIR} — run npm run build first.`);
+    process.exit(1);
+  }
+  const inlined = files.some((f) => readFileSync(join(CHUNKS_DIR, f), 'utf8').includes('pk.eyJ'));
+  if (!inlined) {
+    console.error('\n❌ CRITICAL: Mapbox token not inlined - build was likely produced without --webpack.');
+    console.error('   Run: npm run deploy (not next build directly)');
+    process.exit(1);
+  }
+  console.log('  ✓ Mapbox token inlined into built chunks (pk.eyJ present)');
+}
+
 async function main() {
   const buildId = getBuildId();
   console.log(`Verifying live deploy on ${BASE_URL} for BUILD_ID ${buildId} ...\n`);
+
+  checkTokenInlined();
 
   // 1. New build-id asset must actually be served (proves the asset manifest advanced).
   const manifestUrl = `${BASE_URL}/_next/static/${buildId}/_buildManifest.js`;

@@ -86,6 +86,11 @@
 - Write tokens: not stored here — see Claude memory / sanity.io manage.
 
 ## Mapbox (+1 Museum map)
+- **NEVER run `next build` directly — always use `npm run deploy`.** Running
+  `next build` without `--webpack` (Turbopack default) prevents the Mapbox token
+  from being inlined and causes the museum map to show a gray box silently.
+  `verify-deploy` now greps the built chunks for the literal token and fails the
+  deploy if it isn't inlined.
 - Token in `NEXT_PUBLIC_MAPBOX_TOKEN` (`.env.local`); restricted to the
   production domains. Required for `npm run build` — the build fails without it.
 - **Never** apply CSS `filter` (incl. `grayscale`) to

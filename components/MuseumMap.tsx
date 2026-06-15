@@ -145,7 +145,13 @@ export default function MuseumMap() {
   // Init map
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
-    if (!MAPBOX_TOKEN) return; // token not set at build time — skip map init
+    // Fail visibly, not silently: an empty token (build produced without --webpack
+    // so NEXT_PUBLIC_MAPBOX_TOKEN wasn't inlined) or a browser without WebGL would
+    // otherwise leave a bare gray container. Surface the "map unavailable" fallback.
+    // mapboxgl.supported() exists at runtime in v3 but was dropped from the public
+    // types, so call it defensively and treat its absence as "assume supported".
+    const mbx = mapboxgl as typeof mapboxgl & { supported?: () => boolean };
+    if (!MAPBOX_TOKEN || mbx.supported?.() === false) { setMapError(true); return; }
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
 
