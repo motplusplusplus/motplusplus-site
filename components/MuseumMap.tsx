@@ -431,7 +431,7 @@ export default function MuseumMap() {
           padding: '8px 16px',
           display: 'flex', alignItems: 'center',
         }}>
-          <span>COMING SOON: demo version of +1 museum by any other name. all works are placeholders. posted march 21, 2026</span>
+          <span>the +1 museum map is coming soon. the pins shown are placeholders — real locations will appear here as works are placed in host spaces across the city.</span>
         </div>
       )}
 
