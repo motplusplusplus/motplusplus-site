@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import HeaderSearch from "./HeaderSearch";
 
 const primaryNav = [
   { label: "+1 museum", href: "/museum" },
@@ -44,10 +45,7 @@ const featuredDropdownItem = { label: "MoTcyclopedia", href: "/profiles" };
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
-  const router = useRouter();
 
   useEffect(() => {
     if (menuOpen || searchOpen) {
@@ -59,16 +57,6 @@ export default function Header() {
       document.body.style.overflow = "";
     };
   }, [menuOpen, searchOpen]);
-
-  useEffect(() => {
-    if (searchOpen && searchInputRef.current) {
-      // Delay focus slightly so iOS keyboard doesn't pop up during the 300ms
-      // ghost-click window — prevents layout shift from causing ghost tap to
-      // land on page content below the search icon
-      const t = setTimeout(() => searchInputRef.current?.focus(), 350);
-      return () => clearTimeout(t);
-    }
-  }, [searchOpen]);
 
   const openSearch = () => {
     setMenuOpen(false);
@@ -228,88 +216,8 @@ export default function Header() {
         </div>
       </header>
 
-      {/* search overlay */}
-      {searchOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: "60px",
-            left: 0,
-            right: 0,
-            zIndex: 51,
-            backgroundColor: "#ffffff",
-            borderBottom: "1px solid #e5e5e5",
-            padding: "20px 24px",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: "1400px",
-              margin: "0 auto",
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-            }}
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="#999999"
-              strokeWidth="1.5"
-              style={{ flexShrink: 0 }}
-            >
-              <circle cx="6.5" cy="6.5" r="5" />
-              <line x1="10.5" y1="10.5" x2="14.5" y2="14.5" />
-            </svg>
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="search events, artists..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                flex: 1,
-                border: "none",
-                outline: "none",
-                fontSize: "16px",
-                fontWeight: 300,
-                color: "#111111",
-                fontFamily: "inherit",
-                background: "transparent",
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  setSearchOpen(false);
-                  setSearchQuery("");
-                }
-                if (e.key === "Enter" && searchQuery.trim()) {
-                  router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-                  setSearchOpen(false);
-                  setSearchQuery("");
-                }
-              }}
-            />
-            <button
-              onClick={() => {
-                setSearchOpen(false);
-                setSearchQuery("");
-              }}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: "12px",
-                color: "#999999",
-                fontFamily: "inherit",
-              }}
-            >
-              close
-            </button>
-          </div>
-        </div>
-      )}
+      {/* search overlay — typeahead dropdown + existing /search submit flow */}
+      {searchOpen && <HeaderSearch onClose={() => setSearchOpen(false)} />}
 
       {/* dropdown menu overlay */}
       {menuOpen && (

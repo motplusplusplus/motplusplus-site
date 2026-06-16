@@ -60,6 +60,29 @@
   4.100 requires it), and keep the `NEXT_PUBLIC_MAPBOX_TOKEN` Actions secret +
   the CF Workers Build dashboard command (`npm run build -- --webpack`) in place.
 
+## Header search (typeahead dropdown)
+- The header search bar shows a live typeahead dropdown (`components/HeaderSearch.tsx`)
+  in addition to the existing `/search` results page (unchanged). Pressing
+  Enter / the search button still navigates to `/search?q=…`.
+- **Powered by a live client-side GROQ query**, not a build-time index. The
+  browser fetches a compact index (~54 KB gzipped) straight from Sanity's public
+  CDN API (`t5nsm79o.apicdn.sanity.io`, dataset `production` is `aclMode: public`
+  — no token) the first time a user searches, caches it for the session, and
+  filters client-side. **No rebuild, webhook, or extra Worker** — content edits
+  appear in search within Sanity's CDN purge window (~minutes). See
+  ARCHITECTURE.md §10.
+- **CORS**: the public domains + `http://localhost:3000` are allowlisted in the
+  Sanity project (no credentials). Adding a new public domain requires adding its
+  CORS origin in Sanity (`sanity cors add <origin>` or the MCP `add_cors_origin`).
+- **No new environment variables.** `lib/searchIndex.ts` hardcodes the public
+  projectId/dataset/apiVersion (same public values already in `lib/sanity.ts`).
+- Indexes only publicly visible content: artists (`active`), events
+  (`active && !isBioPage`), a.Farm studios (`visibility == "visible"`), trash &
+  museum (`active`). News/press is NOT in Sanity — it lives in `lib/press.ts`
+  (shared with `/press`) and is indexed there, badged "News", linked to `/press`.
+- **All result hrefs are internal** to motplusplusplus.com — enforced by
+  `isInternalHref()` at filter time, not just convention.
+
 ## Key systems (details in ARCHITECTURE.md)
 - **Profiles** — canonical artist pages at `/profiles/[slug]`; `/residents/*`
   and `/artists/*` are legacy namespaces 301-redirected by `worker.js`.
