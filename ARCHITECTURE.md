@@ -245,8 +245,6 @@ the bio page (`app/profiles/[slug]/page.tsx`).
 - `HOSTING_SLUGS` — current a.Farm studio hosts (7).
 - `COLLECTIVE_SLUGS` — MoT+++ collective members (7, matches `/collective`).
 - `FOUNDER_SLUGS` — founder/director (`cam-xanh` only).
-- `PLUS1_RESIDENCY_SLUGS` — pre-2018 "+1 residency" MoT+++ residents —
-  currently empty; unconfirmed candidates noted in a comment.
 - `PLUS1_MUSEUM_SLUGS` — artists with work placed in the decentralized "+1
   museum by any other name" collection — currently empty (no `museumLocation`
   docs with an `artistRef` yet).
@@ -352,17 +350,14 @@ render — both curated sets are empty.
 
 ### Remaining
 
-1. **Populate `PLUS1_RESIDENCY_SLUGS`** (in `lib/badges.ts`) from the WP XML
-   export — pre-2018 MoT+++ residents only. Blocked: `/Volumes/MoT` not
-   mounted (re-confirmed 2026-06-15) — see ISSUE-003.
-2. **Populate `PLUS1_MUSEUM_SLUGS`** once Sanity `museumLocation` documents
+1. **Populate `PLUS1_MUSEUM_SLUGS`** once Sanity `museumLocation` documents
    carry artist refs. Confirmed 2026-06-15: Sanity currently has **zero**
    `museumLocation` documents (the live map renders `DEMO_LOCATIONS` with
    `isDemo=true` by design until real docs are added) — this item has no
    data to consume yet.
-3. **Add a role enum to the Sanity `artist` schema** — role is still
+2. **Add a role enum to the Sanity `artist` schema** — role is still
    free-text. See ISSUE-005.
-4. **Retire the JSON flags** (`resident`, `curator`, `performancePlus`, etc.)
+3. **Retire the JSON flags** (`resident`, `curator`, `performancePlus`, etc.)
    and the curated slug sets in `lib/badges.ts` once Sanity is the sole
    source of truth for badge data. See ISSUE-006 (audited 2026-06-14, not yet
    retirable).

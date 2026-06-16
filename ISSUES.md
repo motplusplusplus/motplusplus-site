@@ -44,25 +44,6 @@ Still open (blocked on artist):
 - Currently connected events (all correct, none flagged): mot-sound-1, -2, -4,
   -5, -7, -9-aconvergence, -10-anoise, -13-amoment, -16-poetry-plus-vol-3.
 
-### [ISSUE-003] PLUS1_RESIDENCY_SLUGS empty
-**Reported:** 2026-06-12
-**Updated:** 2026-06-15
-**Priority:** low-medium
-**Status:** open — BLOCKED on external drive `/Volumes/MoT` being mounted
-
-PLUS1_RESIDENCY_SLUGS in lib/badges.ts is empty so the "+1 residency" badge never renders. Populate from WordPress XML export at:
-/Volumes/MoT/EXPORTED DATA/wordpress/motplusplusplus.wordpress.com-2026-03-17-04_52_48/
-
-**2026-06-14 (overnight):** attempted the scan but `/Volumes/MoT` is **not mounted**
-(WD external drive offline), so the WP XML export is inaccessible. Task skipped.
-Re-attempt once the drive is mounted. Note also `lib/badges.ts` already flags two
-*unconfirmed* candidates in a comment (`dao-tung`, `tran-minh-duc`) that appear in the
-"+1 museum" collection but are NOT confirmed residents — do not add without XML confirmation.
-
-**2026-06-15:** re-checked (`ls /Volumes/MoT`) — still **not mounted**. No further
-action possible from this machine; re-attempt next session once the drive is
-connected and mounted.
-
 ### [ISSUE-005] Sanity role enum
 **Reported:** 2026-06-12
 **Priority:** low
@@ -116,9 +97,25 @@ Their `bio` field is now empty (unset) pending text supplied by the artist:
 
 `sonar-lee`, `nguyen-giao-xuan`, `sto-len`, `kin`, `anh-tran`, `hien-tran`,
 `mai-thi-tran`, `thy-tran`, `llama-olo`, `espen-iden`, `lu-nguyen`,
-`carl-stone`, `tran-van-thao`, `ngo-dinh-bao-chau`, `chicko`, `nguyen-van-du`,
-`annie-thao-phan`, `ken-ueno`, `ho-tuong-danh`, `ayano-otani`, `duy-bao`,
-`fad-plastic`, `lys-bui`.
+`chicko`, `annie-thao-phan`, `ho-tuong-danh`, `duy-bao`, `fad-plastic`.
+
+**2026-06-16 bio research results (10 written, 13 still empty):**
+
+Bios written and published to Sanity: `carl-stone` (pioneer of live computer music,
+CalArts, Tokyo/Chukyo), `ken-ueno` (composer/vocalist, UC Berkeley, Rome + Berlin
+prizes), `ayano-otani` (Japanese artist based in HCMC, studied medicine/piano/
+psychology/design), `espen-iden` (b.1989 Bergen, interdisciplinary artist + DJ alias
+Pyramiden, Saigon), `lys-bui` (illustrator/printmaker, NY/Saigon, SVA MFA 2016,
+Murakami studio), `sto-len` (Asian-American artist, Queens NY, Vietnamese roots,
+co-founded Cinders Gallery 2004), `tran-van-thao` (abstract painter, Group of 10,
+HCMC Fine Arts 1986), `ngo-dinh-bao-chau` (b.1986, lacquer→multimedia, HCMC Fine
+Arts, Galerie Quynh), `nguyen-van-du` (oil painter, HCMC Fine Arts, The Factory,
+explores nationalism/violence), `thy-tran` (b.1988 HCMC, Vietnamese-Australian,
+BFA Monash, photographer, LGBTQIA+ focus).
+
+Still empty — no reliable source found: `sonar-lee`, `nguyen-giao-xuan`, `kin`,
+`anh-tran`, `hien-tran`, `mai-thi-tran`, `llama-olo`, `lu-nguyen`,
+`chicko`, `annie-thao-phan`, `ho-tuong-danh`, `duy-bao`, `fad-plastic`.
 
 ### [ISSUE-012] 315 R2 keys referenced but missing from source (follow-up to RESOLVED-009)
 **Reported:** 2026-06-15
@@ -343,6 +340,13 @@ token is created in the Cloudflare dashboard and pasted in, `npm run deploy`
 prints a skip warning (harmless: `verify-deploy` still catches stale HTML). The
 zone "Cache Everything" rule could also be narrowed to not Cache-Everything
 `text/html`, but `must-revalidate` already keeps HTML fresh, so this is optional.
+
+### [ISSUE-003] PLUS1_RESIDENCY_SLUGS empty
+**Resolved:** 2026-06-16 — WP XML confirms the "+1 residency" badge referenced the
+2019 Performance Plus cohort, who already carry "+1 performance" badges via the
+`PLUS1_PERFORMANCE_SLUGS` path in `lib/badges.ts`. `PLUS1_RESIDENCY_SLUGS` is
+therefore redundant and intentionally empty. No code change needed. References
+removed from ARCHITECTURE.md §7 Remaining list.
 
 ### [RESOLVED-001] All inquiry forms broken
 Fixed: 2026-06-11 — replaced POST /submit-inquiry with mailto on all three forms (commit 299adc5)

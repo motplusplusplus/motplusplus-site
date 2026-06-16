@@ -3,7 +3,7 @@ const pressItems = [
     outlet: "Tatler Asia",
     title: "5 independent artist communities in Saigon you shouldn't miss",
     date: "June 16, 2025",
-    url: "https://tatlerasia.com/lifestyle/arts/unmissable-independent-artist-communities-in-saigon",
+    url: "https://tatlerasia.com/lifestyle/arts/independent-artist-communities-in-saigon",
     excerpt: "MoT+++ and A.Farm have played a decisive role in advancing Vietnam's contemporary art movement, with projects that tend to be bold in approach and deeply engaged with contemporary social themes.",
     tag: "mot+++",
   },
@@ -69,14 +69,6 @@ const pressItems = [
     date: "May 28, 2020",
     url: "https://www.artandmarket.net/my-own-words/2020/5/28/the-future-of-international-art-residencies",
     excerpt: "In February 2020, A. Farm received the news that its international art residency in Ho Chi Minh City would need to vacate its current premises - a reflection on the fragility and resilience of artist-run spaces.",
-    tag: "a.Farm",
-  },
-  {
-    outlet: "Mineral House Media",
-    title: "Interview with Nghia Dang, A. Farm Artist Resident",
-    date: "April 2020",
-    url: "https://www.mineralhousemedia.com/media/2020/4/6/nghia-dang-interview",
-    excerpt: "In conversation with Nghia Dang about his practice and research during his residency at A. Farm.",
     tag: "a.Farm",
   },
   {
