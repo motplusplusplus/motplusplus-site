@@ -48,28 +48,6 @@ export async function getTrashItems() {
   `);
 }
 
-export async function getMuseumLocations() {
-  return buildClient.fetch(`
-    *[_type == "museumLocation" && active == true && (!defined(locationEnd) || locationEnd >= string::split(now(), "T")[0])] {
-      _id,
-      title,
-      artist,
-      "artistSlug": artistRef->slug.current,
-      medium,
-      year,
-      description,
-      accessType,
-      accessDetails,
-      hours,
-      contactMethod,
-      hostName,
-      "coordinates": location,
-      "mainImage": mainImage.asset->url,
-      "images": images[].asset->url,
-      isPast,
-    }
-  `);
-}
 
 const ARTIST_FIELDS = `
   _id,
