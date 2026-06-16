@@ -122,8 +122,9 @@ Their `bio` field is now empty (unset) pending text supplied by the artist:
 
 ### [ISSUE-012] 315 R2 keys referenced but missing from source (follow-up to RESOLVED-009)
 **Reported:** 2026-06-15
-**Priority:** see breakdown — 1 HIGH (unresolved), 19 MEDIUM, 267 LOW
-**Status:** partially resolved — 28/29 HIGH-priority items fixed 2026-06-15
+**Updated:** 2026-06-16
+**Priority:** see breakdown — 1 HIGH (unresolved), 267 LOW
+**Status:** partially resolved — 28/29 HIGH fixed 2026-06-15; all 39 MEDIUM fixed 2026-06-16
 
 During RESOLVED-009's migration audit, 315 of 2,686 referenced R2 keys were
 already missing from the old `site-general` bucket — pre-existing broken
@@ -146,16 +147,19 @@ extension/case, same stem).
   stem). Needs a real photo sourced from elsewhere (e.g. `/Volumes/MoT`) or
   the thumbnail field cleared on the `studio-kim-duy` event.
 
-**MEDIUM (19) — event gallery images, all from 2024–2025 events**
-(`between-land-sea-ink-rock-paintings-by-saverio-tonoli` ×5,
-`eta-estimated-time-of-arrival-film-screening` ×2, `living-today-for-tomorrow`
-×1, `may-open-studio` ×5, `minimal-prayer-duy-nguyen` ×1,
-`nhap-vai-ky-uc-mot-buoi-viet-chung-cung-tam-do` ×1,
-`saigon-dreaming-open-studio-by-ania-reynolds` ×1,
-`sombras-nada-mas-shadows-nothing-more` ×2, `while-the-soil-slumbers-linh-san`
-×1). Not on listing pages — gallery-only, so broken only if a visitor opens
-the event's image gallery. Left open; same remediation pattern (check
-`site-general` for alternates) would apply if prioritized.
+**MEDIUM — resolved 2026-06-16:** 39 keys across 10 event slugs
+(`between-land-sea-ink-rock-paintings-by-saverio-tonoli` ×7,
+`eta-estimated-time-of-arrival-film-screening` ×3, `living-today-for-tomorrow`
+×3, `may-open-studio` ×7, `minimal-prayer-duy-nguyen` ×3 +
+`minimal-prayer-duy-nguyen-vn` ×2, `nhap-vai-ky-uc-mot-buoi-viet-chung-cung-tam-do`
+×3 + `-2` ×3, `saigon-dreaming-open-studio-by-ania-reynolds` ×3,
+`sombras-nada-mas-shadows-nothing-more` ×3, `while-the-soil-slumbers-linh-san`
+×2). All 39/39 resolved — `.jpg` alternates with matching stems found in
+`site-general` for every key, copied to `mot-assets` under the exact missing
+key names (`.jpeg`/`.png` target extensions preserved as referenced). Verified
+6 sample keys return HTTP 200 from `pub-136b7c559e56403eb674c24e717611c6.r2.dev`.
+Script: `scripts/r2-fix-medium-missing.mjs`; results log:
+`scripts/r2-fix-medium-results.json`.
 
 **LOW (267) — not user-impacting:**
 - 145 — junk-image stems (`isJunkImage()` in `lib/junk-images.ts`) — filtered
@@ -173,6 +177,34 @@ the event's image gallery. Left open; same remediation pattern (check
 Full per-key data in `scripts/r2-migration-missing.json` (315 keys,
 unchanged); classification breakdown was done in a scratch script, not
 checked into the repo.
+
+### [ISSUE-013] Cloudflare Workers Build auto-deploys on push with wrong build command
+**Reported:** 2026-06-15
+**Priority:** high
+**Status:** partially resolved — build command fixed in dashboard, unconfirmed
+
+The Cloudflare Workers Build git integration auto-deploys on every push to main.
+The build command was set to "npm run build" (Turbopack) which does not inline
+NEXT_PUBLIC_MAPBOX_TOKEN, causing the museum map to show a gray box / "map
+unavailable" on every push-triggered build.
+
+This was discovered on 2026-06-15 when two successive push-triggered auto-builds
+(9781b870, 5b2f5861) clobbered manual deploys ~17-84s after each push, reverting
+the live site to a tokenless Turbopack build.
+
+Fix applied 2026-06-15 in Cloudflare dashboard (Workers & Pages → motplusplus-site
+→ Settings → Build):
+- Build command changed from "npm run build" to "npm run build -- --webpack"
+- NEXT_PUBLIC_MAPBOX_TOKEN added as build environment variable
+
+This is a dashboard-only change not visible in the repo. Cannot be confirmed until
+the next push-triggered auto-build completes successfully.
+
+**Workaround until confirmed:** after any git push, run `npm run deploy` twice —
+once immediately, once ~2 minutes later to land after any rogue auto-build.
+
+Note: the GitHub Actions "Deploy site" workflow is separate and had zero runs on
+2026-06-15. The rogue deploys were Cloudflare Workers Build only.
 
 ## Resolved
 
