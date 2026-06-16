@@ -178,10 +178,15 @@ Full per-key data in `scripts/r2-migration-missing.json` (315 keys,
 unchanged); classification breakdown was done in a scratch script, not
 checked into the repo.
 
+## Resolved
+
 ### [ISSUE-013] Cloudflare Workers Build auto-deploys on push with wrong build command
 **Reported:** 2026-06-15
-**Priority:** high
-**Status:** partially resolved — build command fixed in dashboard, unconfirmed
+**Updated:** 2026-06-16
+**Priority:** ~~high~~ → resolved
+**Status:** RESOLVED 2026-06-16 — both deploy paths confirmed producing
+token-inlined webpack builds (CF Workers Build on push + GitHub Action on Sanity
+publish). See "Resolution" below.
 
 The Cloudflare Workers Build git integration auto-deploys on every push to main.
 The build command was set to "npm run build" (Turbopack) which does not inline
@@ -217,10 +222,35 @@ Note: the GitHub Actions "Deploy site" workflow is separate and had zero runs on
   (`.github/workflows/deploy.yml` pins `node-version: '20'`; wrangler 4.100.0
   needs ≥22.) This is why Sanity publishes never reach production.
 - CF Workers Build deploy hooks **cannot be created via API** (dashboard only).
-- Verification of the dashboard build-command fix: see the dated result appended
-  below after the next push-triggered CF build.
 
-## Resolved
+**Resolution 2026-06-16 — two independent fixes, both verified:**
+
+1. **CF Workers Build dashboard fix confirmed working.** Push of `2036f0d`
+   triggered a CF Workers Build that deployed `09788eb8` (~114s after push) with
+   a fresh chunk and the **Mapbox token inlined (`pk.eyJ` present)**. The
+   dashboard build-command change (`npm run build -- --webpack` +
+   `NEXT_PUBLIC_MAPBOX_TOKEN` env var) is effective — push-triggered auto-builds
+   no longer ship a tokenless map. The old "deploy twice" workaround is no
+   longer needed.
+
+2. **GitHub Action Node 20→22 fix confirmed working** (commit `dd85564`).
+   Root cause of the Action failures was `wrangler deploy` aborting with
+   `Wrangler requires at least Node.js v22.0.0`. After bumping
+   `.github/workflows/deploy.yml` to `node-version: '22'`, a clean
+   `workflow_dispatch` run (27596388945, sha `dd85564`) went **fully green** —
+   Build ✓, Deploy to Cloudflare Workers ✓, verify-deploy ✓. The
+   Sanity "Auto deploy on publish" webhook → Action → `wrangler deploy`
+   pipeline is now **fully operational** (content live ~3–5 min after publish).
+
+**Known benign caveat (the two mechanisms only "race" when triggered together).**
+A git *push* triggers the CF Workers Build; a Sanity *publish* triggers the
+GitHub Action — different triggers, so they normally don't collide. If a push
+and a publish happen within the same ~2-minute window, both build the same
+`origin/main` and deploy correct token-inlined output, but with different
+BUILD_IDs; whichever lands last wins, and the Action's `verify-deploy` may fail
+its "homepage embeds this BUILD_ID" check (cosmetic — content is still correct).
+This was observed once during testing (push `dd85564` + a manual dispatch fired
+together); a publish on its own is fully green. Not worth special handling.
 
 ### [ISSUE-010] Likely duplicate artist profiles
 **Reported:** 2026-06-13

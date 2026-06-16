@@ -655,3 +655,47 @@ no runtime injection on this static-export site (§1).
 - **Verifying the token is live:** fetch the museum page's JS chunk
   (`/_next/static/chunks/app/museum/page-<hash>.js`) and grep for `pk.eyJ` —
   its presence confirms the token was inlined correctly.
+
+### 9.6 Content auto-deploy pipeline (Sanity publish → live)
+
+Because the site is a static export (§1), Sanity content changes only appear
+live after a full rebuild + redeploy. As of 2026-06-16 this is **automated** —
+no manual `npm run deploy` is needed for content-only changes:
+
+```
+Editor publishes/updates/deletes in Sanity Studio (motplusplus.sanity.studio)
+   │
+   ▼
+Sanity webhook "Auto deploy on publish"  (project t5nsm79o, dataset production)
+   │  POST https://api.github.com/repos/motplusplusplus/motplusplus-site/
+   │       actions/workflows/deploy.yml/dispatches   (body {"ref":"main"})
+   ▼
+GitHub Action "Deploy site" (.github/workflows/deploy.yml, workflow_dispatch)
+   │  npm ci → validate Sanity images → npm run build (next build --webpack,
+   │  Node 22, NEXT_PUBLIC_MAPBOX_TOKEN from Actions secret) → npx wrangler deploy
+   │  → npm run verify-deploy
+   ▼
+Live on motplusplusplus.com within ~3–5 minutes.
+```
+
+**Two deploy mechanisms now coexist, by trigger:**
+- **git push to `main`** → **Cloudflare Workers Build** (git integration) rebuilds
+  with the dashboard build command `npm run build -- --webpack` and its own
+  `NEXT_PUBLIC_MAPBOX_TOKEN` env var (ISSUE-013 resolved). Handles code changes.
+- **Sanity publish** → **GitHub Action** (above). Handles content changes.
+  The Action's `push:` trigger stays disabled so it does not also fire on pushes.
+
+They use different triggers and do not normally collide. The only overlap is if a
+push and a publish land in the same ~2-min window: both build the same
+`origin/main` and ship correct token-inlined output, but with different
+BUILD_IDs, so the Action's `verify-deploy` "homepage embeds BUILD_ID" check can
+fail cosmetically (content is still correct). See ISSUE-013 "benign caveat".
+
+**Requirements that keep this working (do not regress):**
+- `.github/workflows/deploy.yml` must use **Node ≥ 22** (`wrangler` 4.100 requires
+  it; Node 20 fails the deploy step). The `NEXT_PUBLIC_MAPBOX_TOKEN` and
+  `CLOUDFLARE_API_TOKEN` Actions secrets must be present.
+- The Cloudflare Workers Build dashboard build command must stay
+  `npm run build -- --webpack` with `NEXT_PUBLIC_MAPBOX_TOKEN` set (§9.5).
+- Manual `npm run deploy` from the dev machine remains available for urgent or
+  local-only deploys.

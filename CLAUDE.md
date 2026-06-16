@@ -47,6 +47,19 @@
   `must-revalidate`, so HTML self-corrects once assets are correct. See
   ISSUE-011 / ARCHITECTURE.md §9.
 
+## Content auto-deploy (Sanity → live, no manual deploy needed)
+- **Sanity content changes auto-deploy** within **~3–5 minutes** of publish.
+  Publishing/updating/deleting a doc in Studio fires the "Auto deploy on publish"
+  webhook → GitHub Action `deploy.yml` → `next build --webpack` (Node 22) →
+  `wrangler deploy`. **No manual `npm run deploy` is needed for content-only
+  changes.** (Pipeline + diagram: ARCHITECTURE.md §9.6; verified 2026-06-16.)
+- **Code changes** still need a deploy: either **`git push origin main`** (triggers
+  the Cloudflare Workers Build, which now builds correctly with `--webpack`
+  + token — ISSUE-013) **or** `npm run deploy` from the dev machine.
+- **Do not** set `.github/workflows/deploy.yml` back below **Node 22** (wrangler
+  4.100 requires it), and keep the `NEXT_PUBLIC_MAPBOX_TOKEN` Actions secret +
+  the CF Workers Build dashboard command (`npm run build -- --webpack`) in place.
+
 ## Key systems (details in ARCHITECTURE.md)
 - **Profiles** — canonical artist pages at `/profiles/[slug]`; `/residents/*`
   and `/artists/*` are legacy namespaces 301-redirected by `worker.js`.
