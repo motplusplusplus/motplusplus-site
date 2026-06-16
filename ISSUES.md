@@ -206,6 +206,20 @@ once immediately, once ~2 minutes later to land after any rogue auto-build.
 Note: the GitHub Actions "Deploy site" workflow is separate and had zero runs on
 2026-06-15. The rogue deploys were Cloudflare Workers Build only.
 
+**Investigation 2026-06-16 (Sanity auto-deploy session):**
+- A Sanity webhook "Auto deploy on publish" (production; create/update/delete)
+  already exists and POSTs to the **GitHub Actions** `deploy.yml` dispatch
+  endpoint — delivery logs show 204 (success), so the webhook fires fine.
+- The dispatched Action runs **fail** — but the build now succeeds (the
+  `NEXT_PUBLIC_MAPBOX_TOKEN` Actions secret IS present; §9.5/older notes saying
+  it was unset are stale). The run dies at `wrangler deploy`:
+  `Wrangler requires at least Node.js v22.0.0. You are using v20.20.2.`
+  (`.github/workflows/deploy.yml` pins `node-version: '20'`; wrangler 4.100.0
+  needs ≥22.) This is why Sanity publishes never reach production.
+- CF Workers Build deploy hooks **cannot be created via API** (dashboard only).
+- Verification of the dashboard build-command fix: see the dated result appended
+  below after the next push-triggered CF build.
+
 ## Resolved
 
 ### [ISSUE-010] Likely duplicate artist profiles
