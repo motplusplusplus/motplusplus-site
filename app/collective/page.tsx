@@ -95,7 +95,7 @@ const members = [
     origin: "USA, b. 1971",
     website: "matthewbrannon.com",
     bio: "Matthew Brannon (b. 1971, St. Maries, Idaho) is recognized for letterpress and screen prints combining images and text. his work employs traditional silkscreen techniques and hand-painting, presenting a stripped-down aesthetic evoking mass production and marketing design. his artistic practice extends across painting, sculpture, video, and installation. since 2015 he has developed an ongoing research project titled Concerning Vietnam exploring the Vietnam/American War. works appear in the Hammer Museum (Los Angeles), Whitney Museum of American Art (New York), and Museum of Modern Art (New York). exhibitions internationally across Belgium, Canada, Germany, Italy, Japan, Mexico, Norway, Spain, Switzerland, UK, and USA. B.A. from University of California Los Angeles; M.F.A. from Columbia University New York. joined MoT+++ collective in 2020. based in New York.",
-    portrait: null,
+    portrait: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/artists/matthew-brannon/portrait.jpg",
     images: [],
   },
   {
