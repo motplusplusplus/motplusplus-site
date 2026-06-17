@@ -1,6 +1,11 @@
 # Favicon
 /favicon.ico /favicon.svg 200
 
+# Legacy /a-farm/ → /afarm/
+/a-farm /afarm/ 301
+/a-farm/ /afarm/ 301
+/a-farm/* /afarm/:splat 301
+
 # Studio slug renames
 /afarm/studios/saola-dalat /afarm/studios/curu 301
 /afarm/studios/saola-dalat/* /afarm/studios/curu/:splat 301
