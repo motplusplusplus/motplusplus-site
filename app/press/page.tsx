@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { pressItems } from "@/lib/press";
 
 export default function PressPage() {
@@ -72,6 +73,21 @@ export default function PressPage() {
             </div>
           </a>
         ))}
+      </div>
+
+      {/* quiet footnote — not a press item */}
+      <div style={{ paddingTop: "48px", paddingBottom: "16px" }}>
+        <Link
+          href="/luke-tramy"
+          style={{
+            fontSize: "11px",
+            color: "#aaaaaa",
+            textDecoration: "none",
+            borderBottom: "1px solid #e0e0e0",
+          }}
+        >
+          Public statement regarding former staff
+        </Link>
       </div>
 
     </div>

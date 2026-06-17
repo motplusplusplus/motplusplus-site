@@ -191,6 +191,20 @@ function buildDocs(raw: RawIndex): SearchDoc[] {
     });
   }
 
+  // Static one-off: /luke-tramy is not in Sanity — add it here so name searches
+  // surface it. Intentional; do not copy this pattern for CMS-managed content.
+  docs.push({
+    type: "news",
+    title: "Public Statement",
+    badge: "Statement",
+    href: "/luke-tramy",
+    subtitle: "Luke Schneider · Nguyễn Trà My · Rare Sea",
+    haystack: strip(
+      "Luke Schneider Schneider Tra My Nguyen Trà My Nguyễn Trà My Tra My Nguyen Rare Sea Cong ty Rare Sea public statement former staff"
+    ),
+    rank: TIER.news,
+  });
+
   return docs;
 }
 
