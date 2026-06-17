@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
 import { sanityClient } from '@/lib/sanity';
 import { DEMO_LOCATIONS } from '@/lib/demoLocations';
 import { MUSEUM_TO_TRASH } from '@/lib/demoTrashItems';
