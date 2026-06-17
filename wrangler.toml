@@ -9,3 +9,4 @@ routes = [
 [assets]
 directory = "out"
 binding = "ASSETS"
+not_found_handling = "404-page"
