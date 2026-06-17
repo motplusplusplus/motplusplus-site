@@ -36,6 +36,14 @@ function shuffleArray<T>(arr: T[]): T[] {
 type SortOption = 'random' | 'date' | 'artist';
 type Props = { items: TrashItem[] };
 
+const AVAILABILITY_FILTERS = ['all', 'available', 'sold'] as const;
+type AvailabilityFilter = typeof AVAILABILITY_FILTERS[number];
+
+function matchesAvailability(item: TrashItem, filter: AvailabilityFilter): boolean {
+  if (filter === 'all') return true;
+  return filter === 'sold' ? !!item.sold : !item.sold;
+}
+
 export default function TrashPageShell({ items }: Props) {
   // unlock state
   const [clicks, setClicks] = useState(0);
@@ -48,6 +56,7 @@ export default function TrashPageShell({ items }: Props) {
   // gallery state
   const [shuffled, setShuffled] = useState<TrashItem[]>([]);
   const [sort, setSort] = useState<SortOption>('random');
+  const [availability, setAvailability] = useState<AvailabilityFilter>('all');
   const [openId, setOpenId] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
@@ -89,12 +98,17 @@ export default function TrashPageShell({ items }: Props) {
     setShuffled(shuffleArray(items));
   }, [items]);
 
-  // sorted display list
-  const displayItems = useMemo(() => {
+  // sorted, then availability-filtered display list
+  const sortedItems = useMemo(() => {
     if (sort === 'artist') return [...items].sort((a, b) => a.artist.localeCompare(b.artist));
     if (sort === 'date') return items;
     return shuffled;
   }, [sort, shuffled, items]);
+
+  const displayItems = useMemo(
+    () => sortedItems.filter(i => matchesAvailability(i, availability)),
+    [sortedItems, availability]
+  );
 
   // auto-open from URL param ?item=
   useEffect(() => {
@@ -200,8 +214,22 @@ export default function TrashPageShell({ items }: Props) {
           works available for acquisition, consigned directly by artists. to inquire about what is currently available, get in touch.
         </p>
 
-        {/* sort control */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+        {/* availability filter + sort control */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {AVAILABILITY_FILTERS.map(f => (
+              <button key={f} onClick={() => setAvailability(f)} style={{
+                padding: '8px 18px', fontSize: '11px', letterSpacing: '0.06em',
+                border: '1px solid',
+                borderColor: availability === f ? '#111111' : '#dddddd',
+                backgroundColor: availability === f ? '#111111' : 'transparent',
+                color: availability === f ? '#ffffff' : '#888888',
+                cursor: 'pointer', fontFamily: 'inherit',
+              }}>
+                {f}
+              </button>
+            ))}
+          </div>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '11px', color: '#cccccc', letterSpacing: '0.06em' }}>sort</span>
             <select
