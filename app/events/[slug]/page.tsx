@@ -3,6 +3,43 @@ import { getAllEvents, getAllEventSlugs, getEventBySlug, getAllEventsFromJson } 
 import { getListingEvents, getAdjacentEvents, isPast, BIO_SLUGS } from "@/lib/events";
 import EventContent from "@/components/EventContent";
 import { isJunkImage } from "@/lib/junk-images";
+import type { Metadata } from "next";
+import { ogImage } from "@/lib/og";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const jsonEvents = getAllEventsFromJson();
+  const sanityEvent = await getEventBySlug(slug);
+  const event = sanityEvent ?? jsonEvents.find(e => e.slug === slug) ?? null;
+  if (!event) return {};
+
+  const galleryImages = event.images.filter(url => !isJunkImage(url));
+  // Same cover-image pick as the page's visual hero (prefer first jpg — png
+  // flyers were often not uploaded to R2), minus the logo fallback below.
+  const cover = galleryImages.find(u => /\.(jpg|jpeg)$/i.test(u)) || galleryImages[0] || event.thumbnail || undefined;
+
+  const title = `${event.title} | MoT+++`;
+  const description = event.description?.slice(0, 160).trim() || `${event.title} — MoT+++, Ho Chi Minh City.`;
+  const image = ogImage(cover, event.title);
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://motplusplusplus.com/events/${slug}`,
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image.url],
+    },
+    alternates: { canonical: `https://motplusplusplus.com/events/${slug}` },
+  };
+}
 
 export async function generateStaticParams() {
   const [sanitySlugs, jsonEvents] = await Promise.all([

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { DEFAULT_OG_IMAGE } from "@/lib/og";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
@@ -10,7 +11,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const OG_IMAGE = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/general/homepage-programs.jpg";
+const OG_IMAGE = DEFAULT_OG_IMAGE;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://motplusplusplus.com"),
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
     title: "MoT+++ | Contemporary Art & Artist Residency — Ho Chi Minh City",
     description:
       "Independent contemporary art organization and international artist residency in Ho Chi Minh City, Vietnam. +a.Farm pairs international residents with local artists in Saigon studios.",
-    images: [{ url: OG_IMAGE, width: 1200, height: 800, alt: "MoT+++" }],
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "MoT+++" }],
   },
   twitter: {
     card: "summary_large_image",

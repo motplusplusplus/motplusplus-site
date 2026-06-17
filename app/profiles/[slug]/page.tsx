@@ -8,18 +8,29 @@ import { isJunkImage } from "@/lib/junk-images";
 import { allStudios } from "@/lib/studios";
 import ArtistGallery from "./ArtistGallery";
 import type { Metadata } from "next";
+import { ogImage } from "@/lib/og";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const artist = getArtist(slug);
-  const sanityArtist = !artist ? await getArtistBySlug(slug) : null;
+  const sanityArtist = await getArtistBySlug(slug);
   const name = artist?.name || sanityArtist?.name || slug;
+  const description = `${name} — artist featured in MoT+++ exhibitions and programs in Ho Chi Minh City, Vietnam.`;
+  const image = ogImage(sanityArtist?.portrait as string | undefined, name);
   return {
     title: `${name} | MoT+++`,
-    description: `${name} — artist featured in MoT+++ exhibitions and programs in Ho Chi Minh City, Vietnam.`,
+    description,
     openGraph: {
       title: `${name} | MoT+++`,
+      description,
       url: `https://motplusplusplus.com/profiles/${slug}`,
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${name} | MoT+++`,
+      description,
+      images: [image.url],
     },
     alternates: { canonical: `https://motplusplusplus.com/profiles/${slug}` },
   };

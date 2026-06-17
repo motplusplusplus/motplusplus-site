@@ -2,6 +2,7 @@ import { preconnect } from 'react-dom';
 import MuseumMapWrapper from '@/components/MuseumMapWrapper';
 import Link from "next/link";
 import type { Metadata } from "next";
+import { ogImage } from "@/lib/og";
 
 export const metadata: Metadata = {
   title: "+1 museum by any other name | contemporary art museum, ho chi minh city",
@@ -21,6 +22,13 @@ export const metadata: Metadata = {
     title: "+1 museum by any other name | contemporary art museum, ho chi minh city",
     description: "The only contemporary art museum in Ho Chi Minh City without walls. Artworks placed across Saigon in private homes, businesses, and studios.",
     url: "https://motplusplusplus.com/museum",
+    images: [ogImage(undefined, "MoT+++")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "+1 museum by any other name | contemporary art museum, ho chi minh city",
+    description: "The only contemporary art museum in Ho Chi Minh City without walls. Artworks placed across Saigon in private homes, businesses, and studios.",
+    images: [ogImage(undefined, "MoT+++").url],
   },
   alternates: { canonical: "https://motplusplusplus.com/museum" },
 };

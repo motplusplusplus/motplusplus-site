@@ -285,6 +285,7 @@ render — both curated sets are empty.
 | 8 | One orphan profile page (`pug-alex-williams`) existed but was unlisted. | Listing and detail pages use different slug-source unions (§3). | **Resolved.** `lib/artists.ts` excludes it from standalone generation via `CONSOLIDATED_BIO_SLUGS`; `worker.js` 301s `/profiles/pug-alex-williams` → `/profiles/alex-williams/`. |
 | 9 | Curators/researchers displayed as artists. | No taxonomy field; flags not fully surfaced. | **Resolved.** `roleCategory()` in `lib/badges.ts` maps Sanity `role` values (`curator`/`writer`/`researcher`) to a primary identity and filter tag (§5). |
 | 10 | Stale doc counts elsewhere (e.g. "244 events"). | Data has grown: `events-data.json` = 339, Sanity = 216 active. | This file is now the reference. |
+| 11 | `/afarm` shares a different image for `og:image` vs. `twitter:image`. | `app/afarm/page.tsx` sets a deliberate custom `openGraph.images` (a studio photo) but never sets `twitter`, so `twitter:image` falls through to the root layout default (the MoT+++ logo, `lib/og.ts`). | Open, low priority — pre-existing, out of scope for the 2026-06-17 OG-image fix (which addressed the sitewide default + event/profile/museum images). Fix by adding a matching `twitter` block to `app/afarm/page.tsx`'s `metadata` export. |
 
 ---
 
