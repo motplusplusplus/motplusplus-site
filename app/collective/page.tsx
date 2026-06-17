@@ -136,8 +136,19 @@ export default function CollectivePage() {
         >
           mot+++ collective
         </h1>
+        <p style={{ fontSize: "15px", color: "#666666", maxWidth: "520px", lineHeight: 1.7, marginBottom: "16px" }}>
+          MoT+++ collective was founded 2017 by{" "}
+          <Link href="/profiles/cam-xanh" style={{ color: "#666666", borderBottom: "1px solid #999999" }}>
+            Cam Xanh
+          </Link>{" "}
+          and{" "}
+          <Link href="/profiles/wu-chi-tsung" style={{ color: "#666666", borderBottom: "1px solid #999999" }}>
+            Wu Chi-Tsung
+          </Link>
+          , with the intention of supporting artists and creating real opportunities for talented artists.
+        </p>
         <p style={{ fontSize: "15px", color: "#666666", maxWidth: "520px", lineHeight: 1.7 }}>
-          comprised of artists that share an affinity with MoT+++&rsquo;s philosophy.
+          the collective grows by maximum one new member each year. to apply, a prospective member writes a love letter to the collective. the collective reads it and votes on whether to accept them.
         </p>
       </div>
 
