@@ -2,28 +2,11 @@
 
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import type { TrashItem } from '@/lib/demoTrashItems';
+import { buildTrashInquiryEmail, type TrashItem } from '@/lib/demoTrashItems';
 import ArtistCreditLinks from '@/components/ArtistCreditLinks';
 
 const PASSWORD = 'virtuesofhumantrash';
 const CLICKS_NEEDED = 7;
-
-function buildInquiryEmail(item: TrashItem) {
-  const subject = encodeURIComponent(
-    `+1 trash — inquiry: ${item.title} by ${item.artist}`
-  );
-  const body = encodeURIComponent(
-    `Hello,\n\nI am writing to inquire about the following work:\n\n` +
-    `Artist: ${item.artist}\n` +
-    `Title: ${item.title}\n` +
-    `Medium: ${item.medium}\n` +
-    `Year: ${item.year}\n` +
-    (item.dimensions ? `Dimensions: ${item.dimensions}\n` : '') +
-    (item.edition ? `Edition: ${item.edition}\n` : '') +
-    `\nI would like to learn more about its availability and price.\n\nThank you.`
-  );
-  return `mailto:motplusplusplus@gmail.com?subject=${subject}&body=${body}`;
-}
 
 function shuffleArray<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -314,7 +297,7 @@ export default function TrashPageShell({ items }: Props) {
                   </span>
                 ) : (
                   <a
-                    href={buildInquiryEmail(item)}
+                    href={buildTrashInquiryEmail(item)}
                     style={{ fontSize: '11px', color: '#fff', backgroundColor: '#111', padding: '5px 12px', textDecoration: 'none', letterSpacing: '0.03em' }}
                   >
                     inquire
@@ -444,7 +427,7 @@ export default function TrashPageShell({ items }: Props) {
                   </span>
                 ) : (
                   <a
-                    href={buildInquiryEmail(open)}
+                    href={buildTrashInquiryEmail(open)}
                     style={{ fontSize: '12px', color: '#fff', backgroundColor: '#111', padding: '8px 18px', textDecoration: 'none', letterSpacing: '0.03em' }}
                   >
                     inquire through +1 trash

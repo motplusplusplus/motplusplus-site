@@ -20,6 +20,24 @@ export type TrashItem = {
   price?: string;              // internal — not rendered unless unlocked
 };
 
+/** Pre-populated mailto inquiry link, shared by the /trash lightbox and /trash/[slug] pages */
+export function buildTrashInquiryEmail(item: TrashItem) {
+  const subject = encodeURIComponent(
+    `+1 trash — inquiry: ${item.title} by ${item.artist}`
+  );
+  const body = encodeURIComponent(
+    `Hello,\n\nI am writing to inquire about the following work:\n\n` +
+    `Artist: ${item.artist}\n` +
+    `Title: ${item.title}\n` +
+    `Medium: ${item.medium}\n` +
+    `Year: ${item.year}\n` +
+    (item.dimensions ? `Dimensions: ${item.dimensions}\n` : '') +
+    (item.edition ? `Edition: ${item.edition}\n` : '') +
+    `\nI would like to learn more about its availability and price.\n\nThank you.`
+  );
+  return `mailto:motplusplusplus@gmail.com?subject=${subject}&body=${body}`;
+}
+
 export const DEMO_TRASH_ITEMS: TrashItem[] = [
   {
     _id: 'trash-demo-8',
