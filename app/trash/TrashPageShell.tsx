@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import type { TrashItem } from '@/lib/demoTrashItems';
+import ArtistCreditLinks from '@/components/ArtistCreditLinks';
 
 const PASSWORD = 'virtuesofhumantrash';
 const CLICKS_NEEDED = 7;
@@ -408,7 +409,7 @@ export default function TrashPageShell({ items }: Props) {
 
             <div style={{ padding: '24px 32px 32px' }}>
               <p style={{ fontSize: '11px', color: '#aaaaaa', letterSpacing: '0.07em', marginBottom: '6px', textTransform: 'uppercase' }}>
-                {open.artist}
+                <ArtistCreditLinks artists={open.artists} fallback={open.artist} />
               </p>
               <p style={{ fontSize: '20px', fontWeight: 300, lineHeight: 1.2, marginBottom: '12px', color: '#111' }}>
                 {open.title}{open.year ? `, ${open.year}` : ''}

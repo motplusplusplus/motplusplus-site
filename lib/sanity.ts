@@ -23,29 +23,49 @@ const buildClient = createClient({
   useCdn: false,
 });
 
+const TRASH_ITEM_FIELDS = `
+  _id,
+  artist,
+  "artistSlug": artistRef->slug.current,
+  "artists": artists[]->{_id, name, "slug": slug.current},
+  "slug": slug.current,
+  title,
+  medium,
+  year,
+  dimensions,
+  edition,
+  description,
+  "directImageUrls": images[].asset->url,
+  legacyImageUrls,
+  "museumLocationId": museumLocationRef->._id,
+  "neighbourhood": museumLocationRef->neighbourhood,
+  sold,
+  price,
+  workLocation,
+  accessContact,
+  accessNotes,
+`;
+
 export async function getTrashItems() {
   return buildClient.fetch(`
-    *[_type == "trashItem" && active == true && (count(images) > 0 || count(legacyImageUrls) > 0) && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(sortOrder asc, artist asc) {
-      _id,
-      artist,
-      "artistSlug": artistRef->slug.current,
-      title,
-      medium,
-      year,
-      dimensions,
-      edition,
-      description,
-      "directImageUrls": images[].asset->url,
-      legacyImageUrls,
-      "museumLocationId": museumLocationRef->._id,
-      "neighbourhood": museumLocationRef->neighbourhood,
-      sold,
-      price,
-      workLocation,
-      accessContact,
-      accessNotes,
-    }
+    *[_type == "trashItem" && active == true && (count(images) > 0 || count(legacyImageUrls) > 0) && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(sortOrder asc, artist asc) { ${TRASH_ITEM_FIELDS} }
   `);
+}
+
+/** Single trash item by slug, for the shareable /trash/[slug] page */
+export async function getTrashItemBySlug(slug: string) {
+  return buildClient.fetch(
+    `*[_type == "trashItem" && slug.current == $slug && active == true && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])][0] { ${TRASH_ITEM_FIELDS} }`,
+    { slug }
+  );
+}
+
+/** All trash item slugs — for generateStaticParams */
+export async function getAllTrashItemSlugs(): Promise<string[]> {
+  const results: { slug: string }[] = await buildClient.fetch(
+    `*[_type == "trashItem" && active == true && defined(slug.current)]{ "slug": slug.current }`
+  );
+  return results.map(r => r.slug).filter(Boolean);
 }
 
 
@@ -77,6 +97,7 @@ const ARTIST_FIELDS = `
     medium,
     year,
     sold,
+    "slug": slug.current,
     "images": images[].asset->url,
     "museumLocationId": museumLocationRef->._id,
   },

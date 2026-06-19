@@ -1,8 +1,12 @@
 const D = 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo';
 
+export type ArtistCredit = { _id: string; name: string; slug: string | null };
+
 export type TrashItem = {
   _id: string;
   artist: string;
+  artists?: ArtistCredit[];     // resolved artists[] refs — may be empty/unresolved
+  slug?: string;                // links to /trash/[slug]
   title: string;
   medium: string;
   year: number;
