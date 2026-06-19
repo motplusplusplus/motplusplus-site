@@ -412,6 +412,14 @@ export default function TrashPageShell({ items }: Props) {
               )}
 
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+                {open.slug && (
+                  <Link
+                    href={`/trash/${open.slug}`}
+                    style={{ fontSize: '12px', color: '#333', border: '1px solid #ccc', padding: '8px 18px', textDecoration: 'none', letterSpacing: '0.03em' }}
+                  >
+                    share this work →
+                  </Link>
+                )}
                 {open.museumLocationId && (
                   <Link
                     href={`/museum?work=${open.museumLocationId}`}
