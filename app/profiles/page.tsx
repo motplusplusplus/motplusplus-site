@@ -1,6 +1,7 @@
 import { getArtists, getMotsoundPerformerEditions } from '@/lib/sanity';
 import { artistsFromData } from '@/lib/artists';
 import { computeBadges } from '@/lib/badges';
+import { compareNames } from '@/lib/sortName';
 import ArtistsShell, { type ArtistEntry } from './ArtistsShell';
 
 const jsonBySlug = new Map(artistsFromData.map(a => [a.slug, a]));
@@ -44,7 +45,7 @@ export default async function ArtistsPage() {
     });
 
   const artists = [...sanityArtists, ...jsonOnlyArtists]
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => compareNames(a.name, b.name));
 
   return <ArtistsShell artists={artists} />;
 }

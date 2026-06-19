@@ -1,5 +1,6 @@
 import artistsRaw from '../artists-data.json';
 import { BIO_SLUGS, type Event } from './events';
+import { compareNames } from './sortName';
 
 export type Artist = {
   slug:           string;
@@ -46,7 +47,7 @@ const residentArtists: Artist[] = Array.from(BIO_SLUGS)
 
 export const allArtists: Artist[] = [...artistsFromData, ...residentArtists]
   .filter(a => !CONSOLIDATED_BIO_SLUGS.has(a.slug))
-  .sort((a, b) => a.name.localeCompare(b.name));
+  .sort((a, b) => compareNames(a.name, b.name));
 
 export function getArtist(slug: string): Artist | undefined {
   return allArtists.find(a => a.slug === slug);

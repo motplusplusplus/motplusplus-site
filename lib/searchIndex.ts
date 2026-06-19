@@ -13,6 +13,7 @@
 // `isInternalHref` is enforced again at filter time so nothing external can leak.
 
 import { pressItems } from "./press";
+import { compareNames } from "./sortName";
 
 // ─── Sanity public read endpoint (no token — dataset ACL is `public`) ──────────
 const PROJECT_ID = "t5nsm79o";
@@ -268,6 +269,6 @@ export function searchIndex(docs: SearchDoc[], query: string, limit = 7): Search
     out.push({ ...d, score: d.rank * 10 + quality });
   }
 
-  out.sort((a, b) => a.score - b.score || a.title.localeCompare(b.title));
+  out.sort((a, b) => a.score - b.score || compareNames(a.title, b.title));
   return out.slice(0, limit);
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { groupLetter } from "@/lib/sortName";
 
 export type ArtistEntry = {
   slug: string;
@@ -39,7 +40,10 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
 
   const groups: Record<string, ArtistEntry[]> = {};
   for (const a of visible) {
-    const letter = a.name[0].toUpperCase();
+    // Diacritics fold to their base letter (Đ → D, Ư → U, etc.) so Vietnamese
+    // and English names share the same A–Z header instead of Đ/Ư/etc. getting
+    // their own group at the end of a plain code-point sort.
+    const letter = groupLetter(a.name);
     if (!groups[letter]) groups[letter] = [];
     groups[letter].push(a);
   }

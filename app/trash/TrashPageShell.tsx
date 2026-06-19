@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { buildTrashInquiryEmail, type TrashItem } from '@/lib/demoTrashItems';
 import ArtistCreditLinks from '@/components/ArtistCreditLinks';
+import { compareNames } from '@/lib/sortName';
 
 const PASSWORD = 'virtuesofhumantrash';
 const CLICKS_NEEDED = 7;
@@ -84,7 +85,7 @@ export default function TrashPageShell({ items }: Props) {
 
   // sorted, then availability-filtered display list
   const sortedItems = useMemo(() => {
-    if (sort === 'artist') return [...items].sort((a, b) => a.artist.localeCompare(b.artist));
+    if (sort === 'artist') return [...items].sort((a, b) => compareNames(a.artist, b.artist));
     if (sort === 'date') return items;
     return shuffled;
   }, [sort, shuffled, items]);

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import artistsData from "@/artists-data.json";
+import { compareNames } from "@/lib/sortName";
 
 const R2 = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/performance";
 
@@ -41,7 +42,7 @@ const events = [
 type ArtistEntry = { slug: string; name: string; performancePlus?: boolean };
 const performanceArtists = (artistsData as ArtistEntry[])
   .filter(a => a.performancePlus)
-  .sort((a, b) => a.name.localeCompare(b.name));
+  .sort((a, b) => compareNames(a.name, b.name));
 
 export default function PerformancePage() {
   return (

@@ -8,6 +8,7 @@ import { DEMO_LOCATIONS } from '@/lib/demoLocations';
 import { MUSEUM_TO_TRASH } from '@/lib/demoTrashItems';
 import type { MuseumLocation, AccessType } from '@/lib/museumTypes';
 import { HCMC_CENTER, MAP_DEFAULT_ZOOM, getStaticMapUrl } from '@/lib/mapConstants';
+import { compareNames } from '@/lib/sortName';
 
 // chunk-rehash nudge (Workers Assets large-file 404 workaround, 2026-06-15)
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? '';
@@ -109,7 +110,7 @@ export default function MuseumMap() {
     : locations;
   // Locations shown as pins on the map (respects mapFilter toggle)
   const mapLocations = filteredLocations.filter(l => mapFilter === 'current' ? !l.isPast : true);
-  const artists = [...new Set(locations.map(l => l.artist))].sort();
+  const artists = [...new Set(locations.map(l => l.artist))].sort(compareNames);
   const latestAdditions = locations.filter(l => l.dateAdded === 'September 21, 1820');
   const featuredWorks = locations.filter(l => l.dateAdded === 'September 22, 1820').slice(0, 25);
 

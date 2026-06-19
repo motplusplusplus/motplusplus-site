@@ -3,6 +3,7 @@ import { getArtists } from "@/lib/sanity";
 import { getAllStudios } from "@/lib/studios";
 import { artistsFromData } from "@/lib/artists";
 import { BIO_SLUGS } from "@/lib/events";
+import { compareNames } from "@/lib/sortName";
 import eventsRaw from "@/events-data.json";
 import SearchShell, { type ArtistResult, type StudioResult, type EventResult } from "./SearchShell";
 import type { Metadata } from "next";
@@ -31,7 +32,7 @@ export default async function SearchPage() {
     }));
 
   const artists = [...sanityArtists, ...jsonOnlyArtists].sort((a, b) =>
-    a.name.localeCompare(b.name)
+    compareNames(a.name, b.name)
   );
 
   // Studios: active, visible
