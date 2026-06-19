@@ -83,6 +83,20 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const sanityArtistId = sanityArtist?._id as string | undefined;
   const relatedEvents = sanityArtistId ? await getEventsByArtistRef(sanityArtistId) : [];
 
+  // +1 trash — available works for this artist (via artistRef or artists[], "available" = not sold).
+  // The trashItem schema has no "status"/"on hold" field, so "available" mirrors the
+  // /trash page's own availability filter (lib: app/trash/TrashPageShell.tsx).
+  type ProfileTrashWork = { _id: string; title?: string; medium?: string; year?: number; sold?: boolean; slug?: string; images?: string[] };
+  const allTrashWorks = (sanityArtist?.trashItems as ProfileTrashWork[] | undefined) ?? [];
+  const availableTrashWorks = allTrashWorks.filter(w => !w.sold && w.slug);
+  const trashWorksMissingSlug = allTrashWorks.filter(w => !w.sold && !w.slug);
+  if (trashWorksMissingSlug.length > 0) {
+    console.warn(
+      `[profiles/${slug}] ${trashWorksMissingSlug.length} available +1 trash work(s) have no slug yet, omitted from the available-works section:`,
+      trashWorksMissingSlug.map(w => w._id)
+    );
+  }
+
   const studio = allStudios.find(s => s.hostSlug === slug);
   // Deceased dates come from the Sanity artist's deathYear/birthYear fields.
   // Shows "birthYear–deathYear" when both exist, or just the death year alone.
@@ -266,6 +280,44 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                 +1 direct experience →
               </Link>
             )}
+          </div>
+        )}
+
+        {/* +1 trash — available works */}
+        {availableTrashWorks.length > 0 && (
+          <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
+            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+              +1 trash — available works
+            </p>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+              gap: "32px 20px",
+            }}>
+              {availableTrashWorks.map(work => (
+                <Link
+                  key={work._id}
+                  href={`/trash/${work.slug}`}
+                  style={{ textDecoration: "none", color: "inherit", display: "block" }}
+                >
+                  <div style={{ aspectRatio: "4/3", overflow: "hidden", backgroundColor: "#f5f5f5", marginBottom: "10px" }}>
+                    {work.images?.[0] ? (
+                      <img
+                        src={work.images[0]}
+                        alt={work.title || ""}
+                        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      />
+                    ) : null}
+                  </div>
+                  <p style={{ fontSize: "13px", color: "#333333", lineHeight: 1.4 }}>
+                    {work.title}{work.year ? `, ${work.year}` : ""}
+                  </p>
+                  {work.medium && (
+                    <p style={{ fontSize: "11px", color: "#aaaaaa", marginTop: "2px" }}>{work.medium}</p>
+                  )}
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 
