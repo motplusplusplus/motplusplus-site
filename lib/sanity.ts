@@ -52,6 +52,15 @@ export async function getTrashItems() {
   `);
 }
 
+/** All currently available (active, unsold) trash items, for the internal
+ *  /pricelist sales tool. Unlike getTrashItems(), does not require an image
+ *  -- Karlie needs every sellable work, not just publicly gallery-ready ones. */
+export async function getPricelistItems() {
+  return buildClient.fetch(`
+    *[_type == "trashItem" && active == true && sold != true && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(artist asc) { ${TRASH_ITEM_FIELDS} }
+  `);
+}
+
 /** Single trash item by slug, for the shareable /trash/[slug] page */
 export async function getTrashItemBySlug(slug: string) {
   return buildClient.fetch(

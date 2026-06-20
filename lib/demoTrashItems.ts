@@ -20,6 +20,13 @@ export type TrashItem = {
   price?: string;              // internal — not rendered unless unlocked
 };
 
+/** Joined artist credit, e.g. "A & B" for a collaborative work, falling back
+ *  to the plain display string when artists[] is empty or unresolved. */
+export function artistLabelFor(item: { artist: string; artists?: ArtistCredit[] }): string {
+  const names = (item.artists ?? []).filter(Boolean).map(a => a.name);
+  return names.length > 0 ? names.join(' & ') : item.artist;
+}
+
 /** Pre-populated mailto inquiry link, shared by the /trash lightbox and /trash/[slug] pages */
 export function buildTrashInquiryEmail(item: TrashItem) {
   const subject = encodeURIComponent(
