@@ -27,7 +27,7 @@ const API_VERSION = "2026-03-20";
 //  - trashItem / museumLocation: active == true
 const INDEX_QUERY = `{
   "profiles": *[_type == "artist" && active == true && defined(slug.current)]{
-    "slug": slug.current, name,
+    "slug": slug.current, name, alternateNames,
     "bio": coalesce(pt::text(bio), bio),
     "vnBio": coalesce(pt::text(vnBio), vnBio),
     role
@@ -100,7 +100,7 @@ export function isInternalHref(href: string): boolean {
 
 // ─── Raw Sanity shapes ─────────────────────────────────────────────────────────
 type RawIndex = {
-  profiles?: { slug: string; name: string; bio?: string; vnBio?: string; role?: string }[];
+  profiles?: { slug: string; name: string; alternateNames?: string[]; bio?: string; vnBio?: string; role?: string }[];
   events?: { slug: string; title: string; vnTitle?: string; category: string; displayDate: string }[];
   studios?: { slug: string; name: string; studioName?: string; neighbourhood?: string }[];
   trash?: { title?: string; artist?: string; medium?: string }[];
@@ -118,7 +118,7 @@ function buildDocs(raw: RawIndex): SearchDoc[] {
       badge: "MoTcyclopedia",
       href: `/profiles/${p.slug}`,
       subtitle: p.role || undefined,
-      haystack: strip([p.name, p.bio, p.vnBio, p.role].filter(Boolean).join(" ")),
+      haystack: strip([p.name, ...(p.alternateNames ?? []), p.bio, p.vnBio, p.role].filter(Boolean).join(" ")),
       rank: TIER.profile,
     });
   }

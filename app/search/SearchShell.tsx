@@ -7,6 +7,7 @@ import Link from "next/link";
 export type ArtistResult = {
   slug: string;
   name: string;
+  alternateNames?: string[];
   hasBio: boolean;
 };
 
@@ -66,7 +67,7 @@ export default function SearchShell({ artists, studios, events }: Props) {
   const hasQuery = terms.length > 0;
 
   const matchedArtists = useMemo(
-    () => hasQuery ? artists.filter(a => matches(a.name, terms)) : [],
+    () => hasQuery ? artists.filter(a => matches([a.name, ...(a.alternateNames ?? [])].join(" "), terms)) : [],
     [artists, terms, hasQuery]
   );
 

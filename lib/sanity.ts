@@ -73,6 +73,7 @@ const ARTIST_FIELDS = `
   _id,
   "slug": slug.current,
   name,
+  alternateNames,
   pronouns,
   birthYear,
   deathYear,

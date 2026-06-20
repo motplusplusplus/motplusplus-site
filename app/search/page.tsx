@@ -20,6 +20,7 @@ export default async function SearchPage() {
   const sanityArtists: ArtistResult[] = sanityRaw.map((a: any) => ({
     slug: a.slug,
     name: a.name,
+    alternateNames: a.alternateNames ?? [],
     hasBio: BIO_SLUGS.has(a.slug),
   }));
 
