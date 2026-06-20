@@ -533,6 +533,14 @@ map UI never reads them — the same EN/VN gap that events closed (`vnTitle`/
 still renders correctly. Low priority — delete the dead `uploadedImageUrls`
 line whenever `lib/sanity.ts` is next touched.
 
+**Slug auto-generates and locks (Studio repo, `schemaTypes/trashItem.ts`,
+commit `7062794`).** The `slug` field auto-fills from `title` as it's typed
+in Studio — no manual "Generate" click needed — but only while no slug
+value exists yet. Once a slug is set (for that document, ever), further
+title edits never change it. In practice: editing a published work's title
+later (fixing a typo, renaming) will **not** change its live `/trash/[slug]`
+URL, so any link already shared externally keeps working.
+
 ### `inquiry`
 
 Defines `type` (`trash`/`residency`/`museum`), `status`, `submittedAt`,
