@@ -118,9 +118,9 @@ export default function MuseumMap() {
   useEffect(() => {
     sanityClient.fetch(`
       *[_type == "museumLocation" && active == true] {
-        _id, title, titleVi, artist,
+        _id, title, vnTitle, artist,
         "artistSlug": artistRef->slug.current,
-        medium, year, dateAdded, description, descriptionVi,
+        medium, year, dateAdded, description, vnDescription,
         accessType, accessDetails, hours, contactMethod,
         hostName, neighbourhood, isPast,
         "coordinates": location,

@@ -3,14 +3,14 @@ export type AccessType = 'open' | 'appointment' | 'phone' | 'introduction' | 'ho
 export type MuseumLocation = {
   _id: string;
   title: string;
-  titleVi?: string;
+  vnTitle?: string;
   artist: string;
   artistSlug?: string;
   medium?: string;
   year?: number;
   dateAdded?: string;
   description?: string;
-  descriptionVi?: string;
+  vnDescription?: string;
   accessType: AccessType;
   accessDetails?: string;
   hours?: string;
