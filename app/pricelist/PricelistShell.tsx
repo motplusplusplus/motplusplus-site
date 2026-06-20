@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { PRICE_REVEAL_PASSWORD } from '@/lib/priceReveal';
+import { registerVietnameseFont, VIETNAMESE_FONT_NAME } from '@/lib/pdfFonts';
 
 export type PricelistItem = {
   _id: string;
@@ -22,13 +23,14 @@ async function downloadPdf(items: PricelistItem[]) {
   const { autoTable } = await import('jspdf-autotable');
 
   const doc = new jsPDF();
+  registerVietnameseFont(doc); // embeds + activates a Vietnamese-safe font for ALL text below --
+                                // jsPDF's built-in fonts (Helvetica etc.) are Latin-only and
+                                // corrupt/drop Vietnamese diacritics in artist names and titles.
 
-  doc.setFont('helvetica', 'bold');
   doc.setFontSize(20);
   doc.setTextColor(17, 17, 17);
   doc.text('MoT+++', 14, 18);
 
-  doc.setFont('helvetica', 'normal');
   doc.setFontSize(11);
   doc.setTextColor(85, 85, 85);
   doc.text('+1 trash — pricelist', 14, 26);
@@ -42,10 +44,10 @@ async function downloadPdf(items: PricelistItem[]) {
     startY: 40,
     head: [['Artist', 'Title', 'Medium / Year', 'Price']],
     body: items.map(i => [i.artist, i.title, mediumYear(i), i.price || '']),
-    headStyles: { fillColor: [17, 17, 17], textColor: [255, 255, 255], fontStyle: 'normal', fontSize: 10 },
-    bodyStyles: { textColor: [51, 51, 51], fontSize: 10 },
+    headStyles: { fillColor: [17, 17, 17], textColor: [255, 255, 255], fontStyle: 'normal', fontSize: 10, font: VIETNAMESE_FONT_NAME },
+    bodyStyles: { textColor: [51, 51, 51], fontSize: 10, font: VIETNAMESE_FONT_NAME },
     alternateRowStyles: { fillColor: [245, 245, 245] },
-    styles: { cellPadding: 6 },
+    styles: { cellPadding: 6, font: VIETNAMESE_FONT_NAME },
   });
 
   const stamp = new Date().toISOString().slice(0, 10);
