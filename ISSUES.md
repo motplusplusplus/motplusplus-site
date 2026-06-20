@@ -313,11 +313,48 @@ Resolved 2026-06-13:
 
 ### [ISSUE-011] Live site served stale (April 2026) build for months — stale asset manifest + edge cache
 **Reported:** 2026-06-13
-**Updated:** 2026-06-13
-**Priority:** ~~critical~~ → resolved (primary); one low-priority follow-up open
-**Status:** RESOLVED 2026-06-13 — site now serves the current build. One optional hardening item remains (cache-purge token).
+**Updated:** 2026-06-21
+**Priority:** ~~critical~~ → resolved (primary); RECURRED 2026-06-21 (see below)
+**Status:** RESOLVED 2026-06-13 → **RECURRED 2026-06-21** (stale/partial asset set broke the museum map) → fixed by a clean `npm run deploy`.
 
-What looked like an edge-cache problem was actually **two compounding layers**.
+**Recurrence 2026-06-21 — the museum map went blank (the visible symptom of this class of bug).**
+Andrew reported the `/museum` Mapbox section showing a blank box with an error.
+Diagnosis ruled out the usual map suspects and proved it was THIS bug again:
+- The Mapbox token was inlined in the live build (`pk.eyJ` present in the live
+  `app/museum/page` chunk) AND valid (Mapbox style API returns 200 with a
+  `Referer: https://motplusplusplus.com` — the URL-restriction note in Claude
+  memory was stale; production is allowed). So NOT a token problem.
+- The live `/museum` HTML + webpack runtime were internally inconsistent with the
+  deployed asset set: of the 14 chunks in the webpack manifest, only 2 returned
+  200 (the unchanged vendor chunk `2149` = mapbox-gl + MuseumMap, ~990 KB; and
+  `2657`); the other **12 returned the SPA 404 page (identical 25,085 bytes)** —
+  i.e. those chunk files were never uploaded.
+- **Proof it broke the map specifically:** the `app/museum/page` chunk loads the
+  map via `Promise.all([n.e(5508), n.e(240), n.e(2657), n.e(2149), n.e(4485)])`.
+  Chunks **5508, 240, 4485 all 404'd**, so that `Promise.all` rejects, the
+  `dynamic(() => import('./MuseumMap'))` fails, and the section renders blank with
+  a chunk-load error. Same stale-asset-manifest mechanism as the original
+  ISSUE-011 (vendor chunks whose hash didn't change survive; new app-code chunk
+  hashes referenced by the manifest were never deployed).
+- **Likely trigger:** a deploy path that bypassed `verify-deploy` — a content
+  auto-deploy via the GitHub Action / Cloudflare Workers Build on push, or a bare
+  `wrangler deploy` — shipped HTML + a webpack manifest without all the matching
+  asset files. `npm run deploy` (clean `rm -rf .next out && build`, then
+  `verify-deploy`) regenerates a consistent set and is the fix.
+
+**Diagnostic recipe (reuse next time the map is blank):**
+```bash
+# 1. all chunks the live /museum HTML references — every one should be 200
+curl -s https://motplusplusplus.com/museum/ | grep -oE '/_next/static/[^"]+\.js' | sort -u \
+  | while read u; do echo "$(curl -s -o /dev/null -w '%{http_code}' https://motplusplusplus.com$u) $u"; done
+# 2. the chunks the museum page DYNAMICALLY loads (the real tell): pull the page
+#    chunk, read its Promise.all([n.e(ID),...]) ids, map ids->hashes via the
+#    webpack-*.js runtime, and curl each. A 404 (== 25,085-byte SPA page) on any
+#    of them is the bug. The token grep (`pk.eyJ`) confirms the token is a
+#    separate, non-issue.
+```
+
+What looked (in the original 2026-06-13 incident) like an edge-cache problem was actually **two compounding layers**.
 Full diagnosis + fix in ARCHITECTURE.md §9.
 
 **Layer 1 (primary, was invisible): stale static-asset manifest.** The worker

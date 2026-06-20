@@ -169,9 +169,22 @@ The museum map WILL silently break if any of these rules are violated:
    then fetch that path (prefixed with `https://motplusplusplus.com`) and grep
    for `pk.eyJ` — if present, the token is inlined correctly.
 
+5. **Map blank but the token IS inlined → it's ISSUE-011 (missing chunks), not
+   the token.** The map loads via a dynamic import; `app/museum/page` does
+   `Promise.all([n.e(5508), n.e(240), n.e(2657), n.e(2149), n.e(4485)])`. If any
+   of those chunk files 404 (a stale/partial asset deploy), the import rejects and
+   the section goes blank with a chunk-load error — looks identical to a token
+   failure but isn't. Confirm by curling the museum page's referenced + dynamically
+   loaded chunks (recipe in ISSUES.md ISSUE-011); a 404 there returns the 25,085-byte
+   SPA page. Fix: a clean `npm run deploy` (never a bare `wrangler deploy` / content
+   auto-deploy, which can ship HTML + manifest without all matching asset files).
+   This recurred 2026-06-21.
+
 Root cause history: this issue recurred multiple times (2026-05 through
 2026-06) because each repair used `wrangler deploy` or bare `next build`
-without `--webpack`, stripping the token again on the next deploy.
+without `--webpack`, stripping the token again on the next deploy. A separate
+recurrence (2026-06-21) was the stale-asset-manifest variant above (token fine,
+chunks missing).
 
 ## Key data files
 - `events-data.json` — **LEGACY ARCHIVE** (339 events). All public events now
