@@ -27,7 +27,7 @@ export default async function ArtistsPage() {
       isPerformancePlus: !!json?.performancePlus,
       motsoundEditions: motsound[a.slug],
     });
-    return { slug: a.slug, name: a.name, primary: b.primary, isFounder: b.isFounder, filters: b.filters };
+    return { slug: a.slug, name: a.name, alternateNames: a.alternateNames ?? [], primary: b.primary, isFounder: b.isFounder, filters: b.filters };
   });
 
   // Artists in artists-data.json that aren't in Sanity

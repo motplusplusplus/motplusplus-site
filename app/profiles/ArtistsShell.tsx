@@ -7,6 +7,7 @@ import { groupLetter } from "@/lib/sortName";
 export type ArtistEntry = {
   slug: string;
   name: string;
+  alternateNames?: string[];
   primary: string;     // primary identity badge (sub-label + grouping)
   isFounder: boolean;
   filters: string[];   // every filter tag this person matches
@@ -100,6 +101,9 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
                     fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.4,
                   }}>
                     {a.name}
+                    {a.alternateNames && a.alternateNames.length > 0 && (
+                      <span style={{ color: "#aaaaaa" }}> ({a.alternateNames.join(", ")})</span>
+                    )}
                   </p>
                   {a.primary !== "artist" && (
                     <p style={{

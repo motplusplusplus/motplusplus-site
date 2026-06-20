@@ -24,7 +24,7 @@ export const artistsFromData: Artist[] = artistsRaw as Artist[];
 // excluded from /events, but no standalone /profiles page is generated for them.
 export const CONSOLIDATED_BIO_SLUGS = new Set<string>([
   'pug-alex-williams',     // → alex-williams ("Alex Williams (Pug)")
-  'baby-reni',             // → irene-ha ("Baby Reni (Irene Ha)")
+  'baby-reni',             // → irene-ha ("Baby Reni", alternateNames: ["Irene Ha"])
   'dan-nguyen-demonslayer', // → dan-nguyen ("Dan Nguyen (Demonslayer)")
 ]);
 
