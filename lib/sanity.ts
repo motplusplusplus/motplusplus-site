@@ -23,12 +23,14 @@ const buildClient = createClient({
   useCdn: false,
 });
 
-/** A trashItem must have a non-empty price to appear anywhere on the public
- *  site -- single source of truth for that rule, used by every trashItem
- *  query (the /trash grid, /trash/[slug], /pricelist, and the artist
- *  profile's embedded "available works" list). Independent of and additional
- *  to the existing active/sold filters below -- does not replace them. */
-const TRASH_ITEM_PRICED = `defined(price) && price != ""`;
+/** An UNSOLD trashItem must have a non-empty price to appear anywhere on the
+ *  public site. A SOLD work bypasses this entirely -- it's part of the sales
+ *  record, and a missing price there is a data-completeness gap, not a
+ *  reason to hide it. Single source of truth, used by every trashItem query
+ *  (the /trash grid, /trash/[slug], /pricelist, and the artist profile's
+ *  embedded work-history list). Independent of and additional to each call
+ *  site's own active/sold filters -- does not replace them. */
+const TRASH_ITEM_PRICED = `(sold == true || (defined(price) && price != ""))`;
 
 const TRASH_ITEM_FIELDS = `
   _id,
