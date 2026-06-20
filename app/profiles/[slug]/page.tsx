@@ -108,8 +108,8 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const isDavidWillis = slug === "david-willis";
   const isCamXanh = slug === "cam-xanh";
 
-  // Cam Xanh: full name on the bio page, "Cam Xanh" on the listing card.
-  const displayName = slug === "cam-xanh" ? "Tran Thi Thanh Ha (Cam Xanh)" : artist.name;
+  const displayName = artist.name;
+  const alternateNames = (sanityArtist?.alternateNames as string[] | undefined) ?? [];
 
   const badges = computeBadges({
     slug,
@@ -169,6 +169,11 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           }}>
             {displayName}
           </h1>
+          {alternateNames.length > 0 && (
+            <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.45)", marginTop: "8px", fontWeight: 300 }}>
+              {alternateNames.join(", ")}
+            </p>
+          )}
           {deceasedDates ? (
             <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", marginTop: "8px", fontWeight: 300 }}>
               {deceasedDates}
