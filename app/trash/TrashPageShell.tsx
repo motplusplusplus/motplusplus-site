@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { buildTrashInquiryEmail, type TrashItem } from '@/lib/demoTrashItems';
 import ArtistCreditLinks from '@/components/ArtistCreditLinks';
 import { compareNames } from '@/lib/sortName';
+import { PRICE_REVEAL_PASSWORD } from '@/lib/priceReveal';
 
-const PASSWORD = 'virtuesofhumantrash';
+const PASSWORD = PRICE_REVEAL_PASSWORD;
 const CLICKS_NEEDED = 7;
 
 function shuffleArray<T>(arr: T[]): T[] {
