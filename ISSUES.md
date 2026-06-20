@@ -177,6 +177,37 @@ checked into the repo.
 
 ## Resolved
 
+### [ISSUE-014] Sanity Studio at the new Workers URL showed "This Studio is not registered"
+**Reported:** 2026-06-20
+**Status:** RESOLVED 2026-06-20
+
+A prior session switched the Studio repo's deploy mechanism from `sanity deploy`
+to `wrangler deploy` (Cloudflare Workers hosting). Unlike `sanity deploy`,
+`wrangler deploy` only publishes static assets — it never registers the
+resulting hostname as an authorized Sanity CORS origin. Every API request from
+the new Studio URL was correctly rejected, surfaced to users as "This Studio is
+not registered and cannot access your content yet."
+
+**Fix:** `npx sanity cors add <url> --credentials` for both the long Workers
+URL and the new custom domain (see ARCHITECTURE.md §11). Confirmed via
+`sanity cors list`. The old Sanity-hosted Studio (`motplusplus.sanity.studio`)
+was unaffected throughout — its origin was already registered and remains so —
+but it has not been rebuilt since the switch to `wrangler deploy`, so it lacks
+newer schema fields/Studio tools. Treat it as a stale fallback only.
+
+**Also added in this session:** `studio.motplusplusplus.com` as a Cloudflare
+Custom Domain on the same Worker, now the canonical documented Studio URL
+(wrangler.jsonc commit `f079cd5`). Adding the `routes` entry initially disabled
+the `workers.dev` URL as an undocumented wrangler default — fixed by setting
+`workers_dev: true` explicitly; both URLs now resolve.
+
+**Does this recur?** Registering a *specific* hostname is one-time — CORS
+origins persist independently of future redeploys to the same URL. It would
+only need repeating if Studio is ever deployed to a genuinely new hostname.
+The in-Studio "Deploy" button (`DeployTool.tsx`) is unrelated to this risk —
+it redeploys the main website's content build, not the Studio app itself, and
+was never part of the failure.
+
 ### [ISSUE-013] Cloudflare Workers Build auto-deploys on push with wrong build command
 **Reported:** 2026-06-15
 **Updated:** 2026-06-16

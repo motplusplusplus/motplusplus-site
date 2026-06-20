@@ -14,7 +14,7 @@
 | Frontend | Next.js (App Router), **static export** (`output: "export"`, `trailingSlash: true`, unoptimized images) | `app/`, builds to `out/` |
 | Hosting | Cloudflare **Worker** (`worker.js`) with an `[assets]` binding serving `out/` | `wrangler.toml`, account `f2a86349…` (see dashboard) |
 | Domains | `motplusplusplus.com` + `www.` (custom domains on the Worker), plus `motplusplus-site.motplusplusplus.workers.dev` | `wrangler.toml` routes |
-| CMS | Sanity, project `t5nsm79o`, dataset `production` | Studio repo: `~/Documents/motplus-sanity` (live: motplusplus.sanity.studio) |
+| CMS | Sanity, project `t5nsm79o`, dataset `production` | Studio repo: `~/Documents/motplus-sanity` (live: studio.motplusplusplus.com — see §11) |
 | Images | Cloudflare R2 bucket `mot-assets` (MoT+++ account, same as Workers) | public URL `https://pub-136b7c559e56403eb674c24e717611c6.r2.dev` |
 | Legacy data | `events-data.json`, `artists-data.json`, `studios-data.json` | repo root |
 
@@ -667,7 +667,7 @@ live after a full rebuild + redeploy. As of 2026-06-16 this is **automated** —
 no manual `npm run deploy` is needed for content-only changes:
 
 ```
-Editor publishes/updates/deletes in Sanity Studio (motplusplus.sanity.studio)
+Editor publishes/updates/deletes in Sanity Studio (studio.motplusplusplus.com)
    │
    ▼
 Sanity webhook "Auto deploy on publish"  (project t5nsm79o, dataset production)
@@ -788,3 +788,54 @@ type, add it to the combined query and drop the `pressItems` import.
   A new public domain needs its CORS origin added (`sanity cors add <origin>` or
   the MCP `add_cors_origin`), or the dropdown silently fails (the submit flow to
   `/search` still works since that's server-rendered at build time).
+
+---
+
+## 11. Sanity Studio hosting (separate from the main site's hosting)
+
+The Studio app itself (the CMS editing UI) is a **separate deployment** from
+everything in §1/§9 — those sections cover this site repo's Cloudflare Worker.
+The Studio is its own Cloudflare Worker, built and deployed from the Studio
+repo (`~/Documents/motplus-sanity`).
+
+**Canonical URL to bookmark: `https://studio.motplusplusplus.com`** — a
+Cloudflare Custom Domain pointing at the Worker `1-museum-by-any-other-name`
+(wrangler.jsonc, commit `f079cd5`). The long auto-generated URL
+(`https://1-museum-by-any-other-name.motplusplusplus.workers.dev`) still works
+too (kept alive deliberately — see ISSUE-014) but is not the one to document
+or share going forward.
+
+**Deploying the Studio app itself** (schema changes, new fields, new Studio
+components) is currently a **manual, two-step terminal process**, run from
+`~/Documents/motplus-sanity`:
+```
+npm run build   # sanity build -> dist/
+npx wrangler deploy
+```
+This is **not** what the in-Studio "Deploy" button (`components/DeployTool.tsx`)
+does — that button redeploys the *main website* (`motplusplus-site`, via a
+GitHub Actions workflow_dispatch), so editors can publish content changes
+without leaving Studio. It has no effect on the Studio app's own code/schema;
+there is currently no equivalent one-click flow for redeploying Studio itself.
+
+**CORS origins required for the Studio to function**: `wrangler deploy`
+publishes static assets only — unlike `sanity deploy` (Sanity's own hosted
+flow, no longer used here), it does **not** register the resulting hostname
+with Sanity's API as an authorized CORS origin. Any new Studio hostname needs
+one manual step after deploying:
+```
+npx sanity cors add <url> --credentials
+```
+Skipping this produces the error "This Studio is not registered and cannot
+access your content yet." Both current Studio URLs are registered
+(`sanity cors list`). **This does not need to be repeated for the existing
+URLs** — CORS registration persists independently of future redeploys to the
+same hostname. It only needs repeating if Studio is ever deployed to a *new*
+hostname (e.g. the Worker is renamed, or another custom domain is added).
+
+The old Sanity-hosted Studio (`https://motplusplus.sanity.studio`) is still a
+registered CORS origin and still works for login, but has not been rebuilt
+since the switch to `wrangler deploy` — it does not have the newer schema
+fields/Studio tools (e.g. `vnTitle`/`vnDescription`, the Deploy tool, the
+EN↔VI translation view). Treat it as a stale fallback only, not a second
+maintained Studio.

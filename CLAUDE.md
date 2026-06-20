@@ -112,7 +112,10 @@
 
 ## Sanity CMS
 - **Project ID:** `t5nsm79o`, dataset `production`
-- **Studio URL:** `https://motplusplus.sanity.studio`
+- **Studio URL:** `https://studio.motplusplusplus.com` — bookmark this one. The
+  old `https://motplusplus.sanity.studio` still works for login but is a stale
+  fallback, not rebuilt since Studio moved to Cloudflare Workers hosting (see
+  ARCHITECTURE.md §11, ISSUE-014).
 - **Studio repo (canonical schemas):** `~/Documents/motplus-sanity` →
   `schemaTypes/` (`event`, `artist`, `afarmHost`, `museumLocation`,
   `trashItem`, `inquiry`). See ARCHITECTURE.md §8 for a field-by-field
