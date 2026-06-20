@@ -4,7 +4,7 @@ import { getAllStudios } from "@/lib/studios";
 import { getArtist } from "@/lib/artists";
 
 export const metadata: Metadata = {
-  title: "Studios | MoT+++",
+  title: "Studios",
   description: "Artist studios associated with MoT+++, Ho Chi Minh City — spaces for making, hosting, and exchange.",
   openGraph: {
     title: "Studios | MoT+++",

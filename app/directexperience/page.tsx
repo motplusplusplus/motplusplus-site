@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "+1 Direct Experience Meditation Residency — MoT+++",
+  title: "+1 Direct Experience Meditation Residency",
   description:
     "A one-on-one meditation residency in Ho Chi Minh City. One month in a private penthouse — unstructured, silent, and deeply personal. For artists, writers, and seekers. $20,000/month.",
   openGraph: {

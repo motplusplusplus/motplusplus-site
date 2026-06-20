@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const description = `${name} — artist featured in MoT+++ exhibitions and programs in Ho Chi Minh City, Vietnam.`;
   const image = ogImage(sanityArtist?.portrait as string | undefined, name);
   return {
-    title: `${name} | MoT+++`,
+    title: name,
     description,
     openGraph: {
       title: `${name} | MoT+++`,

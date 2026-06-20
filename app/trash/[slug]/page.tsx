@@ -18,7 +18,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const label = artistLabel(raw);
   const images = [...(raw.directImageUrls ?? []), ...(raw.legacyImageUrls ?? [])];
-  const title = `${raw.title || "untitled"} — ${label} | +1 trash | MoT+++`;
+  const title = `${raw.title || "untitled"} — ${label} | +1 trash`;
+  const socialTitle = `${title} | MoT+++`;
   const descParts = [label, raw.medium, raw.year ? String(raw.year) : null].filter(Boolean);
   const description = `${descParts.join(" — ")} — available through +1 trash, MoT+++'s artwork acquisition program in Ho Chi Minh City, Vietnam.`;
   const image = ogImage(images[0], `${raw.title || "untitled"} by ${label}`);
@@ -27,14 +28,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     openGraph: {
-      title,
+      title: socialTitle,
       description,
       url: `https://motplusplusplus.com/trash/${slug}`,
       images: [image],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: socialTitle,
       description,
       images: [image.url],
     },

@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ? studio.description.slice(0, 160).trim()
     : `${studio.name} — artist studio associated with MoT+++, Ho Chi Minh City.`;
   return {
-    title: `${studio.name} | MoT+++`,
+    title: studio.name,
     description,
     openGraph: {
       title: `${studio.name} | MoT+++`,

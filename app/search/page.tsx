@@ -9,7 +9,7 @@ import SearchShell, { type ArtistResult, type StudioResult, type EventResult } f
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Search — MoT+++",
+  title: "Search",
 };
 
 export default async function SearchPage() {

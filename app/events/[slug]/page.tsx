@@ -18,7 +18,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // flyers were often not uploaded to R2), minus the logo fallback below.
   const cover = galleryImages.find(u => /\.(jpg|jpeg)$/i.test(u)) || galleryImages[0] || event.thumbnail || undefined;
 
-  const title = `${event.title} | MoT+++`;
+  const title = event.title;
+  const socialTitle = `${event.title} | MoT+++`;
   const description = event.description?.slice(0, 160).trim() || `${event.title} — MoT+++, Ho Chi Minh City.`;
   const image = ogImage(cover, event.title);
 
@@ -26,14 +27,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     openGraph: {
-      title,
+      title: socialTitle,
       description,
       url: `https://motplusplusplus.com/events/${slug}`,
       images: [image],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: socialTitle,
       description,
       images: [image.url],
     },

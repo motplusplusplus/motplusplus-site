@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ? `${name} by ${artist} — artist residency studio in ${studio.neighborhood}, Ho Chi Minh City. Available through +a.Farm, MoT+++'s international artist residency in Vietnam.`
     : `${name} — artist residency studio in ${studio.neighborhood}, Ho Chi Minh City. Available through +a.Farm, MoT+++'s international artist residency in Vietnam.`;
   return {
-    title: `${name} — Artist Studio Vietnam | MoT+++`,
+    title: `${name} — Artist Studio Vietnam`,
     description: desc,
     openGraph: {
       title: `${name} | +a.Farm Artist Residency Vietnam`,
