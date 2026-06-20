@@ -38,8 +38,9 @@ export default async function PricelistPage() {
     };
   });
 
-  // Omit works with no price entered yet, rather than show a blank/misleading row.
-  const priced = items.filter(item => !!item.price);
+  // getPricelistItems() already excludes priceless works at the query level
+  // (TRASH_ITEM_PRICED in lib/sanity.ts) -- no separate filter needed here.
+  const priced = [...items];
   priced.sort((a, b) => compareNames(a.artist, b.artist));
 
   return (

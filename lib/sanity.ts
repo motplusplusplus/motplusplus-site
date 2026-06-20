@@ -23,6 +23,13 @@ const buildClient = createClient({
   useCdn: false,
 });
 
+/** A trashItem must have a non-empty price to appear anywhere on the public
+ *  site -- single source of truth for that rule, used by every trashItem
+ *  query (the /trash grid, /trash/[slug], /pricelist, and the artist
+ *  profile's embedded "available works" list). Independent of and additional
+ *  to the existing active/sold filters below -- does not replace them. */
+const TRASH_ITEM_PRICED = `defined(price) && price != ""`;
+
 const TRASH_ITEM_FIELDS = `
   _id,
   artist,
@@ -48,7 +55,7 @@ const TRASH_ITEM_FIELDS = `
 
 export async function getTrashItems() {
   return buildClient.fetch(`
-    *[_type == "trashItem" && active == true && (count(images) > 0 || count(legacyImageUrls) > 0) && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(sortOrder asc, artist asc) { ${TRASH_ITEM_FIELDS} }
+    *[_type == "trashItem" && active == true && ${TRASH_ITEM_PRICED} && (count(images) > 0 || count(legacyImageUrls) > 0) && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(sortOrder asc, artist asc) { ${TRASH_ITEM_FIELDS} }
   `);
 }
 
@@ -57,14 +64,14 @@ export async function getTrashItems() {
  *  -- Karlie needs every sellable work, not just publicly gallery-ready ones. */
 export async function getPricelistItems() {
   return buildClient.fetch(`
-    *[_type == "trashItem" && active == true && sold != true && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(artist asc) { ${TRASH_ITEM_FIELDS} }
+    *[_type == "trashItem" && active == true && ${TRASH_ITEM_PRICED} && sold != true && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(artist asc) { ${TRASH_ITEM_FIELDS} }
   `);
 }
 
 /** Single trash item by slug, for the shareable /trash/[slug] page */
 export async function getTrashItemBySlug(slug: string) {
   return buildClient.fetch(
-    `*[_type == "trashItem" && slug.current == $slug && active == true && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])][0] { ${TRASH_ITEM_FIELDS} }`,
+    `*[_type == "trashItem" && slug.current == $slug && active == true && ${TRASH_ITEM_PRICED} && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])][0] { ${TRASH_ITEM_FIELDS} }`,
     { slug }
   );
 }
@@ -72,7 +79,7 @@ export async function getTrashItemBySlug(slug: string) {
 /** All trash item slugs — for generateStaticParams */
 export async function getAllTrashItemSlugs(): Promise<string[]> {
   const results: { slug: string }[] = await buildClient.fetch(
-    `*[_type == "trashItem" && active == true && defined(slug.current)]{ "slug": slug.current }`
+    `*[_type == "trashItem" && active == true && ${TRASH_ITEM_PRICED} && defined(slug.current)]{ "slug": slug.current }`
   );
   return results.map(r => r.slug).filter(Boolean);
 }
@@ -101,7 +108,7 @@ const ARTIST_FIELDS = `
   "portrait": portrait.asset->url,
   "images": uploadedImages[].asset->url,
   legacyImageUrls,
-  "trashItems": *[_type == "trashItem" && references(^._id) && active == true && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] {
+  "trashItems": *[_type == "trashItem" && references(^._id) && active == true && ${TRASH_ITEM_PRICED} && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] {
     _id,
     title,
     medium,
