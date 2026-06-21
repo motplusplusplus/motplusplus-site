@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { PortableText } from "@portabletext/react";
 import { getArtist, getArtistSlugs, type Artist } from "@/lib/artists";
 import { getEventBySlug, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef, getMotsoundPerformerEditions } from "@/lib/sanity";
 import { BIO_SLUGS } from "@/lib/events";
@@ -69,12 +70,17 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
     studioHost: false,
     origin:     ([sanityArtist!.originCity, sanityArtist!.nationality] as string[]).filter(Boolean).join(", "),
     website:    ((sanityArtist!.links?.[0] as { url?: string })?.url ?? "").replace(/^https?:\/\//, ""),
-    bio:        (sanityArtist!.bio as string) ?? "",
+    bio:        "",
     photo:      (sanityArtist!.portrait as string) ?? "",
     workImages: (sanityArtist!.images as string[]) ?? [],
   };
 
-  const bioText = artist.bio || (sanityArtist?.bio as string) || eventEntry?.description || "";
+  const rawSanityBio = sanityArtist?.bio;
+  const ptBio = Array.isArray(rawSanityBio) ? rawSanityBio as any[] : null;
+  const bioText = (localArtist?.bio ?? '') || (typeof rawSanityBio === 'string' ? rawSanityBio : '') || eventEntry?.description || '';
+  // Use PT rendering when Sanity returned a block array and no plain-text source overrides it
+  const usePtBio = ptBio !== null && !(localArtist?.bio) && !(eventEntry?.description);
+  const hasBio = usePtBio || bioText.length > 0;
   const displayDate = eventEntry?.displayDate || "";
 
   // Gallery images from the bio event entry (documentation photos), junk-filtered
@@ -243,18 +249,45 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         )}
 
         {/* bio */}
-        {bioText && (
+        {hasBio && (
           <div style={{ maxWidth: "680px", marginBottom: "80px" }}>
             <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "28px" }}>
               practice
             </p>
-            {bioText.split(/\n{2,}/).filter(Boolean).map((para, i) => (
-              <p key={i} style={{
-                fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px",
-              }}>
-                {para.trim()}
-              </p>
-            ))}
+            {usePtBio ? (
+              <PortableText
+                value={ptBio!}
+                components={{
+                  block: {
+                    normal: ({ children }) => (
+                      <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}>
+                        {children}
+                      </p>
+                    ),
+                  },
+                  marks: {
+                    link: ({ children, value }) => (
+                      <a
+                        href={value?.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "#444444", textDecoration: "underline" }}
+                      >
+                        {children}
+                      </a>
+                    ),
+                  },
+                }}
+              />
+            ) : (
+              bioText.split(/\n{2,}/).filter(Boolean).map((para, i) => (
+                <p key={i} style={{
+                  fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px",
+                }}>
+                  {para.trim()}
+                </p>
+              ))
+            )}
             {isDavidWillis && (
               <Link
                 href="/afarm/retreat"
@@ -398,7 +431,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         )}
 
         {/* if no bio and no events: minimal state */}
-        {!bioText && relatedEvents.length === 0 && (
+        {!hasBio && relatedEvents.length === 0 && (
           <div style={{ marginBottom: "80px" }}>
             <p style={{ fontSize: "14px", color: "#aaaaaa", fontWeight: 300 }}>
               artist profile — more information to come.
