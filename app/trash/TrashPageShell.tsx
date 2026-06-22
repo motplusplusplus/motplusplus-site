@@ -269,7 +269,13 @@ export default function TrashPageShell({ items }: Props) {
                   <img
                     src={item.images[cardImageIdx[item._id] ?? 0]}
                     alt={item.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }}
+                    style={{
+                      width: '100%', height: '100%',
+                      // items with a multi-image set (e.g. wide/landscape dataset stills)
+                      // show the full frame instead of cropping a random crop of it
+                      objectFit: item.images.length > 1 ? 'contain' : 'cover',
+                      transition: 'transform 0.3s ease',
+                    }}
                     onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.03)')}
                     onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
                   />
