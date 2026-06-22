@@ -5,9 +5,10 @@ import { useState } from "react";
 type MailtoContactFormProps = {
   heading: string;
   recipient: string;
+  messagePlaceholder?: string;
 };
 
-export default function MailtoContactForm({ heading, recipient }: MailtoContactFormProps) {
+export default function MailtoContactForm({ heading, recipient, messagePlaceholder = "what's this about…" }: MailtoContactFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -96,7 +97,7 @@ export default function MailtoContactForm({ heading, recipient }: MailtoContactF
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
-              placeholder="what's this about…"
+              placeholder={messagePlaceholder}
               style={{ ...inputStyle, resize: "vertical" }}
             />
           </div>
