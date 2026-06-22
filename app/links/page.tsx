@@ -29,6 +29,8 @@ const programLinks = [
   { label: "+1 museum by any other name", href: "/museum" },
   { label: "MoTcyclopedia", href: "/profiles" },
   { label: "MoTsound", href: "/sound" },
+  { label: "instagram @motplusplusplus", href: "https://www.instagram.com/motplusplusplus", external: true },
+  { label: "instagram @a.farm.saigon", href: "https://www.instagram.com/a.farm.saigon", external: true },
 ];
 
 export default function LinksPage() {
@@ -52,24 +54,33 @@ export default function LinksPage() {
 
       {/* program links */}
       <nav style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "64px" }}>
-        {programLinks.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            style={{
-              display: "block",
-              textAlign: "center",
-              fontSize: "18px",
-              fontWeight: 300,
-              color: "#111111",
-              border: "1px solid #cccccc",
-              borderRadius: "4px",
-              padding: "20px 16px",
-            }}
-          >
-            {item.label}
-          </Link>
-        ))}
+        {programLinks.map((item) => {
+          const linkStyle = {
+            display: "block",
+            textAlign: "center" as const,
+            fontSize: "18px",
+            fontWeight: 300,
+            color: "#111111",
+            border: "1px solid #cccccc",
+            borderRadius: "4px",
+            padding: "20px 16px",
+          };
+          return item.external ? (
+            <a
+              key={item.href}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={linkStyle}
+            >
+              {item.label}
+            </a>
+          ) : (
+            <Link key={item.href} href={item.href} style={linkStyle}>
+              {item.label}
+            </Link>
+          );
+        })}
       </nav>
 
       {/* contact forms */}
