@@ -1,0 +1,83 @@
+import Image from "next/image";
+import Link from "next/link";
+import type { Metadata } from "next";
+import { ogImage } from "@/lib/og";
+import MailtoContactForm from "@/components/MailtoContactForm";
+
+export const metadata: Metadata = {
+  title: "links",
+  description: "MoT+++ links — +a.Farm, +1 trash, events, +1 museum by any other name, MoTcyclopedia, MoTsound, and contact.",
+  openGraph: {
+    title: "links | MoT+++",
+    description: "MoT+++ links — +a.Farm, +1 trash, events, +1 museum by any other name, MoTcyclopedia, MoTsound, and contact.",
+    url: "https://motplusplusplus.com/links",
+    images: [ogImage(undefined, "MoT+++")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "links | MoT+++",
+    description: "MoT+++ links — +a.Farm, +1 trash, events, +1 museum by any other name, MoTcyclopedia, MoTsound, and contact.",
+    images: [ogImage(undefined, "MoT+++").url],
+  },
+  alternates: { canonical: "https://motplusplusplus.com/links" },
+};
+
+const programLinks = [
+  { label: "+a.Farm", href: "/afarm" },
+  { label: "+1 trash", href: "/trash" },
+  { label: "events", href: "/events" },
+  { label: "+1 museum by any other name", href: "/museum" },
+  { label: "MoTcyclopedia", href: "/profiles" },
+  { label: "MoTsound", href: "/sound" },
+];
+
+export default function LinksPage() {
+  return (
+    <div style={{ maxWidth: "480px", margin: "0 auto", padding: "56px 24px 96px" }}>
+
+      {/* logo */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "48px" }}>
+        <Image
+          src="/motpluspluspluslogo.jpg"
+          alt="MoT+++"
+          width={112}
+          height={112}
+          style={{ objectFit: "contain" }}
+          unoptimized
+        />
+        <p style={{ fontSize: "13px", color: "#999999", letterSpacing: "0.06em", marginTop: "16px", textAlign: "center" }}>
+          contemporary art &amp; artist residency, ho chi minh city
+        </p>
+      </div>
+
+      {/* program links */}
+      <nav style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "64px" }}>
+        {programLinks.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            style={{
+              display: "block",
+              textAlign: "center",
+              fontSize: "18px",
+              fontWeight: 300,
+              color: "#111111",
+              border: "1px solid #cccccc",
+              borderRadius: "4px",
+              padding: "20px 16px",
+            }}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
+      {/* contact forms */}
+      <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", display: "flex", flexDirection: "column", gap: "64px" }}>
+        <MailtoContactForm heading="contact mot+++" recipient="motplusplusplus@gmail.com" />
+        <MailtoContactForm heading="contact a.farm" recipient="a.farm.saigon@gmail.com" />
+      </div>
+
+    </div>
+  );
+}
