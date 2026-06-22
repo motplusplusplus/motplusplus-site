@@ -14,6 +14,7 @@ export type TrashItem = {
   edition: string;
   description: string;
   images: string[];
+  youtubeUrls?: string[];      // YouTube embed URLs, rendered on /trash/[slug] only
   museumLocationId?: string;   // links to a museum location _id
   neighbourhood?: string;      // neighbourhood of museum placement
   sold?: boolean;

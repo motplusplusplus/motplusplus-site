@@ -46,6 +46,7 @@ const TRASH_ITEM_FIELDS = `
   description,
   "directImageUrls": images[].asset->url,
   legacyImageUrls,
+  youtubeUrls,
   "museumLocationId": museumLocationRef->._id,
   "neighbourhood": museumLocationRef->neighbourhood,
   sold,

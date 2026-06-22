@@ -47,6 +47,20 @@ export default function TrashPageShell({ items }: Props) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
 
+  // for items with multiple images, pick a random image index per item (client-side
+  // only, after mount, to avoid an SSR/hydration mismatch). The lightbox reuses the
+  // same index so it matches whichever image the card happened to show.
+  const [cardImageIdx, setCardImageIdx] = useState<Record<string, number>>({});
+  useEffect(() => {
+    const idx: Record<string, number> = {};
+    for (const item of items) {
+      if (item.images && item.images.length > 1) {
+        idx[item._id] = Math.floor(Math.random() * item.images.length);
+      }
+    }
+    setCardImageIdx(idx);
+  }, [items]);
+
   // unlock handlers
   const handleTrashClick = () => {
     if (unlocked) return;
@@ -253,7 +267,7 @@ export default function TrashPageShell({ items }: Props) {
               >
                 {item.images && item.images.length > 0 ? (
                   <img
-                    src={item.images[0]}
+                    src={item.images[cardImageIdx[item._id] ?? 0]}
                     alt={item.title}
                     style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }}
                     onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.03)')}
@@ -385,7 +399,7 @@ export default function TrashPageShell({ items }: Props) {
             {open.images && open.images.length > 0 && (
               <div>
                 <img
-                  src={open.images[0]}
+                  src={open.images[cardImageIdx[open._id] ?? 0]}
                   alt={open.title}
                   style={{ width: '100%', maxHeight: '380px', objectFit: 'contain', backgroundColor: '#f5f5f5', display: 'block' }}
                 />

@@ -70,6 +70,7 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
     edition: raw.edition ?? "",
     description: raw.description ?? "",
     images: [...(raw.directImageUrls ?? []), ...(raw.legacyImageUrls ?? [])],
+    youtubeUrls: raw.youtubeUrls ?? [],
     museumLocationId: raw.museumLocationId,
     neighbourhood: raw.neighbourhood,
     sold: raw.sold ?? false,
@@ -111,6 +112,22 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
           <p style={{ fontSize: "15px", color: "#555555", lineHeight: 1.85, marginBottom: "32px", maxWidth: "640px" }}>
             {item.description}
           </p>
+        )}
+
+        {item.youtubeUrls && item.youtubeUrls.length > 0 && (
+          <div style={{ marginBottom: "32px", display: "flex", flexDirection: "column", gap: "24px" }}>
+            {item.youtubeUrls.map((url) => (
+              <div key={url} style={{ position: "relative", width: "100%", paddingBottom: "56.25%", height: 0, overflow: "hidden", backgroundColor: "#000000" }}>
+                <iframe
+                  src={url}
+                  title={item.title}
+                  frameBorder="0"
+                  allowFullScreen
+                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
+                />
+              </div>
+            ))}
+          </div>
         )}
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "14px", alignItems: "center", borderTop: "1px solid #eeeeee", paddingTop: "28px" }}>
