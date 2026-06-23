@@ -90,15 +90,18 @@ a {
 }
 
 /* profile hero — mobile keeps the original fixed-height cover crop (already
-   correct there); desktop shows the full image with no top/bottom crop by
-   letting the container's height follow the image's natural aspect ratio
-   instead of a fixed viewport-height band. */
+   correct there). Desktop: this is a bio photo, not a full-bleed banner, so
+   it's capped to a sane band height (whichever is smaller of 70% of the
+   viewport or 700px) rather than letting it grow unbounded to the image's
+   full natural height. object-fit:contain (not cover) still shows the whole
+   image with no top/bottom crop within that cap -- any letterboxing on the
+   sides for a tall/narrow photo is expected and blends into the wrapper's
+   dark background. */
 @media (min-width: 768px) {
   .profile-hero-wrap {
-    height: auto !important;
-    min-height: 0 !important;
+    height: min(70vh, 700px) !important;
   }
   .profile-hero-img {
-    height: auto !important;
+    object-fit: contain !important;
   }
 }
