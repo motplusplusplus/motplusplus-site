@@ -1,5 +1,5 @@
 import { getArtists, getMotsoundPerformerEditions } from '@/lib/sanity';
-import { artistsFromData } from '@/lib/artists';
+import { artistsFromData, CONSOLIDATED_BIO_SLUGS } from '@/lib/artists';
 import { computeBadges } from '@/lib/badges';
 import { compareNames } from '@/lib/sortName';
 import ArtistsShell, { type ArtistEntry } from './ArtistsShell';
@@ -30,9 +30,12 @@ export default async function ArtistsPage() {
     return { slug: a.slug, name: a.name, alternateNames: a.alternateNames ?? [], primary: b.primary, isFounder: b.isFounder, filters: b.filters };
   });
 
-  // Artists in artists-data.json that aren't in Sanity
+  // Artists in artists-data.json that aren't in Sanity. Excludes
+  // CONSOLIDATED_BIO_SLUGS -- these are old/retired slugs merged into a
+  // canonical profile elsewhere (e.g. baby-reni -> irene-ha); without this
+  // filter they show as a second, broken-linking card alongside the real one.
   const jsonOnlyArtists: ArtistEntry[] = artistsFromData
-    .filter(a => !sanitySlugSet.has(a.slug))
+    .filter(a => !sanitySlugSet.has(a.slug) && !CONSOLIDATED_BIO_SLUGS.has(a.slug))
     .map(a => {
       const b = computeBadges({
         slug: a.slug,

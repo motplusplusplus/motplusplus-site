@@ -15,7 +15,7 @@ const exhibitions = [
     artist: "Tuyp Tran",
     dates: "July 5 – September 7, 2024",
     img: `${R2}/tuyp-tran-once-upon-a-time.jpg`,
-    slug: "once-upon-a-time-by-tuyp-tran",
+    slug: "solo-exhibition-once-upon-a-time",
   },
   {
     title: "Girl in Red",
@@ -50,7 +50,7 @@ const exhibitions = [
     artist: "group show",
     dates: "June 9 – September 6, 2020",
     img: `${R2}/password-01.png`,
-    slug: "password-0-1",
+    slug: "password-01-group-show",
   },
   {
     title: "Frozen Data",
@@ -85,14 +85,14 @@ const exhibitions = [
     artist: "Lê Hiền Minh & Cam Xanh",
     dates: "Taiwan Annual Art Fair, September 16–24, 2017",
     img: `${R2}/home-land-taiwan-2017.jpg`,
-    slug: "home-land-by-le-hien-minh-and-cam-xanh",
+    slug: "home-land-by-le-hien-minh-and-cam-xanh-at-taiwan-annual-art-fair-2017",
   },
   {
     title: "Renaissance International School",
     artist: "Regis Golay",
     dates: "July 27, 2017",
     img: `${R2}/regis-golay-renaissance.jpg`,
-    slug: "renaissance-international-school-now-features-work-by-regis-g",
+    slug: "renaissance-international-school-now-features-work-by-regis-golay",
   },
 ];
 

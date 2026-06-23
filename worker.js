@@ -54,6 +54,7 @@ export default {
       '/profiles/scobi-wan': '/profiles/alec-schachner/',
       '/profiles/writher': '/profiles/nguyen-hong-giang/',
       '/profiles/dan-nguyen-demonslayer': '/profiles/dan-nguyen/',
+      '/profiles/baby-reni': '/profiles/irene-ha/',
     };
     const canonicalProfile = PROFILE_REDIRECTS[path.replace(/\/$/, '')];
     if (canonicalProfile) {
