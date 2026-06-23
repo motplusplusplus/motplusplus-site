@@ -6,18 +6,10 @@ import { buildTrashInquiryEmail, type TrashItem } from '@/lib/demoTrashItems';
 import ArtistCreditLinks from '@/components/ArtistCreditLinks';
 import { compareNames } from '@/lib/sortName';
 import { PRICE_REVEAL_PASSWORD } from '@/lib/priceReveal';
+import { shuffleArray } from '@/lib/shuffle';
 
 const PASSWORD = PRICE_REVEAL_PASSWORD;
 const CLICKS_NEEDED = 7;
-
-function shuffleArray<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 type SortOption = 'random' | 'date' | 'artist';
 type Props = { items: TrashItem[] };
