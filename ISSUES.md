@@ -328,6 +328,36 @@ side effect.
 Checked 64 external links (artist personal websites, etc.) across a
 40-profile sample -- all healthy, 0 dead links.
 
+**Round 7, final (commit `0d5003b`):** full regression re-check of every
+fix from all 6 prior rounds -- all still live and correct. Checked
+`/afarm/apply` specifically and found `studioOptions` (the form's studio-
+preference dropdown) had no filter at all on `lib/studios.ts`'s `studios`
+export, which is an unfiltered 1:1 map of `studios-data.json`. Two retired/
+non-current hosts -- `amanaki-hotel` and `mark-vu-studio` (a Hanoi-based
+entry, inconsistent with this being a Saigon program) -- were selectable as
+a "studio preference" on a live application form. Fixed with the same
+`active && !hidden` filter already used consistently everywhere else this
+codebase touches studio data. Couldn't verify via crawling (the dropdown is
+entirely client-rendered, `useSearchParams()` requires a Suspense boundary
+so the static export's initial HTML only shows a fallback) -- verified the
+filter predicate directly against the raw JSON instead, confirming it
+excludes exactly these 2 entries and no others.
+
+**Session wrap-up:** 7 rounds, ~6 hours, 14 commits. Fixed: 2 sitemap gaps
+(109 missing profiles, 30 missing trash pages + the /trash listing itself),
+41 broken internal links (5 + 36 via /search), 1 broken image, 2 lint
+errors, profile SEO (structured data + richer meta tags for all ~250
+profiles), a search-index consistency gap, 4 user-visible em dashes in
+mailto subjects, and 1 live-form data-integrity bug (retired studios
+selectable on the apply form). Confirmed healthy and left untouched:
+alt-text coverage, robots.txt, the Mapbox/museum-map pipeline, external
+links, bundle size, and `app/events/page.tsx` / `app/performance/page.tsx`
+(both already use canonical helpers or were independently verified clean).
+Logged as open questions rather than guessed at: a theoretical museum-map
+edge case with zero current impact, and whether the no-em-dash style rule
+should extend to the ~34 files with pre-existing em dashes found in a
+broader sweep (deliberately not mass-edited).
+
 ### [ISSUE-014] Sanity Studio at the new Workers URL showed "This Studio is not registered"
 **Reported:** 2026-06-20
 **Status:** RESOLVED 2026-06-20
