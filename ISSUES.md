@@ -292,6 +292,42 @@ Swept every other file matching the same pattern (`grep` for direct
 `app/events/page.tsx` already uses the canonical `getListingEvents()` helper
 correctly -- no bug there, the grep match was just a comment.
 
+**Round 5 (no code changes -- everything checked out healthy):**
+afarm/studios pages, the museum map's client-side Sanity query, and
+`app/performance/page.tsx` (a third file with hardcoded lists, found via a
+final exhaustive sweep) were all checked against live data and found
+correct -- all 14 hardcoded event slugs and a sample of 5 performer profile
+links returned 200, zero `CONSOLIDATED_BIO_SLUGS` overlap. Bundle size
+reviewed: the only large chunks are the already-known, already-monitored
+Mapbox GL bundle and the Vietnamese PDF font from earlier this session --
+nothing new.
+
+**Round 6 (commit `322bae7`):** verified the museum map's Mapbox token,
+static fallback image, and dynamically-loaded chunks are all genuinely
+working live (the static-image 403 on a bare curl was just a missing
+browser-sent `Referer` header -- confirmed 200 with it set, matching a
+prior session's note that this token is referer-restricted). Checked every
+mailto/inquiry link construction site and found 4 occurrences of an em dash
+in genuinely user-visible text (the subject line a person sees in their
+email client after clicking an inquiry link) -- same style rule applied
+earlier this session to meta descriptions and page copy. Fixed: the
+per-item and general +1 trash inquiry subjects, the shared
+`MailtoContactForm` component (currently used by `/links`), and the museum
+space-inquiry subject.
+
+A broader grep found em dashes in 34 files total -- deliberately stopped
+without mass-editing further, since most look like legitimate typographic
+uses (date ranges, credit lines) rather than style violations, and a
+sweeping site-wide rewrite wasn't requested. **Flagging as an open question
+for the project owner:** is the no-em-dash rule meant to apply site-wide to
+all existing copy, or was it scoped to the specific pieces of text raised
+explicitly this session? If the former, a full audit + rewrite is a
+larger, separate task worth doing deliberately rather than as an overnight
+side effect.
+
+Checked 64 external links (artist personal websites, etc.) across a
+40-profile sample -- all healthy, 0 dead links.
+
 ### [ISSUE-014] Sanity Studio at the new Workers URL showed "This Studio is not registered"
 **Reported:** 2026-06-20
 **Status:** RESOLVED 2026-06-20
