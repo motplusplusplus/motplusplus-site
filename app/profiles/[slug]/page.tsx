@@ -220,22 +220,11 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             hero above instead. A bio photo reads better as a contained portrait
             beside the name than as a viewport-wide banner. */}
         <div className="profile-hero-desktop-only" style={{
-          gridTemplateColumns: "minmax(280px, 440px) 1fr",
+          gridTemplateColumns: "1fr minmax(220px, 340px)",
           gap: "48px",
           alignItems: "start",
           marginBottom: "56px",
         }}>
-          {artist.photo && (
-            <img
-              src={artist.photo}
-              alt={artist.name}
-              style={{
-                width: "100%", maxWidth: "440px", maxHeight: "560px",
-                objectFit: "contain", display: "block",
-                border: "1px solid #e5e5e5", backgroundColor: "#f5f5f5",
-              }}
-            />
-          )}
           <div>
             {badges.length > 0 && (
               <div style={{ display: "flex", gap: "12px", marginBottom: "14px", flexWrap: "wrap" }}>
@@ -277,6 +266,17 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
               </p>
             )}
           </div>
+          {artist.photo && (
+            <img
+              src={artist.photo}
+              alt={artist.name}
+              style={{
+                width: "100%", maxWidth: "340px", maxHeight: "420px",
+                objectFit: "contain", display: "block",
+                border: "1px solid #e5e5e5", backgroundColor: "#f5f5f5",
+              }}
+            />
+          )}
         </div>
 
         {/* metadata strip */}
