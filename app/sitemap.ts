@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
-import { getAllEvents } from '@/lib/sanity';
+import { getAllEvents, getAllSanityArtistSlugs } from '@/lib/sanity';
 import { BIO_SLUGS, HIDDEN_SLUGS } from '@/lib/events';
-import { allArtists } from '@/lib/artists';
+import { getArtistSlugs, CONSOLIDATED_BIO_SLUGS } from '@/lib/artists';
 import { getAllStudios } from '@/lib/studios';
 
 export const dynamic = 'force-static';
@@ -9,7 +9,14 @@ export const dynamic = 'force-static';
 const BASE = 'https://motplusplusplus.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [allEvents, allStudios] = await Promise.all([getAllEvents(), getAllStudios()]);
+  const [allEvents, allStudios, sanityArtistSlugs] = await Promise.all([
+    getAllEvents(), getAllStudios(), getAllSanityArtistSlugs(),
+  ]);
+  // Same union generateStaticParams uses for app/profiles/[slug] -- without this,
+  // any artist that exists only in Sanity (no artists-data.json entry, no bio-page
+  // stub) gets a real, live page but was silently absent from the sitemap.
+  const allProfileSlugs = Array.from(new Set([...getArtistSlugs(), ...sanityArtistSlugs]))
+    .filter(slug => !CONSOLIDATED_BIO_SLUGS.has(slug));
 
   const staticPages = [
     { url: `${BASE}/museum`,          priority: 1.0 },
@@ -44,8 +51,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-  const artistPages = allArtists.map(a => ({
-    url: `${BASE}/profiles/${a.slug}`,
+  const artistPages = allProfileSlugs.map(slug => ({
+    url: `${BASE}/profiles/${slug}`,
     lastModified: new Date(),
     changeFrequency: 'yearly' as const,
     priority: 0.7,
