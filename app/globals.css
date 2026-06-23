@@ -89,19 +89,15 @@ a {
   }
 }
 
-/* profile hero — mobile keeps the original fixed-height cover crop (already
-   correct there). Desktop: this is a bio photo, not a full-bleed banner, so
-   it's capped to a sane band height (whichever is smaller of 70% of the
-   viewport or 700px) rather than letting it grow unbounded to the image's
-   full natural height. object-fit:contain (not cover) still shows the whole
-   image with no top/bottom crop within that cap -- any letterboxing on the
-   sides for a tall/narrow photo is expected and blends into the wrapper's
-   dark background. */
+/* profile hero — mobile keeps the original full-bleed banner-with-overlay
+   treatment (already correct there, untouched). Desktop replaces it entirely
+   with a framed-portrait + plain-text layout (see the two
+   .profile-hero-mobile-only / .profile-hero-desktop-only blocks in
+   app/profiles/[slug]/page.tsx) -- a bio photo reads better as a contained
+   portrait beside the name/bio than as a viewport-wide banner. */
+.profile-hero-mobile-only { display: block; }
+.profile-hero-desktop-only { display: none; }
 @media (min-width: 768px) {
-  .profile-hero-wrap {
-    height: min(70vh, 700px) !important;
-  }
-  .profile-hero-img {
-    object-fit: contain !important;
-  }
+  .profile-hero-mobile-only { display: none !important; }
+  .profile-hero-desktop-only { display: grid !important; }
 }

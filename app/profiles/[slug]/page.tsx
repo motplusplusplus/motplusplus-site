@@ -128,15 +128,14 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
 
   return (
     <>
-      {/* hero */}
-      <div className="profile-hero-wrap" style={{
+      {/* hero — mobile only; desktop uses the framed-portrait block below instead */}
+      <div className="profile-hero-mobile-only" style={{
         position: "relative",
         width: "100%", height: "55vh", minHeight: "360px",
         overflow: "hidden", backgroundColor: "#111111",
       }}>
         {artist.photo ? (
           <img
-            className="profile-hero-img"
             src={artist.photo}
             alt={artist.name}
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.72 }}
@@ -215,6 +214,69 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
               hosting artist — view studio ↗
             </Link>
           )}
+        </div>
+
+        {/* framed portrait + identity — desktop only; mobile uses the full-bleed
+            hero above instead. A bio photo reads better as a contained portrait
+            beside the name than as a viewport-wide banner. */}
+        <div className="profile-hero-desktop-only" style={{
+          gridTemplateColumns: "minmax(280px, 440px) 1fr",
+          gap: "48px",
+          alignItems: "start",
+          marginBottom: "56px",
+        }}>
+          {artist.photo && (
+            <img
+              src={artist.photo}
+              alt={artist.name}
+              style={{
+                width: "100%", maxWidth: "440px", maxHeight: "560px",
+                objectFit: "contain", display: "block",
+                border: "1px solid #e5e5e5", backgroundColor: "#f5f5f5",
+              }}
+            />
+          )}
+          <div>
+            {badges.length > 0 && (
+              <div style={{ display: "flex", gap: "12px", marginBottom: "14px", flexWrap: "wrap" }}>
+                {badges.map(b => {
+                  const isFounderBadge = b === "founder/director";
+                  return (
+                    <span key={b} style={{
+                      fontSize: "10px", letterSpacing: "0.1em",
+                      color: isFounderBadge ? "#ff6b5e" : "#999999",
+                      border: isFounderBadge ? "1px solid rgba(255,107,94,0.5)" : "1px solid #dddddd",
+                      padding: "3px 8px",
+                    }}>
+                      {b}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+            <h1 style={{
+              fontSize: "clamp(26px, 4.5vw, 56px)",
+              fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.02em",
+              color: deceasedDates ? "#999999" : "#111111",
+              fontStyle: deceasedDates ? "italic" : "normal",
+            }}>
+              {displayName}
+            </h1>
+            {alternateNames.length > 0 && (
+              <p style={{ fontSize: "13px", color: "#aaaaaa", marginTop: "8px", fontWeight: 300 }}>
+                {alternateNames.join(", ")}
+              </p>
+            )}
+            {deceasedDates ? (
+              <p style={{ fontSize: "13px", color: "#bbbbbb", marginTop: "8px", fontWeight: 300 }}>
+                {deceasedDates}
+              </p>
+            ) : artist.origin && (
+              <p style={{ fontSize: "13px", color: "#aaaaaa", marginTop: "10px", fontWeight: 300 }}>
+                {artist.origin}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* metadata strip */}
