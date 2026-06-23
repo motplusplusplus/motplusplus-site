@@ -40,7 +40,7 @@ const dropdownSections = [
   },
 ];
 
-const featuredDropdownItem = { label: "MoTcyclopedia", href: "/profiles" };
+const featuredDropdownItem = { label: "MoTcyclopedia (profiles)", href: "/profiles" };
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
