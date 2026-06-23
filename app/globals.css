@@ -88,3 +88,17 @@ a {
     gap: 16px 0;
   }
 }
+
+/* profile hero — mobile keeps the original fixed-height cover crop (already
+   correct there); desktop shows the full image with no top/bottom crop by
+   letting the container's height follow the image's natural aspect ratio
+   instead of a fixed viewport-height band. */
+@media (min-width: 768px) {
+  .profile-hero-wrap {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .profile-hero-img {
+    height: auto !important;
+  }
+}

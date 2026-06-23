@@ -129,13 +129,14 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   return (
     <>
       {/* hero */}
-      <div style={{
+      <div className="profile-hero-wrap" style={{
         position: "relative",
         width: "100%", height: "55vh", minHeight: "360px",
         overflow: "hidden", backgroundColor: "#111111",
       }}>
         {artist.photo ? (
           <img
+            className="profile-hero-img"
             src={artist.photo}
             alt={artist.name}
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.72 }}
