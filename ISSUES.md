@@ -227,6 +227,44 @@ deeper 50-page sample (25 profiles + 25 events) checking 277 images and 177
 links from each. Final re-check after fixes: 0 broken links, 0 broken images
 in the same sample set.
 
+**Round 2 (same overnight session):** afarm studio + trash item pages, and
+museum/sound/performance landing pages sampled (191 + 33 images, 17 + 89
+links) — all clean. Alt-text coverage spot-checked across 15 random sitemap
+pages (117 `<img>` tags, 0 missing) — clean, no action needed.
+
+**Sitemap gap #2 (commit `afc956e`):** neither `/trash` nor any of its 30
+work pages were in the sitemap at all. Worse, `/trash/[slug]` pages are only
+linked from the grid via a client-side lightbox (no real `<a href>` in the
+static HTML — confirmed by crawling the live grid and finding zero outbound
+item links) — the sitemap was their only possible discovery path for search
+engines. Added `/trash` plus a `trashPages` block using the same
+`getAllTrashItemSlugs()` source `generateStaticParams` uses. Sitemap count:
+414 → 445.
+
+**Round 3 (commit `ebccd32`):** the header search typeahead's trash query
+(`lib/searchIndex.ts`) didn't apply the price-required-unless-sold rule
+established earlier this session (`TRASH_ITEM_PRICED` in `lib/sanity.ts`) —
+a priceless, unsold work (e.g. "Song 4") could surface in search results.
+Not a broken link (trash results link to the general `/trash` listing, not
+a per-item route) but a misleading one: searchable, yet absent from the
+listing it points to. Fixed by duplicating the same GROQ condition (can't
+import the canonical constant — `lib/sanity.ts` instantiates a Sanity client
+at module scope, which would pull the whole SDK into this client bundle).
+Verified directly against Sanity's public CDN endpoint with the exact fixed
+query.
+
+**Logged, not fixed (no current real-world impact, needs a UX judgment
+call):** `components/MuseumMap.tsx`'s "inquire through +1 trash" link
+(`/trash?item=<trashItem _id>`) assumes the linked trashItem is currently
+visible on `/trash`. If a museum-placed work ever became priceless/unsold-
+without-a-price (hidden per the price-required rule), clicking that link
+would silently do nothing (the `?item=` param wouldn't match any item in
+the now-filtered list) rather than erroring -- confirmed via Sanity query
+that zero trashItems are currently in this state, so this is a theoretical
+edge case, not an active bug. Left untouched given the museum map's history
+of fragility (see the Mapbox/chunk-loading notes elsewhere in this file) --
+revisit if a museum-placed work's price is ever unset.
+
 ### [ISSUE-014] Sanity Studio at the new Workers URL showed "This Studio is not registered"
 **Reported:** 2026-06-20
 **Status:** RESOLVED 2026-06-20
