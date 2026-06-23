@@ -177,7 +177,7 @@ checked into the repo.
 
 ## Resolved
 
-### [ISSUE-015] Overnight site health check — 5 broken links, 1 broken image, sitemap gap, lint cleanup, profile SEO
+### [ISSUE-015] Overnight site health check — 41 broken links, 1 broken image, 2 sitemap gaps, lint cleanup, profile SEO, search index consistency
 **Reported:** 2026-06-24
 **Status:** RESOLVED 2026-06-24
 
@@ -264,6 +264,33 @@ that zero trashItems are currently in this state, so this is a theoretical
 edge case, not an active bug. Left untouched given the museum map's history
 of fragility (see the Mapbox/chunk-loading notes elsewhere in this file) --
 revisit if a museum-placed work's price is ever unset.
+
+**Round 4 — the biggest finding this session (commit `c87a95c`):** asked to
+specifically hunt for the systemic pattern behind the profiles-listing and
+sitemap bugs above (a page building its own artist/event list independently
+of the canonical, already-filtered helpers). Found a third, more severe
+instance: `app/search/page.tsx` imported `events-data.json` directly with
+**no filtering at all** and linked every entry as `/events/[slug]`. 36 of
+those slugs are bio-page-stub events (`BIO_SLUGS`) that
+`generateStaticParams` explicitly excludes -- confirmed live, 404, including
+prominent figures: `/events/cam-xanh` and `/events/aliansyah-caniago` (both
+MoT+++ co-founders), plus `pamela-n-corey`, `tuyp-tran`, `regis-golay`,
+`le-hien-minh`, and 30 others. The artist list had the same missing
+`CONSOLIDATED_BIO_SLUGS` exclusion as the profiles-listing bug.
+
+Fix: `events-data.json` is a fully-migrated legacy archive (RESOLVED-003,
+no unique coverage left), so switched `/search`'s event list to
+`getAllEvents()` (Sanity, `active == true`) with the exact same exclusion
+filter `app/sitemap.ts`'s `eventPages` already uses. Verified in the build
+output: `aliansyah-caniago` and `boynton-yue` now appear exactly once each
+(as artist results, not duplicated as a second, 404ing event result), while
+their real, distinct events (`artist-in-residence-aliansyah-caniago`,
+`boynton-yue-closing-studio`) remain correctly present.
+
+Swept every other file matching the same pattern (`grep` for direct
+`artistsFromData`/`events-data.json` imports outside `lib/`):
+`app/events/page.tsx` already uses the canonical `getListingEvents()` helper
+correctly -- no bug there, the grep match was just a comment.
 
 ### [ISSUE-014] Sanity Studio at the new Workers URL showed "This Studio is not registered"
 **Reported:** 2026-06-20
