@@ -16,11 +16,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const artist = getArtist(slug);
   const sanityArtist = await getArtistBySlug(slug);
   const name = artist?.name || sanityArtist?.name || slug;
-  const description = `${name} — artist featured in MoT+++ exhibitions and programs in Ho Chi Minh City, Vietnam.`;
+  const altNames = (sanityArtist?.alternateNames as string[] | undefined) ?? [];
+  // Alternate names/nicknames included so search engines can match this page
+  // for either name an artist is known by, not just their primary display name.
+  const akaClause = altNames.length > 0 ? ` (also known as ${altNames.join(", ")})` : "";
+  const description = `${name}${akaClause}, artist featured in MoT+++ exhibitions and programs in Ho Chi Minh City, Vietnam.`;
   const image = ogImage(sanityArtist?.portrait as string | undefined, name);
   return {
     title: name,
     description,
+    keywords: [name, ...altNames, "MoT+++", "Ho Chi Minh City artist", "Vietnam contemporary art"],
     openGraph: {
       title: `${name} | MoT+++`,
       description,
@@ -126,8 +131,27 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   }).bioBadges;
   if (isCamXanh) badges.push("+1 direct experience");
 
+  // Structured data (schema.org Person) so search engines can index this
+  // artist's name(s) directly against the page, not just plain meta tags.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: displayName,
+    ...(alternateNames.length > 0 ? { alternateName: alternateNames } : {}),
+    url: `https://motplusplusplus.com/profiles/${slug}`,
+    ...(artist.photo ? { image: artist.photo } : {}),
+    jobTitle: "Artist",
+    memberOf: { "@type": "Organization", name: "MoT+++", url: "https://motplusplusplus.com" },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        // JSON.stringify doesn't escape "</script>" sequences; replacing "<"
+        // keeps this safe to inline even if a name ever contains one.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
       {/* hero — mobile only; desktop uses the framed-portrait block below instead */}
       <div className="profile-hero-mobile-only" style={{
         position: "relative",
