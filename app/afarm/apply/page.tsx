@@ -4,8 +4,13 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { studios, hotel } from "@/lib/studios";
 
+// studios (lib/studios.ts) is an unfiltered 1:1 map of studios-data.json --
+// excludes retired/non-current hosts (active:false or hidden:true in the JSON
+// itself) so they can't be selected as a studio preference on a live
+// application form. Found via health-check: amanaki-hotel and mark-vu-studio
+// (a Hanoi-based, non-Saigon entry) were both selectable with no filter.
 const studioOptions = [
-  ...studios.map((s) => ({ value: s.slug, label: s.artistName })),
+  ...studios.filter((s) => s.active !== false && !s.hidden).map((s) => ({ value: s.slug, label: s.artistName })),
   { value: hotel.slug, label: `${hotel.name} (hotel track)` },
   { value: "open", label: "no preference / open to discussion" },
 ];
