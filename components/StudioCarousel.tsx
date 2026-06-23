@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
 type CarouselItem = {
@@ -51,19 +51,6 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Keyboard navigation (arrow keys)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') {
-        prev();
-      } else if (e.key === 'ArrowRight') {
-        next();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  });
-
   // Responsive spread - tighter on mobile to prevent horizontal overflow
   const SPREAD_X = isMobile ? 20 : 48;
   const SPREAD_Y = isMobile ? 10 : 14;
@@ -79,6 +66,19 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
 
   const next = () => goTo((index + 1) % total);
   const prev = () => goTo((index - 1 + total) % total);
+
+  // Keyboard navigation (arrow keys)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        prev();
+      } else if (e.key === 'ArrowRight') {
+        next();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
 
   // Touch handlers for swipe
   const handleTouchStart = (e: React.TouchEvent) => {

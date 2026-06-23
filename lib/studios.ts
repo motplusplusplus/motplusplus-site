@@ -181,7 +181,7 @@ function sanityToStudioEntry(raw: any): StudioEntry {
 
 export async function getAllStudios(): Promise<StudioEntry[]> {
   const raw = await getAfarmHosts();
-  return (raw as any[]).map(sanityToStudioEntry);
+  return raw.map(sanityToStudioEntry);
 }
 
 export async function getStudio(slug: string): Promise<StudioEntry | undefined> {
