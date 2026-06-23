@@ -61,9 +61,9 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
           MoTcyclopedia
         </h1>
         <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8, marginBottom: "12px" }}>
-          everyone MoT+++ has worked with — residents, collective members, exhibition artists, performers, collaborators.
+          everyone MoT+++ has worked with: collaborators, residents and artists in our network, and those whose work we have in +1 trash or display in +1 museum by any other name.
         </p>
-        <p style={{ fontSize: "12px", color: "#aaaaaa" }}>{artists.length} artists</p>
+        <p style={{ fontSize: "12px", color: "#aaaaaa" }}>{artists.length} profiles</p>
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "56px" }}>
