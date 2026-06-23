@@ -153,7 +153,7 @@ export default function MuseumInquirePage() {
     const securityLabel = t.securityOptions.find((s) => s.value === security)?.label || security;
     const lightLabel = t.lightOptions.find((s) => s.value === light)?.label || light;
 
-    const subject = `+1 museum by any other name — space inquiry: ${name}`;
+    const subject = `+1 museum by any other name space inquiry: ${name}`;
     const body = [
       `${t.fields.name}: ${name}`,
       `${t.fields.email}: ${email}`,

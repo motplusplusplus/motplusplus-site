@@ -31,7 +31,7 @@ export function artistLabelFor(item: { artist: string; artists?: ArtistCredit[] 
 /** Pre-populated mailto inquiry link, shared by the /trash lightbox and /trash/[slug] pages */
 export function buildTrashInquiryEmail(item: TrashItem) {
   const subject = encodeURIComponent(
-    `+1 trash — inquiry: ${item.title} by ${item.artist}`
+    `+1 trash inquiry: ${item.title} by ${item.artist}`
   );
   const body = encodeURIComponent(
     `Hello,\n\nI am writing to inquire about the following work:\n\n` +

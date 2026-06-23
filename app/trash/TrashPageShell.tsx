@@ -324,7 +324,7 @@ export default function TrashPageShell({ items }: Props) {
 
         <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '40px' }}>
           <a
-            href="mailto:motplusplusplus@gmail.com?subject=+1%20trash%20%E2%99%BB%20%E2%80%94%20inquiry"
+            href="mailto:motplusplusplus@gmail.com?subject=+1%20trash%20%E2%99%BB%20inquiry"
             style={{ display: 'inline-block', fontSize: '13px', color: '#ffffff', backgroundColor: '#111111', padding: '12px 28px', textDecoration: 'none' }}
           >
             general inquiry

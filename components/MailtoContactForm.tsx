@@ -17,7 +17,7 @@ export default function MailtoContactForm({ heading, recipient, messagePlacehold
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const subject = `${heading} — message from ${name}`;
+    const subject = `${heading}: message from ${name}`;
     const body = [
       `name: ${name}`,
       `email: ${email}`,
