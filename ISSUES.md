@@ -177,6 +177,56 @@ checked into the repo.
 
 ## Resolved
 
+### [ISSUE-015] Overnight site health check — 5 broken links, 1 broken image, sitemap gap, lint cleanup, profile SEO
+**Reported:** 2026-06-24
+**Status:** RESOLVED 2026-06-24
+
+Autonomous health-check pass: typecheck/lint baseline, a live crawl of every
+landing page + a 50-page sample of profile/event detail pages (links and
+images), and a sitemap audit.
+
+**Sitemap gap (commit `109ec28`):** `app/sitemap.ts` built its profile list
+from `allArtists` (`artists-data.json` + bio-page stubs only), not the same
+Sanity-aware union `generateStaticParams` actually uses for
+`app/profiles/[slug]`. 109 Sanity-only artists (no JSON entry, no bio-page
+stub) had real, live pages completely absent from the sitemap. Fixed to use
+the same union. Sitemap profile count: 152 → 243.
+
+**5 broken internal links (commit `06ea657`), found via crawl:**
+- `app/contemporary/page.tsx` had 4 hardcoded event slugs that didn't match
+  their real Sanity slugs (renamed/restructured during the events migration,
+  or truncated) — all 4 corrected, verified against real Sanity docs first.
+- `/profiles/baby-reni` 404'd — the profiles listing page builds its artist
+  list independently of `lib/artists.ts`'s `allArtists`, so it never applied
+  the `CONSOLIDATED_BIO_SLUGS` exclusion, rendering a second, broken-linking
+  card for an identity already correctly listed under its canonical slug
+  (`irene-ha`). Fixed the listing's filter, and added the missing
+  `baby-reni` → `irene-ha` redirect to `worker.js` (the other 3 consolidated
+  slugs already had one — this one was always missing).
+
+**1 broken image, same root cause as ISSUE-012 (R2 fixed directly, no code
+change):** `events-data.json` (legacy archive) references
+`cam-xanh-mot-doi-gai-999-9-clouds.jpeg` for `mot-doi-gai-a-beach-life-cam-xanh`,
+but the migrated file in `mot-assets` is `...999-9-clouds.jpg` (no "e").
+Copied the existing object to the missing key name, same bucket
+(`scripts/r2-fix-mot-doi-gai-999-clouds.mjs`). This wasn't in ISSUE-012's
+original 315-key audit — likely missed because it's a same-bucket extension
+mismatch, not a cross-bucket missing-key case.
+
+**Lint cleanup (commit `6428426`):** `StudioCarousel.tsx` had a real "used
+before declared" error (not a runtime bug, but worth fixing) plus an unused
+import; `lib/studios.ts` had a redundant `as any[]` cast.
+
+**SEO (commit `d0cd2b1`):** added a schema.org `Person` JSON-LD block to
+every profile page (name, alternateName, image, url, jobTitle, memberOf
+MoT+++), alternate names folded into the meta description, a keywords meta
+tag, and dropped an em dash from the description per site style rules.
+
+Crawled: 19 landing pages (all 200), 331 links discovered from them, plus a
+deeper 50-page sample (25 profiles + 25 events) checking 277 images and 177
+links from each. Final re-check after fixes: 0 broken links, 0 broken images
+in the same sample set.
+
 ### [ISSUE-014] Sanity Studio at the new Workers URL showed "This Studio is not registered"
 **Reported:** 2026-06-20
 **Status:** RESOLVED 2026-06-20
