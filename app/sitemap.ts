@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getAllEvents, getAllSanityArtistSlugs } from '@/lib/sanity';
+import { getAllEvents, getAllSanityArtistSlugs, getAllTrashItemSlugs } from '@/lib/sanity';
 import { BIO_SLUGS, HIDDEN_SLUGS } from '@/lib/events';
 import { getArtistSlugs, CONSOLIDATED_BIO_SLUGS } from '@/lib/artists';
 import { getAllStudios } from '@/lib/studios';
@@ -9,8 +9,8 @@ export const dynamic = 'force-static';
 const BASE = 'https://motplusplusplus.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [allEvents, allStudios, sanityArtistSlugs] = await Promise.all([
-    getAllEvents(), getAllStudios(), getAllSanityArtistSlugs(),
+  const [allEvents, allStudios, sanityArtistSlugs, trashItemSlugs] = await Promise.all([
+    getAllEvents(), getAllStudios(), getAllSanityArtistSlugs(), getAllTrashItemSlugs(),
   ]);
   // Same union generateStaticParams uses for app/profiles/[slug] -- without this,
   // any artist that exists only in Sanity (no artists-data.json entry, no bio-page
@@ -26,6 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/directexperience`, priority: 0.8 },
     { url: `${BASE}/events`,          priority: 0.9 },
     { url: `${BASE}/profiles`,         priority: 0.8 },
+    { url: `${BASE}/trash`,           priority: 0.8 },
     { url: `${BASE}/contemporary`,    priority: 0.7 },
     { url: `${BASE}/performance`,     priority: 0.7 },
     { url: `${BASE}/sound`,           priority: 0.7 },
@@ -58,5 +59,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...afarmStudioPages, ...eventPages, ...artistPages];
+  // /trash/[slug] work pages are only reachable from the grid via a client-side
+  // lightbox (no real <a> in the static HTML), so the sitemap is their only
+  // crawlable discovery path. Same slug source as generateStaticParams.
+  const trashPages = trashItemSlugs.map(slug => ({
+    url: `${BASE}/trash/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...afarmStudioPages, ...eventPages, ...artistPages, ...trashPages];
 }
