@@ -177,6 +177,45 @@ checked into the repo.
 
 ## Resolved
 
+### [ISSUE-016] Second overnight health check — security headers, OG image content gap
+**Reported:** 2026-06-25
+**Status:** RESOLVED (security headers) / logged, not fixed (OG image content gap)
+
+Second night's health check, deliberately covering fresh angles not checked
+in ISSUE-015 (which already covered links/images/sitemap/SEO/search/lint
+extensively). Also covered walther.website for the first time this session
+(see that repo's own commit history -- not duplicated here).
+
+**Security headers (commit `0b55f55`):** the live site had zero security
+response headers at all -- confirmed via `curl -D -`, no
+`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`,
+`Strict-Transport-Security`, or `Permissions-Policy`. Added the
+well-established, low-risk ones via `public/_headers` (the same Cloudflare
+Workers Assets convention already used for `public/_redirects` --
+`env.ASSETS.fetch()` respects both, no `worker.js` changes needed).
+Confirmed no geolocation/camera/microphone usage anywhere in the codebase
+before locking those down. Verified live + confirmed the museum map (the
+highest-risk area for this kind of change) still loads correctly.
+
+**Deliberately not added: a Content-Security-Policy.** Getting one right
+requires auditing every external resource this site loads (Mapbox
+tiles/API, Sanity CDN, R2 buckets, fonts, social/video embeds), and a
+too-strict CSP could silently break the museum map. Needs careful,
+deliberate scoping in its own session, not an overnight guess.
+
+**OG image content gap, logged not fixed:** checking Open Graph images
+across a 20-page random sample found one event (`studio-cian-duggan`) whose
+only uploaded image is a 378x77px logo, producing a broken-looking social
+media preview. Checked for the same pattern more broadly and found 2 more:
+`a-farm-solo-sans-solo` (142x142) and `living-today-for-tomorrow` (267px).
+This is a content gap (these events were never given real documentation
+photos), not a code bug -- `lib/og.ts`'s `ogImage()` has no way to know
+image dimensions at the call site without a more invasive change to the
+shared event-fetching pipeline (`lib/sanity.ts`), which is too broad a
+change to make for 3 narrow, low-traffic cases. Left for the project owner
+to either upload real photos or clear the placeholder image (which would
+fall back to the site's default OG image).
+
 ### [ISSUE-015] Overnight site health check — 41 broken links, 1 broken image, 2 sitemap gaps, lint cleanup, profile SEO, search index consistency
 **Reported:** 2026-06-24
 **Status:** RESOLVED 2026-06-24
