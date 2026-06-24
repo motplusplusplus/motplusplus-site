@@ -358,6 +358,40 @@ edge case with zero current impact, and whether the no-em-dash style rule
 should extend to the ~34 files with pre-existing em dashes found in a
 broader sweep (deliberately not mass-edited).
 
+**Follow-up, post-session (commit `70108f7`):** project owner asked to
+double-check the 109 newly-surfaced profiles for duplicates/pseudonyms
+before treating them as 109 new people. Correction: only 91 of the 109 are
+actually active, live profiles -- the other 18 are `active: false` Sanity
+docs (the sitemap fix correctly excludes them via `getAllSanityArtistSlugs()`'s
+`active == true` filter; they never had real pages). Of those 18 inactive
+docs, most are already-resolved legacy duplicates or unrelated retired
+entries -- audited each by bio content (not just name similarity, since
+Vietnamese names share short syllables too often to trust fuzzy-matching
+alone) and found 2 NEW confirmed duplicates that weren't previously
+cross-referenced:
+- `vicente-arresse` (inactive) = `vicente-arrese` (active) -- both bios
+  independently describe the same Leipzig residency / Chile / "Ecologies of
+  Water" program.
+- `tran-luong` (inactive) = `tram-luong` (active) -- the inactive doc's
+  corrupted bio contains the exact verbatim phrase "tram luong is a trained
+  filmmaker and visual anthropologist," matching the clean bio word-for-word.
+
+Both consolidated: `alternateNames` added to the canonical doc (published,
+verified live) + a `worker.js` 301 redirect, matching the exact established
+pattern from `scobi-wan`/`writher`/`dan-nguyen-demonslayer`/`baby-reni`.
+
+**Flagged but NOT merged (insufficient evidence):** `karen-thao` (inactive)
+vs `karen-thao-nguyen-la` (active) -- strong name similarity but the
+inactive doc's bio is corrupted junk with no usable biographical content to
+confirm against. Needs a human decision, not a guess.
+
+**False alarm, logged separately:** `dat-nguyen` (inactive) is NOT a
+duplicate of `dan-nguyen` (active, music producer) -- different real
+people. `dat-nguyen`'s bio is corrupted with leaked event-announcement text
+(same pattern as ISSUE-008/009), independently naming "Dat Nguyen" as a
+real performer at a 2023 event. Candidate for the existing bio-cleanup
+queue (ISSUE-009), not a merge.
+
 ### [ISSUE-014] Sanity Studio at the new Workers URL showed "This Studio is not registered"
 **Reported:** 2026-06-20
 **Status:** RESOLVED 2026-06-20
