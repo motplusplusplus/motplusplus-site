@@ -177,9 +177,9 @@ checked into the repo.
 
 ## Resolved
 
-### [ISSUE-016] Second overnight health check — security headers, OG image content gap
+### [ISSUE-016] Second overnight health check — security headers, OG image content gap, heading hierarchy
 **Reported:** 2026-06-25
-**Status:** RESOLVED (security headers) / logged, not fixed (OG image content gap)
+**Status:** RESOLVED (security headers, heading hierarchy) / logged, not fixed (OG image content gap)
 
 Second night's health check, deliberately covering fresh angles not checked
 in ISSUE-015 (which already covered links/images/sitemap/SEO/search/lint
@@ -215,6 +215,31 @@ shared event-fetching pipeline (`lib/sanity.ts`), which is too broad a
 change to make for 3 narrow, low-traffic cases. Left for the project owner
 to either upload real photos or clear the placeholder image (which would
 fall back to the site's default OG image).
+
+**Round 2 (commit `ef23a6d`):** verified the Sanity Studio admin side
+(loads correctly, CORS registration intact, both JS chunks healthy) and
+noticed active in-progress work there (uncommitted schema changes, recent
+invoice/consignment-agreement commits) -- deliberately left untouched, not
+mine to build or deploy. Confirmed a fresh 40-page crawl sample clean (0
+broken links/images).
+
+Heading-hierarchy pass found 2 real issues, both fixed:
+- `/events` and `/links` had zero heading elements at all (every other
+  page has exactly one h1). `/events`' hero is dedicated to one featured
+  event's own title with no existing slot for a page-level label -- added
+  a visually-hidden h1 ("events"). `/links` is a minimal logo+tagline
+  link-in-bio page -- promoted the existing tagline `<p>` to `<h1>` with
+  no visual change.
+- Every `/profiles/[slug]` page (~250 of them) has had **two** real `<h1>`
+  elements since the desktop framed-portrait redesign added 2 sessions
+  ago -- both the mobile and desktop hero blocks are always in the DOM
+  (CSS display-toggled by viewport, not conditionally rendered), and both
+  used `<h1>` for the artist's name. Changed the desktop one to `<h2>` --
+  whichever block CSS shows at a given viewport, the markup is now a
+  normal h1-then-h2 structure, not two h1s.
+
+(`/` itself is a pure client-side redirect to `/museum`, not in the
+sitemap by design -- its own zero-heading crawl result is not a bug.)
 
 ### [ISSUE-015] Overnight site health check — 41 broken links, 1 broken image, 2 sitemap gaps, lint cleanup, profile SEO, search index consistency
 **Reported:** 2026-06-24
