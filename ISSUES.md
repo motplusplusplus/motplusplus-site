@@ -241,6 +241,42 @@ Heading-hierarchy pass found 2 real issues, both fixed:
 (`/` itself is a pure client-side redirect to `/museum`, not in the
 sitemap by design -- its own zero-heading crawl result is not a bug.)
 
+**Round 3 -- duplicate-heading sweep + color contrast (logged, not fixed):**
+
+Searched for the same "two real h1 elements in one file" pattern that
+caused the profile-page bug above (`grep` for files with 2+ `<h1>`
+occurrences in source). Found 2 more candidates -- both false positives:
+`app/afarm/apply/page.tsx` and `app/museum/inquire/page.tsx` each have two
+`<h1>` blocks, but in both cases they're inside an `if (submitted) return
+(...)` early-return pattern -- mutually exclusive via JS conditional
+return (one for the form, one for the post-submit confirmation), never
+both in the DOM simultaneously. Not a bug. The profile-page CSS-toggle
+case was a one-off, not a systemic pattern elsewhere.
+
+**Major finding, NOT fixed -- needs the project owner's decision, not a
+guess:** a WCAG AA color-contrast check across the site's most-used text
+colors (calculated against the site's white background, the standard
+formula) found that `#999999` -- the single most common text color in the
+entire codebase, **109 occurrences across 29 files** -- fails WCAG AA for
+normal text (2.85:1, needs 4.5:1) AND even the relaxed "large text"
+threshold (needs 3.0:1). It's used predominantly at 11-12px (65 + 16
+occurrences), well below the size that would exempt it under the relaxed
+threshold anyway. `#aaaaaa` (54 occurrences, 17 files, 2.32:1), `#bbbbbb`
+(12, 1.92:1), and `#cccccc` (11, 1.61:1) all fail similarly. `#888888` (27
+occurrences) is borderline -- fails normal text (3.54:1) but passes the
+large-text threshold.
+
+This is the established "muted gray label" aesthetic used deliberately and
+consistently for eyebrow labels, breadcrumbs, captions, and metadata
+across most of the site -- not a bug introduced by any single change, and
+fixing it means a sweeping, multi-file visual change to the site's brand
+voice, not a narrow code fix. Concrete reference point: `#767676` is the
+lightest pure gray that passes 4.5:1 against white, if a less drastic
+darkening is wanted than jumping straight to something like `#666666`
+(already used elsewhere, passes at 5.74:1). Left entirely alone --
+this needs the project owner's call on the design/accessibility tradeoff,
+not something to mass-edit unattended overnight.
+
 ### [ISSUE-015] Overnight site health check — 41 broken links, 1 broken image, 2 sitemap gaps, lint cleanup, profile SEO, search index consistency
 **Reported:** 2026-06-24
 **Status:** RESOLVED 2026-06-24
