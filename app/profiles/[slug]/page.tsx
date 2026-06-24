@@ -267,14 +267,18 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                 })}
               </div>
             )}
-            <h1 style={{
+            {/* h2, not h1 -- the mobile hero above already has the page's one
+                real h1; both blocks are always in the DOM (CSS display-toggled
+                by viewport, not conditionally rendered), so using h1 here too
+                would put two h1 elements on every profile page. */}
+            <h2 style={{
               fontSize: "clamp(26px, 4.5vw, 56px)",
               fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.02em",
               color: deceasedDates ? "#999999" : "#111111",
               fontStyle: deceasedDates ? "italic" : "normal",
             }}>
               {displayName}
-            </h1>
+            </h2>
             {alternateNames.length > 0 && (
               <p style={{ fontSize: "13px", color: "#aaaaaa", marginTop: "8px", fontWeight: 300 }}>
                 {alternateNames.join(", ")}

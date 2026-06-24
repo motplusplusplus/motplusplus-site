@@ -96,6 +96,15 @@ export function EventsShell({ events }: { events: Event[] }) {
 
   return (
     <>
+      {/* Page has no visible page-level title -- the hero is dedicated to a single
+          featured event's own title -- but every page needs exactly one real h1
+          for accessibility/SEO. Visually hidden, no design change. */}
+      <h1 style={{
+        position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px",
+        overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0,
+      }}>
+        events
+      </h1>
       {/* hero — random event, click to view, button to randomize (hidden when searching) */}
       {!urlQuery && (
         <Link
