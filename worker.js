@@ -55,6 +55,8 @@ export default {
       '/profiles/writher': '/profiles/nguyen-hong-giang/',
       '/profiles/dan-nguyen-demonslayer': '/profiles/dan-nguyen/',
       '/profiles/baby-reni': '/profiles/irene-ha/',
+      '/profiles/vicente-arresse': '/profiles/vicente-arrese/',
+      '/profiles/tran-luong': '/profiles/tram-luong/',
     };
     const canonicalProfile = PROFILE_REDIRECTS[path.replace(/\/$/, '')];
     if (canonicalProfile) {
