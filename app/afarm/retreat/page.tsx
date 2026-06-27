@@ -420,7 +420,7 @@ export default function RetreatPage() {
       {/* topics */}
       <Reveal delay={0.12}>
         <ContentBlock maxWidth="720px">
-        <p style={eyebrow}>topics may include</p>
+        <p style={eyebrow}>topics may include:</p>
         <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
           {[
             "critical discussion of current work",
