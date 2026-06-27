@@ -421,9 +421,24 @@ export default function RetreatPage() {
       <Reveal delay={0.12}>
         <ContentBlock maxWidth="720px">
         <p style={eyebrow}>topics may include</p>
-        <p style={{ fontSize: "14px", color: "#aaaaaa", fontStyle: "italic" }}>
-          content pending — to be added from the program document.
-        </p>
+        <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
+          {[
+            "critical discussion of current work",
+            "portfolio design optimisation",
+            "artist statements and text editing",
+            "identifying strengths, weaknesses, and recurring concerns within a practice",
+            "pricing artworks and building a sustainable studio practice",
+            "strategies for working with galleries and curators",
+            "exhibition installation & framing strategies, both literal and figurative",
+            "advice regarding residencies and international opportunities",
+            "future directions, professional positioning and career development",
+            "prevalent trends and issues within contemporary art discourse",
+          ].map((item) => (
+            <li key={item} style={{ fontSize: "14px", lineHeight: 1.7, color: "#444444", marginBottom: "8px" }}>
+              — {item}
+            </li>
+          ))}
+        </ul>
       </ContentBlock>
       </Reveal>
 
@@ -482,6 +497,9 @@ export default function RetreatPage() {
         <p style={eyebrow}>apply</p>
         <p style={{ ...body, fontSize: "17px", color: "#222222" }}>
           applications are now open. maximum 8 artists. program fee: usd 3,000.
+        </p>
+        <p style={{ ...body, fontSize: "17px", color: "#222222" }}>
+          the deadline for application is july 30.
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "24px", marginBottom: "32px" }}>
           <ApplyButton />
