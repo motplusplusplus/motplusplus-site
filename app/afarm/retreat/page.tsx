@@ -169,6 +169,10 @@ export default function RetreatPage() {
           artists, curators, and cultural practitioners from the mot+++ and a.farm
           communities.
         </p>
+        <p style={body}>
+          the program will take place on august 22 through 28. the deadline for
+          application is july 30.
+        </p>
         <p style={{ ...body, marginBottom: "32px" }}>
           total cost: usd 3,000 per artist. includes seven nights accommodation, daily
           breakfasts and dinners, and all program activities.
