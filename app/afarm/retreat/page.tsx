@@ -263,7 +263,7 @@ export default function RetreatPage() {
         <p style={body}>
           <Link href="/afarm/" style={{ color: "#111111" }}>a.farm</Link> was founded in
           2018 as a collaboration between sàn art, mot+++, and the nguyễn art foundation.
-          it is now administered exclusively by mot+++, one of the most important
+          it is now administered exclusively by mot+++, one of the top
           avant-garde art organizations in saigon (ho chi minh city) over the past decade.
           working with a.farm provides participants exclusive access to many of saigon&apos;s
           leading artists, collectors, and art professionals.
