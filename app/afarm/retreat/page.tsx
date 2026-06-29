@@ -8,12 +8,12 @@ const APPLY_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSd6NHVpUFh7YOPGhACxrJtQgrfsrD1_daf4F__OvK0ZJP85wg/viewform?usp=sharing&ouid=113890478710303560056";
 
 const IMAGES = {
-  hero: `${R2}/hero-community-dinner.jpg`,
-  davidWillis: `${R2}/david-willis.jpg`,
+  hero: `${R2}/retreat-1.jpg`,
+  davidWillis: `${R2}/retreat-2.jpg`,
   davidWillis2: `${R2}/david-willis-2.jpg`,
-  afarm: `${R2}/afarm-gallery.jpg`,
-  hotel: `${R2}/amanaki-hotel.jpg`,
-  coreProgram: `${R2}/core-program-talk.jpg`,
+  afarm: `${R2}/retreat-3.jpg`,
+  hotel: `${R2}/retreat-4.jpg`,
+  coreProgram: `${R2}/retreat-5.jpg`,
 };
 
 export const metadata: Metadata = {
@@ -153,7 +153,7 @@ export default function RetreatPage() {
       <Reveal>
         <SectionBanner
         src={IMAGES.hero}
-        alt="a.farm and mot+++ community dinner"
+        alt="presentation at the a.farm + mot+++ artist retreat"
         eyebrow="a.farm × mot+++"
         title="a.farm saigon artist intensive retreat"
         subtitle="aug. 22–28, 2026"
@@ -185,7 +185,7 @@ export default function RetreatPage() {
       <Reveal>
         <SectionBanner
         src={IMAGES.davidWillis}
-        alt="david willis"
+        alt="a.farm + mot+++ artist retreat"
         eyebrow="organized by"
         title="david willis"
         subtitle="curator, critic & art advisor"
@@ -302,7 +302,7 @@ export default function RetreatPage() {
       <Reveal>
         <SectionBanner
         src={IMAGES.coreProgram}
-        alt="group critique and discussion"
+        alt="a.farm + mot+++ community dinner"
         eyebrow="core program"
         title="critical intensive"
       />
