@@ -308,7 +308,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         </div>
 
         {/* metadata strip */}
-        {(displayDate || artist.website) && (
+        {(displayDate || artist.website || (artist.instagram && artist.instagram.length > 0)) && (
           <div style={{
             display: "flex", flexWrap: "wrap", gap: "40px",
             borderBottom: "1px solid #e5e5e5", paddingBottom: "40px", marginBottom: "56px",
@@ -334,6 +334,27 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                 >
                   {artist.website}
                 </a>
+              </div>
+            )}
+            {artist.instagram && artist.instagram.length > 0 && (
+              <div>
+                <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                  instagram
+                </p>
+                {artist.instagram.map((handle) => {
+                  const h = handle.replace(/^@/, "");
+                  return (
+                    <a
+                      key={h}
+                      href={`https://instagram.com/${h}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: "15px", fontWeight: 300, color: "#333333", display: "block" }}
+                    >
+                      @{h}
+                    </a>
+                  );
+                })}
               </div>
             )}
           </div>

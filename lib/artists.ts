@@ -12,6 +12,7 @@ export type Artist = {
   performancePlus?: boolean;
   origin:         string;
   website:        string;
+  instagram?:     string[];
   bio:            string;
   photo:          string;
   workImages:     string[];

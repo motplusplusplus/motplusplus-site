@@ -10,7 +10,7 @@ const APPLY_URL =
 const IMAGES = {
   hero: `${R2}/retreat-1.jpg`,
   davidWillis: `${R2}/retreat-2.jpg`,
-  davidWillis2: `${R2}/david-willis-2.jpg`,
+  davidWillis2: `https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/artists/david-willis/portrait.jpg`,
   afarm: `${R2}/retreat-3.jpg`,
   hotel: `${R2}/retreat-4.jpg`,
   coreProgram: `${R2}/retreat-5.jpg`,
@@ -71,12 +71,14 @@ function SectionBanner({
   eyebrow: bannerEyebrow,
   title,
   subtitle,
+  objectPosition = "center",
 }: {
   src: string;
   alt: string;
   eyebrow: string;
   title: string;
   subtitle?: string;
+  objectPosition?: string;
 }) {
   return (
     <div
@@ -92,7 +94,7 @@ function SectionBanner({
       <img
         src={src}
         alt={alt}
-        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.72 }}
+        style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition, display: "block", opacity: 0.72 }}
       />
       <div
         style={{
@@ -186,6 +188,7 @@ export default function RetreatPage() {
         <SectionBanner
         src={IMAGES.davidWillis}
         alt="a.farm + mot+++ artist retreat"
+        objectPosition="center 38%"
         eyebrow="organized by"
         title="david willis"
         subtitle="curator, critic & art advisor"
@@ -240,10 +243,10 @@ export default function RetreatPage() {
             cv / linkedin
           </a>
           <a
-            href="mailto:davidwillisartadvisory@gmail.com"
+            href="mailto:dave.a.willis@gmail.com"
             style={{ fontSize: "13px", color: "#888888" }}
           >
-            davidwillisartadvisory@gmail.com
+            dave.a.willis@gmail.com
           </a>
         </div>
       </ContentBlock>
@@ -294,6 +297,14 @@ export default function RetreatPage() {
           vietnamese professionals — a calm residential atmosphere with close proximity
           to the city&apos;s leading contemporary art spaces. seven nights accommodation,
           daily breakfast, and daily dinner are included in the program fee.
+        </p>
+        <p style={{ marginTop: "4px" }}>
+          <Link
+            href="/afarm/hotel/"
+            style={{ fontSize: "14px", color: "#111111", borderBottom: "1px solid #cccccc", paddingBottom: "2px", textDecoration: "none" }}
+          >
+            more about amanaki thao dien hotel →
+          </Link>
         </p>
       </ContentBlock>
       </Reveal>
@@ -511,8 +522,12 @@ export default function RetreatPage() {
         </div>
         <p style={{ fontSize: "13px", color: "#888888" }}>
           for questions, contact david willis directly —{" "}
-          <a href="mailto:davidwillisartadvisory@gmail.com" style={{ color: "#888888" }}>
-            davidwillisartadvisory@gmail.com
+          <a href="mailto:dave.a.willis@gmail.com" style={{ color: "#888888" }}>
+            dave.a.willis@gmail.com
+          </a>{" "}
+          or{" "}
+          <a href="mailto:a.farm.saigon@gmail.com" style={{ color: "#888888" }}>
+            a.farm.saigon@gmail.com
           </a>
         </p>
       </ContentBlock>
