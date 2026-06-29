@@ -514,11 +514,13 @@ export default function RetreatPage() {
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "24px", marginBottom: "32px" }}>
           <ApplyButton />
-          <img
-            src={IMAGES.davidWillis2}
-            alt="david willis"
-            style={{ width: "64px", height: "64px", objectFit: "cover", borderRadius: "50%", display: "block" }}
-          />
+          <Link href="/profiles/david-willis/" aria-label="david willis — motcyclopedia profile">
+            <img
+              src={IMAGES.davidWillis2}
+              alt="david willis"
+              style={{ width: "64px", height: "64px", objectFit: "cover", borderRadius: "50%", display: "block" }}
+            />
+          </Link>
         </div>
         <p style={{ fontSize: "13px", color: "#888888" }}>
           for questions, contact david willis directly —{" "}
