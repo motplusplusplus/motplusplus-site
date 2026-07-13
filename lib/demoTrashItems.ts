@@ -5,6 +5,7 @@ export type ArtistCredit = { _id: string; name: string; slug: string | null };
 export type TrashItem = {
   _id: string;
   artist: string;
+  artistSlug?: string | null;   // single artistRef slug — links the name when artists[] is empty
   artists?: ArtistCredit[];     // resolved artists[] refs — may be empty/unresolved
   slug?: string;                // links to /trash/[slug]
   title: string;

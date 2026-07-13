@@ -275,7 +275,7 @@ export default function TrashPageShell({ items }: Props) {
               </div>
 
               <p style={{ fontSize: '11px', color: '#aaaaaa', letterSpacing: '0.06em', marginBottom: '4px' }}>
-                {item.artist}
+                <ArtistCreditLinks artists={item.artists} artistSlug={item.artistSlug} fallback={item.artist} />
               </p>
               <button
                 onClick={() => setOpenId(item._id)}
@@ -406,7 +406,7 @@ export default function TrashPageShell({ items }: Props) {
 
             <div style={{ padding: '24px 32px 32px' }}>
               <p style={{ fontSize: '11px', color: '#aaaaaa', letterSpacing: '0.07em', marginBottom: '6px', textTransform: 'uppercase' }}>
-                <ArtistCreditLinks artists={open.artists} fallback={open.artist} />
+                <ArtistCreditLinks artists={open.artists} artistSlug={open.artistSlug} fallback={open.artist} />
               </p>
               <p style={{ fontSize: '20px', fontWeight: 300, lineHeight: 1.2, marginBottom: '12px', color: '#111' }}>
                 {open.title}{open.year ? `, ${open.year}` : ''}

@@ -8,6 +8,7 @@ export default async function TrashPage() {
   const items: TrashItem[] = raw.map((r: any) => ({
     _id: r._id,
     artist: r.artist,
+    artistSlug: r.artistSlug ?? null,
     artists: (r.artists ?? []).filter(Boolean),
     slug: r.slug,
     title: r.title ?? '',

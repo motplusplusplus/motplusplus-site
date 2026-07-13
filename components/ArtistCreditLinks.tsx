@@ -4,18 +4,29 @@ import type { ArtistCredit } from '@/lib/demoTrashItems';
 
 type Props = {
   artists?: ArtistCredit[] | null;
+  /** Single-artist fallback slug (trashItem.artistRef), used when artists[] is empty. */
+  artistSlug?: string | null;
   fallback: string;
   style?: CSSProperties;
   linkStyle?: CSSProperties;
 };
 
 /** Renders linked artist name(s) from a trashItem's artists[] refs, joined "A & B" for
- *  collaborations. Falls back to the plain display-name string when artists[] is empty
- *  or every ref is unresolved (dangling reference, or not yet linked in Sanity). */
-export default function ArtistCreditLinks({ artists, fallback, style, linkStyle }: Props) {
+ *  collaborations. Falls back to a single artistSlug link (the primary artistRef) when
+ *  artists[] is empty, then to the plain display-name string if neither resolves. */
+export default function ArtistCreditLinks({ artists, artistSlug, fallback, style, linkStyle }: Props) {
   const resolved = (artists ?? []).filter((a): a is ArtistCredit => !!a?.name);
 
   if (resolved.length === 0) {
+    if (artistSlug) {
+      return (
+        <span style={style}>
+          <Link href={`/profiles/${artistSlug}`} style={{ color: 'inherit', textDecoration: 'underline', ...linkStyle }}>
+            {fallback}
+          </Link>
+        </span>
+      );
+    }
     return <span style={style}>{fallback}</span>;
   }
 

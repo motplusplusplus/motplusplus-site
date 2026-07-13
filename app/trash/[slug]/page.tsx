@@ -61,6 +61,7 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
   const item: TrashItem = {
     _id: raw._id,
     artist: raw.artist,
+    artistSlug: raw.artistSlug ?? null,
     artists: (raw.artists ?? []).filter(Boolean),
     slug: raw.slug,
     title: raw.title ?? "",
@@ -95,7 +96,7 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
         )}
 
         <p style={{ fontSize: "12px", color: "#aaaaaa", letterSpacing: "0.07em", marginBottom: "10px", textTransform: "uppercase" }}>
-          <ArtistCreditLinks artists={item.artists} fallback={item.artist} />
+          <ArtistCreditLinks artists={item.artists} artistSlug={item.artistSlug} fallback={item.artist} />
         </p>
         <h1 style={{ fontSize: "clamp(24px, 3vw, 40px)", fontWeight: 300, lineHeight: 1.2, marginBottom: "16px", color: "#111111" }}>
           {item.title}{item.year ? `, ${item.year}` : ""}
