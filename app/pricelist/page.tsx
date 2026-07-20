@@ -22,8 +22,8 @@ export default async function PricelistPage() {
       year: r.year ?? 0,
       dimensions: r.dimensions ?? '',
       edition: r.edition ?? '',
-      description: '',
-      images: [],
+      description: r.description ?? '',
+      images: [...(r.directImageUrls ?? []), ...(r.legacyImageUrls ?? [])],
       sold: r.sold ?? false,
       price: r.price,
     };
@@ -34,6 +34,9 @@ export default async function PricelistPage() {
       medium: item.medium,
       year: item.year,
       dimensions: item.dimensions,
+      edition: item.edition,
+      description: item.description,
+      image: item.images[0] ?? null,
       price: item.price,
     };
   });

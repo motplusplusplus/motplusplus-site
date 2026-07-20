@@ -11,44 +11,162 @@ export type PricelistItem = {
   medium: string;
   year: number;
   dimensions: string;
+  edition?: string;
+  description?: string;
+  image?: string | null;
   price?: string;
 };
+
+const MOT_PAYMENT_QR_URL = '/pricelist/mot-payment-qr.png';
 
 function mediumYear(item: PricelistItem): string {
   return [item.medium, item.year ? String(item.year) : null].filter(Boolean).join(', ');
 }
 
+type PdfImage = { dataUrl: string; width: number; height: number; format: 'JPEG' | 'PNG' };
+
+// Fetches an image (same-origin or cross-origin CDN) and re-encodes it via canvas into a data
+// URL jsPDF's addImage() can embed directly -- avoids format issues (e.g. WEBP) and CORS taint
+// on the raw blob. Downscales to maxDimension since work photos only ever render at ~180mm wide
+// in the PDF -- embedding at full 1600px source resolution just bloats the file. Returns null on
+// any failure so a broken image just gets skipped in the PDF.
+async function fetchImageForPdf(url: string, mime: 'image/jpeg' | 'image/png' = 'image/jpeg', maxDimension = 1200): Promise<PdfImage | null> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    const bitmap = await createImageBitmap(blob);
+    const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+    const width = Math.round(bitmap.width * scale);
+    const height = Math.round(bitmap.height * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    const dataUrl = mime === 'image/jpeg' ? canvas.toDataURL(mime, 0.8) : canvas.toDataURL(mime);
+    return { dataUrl, width, height, format: mime === 'image/jpeg' ? 'JPEG' : 'PNG' };
+  } catch {
+    return null;
+  }
+}
+
 async function downloadPdf(items: PricelistItem[]) {
   const { jsPDF } = await import('jspdf');
-  const { autoTable } = await import('jspdf-autotable');
 
   const doc = new jsPDF();
   registerVietnameseFont(doc); // embeds + activates a Vietnamese-safe font for ALL text below --
                                 // jsPDF's built-in fonts (Helvetica etc.) are Latin-only and
                                 // corrupt/drop Vietnamese diacritics in artist names and titles.
 
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 14;
+  const contentWidth = pageWidth - margin * 2;
+  const imageMaxHeight = 85;
+  const qrSize = 22;
+
+  // per-line height (mm) at a given font size, matching jsPDF's own text-layout math --
+  // used to reserve accurate vertical space before drawing each item's block.
+  const lineHeight = (fontSize: number) => (fontSize * doc.getLineHeightFactor()) / doc.internal.scaleFactor;
+
   doc.setFontSize(20);
   doc.setTextColor(17, 17, 17);
-  doc.text('MoT+++', 14, 18);
+  doc.text('MoT+++', margin, 18);
 
   doc.setFontSize(11);
   doc.setTextColor(85, 85, 85);
-  doc.text('+1 trash — pricelist', 14, 26);
+  doc.text('+1 trash — pricelist', margin, 26);
 
   const generated = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
   doc.setFontSize(9);
   doc.setTextColor(153, 153, 153);
-  doc.text(`generated ${generated}`, 14, 32);
+  doc.text(`generated ${generated}`, margin, 32);
 
-  autoTable(doc, {
-    startY: 40,
-    head: [['Artist', 'Title', 'Medium / Year', 'Price']],
-    body: items.map(i => [i.artist, i.title, mediumYear(i), i.price || '']),
-    headStyles: { fillColor: [17, 17, 17], textColor: [255, 255, 255], fontStyle: 'normal', fontSize: 10, font: VIETNAMESE_FONT_NAME },
-    bodyStyles: { textColor: [51, 51, 51], fontSize: 10, font: VIETNAMESE_FONT_NAME },
-    alternateRowStyles: { fillColor: [245, 245, 245] },
-    styles: { cellPadding: 6, font: VIETNAMESE_FONT_NAME },
-  });
+  let y = 42;
+
+  const qrImage = await fetchImageForPdf(MOT_PAYMENT_QR_URL, 'image/png');
+
+  for (const item of items) {
+    const workImage = item.image ? await fetchImageForPdf(item.image, 'image/jpeg') : null;
+
+    const imgRenderHeight = workImage
+      ? Math.min(contentWidth * (workImage.height / workImage.width), imageMaxHeight)
+      : 0;
+
+    doc.setFontSize(13);
+    const titleLines = doc.splitTextToSize(`${item.title || 'untitled'}${item.year ? `, ${item.year}` : ''}`, contentWidth);
+    doc.setFontSize(10);
+    const descLines = item.description ? doc.splitTextToSize(item.description, contentWidth) : [];
+    const metaLine = [item.dimensions, item.medium, item.edition].filter(Boolean).join('  ·  ');
+
+    const titleBlockHeight = titleLines.length * lineHeight(13);
+    const descBlockHeight = descLines.length * lineHeight(10);
+    const metaBlockHeight = metaLine ? lineHeight(10) + 2 : 0;
+    const priceBlockHeight = lineHeight(13) + 4;
+    const qrBlockHeight = qrImage ? qrSize + 8 : 0;
+
+    const totalHeight =
+      (imgRenderHeight ? imgRenderHeight + 6 : 0) +
+      titleBlockHeight + 3 +
+      metaBlockHeight +
+      (descLines.length ? descBlockHeight + 4 : 0) +
+      priceBlockHeight +
+      qrBlockHeight +
+      12; // divider + trailing gap
+
+    if (y + totalHeight > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+
+    // 1. image, full width
+    if (workImage) {
+      doc.addImage(workImage.dataUrl, workImage.format, margin, y, contentWidth, imgRenderHeight);
+      y += imgRenderHeight + 6;
+    }
+
+    // 2. title, dimensions, medium, edition, description
+    doc.setFont(VIETNAMESE_FONT_NAME, 'normal');
+    doc.setFontSize(13);
+    doc.setTextColor(17, 17, 17);
+    doc.text(titleLines, margin, y + lineHeight(13) * 0.75);
+    y += titleBlockHeight + 3;
+
+    if (metaLine) {
+      doc.setFontSize(10);
+      doc.setTextColor(120, 120, 120);
+      doc.text(metaLine, margin, y + lineHeight(10) * 0.75);
+      y += metaBlockHeight;
+    }
+
+    if (descLines.length) {
+      doc.setFontSize(10);
+      doc.setTextColor(85, 85, 85);
+      doc.text(descLines, margin, y + lineHeight(10) * 0.75);
+      y += descBlockHeight + 4;
+    }
+
+    // 3. price
+    doc.setFontSize(13);
+    doc.setTextColor(17, 17, 17);
+    doc.text(item.price || 'price on inquiry', margin, y + lineHeight(13) * 0.75);
+    y += priceBlockHeight;
+
+    // 4. QR code, below every item
+    if (qrImage) {
+      doc.addImage(qrImage.dataUrl, qrImage.format, margin, y, qrSize, qrSize);
+      doc.setFontSize(8);
+      doc.setTextColor(153, 153, 153);
+      doc.text('scan to pay via MoT+++', margin + qrSize + 6, y + qrSize / 2 + 1);
+      y += qrSize + 8;
+    }
+
+    doc.setDrawColor(230, 230, 230);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 10;
+  }
 
   const stamp = new Date().toISOString().slice(0, 10);
   doc.save(`motplusplusplus-pricelist-${stamp}.pdf`);
