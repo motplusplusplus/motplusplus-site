@@ -8,7 +8,9 @@ export type MuseumLocation = {
   artistSlug?: string;
   medium?: string;
   year?: number;
-  dateAdded?: string;
+  dateAdded?: string;   // demo data only — the real Sanity schema has no such field
+  createdAt?: string;   // Sanity _createdAt (ISO); absent on demo entries
+  featured?: boolean;   // editor-curated "featured works" rail (optional schema field)
   description?: string;
   vnDescription?: string;
   accessType: AccessType;

@@ -111,8 +111,17 @@ export default function MuseumMap() {
   // Locations shown as pins on the map (respects mapFilter toggle)
   const mapLocations = filteredLocations.filter(l => mapFilter === 'current' ? !l.isPast : true);
   const artists = [...new Set(locations.map(l => l.artist))].sort(compareNames);
-  const latestAdditions = locations.filter(l => l.dateAdded === 'September 21, 1820');
-  const featuredWorks = locations.filter(l => l.dateAdded === 'September 22, 1820').slice(0, 25);
+  // Demo entries curate the two gallery rails via sentinel dateAdded values; real
+  // Sanity docs have no dateAdded field at all, so with real data "latest additions"
+  // derives from _createdAt and "featured works" from the optional `featured` boolean
+  // (rail simply stays hidden until an editor marks something featured).
+  const latestAdditions = isDemo
+    ? locations.filter(l => l.dateAdded === 'September 21, 1820')
+    : [...locations].sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? '')).slice(0, 12);
+  const featuredWorks = (isDemo
+    ? locations.filter(l => l.dateAdded === 'September 22, 1820')
+    : locations.filter(l => l.featured === true)
+  ).slice(0, 25);
 
   // Fetch from Sanity, fall back to demo
   useEffect(() => {
@@ -120,7 +129,8 @@ export default function MuseumMap() {
       *[_type == "museumLocation" && active == true] {
         _id, title, vnTitle, artist,
         "artistSlug": artistRef->slug.current,
-        medium, year, dateAdded, description, vnDescription,
+        medium, year, description, vnDescription,
+        featured, "createdAt": _createdAt,
         accessType, accessDetails, hours, contactMethod,
         hostName, neighbourhood, isPast,
         "coordinates": location,

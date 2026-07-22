@@ -162,7 +162,7 @@ const EVENT_FIELDS = `
   "location": coalesce(location, ""),
   "description": coalesce(description, ""),
   "vnDescription": coalesce(vnDescription, ""),
-  "uploadedImageUrls": uploadedImages[].asset->url,
+  "uploadedImages": uploadedImages[]{ "url": asset->url, "isPoster": coalesce(isPoster, false) },
   "legacyImageUrls": coalesce(legacyImageUrls, []),
   videoUrl,
   bandcampAlbumId,
@@ -178,7 +178,7 @@ type RawEvent = {
   slug: string; title: string; vnTitle?: string; dateISO: string;
   endDateISO?: string; displayDate: string; category: string;
   location: string; description: string; vnDescription?: string;
-  uploadedImageUrls: string[] | null; legacyImageUrls: string[];
+  uploadedImages: { url: string | null; isPoster: boolean }[] | null; legacyImageUrls: string[];
   videoUrl?: string; bandcampAlbumId?: string; wpLink: string; isBioPage: boolean;
   artists?: LinkedArtist[] | null;
 };
@@ -230,7 +230,14 @@ function dedupImages(urls: string[]): string[] {
 }
 
 function toSanityEvent(e: RawEvent): SanityEvent {
-  const uploaded = e.uploadedImageUrls ?? [];
+  // Poster-flagged uploads first (stable order within each group) so an editor
+  // ticking "isPoster" in Studio pins that image as the cover/thumbnail --
+  // images[0] after the merge is what every listing and OG image uses.
+  const uploadedEntries = (e.uploadedImages ?? []).filter(u => u && u.url);
+  const uploaded = [
+    ...uploadedEntries.filter(u => u.isPoster).map(u => u.url as string),
+    ...uploadedEntries.filter(u => !u.isPoster).map(u => u.url as string),
+  ];
   // Filter junk from Sanity legacyImageUrls (logos, brand assets mixed in during migration)
   const legacy   = (e.legacyImageUrls ?? []).filter(u => !isJunkImage(u));
   const jsonImages = legacyImages[e.slug] ?? [];

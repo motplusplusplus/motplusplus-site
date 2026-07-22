@@ -19,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter(slug => !CONSOLIDATED_BIO_SLUGS.has(slug));
 
   const staticPages = [
+    { url: `${BASE}`,                 priority: 1.0 },
     { url: `${BASE}/museum`,          priority: 1.0 },
     { url: `${BASE}/afarm`,           priority: 1.0 },
     { url: `${BASE}/afarm/studios`,   priority: 0.9 },

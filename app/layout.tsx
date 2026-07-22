@@ -60,9 +60,11 @@ export const metadata: Metadata = {
       "Independent contemporary art and international artist residency in Ho Chi Minh City, Vietnam.",
     images: [OG_IMAGE],
   },
-  alternates: {
-    canonical: "https://motplusplusplus.com",
-  },
+  // NOTE: no `alternates.canonical` here on purpose. Next.js metadata is inherited
+  // by every page that doesn't override `alternates`, so a root canonical in the
+  // layout made /about, /events, /press, etc. all declare the homepage as their
+  // canonical URL — telling search engines to deindex them. Per-page canonicals
+  // belong on the pages themselves (the homepage sets its own in app/page.tsx).
   icons: { icon: "/favicon.svg" },
   verification: { google: "LcOHihQFLptj88QR3d-_1zxxu5GyCbmC-t3TtOFyfKE" },
 };
