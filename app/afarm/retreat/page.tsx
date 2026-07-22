@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 
 const eyebrow: React.CSSProperties = {
   fontSize: "11px",
-  color: "#999999",
+  color: "#767676",
   letterSpacing: "0.08em",
   marginBottom: "20px",
 };
@@ -219,7 +219,7 @@ export default function RetreatPage() {
           style={{
             display: "inline-block",
             fontSize: "13px",
-            color: "#999999",
+            color: "#767676",
             letterSpacing: "0.04em",
             marginBottom: "32px",
           }}
@@ -231,7 +231,7 @@ export default function RetreatPage() {
             href="https://www.instagram.com/willisartadvisory/"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ fontSize: "13px", color: "#888888" }}
+            style={{ fontSize: "13px", color: "#767676" }}
           >
             instagram — @willisartadvisory
           </a>
@@ -239,13 +239,13 @@ export default function RetreatPage() {
             href="https://www.linkedin.com/in/david-alexander-willis-74146866/"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ fontSize: "13px", color: "#888888" }}
+            style={{ fontSize: "13px", color: "#767676" }}
           >
             cv / linkedin
           </a>
           <a
             href={`mailto:${CONTACTS.residency}`}
-            style={{ fontSize: "13px", color: "#888888" }}
+            style={{ fontSize: "13px", color: "#767676" }}
           >
             {CONTACTS.residency}
           </a>
@@ -360,7 +360,7 @@ export default function RetreatPage() {
           the core of the program takes place over four intensive working days.
         </p>
 
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.06em", marginBottom: "10px" }}>
+        <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginBottom: "10px" }}>
           morning sessions
         </p>
         <p style={body}>
@@ -374,7 +374,7 @@ export default function RetreatPage() {
           for future growth.
         </p>
 
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.06em", marginBottom: "10px" }}>
+        <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginBottom: "10px" }}>
           afternoon critiques
         </p>
         <p style={body}>
@@ -388,7 +388,7 @@ export default function RetreatPage() {
           dedicated group critique.
         </p>
 
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.06em", marginBottom: "10px" }}>
+        <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginBottom: "10px" }}>
           evening community dinners
         </p>
         <p style={body}>
@@ -523,9 +523,9 @@ export default function RetreatPage() {
             />
           </Link>
         </div>
-        <p style={{ fontSize: "13px", color: "#888888" }}>
+        <p style={{ fontSize: "13px", color: "#767676" }}>
           for questions about the retreat, contact us at{" "}
-          <a href={`mailto:${CONTACTS.residency}`} style={{ color: "#888888" }}>
+          <a href={`mailto:${CONTACTS.residency}`} style={{ color: "#767676" }}>
             {CONTACTS.residency}
           </a>
         </p>
@@ -536,7 +536,7 @@ export default function RetreatPage() {
       <Reveal delay={0.12}>
         <ContentBlock maxWidth="640px">
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "32px" }}>
-          <p style={{ fontSize: "13px", lineHeight: 1.8, color: "#999999" }}>
+          <p style={{ fontSize: "13px", lineHeight: 1.8, color: "#767676" }}>
             the a.farm saigon artist intensive is envisioned as an annual program. future
             editions may take different forms, involve different guest contributors, or
             focus on particular themes. each edition will remain committed to serious

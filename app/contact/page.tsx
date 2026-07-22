@@ -26,7 +26,7 @@ export default function ContactPage() {
 
         {/* general */}
         <div>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             general
           </p>
           <a
@@ -35,7 +35,7 @@ export default function ContactPage() {
           >
             {CONTACTS.general}
           </a>
-          <p style={{ fontSize: "13px", color: "#aaaaaa", lineHeight: 1.7 }}>
+          <p style={{ fontSize: "13px", color: "#767676", lineHeight: 1.7 }}>
             MoT+++, la astoria tower 2<br />
             383 nguyễn duy trinh<br />
             hồ chí minh city
@@ -44,7 +44,7 @@ export default function ContactPage() {
 
         {/* +a.Farm */}
         <div>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             +a.Farm residency
           </p>
           <a
@@ -69,7 +69,7 @@ export default function ContactPage() {
 
         {/* social */}
         <div>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             social
           </p>
           <a
@@ -80,7 +80,7 @@ export default function ContactPage() {
           >
             instagram
           </a>
-          <p style={{ fontSize: "13px", color: "#aaaaaa" }}>@motplusplusplus</p>
+          <p style={{ fontSize: "13px", color: "#767676" }}>@motplusplusplus</p>
         </div>
 
       </div>

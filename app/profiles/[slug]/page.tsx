@@ -220,7 +220,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
 
         {/* breadcrumb + hosting artist badge */}
         <div style={{ marginBottom: "52px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
-          <Link href="/profiles" style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em" }}>
+          <Link href="/profiles" style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.06em" }}>
             ← profiles
           </Link>
           {studio && (
@@ -280,16 +280,16 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
               {displayName}
             </h2>
             {alternateNames.length > 0 && (
-              <p style={{ fontSize: "13px", color: "#aaaaaa", marginTop: "8px", fontWeight: 300 }}>
+              <p style={{ fontSize: "13px", color: "#767676", marginTop: "8px", fontWeight: 300 }}>
                 {alternateNames.join(", ")}
               </p>
             )}
             {deceasedDates ? (
-              <p style={{ fontSize: "13px", color: "#bbbbbb", marginTop: "8px", fontWeight: 300 }}>
+              <p style={{ fontSize: "13px", color: "#767676", marginTop: "8px", fontWeight: 300 }}>
                 {deceasedDates}
               </p>
             ) : artist.origin && (
-              <p style={{ fontSize: "13px", color: "#aaaaaa", marginTop: "10px", fontWeight: 300 }}>
+              <p style={{ fontSize: "13px", color: "#767676", marginTop: "10px", fontWeight: 300 }}>
                 {artist.origin}
               </p>
             )}
@@ -315,7 +315,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           }}>
             {displayDate && (
               <div>
-                <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
                   residency
                 </p>
                 <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>{displayDate}</p>
@@ -323,7 +323,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             )}
             {artist.website && (
               <div>
-                <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
                   website
                 </p>
                 <a
@@ -338,7 +338,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             )}
             {artist.instagram && artist.instagram.length > 0 && (
               <div>
-                <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
                   instagram
                 </p>
                 {artist.instagram.map((handle) => {
@@ -363,7 +363,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {/* bio */}
         {hasBio && (
           <div style={{ maxWidth: "680px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "28px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
               practice
             </p>
             {usePtBio ? (
@@ -436,7 +436,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {/* +1 trash — available works */}
         {availableTrashWorks.length > 0 && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
               +1 trash — available works
             </p>
             <div style={{
@@ -463,7 +463,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                     {work.title}{work.year ? `, ${work.year}` : ""}
                   </p>
                   {work.medium && (
-                    <p style={{ fontSize: "11px", color: "#aaaaaa", marginTop: "2px" }}>{work.medium}</p>
+                    <p style={{ fontSize: "11px", color: "#767676", marginTop: "2px" }}>{work.medium}</p>
                   )}
                 </Link>
               ))}
@@ -474,7 +474,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {/* work images (collective members) */}
         {artist.workImages.length > 0 && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
               work
             </p>
             <ArtistGallery images={artist.workImages} artistName={artist.name} />
@@ -484,7 +484,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {/* documentation gallery from bio event entry (a.Farm residents) */}
         {eventGallery.length > 0 && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
               documentation
             </p>
             <div style={{
@@ -510,7 +510,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {/* events at MoT+++ */}
         {relatedEvents.length > 0 && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "28px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
               at MoT+++
             </p>
             <div>
@@ -525,14 +525,14 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                     gap: "20px", padding: "14px 0", borderBottom: "1px solid #f2f2f2",
                   }}>
                     <div>
-                      <p style={{ fontSize: "10px", color: "#bbbbbb", letterSpacing: "0.06em", marginBottom: "4px" }}>
+                      <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.06em", marginBottom: "4px" }}>
                         {evt.category}
                       </p>
                       <p style={{ fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.35 }}>
                         {evt.title}
                       </p>
                     </div>
-                    <p style={{ fontSize: "12px", color: "#aaaaaa", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    <p style={{ fontSize: "12px", color: "#767676", whiteSpace: "nowrap", flexShrink: 0 }}>
                       {evt.displayDate || evt.dateISO}
                     </p>
                   </div>
@@ -545,7 +545,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {/* if no bio and no events: minimal state */}
         {!hasBio && relatedEvents.length === 0 && (
           <div style={{ marginBottom: "80px" }}>
-            <p style={{ fontSize: "14px", color: "#aaaaaa", fontWeight: 300 }}>
+            <p style={{ fontSize: "14px", color: "#767676", fontWeight: 300 }}>
               artist profile — more information to come.
             </p>
           </div>
@@ -563,14 +563,14 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           {studio ? (
             <Link
               href={`/afarm/studios/${studio.slug}`}
-              style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}
+              style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em" }}
             >
               view studio ↗
             </Link>
           ) : artist.collective && (
             <Link
               href={`/collective#${artist.name.toLowerCase().replace(/\s+/g, "-")}`}
-              style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}
+              style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em" }}
             >
               view on collective page ↗
             </Link>

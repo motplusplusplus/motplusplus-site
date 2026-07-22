@@ -50,10 +50,10 @@ export default function MuseumPage() {
         }}>
           +1 museum by any other name
         </h1>
-        <p style={{ fontSize: "13px", color: "#999999", letterSpacing: "0.06em", lineHeight: 1.8 }}>
+        <p style={{ fontSize: "13px", color: "#767676", letterSpacing: "0.06em", lineHeight: 1.8 }}>
           mot | mót | hoard
         </p>
-        <p style={{ fontSize: "14px", color: "#888888", marginTop: "8px" }}>
+        <p style={{ fontSize: "14px", color: "#767676", marginTop: "8px" }}>
           hosting one work, in one place anywhere in the world
         </p>
       </div>

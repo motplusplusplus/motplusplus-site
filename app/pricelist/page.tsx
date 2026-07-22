@@ -56,7 +56,7 @@ export default async function PricelistPage() {
         }}>
           +1 trash — pricelist
         </h1>
-        <p style={{ fontSize: '13px', color: '#999999', letterSpacing: '0.04em' }}>
+        <p style={{ fontSize: '13px', color: '#767676', letterSpacing: '0.04em' }}>
           internal — currently available works only
         </p>
       </div>

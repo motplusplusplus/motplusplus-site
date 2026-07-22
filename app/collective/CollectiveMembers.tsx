@@ -44,7 +44,7 @@ export default function CollectiveMembers({ members }: { members: CollectiveMemb
           <a
             key={m.name}
             href={`#${m.name.toLowerCase().replace(/\s+/g, "-")}`}
-            style={{ fontSize: "15px", color: "#888888", fontWeight: 300, padding: "10px 8px" }}
+            style={{ fontSize: "15px", color: "#767676", fontWeight: 300, padding: "10px 8px" }}
           >
             {m.name}
           </a>
@@ -100,15 +100,15 @@ export default function CollectiveMembers({ members }: { members: CollectiveMemb
                       marginBottom: "16px",
                     }}
                   >
-                    <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.06em" }}>portrait</p>
+                    <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em" }}>portrait</p>
                   </div>
                 )}
-                <p style={{ fontSize: "12px", color: "#aaaaaa", marginBottom: "4px" }}>{member.origin}</p>
+                <p style={{ fontSize: "12px", color: "#767676", marginBottom: "4px" }}>{member.origin}</p>
                 <a
                   href={`https://${member.website}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ fontSize: "12px", color: "#aaaaaa" }}
+                  style={{ fontSize: "12px", color: "#767676" }}
                 >
                   {member.website}
                 </a>
@@ -129,7 +129,7 @@ export default function CollectiveMembers({ members }: { members: CollectiveMemb
                   </h2>
                   <Link
                     href={`/profiles/${member.slug}`}
-                    style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}
+                    style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em" }}
                   >
                     artist profile ↗
                   </Link>

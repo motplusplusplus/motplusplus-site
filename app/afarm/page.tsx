@@ -78,7 +78,7 @@ export default async function AFarmPage() {
           >
             +a.Farm
           </h1>
-          <p style={{ fontSize: "15px", color: "#999999", fontWeight: 300 }}>
+          <p style={{ fontSize: "15px", color: "#767676", fontWeight: 300 }}>
             a new model for the artist residency - vietnam
           </p>
         </div>
@@ -96,7 +96,7 @@ export default async function AFarmPage() {
         >
           {/* studio track */}
           <div>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
               studio track
             </p>
             <h2
@@ -136,7 +136,7 @@ export default async function AFarmPage() {
 
           {/* hotel retreat track */}
           <div>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
               hotel retreat track
             </p>
             <h2
@@ -167,7 +167,7 @@ export default async function AFarmPage() {
               if required.
             </p>
 
-            <p style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.08em", marginBottom: "12px", marginTop: "24px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "12px", marginTop: "24px" }}>
               options
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -200,7 +200,7 @@ export default async function AFarmPage() {
             marginBottom: "0",
           }}
         >
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "40px" }}>
             studios &amp; accommodation
           </p>
           <div style={{ maxWidth: "672px", paddingLeft: "8px" }}>
@@ -212,7 +212,7 @@ export default async function AFarmPage() {
         <p
           style={{
             fontSize: "13px",
-            color: "#999999",
+            color: "#767676",
             lineHeight: 1.7,
             maxWidth: "480px",
             marginTop: "16px",
@@ -230,7 +230,7 @@ export default async function AFarmPage() {
             href="/afarm/studios"
             style={{
               fontSize: "13px",
-              color: "#888888",
+              color: "#767676",
               borderBottom: "1px solid #cccccc",
               paddingBottom: "2px",
             }}
@@ -248,7 +248,7 @@ export default async function AFarmPage() {
             maxWidth: "720px",
           }}
         >
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             heARTalk
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444" }}>
@@ -267,7 +267,7 @@ export default async function AFarmPage() {
             marginBottom: "80px",
           }}
         >
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             fees
           </p>
           <p
@@ -298,16 +298,16 @@ export default async function AFarmPage() {
             maxWidth: "720px",
           }}
         >
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "8px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "8px" }}>
             a.Farm international art residency
           </p>
-          <p style={{ fontSize: "13px", color: "#aaaaaa", marginBottom: "32px" }}>
+          <p style={{ fontSize: "13px", color: "#767676", marginBottom: "32px" }}>
             ho chi minh city, vietnam
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "24px" }}>
             established in 2018 by MoT+++, a.Farm is the first and longest-running international art residency in ho chi minh city, co-founded by MoT+++, Sàn Art and Nguyễn Art Foundation. we established a series of exhibitions that democratizes access for all artists, regardless of medium, career stage, or category; inaugurated by <Link href="/events/all-animals-are-equal-1" style={{ color: "#444444", borderBottom: "1px solid #cccccc", paddingBottom: "1px" }}>all animals are equal</Link>. the spirit of the program is one of non-stop transformation, never fixed, always current. at its heart, a.Farm&rsquo;s vision is to make the art world a better place!
           </p>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "16px", marginTop: "36px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "16px", marginTop: "36px" }}>
             the model
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444" }}>

@@ -15,18 +15,20 @@ const primaryNav = [
 
 const dropdownSections = [
   {
-    heading: "+1 programs",
+    heading: "programs",
     items: [
-      { label: "+1 museum by any other name", href: "/museum" },
-      { label: "+a.Farm", href: "/afarm" },
-      { label: "+1 trash", href: "/trash" },
       { label: "+1 contemporary project", href: "/contemporary" },
-      { label: "+1 nice place for experimentation", href: "/afarm" },
-      { label: "+1 art advisory", href: "/advisory" },
-      { label: "+1 residency", href: "/afarm" },
-      { label: "MoTsound", href: "/sound" },
       { label: "+1 performance", href: "/performance" },
+      { label: "MoTsound", href: "/sound" },
+      { label: "+1 art advisory", href: "/advisory" },
       { label: "+1 direct experience", href: "/directexperience" },
+    ],
+  },
+  {
+    heading: "people",
+    items: [
+      { label: "MoTcyclopedia (profiles)", href: "/profiles" },
+      { label: "mot+++ collective", href: "/collective" },
     ],
   },
   {
@@ -35,12 +37,9 @@ const dropdownSections = [
       { label: "about", href: "/about" },
       { label: "press", href: "/press" },
       { label: "contact", href: "/contact" },
-      { label: "mot+++ collective", href: "/collective" },
     ],
   },
 ];
-
-const featuredDropdownItem = { label: "MoTcyclopedia (profiles)", href: "/profiles" };
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -114,7 +113,7 @@ export default function Header() {
                     fontSize: "21px",
                     fontWeight: 400,
                     letterSpacing: "0.01em",
-                    color: "#888888",
+                    color: "#767676",
                     whiteSpace: "nowrap",
                     textDecoration: pathname.startsWith(item.href) ? "underline" : "none",
                     textUnderlineOffset: "4px",
@@ -242,20 +241,6 @@ export default function Header() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Link
-              href={featuredDropdownItem.href}
-              onClick={() => setMenuOpen(false)}
-              style={{
-                display: "block",
-                fontSize: "20px",
-                fontWeight: 300,
-                color: "#111111",
-                lineHeight: 1.2,
-                marginBottom: "32px",
-              }}
-            >
-              {featuredDropdownItem.label}
-            </Link>
             <div
               style={{
                 display: "grid",
@@ -269,7 +254,7 @@ export default function Header() {
                   style={{
                     fontSize: "11px",
                     letterSpacing: "0.08em",
-                    color: "#999999",
+                    color: "#767676",
                     marginBottom: "16px",
                   }}
                 >
@@ -338,7 +323,7 @@ export default function Header() {
                 display: "inline-block",
                 fontSize: "18px",
                 fontWeight: 400,
-                color: "#888888",
+                color: "#767676",
                 padding: "11px 16px 11px 0",
                 textDecoration: pathname.startsWith(item.href) ? "underline" : "none",
                 textUnderlineOffset: "4px",

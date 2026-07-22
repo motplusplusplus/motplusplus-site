@@ -36,7 +36,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: "11px",
-  color: "#999999",
+  color: "#767676",
   letterSpacing: "0.08em",
   display: "block",
   marginBottom: "8px",
@@ -150,7 +150,7 @@ export default function InquiryForm({
                 border: "none",
                 fontSize: "22px",
                 lineHeight: 1,
-                color: "#999999",
+                color: "#767676",
                 cursor: "pointer",
                 fontFamily: "inherit",
               }}
@@ -158,7 +158,7 @@ export default function InquiryForm({
               ×
             </button>
 
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
               inquire{artworkTitle ? ` — ${artworkTitle}` : ""}
             </p>
 
@@ -228,9 +228,9 @@ export default function InquiryForm({
                   {submitting ? "sending…" : "send"}
                 </button>
 
-                <p style={{ fontSize: "12px", color: "#aaaaaa", lineHeight: 1.7, marginTop: "18px" }}>
+                <p style={{ fontSize: "12px", color: "#767676", lineHeight: 1.7, marginTop: "18px" }}>
                   or email directly at{" "}
-                  <a href={mailtoHref} style={{ color: "#888888" }}>
+                  <a href={mailtoHref} style={{ color: "#767676" }}>
                     {recipient}
                   </a>
                 </p>

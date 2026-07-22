@@ -10,8 +10,8 @@ export default async function HotelPage() {
 
       {/* header */}
       <div style={{ marginBottom: "64px" }}>
-        <p style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em", marginBottom: "12px" }}>
-          <Link href="/afarm/studios" style={{ color: "#999999" }}>studios</Link>
+        <p style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.06em", marginBottom: "12px" }}>
+          <Link href="/afarm/studios" style={{ color: "#767676" }}>studios</Link>
           {" / "}thảo điền — hotel track
         </p>
         <h1 style={{
@@ -36,7 +36,7 @@ export default async function HotelPage() {
         paddingTop: "48px",
       }}>
         <div>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             about the hotel
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "16px" }}>
@@ -44,21 +44,21 @@ export default async function HotelPage() {
             experience with full independence. suited to introverts or those who prefer
             to focus on their own practice.
           </p>
-          <p style={{ fontSize: "13px", color: "#888888", marginBottom: "12px" }}>
+          <p style={{ fontSize: "13px", color: "#767676", marginBottom: "12px" }}>
             {hotel.address}
           </p>
           <a
             href="https://www.amanaki.vn"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ fontSize: "12px", color: "#aaaaaa" }}
+            style={{ fontSize: "12px", color: "#767676" }}
           >
             amanaki.vn ↗
           </a>
         </div>
 
         <div>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             location
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "16px" }}>
@@ -66,7 +66,7 @@ export default async function HotelPage() {
             exhibitions, open studios, and events. residents in the hotel track have
             direct access to the program space and Thao Dien neighbourhood.
           </p>
-          <p style={{ fontSize: "13px", color: "#888888" }}>
+          <p style={{ fontSize: "13px", color: "#767676" }}>
             Thảo Điền, Thủ Đức, Ho Chi Minh City
           </p>
         </div>
@@ -75,7 +75,7 @@ export default async function HotelPage() {
       {/* gallery */}
       {images.length > 0 && (
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "72px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
             images
           </p>
           <StudioGallery images={images} studioName={hotel.name} />

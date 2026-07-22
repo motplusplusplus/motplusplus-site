@@ -27,7 +27,7 @@ function MapSkeleton() {
           />
         )}
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-          <p style={{ fontSize: '12px', color: '#aaaaaa', letterSpacing: '0.08em', backgroundColor: 'rgba(255,255,255,0.85)', padding: '6px 14px' }}>
+          <p style={{ fontSize: '12px', color: '#767676', letterSpacing: '0.08em', backgroundColor: 'rgba(255,255,255,0.85)', padding: '6px 14px' }}>
             +++loading+++
           </p>
         </div>

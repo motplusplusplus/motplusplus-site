@@ -44,7 +44,7 @@ export default function Footer() {
             flexWrap: "wrap",
             gap: "8px 24px",
             fontSize: "12px",
-            color: "#999999",
+            color: "#767676",
           }}
         >
           <a
@@ -59,7 +59,7 @@ export default function Footer() {
           </a>
         </div>
 
-        <p style={{ fontSize: "11px", color: "#cccccc" }}>
+        <p style={{ fontSize: "11px", color: "#767676" }}>
           © MoT+++ {new Date().getFullYear()}
         </p>
 

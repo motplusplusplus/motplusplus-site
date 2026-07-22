@@ -63,7 +63,7 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
         <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8, marginBottom: "12px" }}>
           everyone MoT+++ has worked with: collaborators, residents and artists in our network, and those whose work we have in +1 trash or display in +1 museum by any other name.
         </p>
-        <p style={{ fontSize: "12px", color: "#aaaaaa" }}>{artists.length} profiles</p>
+        <p style={{ fontSize: "12px", color: "#767676" }}>{artists.length} profiles</p>
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "56px" }}>
@@ -87,7 +87,7 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
             borderBottom: "1px solid #f0f0f0", padding: "32px 0",
             display: "grid", gridTemplateColumns: "40px 1fr", gap: "0 32px", alignItems: "start",
           }}>
-            <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.08em", paddingTop: "2px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", paddingTop: "2px" }}>
               {letter}
             </p>
             <div style={{
@@ -102,7 +102,7 @@ export default function ArtistsShell({ artists }: { artists: ArtistEntry[] }) {
                   }}>
                     {a.name}
                     {a.alternateNames && a.alternateNames.length > 0 && (
-                      <span style={{ color: "#aaaaaa" }}> ({a.alternateNames.join(", ")})</span>
+                      <span style={{ color: "#767676" }}> ({a.alternateNames.join(", ")})</span>
                     )}
                   </p>
                   {a.primary !== "artist" && (

@@ -204,7 +204,7 @@ export function EventsShell({ events }: { events: Event[] }) {
                   onClick={clearSearch}
                   style={{
                     background: "none", border: "none", cursor: "pointer",
-                    fontSize: "12px", color: "#999999", fontFamily: "inherit", padding: 0,
+                    fontSize: "12px", color: "#767676", fontFamily: "inherit", padding: 0,
                   }}
                 >
                   clear
@@ -226,14 +226,14 @@ export function EventsShell({ events }: { events: Event[] }) {
         {/* page label + collapsible category filters */}
         <div style={{ marginBottom: "40px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: tagsOpen ? "16px" : "0" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em" }}>
               {urlQuery ? "search results" : "news & events"}
             </p>
             {!urlQuery && (
               <button
                 onClick={() => setTagsOpen(o => !o)}
                 style={{
-                  fontSize: "11px", color: "#bbbbbb", letterSpacing: "0.06em",
+                  fontSize: "11px", color: "#767676", letterSpacing: "0.06em",
                   background: "none", border: "none", cursor: "pointer",
                   fontFamily: "inherit", padding: 0,
                   display: "flex", alignItems: "center", gap: "5px",
@@ -248,11 +248,11 @@ export function EventsShell({ events }: { events: Event[] }) {
               </button>
             )}
             {activeCategory !== ALL && !urlQuery && (
-              <span style={{ fontSize: "11px", color: "#888888", letterSpacing: "0.04em" }}>
+              <span style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.04em" }}>
                 {activeCategory}
                 <button
                   onClick={() => setActiveCategory(ALL)}
-                  style={{ marginLeft: "6px", fontSize: "11px", color: "#bbbbbb", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", padding: 0 }}
+                  style={{ marginLeft: "6px", fontSize: "11px", color: "#767676", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", padding: 0 }}
                 >
                   ×
                 </button>
@@ -292,7 +292,7 @@ export function EventsShell({ events }: { events: Event[] }) {
               {filtered.map(e => <EventCard key={e.slug} event={e} />)}
             </div>
           ) : (
-            <p style={{ fontSize: "14px", color: "#999999" }}>
+            <p style={{ fontSize: "14px", color: "#767676" }}>
               no events found matching "{urlQuery}"
             </p>
           )
@@ -301,7 +301,7 @@ export function EventsShell({ events }: { events: Event[] }) {
             {/* upcoming */}
             {upcoming.length > 0 && (
               <div style={{ marginBottom: "80px" }}>
-                <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+                <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "40px" }}>
                   upcoming
                 </p>
                 <div style={{
@@ -320,7 +320,7 @@ export function EventsShell({ events }: { events: Event[] }) {
                 borderTop: upcoming.length ? "1px solid #e5e5e5" : "none",
                 paddingTop: upcoming.length ? "56px" : 0,
               }}>
-                <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+                <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "40px" }}>
                   archive
                 </p>
                 {years.map(year => (
@@ -349,18 +349,18 @@ function YearGroup({ year, events }: { year: string; events: Event[] }) {
           minHeight: "48px",
         }}
       >
-        <span style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.1em", fontFamily: "inherit" }}>
+        <span style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.1em", fontFamily: "inherit" }}>
           {year}
         </span>
         <span style={{
-          fontSize: "11px", color: "#cccccc", fontFamily: "inherit",
+          fontSize: "11px", color: "#767676", fontFamily: "inherit",
           transform: open ? "rotate(0deg)" : "rotate(-90deg)",
           transition: "transform 0.18s",
           display: "inline-block",
         }}>
           ↓
         </span>
-        <span style={{ fontSize: "10px", color: "#cccccc", fontFamily: "inherit" }}>
+        <span style={{ fontSize: "10px", color: "#767676", fontFamily: "inherit" }}>
           {events.length}
         </span>
       </button>
@@ -387,18 +387,18 @@ function EventCard({ event }: { event: Event }) {
           />
         </div>
         <div>
-          <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.08em", marginBottom: "8px" }}>
+          <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.08em", marginBottom: "8px" }}>
             {event.category}
           </p>
           <p style={{ fontSize: "16px", fontWeight: 300, color: "#111111", lineHeight: 1.35, marginBottom: event.vnTitle ? "4px" : "10px" }}>
             {event.title}
           </p>
           {event.vnTitle && (
-            <p style={{ fontSize: "12px", color: "#bbbbbb", marginBottom: "10px" }}>{event.vnTitle}</p>
+            <p style={{ fontSize: "12px", color: "#767676", marginBottom: "10px" }}>{event.vnTitle}</p>
           )}
-          <p style={{ fontSize: "12px", color: "#999999" }}>{normalizeDisplayDate(event.displayDate || event.dateISO)}</p>
+          <p style={{ fontSize: "12px", color: "#767676" }}>{normalizeDisplayDate(event.displayDate || event.dateISO)}</p>
           {event.location && (
-            <p style={{ fontSize: "12px", color: "#cccccc", marginTop: "2px" }}>{event.location}</p>
+            <p style={{ fontSize: "12px", color: "#767676", marginTop: "2px" }}>{event.location}</p>
           )}
         </div>
       </div>
@@ -420,17 +420,17 @@ function PastRow({ event }: { event: Event }) {
           />
         </div>
         <div>
-          <p style={{ fontSize: "10px", color: "#bbbbbb", letterSpacing: "0.06em", marginBottom: "4px" }}>
+          <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.06em", marginBottom: "4px" }}>
             {event.category}
           </p>
           <p style={{ fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.35 }}>
             {event.title}
           </p>
           {event.vnTitle && (
-            <p style={{ fontSize: "11px", color: "#cccccc", marginTop: "2px" }}>{event.vnTitle}</p>
+            <p style={{ fontSize: "11px", color: "#767676", marginTop: "2px" }}>{event.vnTitle}</p>
           )}
         </div>
-        <p className="evt-past-date" style={{ fontSize: "12px", color: "#aaaaaa" }}>
+        <p className="evt-past-date" style={{ fontSize: "12px", color: "#767676" }}>
           {normalizeDisplayDate(event.displayDate || event.dateISO)}
         </p>
       </div>

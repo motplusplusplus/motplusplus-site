@@ -192,7 +192,7 @@ export default function HeaderSearch({ onClose }: { onClose: () => void }) {
                 border: "none",
                 cursor: "pointer",
                 fontSize: "12px",
-                color: "#999999",
+                color: "#767676",
                 fontFamily: "inherit",
               }}
             >
@@ -211,7 +211,7 @@ export default function HeaderSearch({ onClose }: { onClose: () => void }) {
               }}
             >
               {error && (
-                <p style={{ fontSize: "13px", color: "#999999", padding: "16px 0" }}>
+                <p style={{ fontSize: "13px", color: "#767676", padding: "16px 0" }}>
                   search is unavailable right now — press enter to open the search page
                 </p>
               )}
@@ -241,7 +241,7 @@ export default function HeaderSearch({ onClose }: { onClose: () => void }) {
                         flexShrink: 0,
                         fontSize: "10px",
                         letterSpacing: "0.08em",
-                        color: "#999999",
+                        color: "#767676",
                         border: "1px solid #e5e5e5",
                         padding: "2px 8px",
                         whiteSpace: "nowrap",
@@ -264,7 +264,7 @@ export default function HeaderSearch({ onClose }: { onClose: () => void }) {
                         {r.title}
                       </span>
                       {r.subtitle && (
-                        <span style={{ fontSize: "12px", color: "#999999" }}>
+                        <span style={{ fontSize: "12px", color: "#767676" }}>
                           {r.subtitle}
                         </span>
                       )}
@@ -273,7 +273,7 @@ export default function HeaderSearch({ onClose }: { onClose: () => void }) {
                 ))}
 
               {!error && results.length === 0 && (
-                <p style={{ fontSize: "13px", color: "#999999", padding: "16px 0" }}>
+                <p style={{ fontSize: "13px", color: "#767676", padding: "16px 0" }}>
                   no quick results — press enter to search everything
                 </p>
               )}
@@ -286,7 +286,7 @@ export default function HeaderSearch({ onClose }: { onClose: () => void }) {
                   display: "block",
                   padding: "14px 8px 4px",
                   fontSize: "13px",
-                  color: "#888888",
+                  color: "#767676",
                 }}
               >
                 see all results for &ldquo;{query.trim()}&rdquo; →

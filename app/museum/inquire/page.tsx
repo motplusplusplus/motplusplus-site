@@ -226,7 +226,7 @@ export default function MuseumInquirePage() {
 
   const labelStyle = {
     fontSize: "11px",
-    color: "#999999",
+    color: "#767676",
     letterSpacing: "0.08em",
     display: "block",
     marginBottom: "8px",
@@ -258,8 +258,8 @@ export default function MuseumInquirePage() {
 
         {/* breadcrumb + language toggle */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
-          <p style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em" }}>
-            <a href="/museum" style={{ color: "#999999" }}>{lang === "en" ? "+1 museum" : "+1 museum"}</a>
+          <p style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.06em" }}>
+            <a href="/museum" style={{ color: "#767676" }}>{lang === "en" ? "+1 museum" : "+1 museum"}</a>
             {" / "}
             {lang === "en" ? "hosting inquiry" : "yêu cầu lưu trú"}
           </p>

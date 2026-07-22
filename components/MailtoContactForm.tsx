@@ -46,7 +46,7 @@ export default function MailtoContactForm({ heading, recipient, messagePlacehold
 
   const labelStyle = {
     fontSize: "11px",
-    color: "#999999",
+    color: "#767676",
     letterSpacing: "0.08em",
     display: "block",
     marginBottom: "8px",
@@ -56,7 +56,7 @@ export default function MailtoContactForm({ heading, recipient, messagePlacehold
 
   return (
     <div>
-      <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+      <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
         {heading}
       </p>
 

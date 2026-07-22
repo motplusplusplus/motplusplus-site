@@ -41,7 +41,7 @@ function matches(haystack: string, terms: string[]): boolean {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: "48px" }}>
-      <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+      <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
         {title}
       </p>
       {children}
@@ -123,7 +123,7 @@ export default function SearchShell({ artists, studios, events }: Props) {
             <button
               type="button"
               onClick={() => { setInput(""); router.push("/search"); }}
-              style={{ background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#999999", fontFamily: "inherit" }}
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#767676", fontFamily: "inherit" }}
             >
               clear
             </button>
@@ -133,14 +133,14 @@ export default function SearchShell({ artists, studios, events }: Props) {
 
       {/* no query state */}
       {!hasQuery && (
-        <p style={{ fontSize: "14px", color: "#999999" }}>
+        <p style={{ fontSize: "14px", color: "#767676" }}>
           search across artists, studios, and events
         </p>
       )}
 
       {/* no results */}
       {hasQuery && totalResults === 0 && (
-        <p style={{ fontSize: "14px", color: "#999999" }}>
+        <p style={{ fontSize: "14px", color: "#767676" }}>
           no results for &ldquo;{urlQuery}&rdquo;
         </p>
       )}
@@ -187,7 +187,7 @@ export default function SearchShell({ artists, studios, events }: Props) {
               >
                 <span style={{ fontSize: "18px", fontWeight: 300 }}>{s.name}</span>
                 {s.neighborhood && (
-                  <span style={{ fontSize: "12px", color: "#999999", marginLeft: "12px" }}>{s.neighborhood}</span>
+                  <span style={{ fontSize: "12px", color: "#767676", marginLeft: "12px" }}>{s.neighborhood}</span>
                 )}
               </Link>
             ))}
@@ -213,7 +213,7 @@ export default function SearchShell({ artists, studios, events }: Props) {
               >
                 <span style={{ fontSize: "16px", fontWeight: 300 }}>{e.title}</span>
                 {e.displayDate && (
-                  <span style={{ fontSize: "12px", color: "#999999", marginLeft: "12px" }}>{e.displayDate}</span>
+                  <span style={{ fontSize: "12px", color: "#767676", marginLeft: "12px" }}>{e.displayDate}</span>
                 )}
               </Link>
             ))}
@@ -221,7 +221,7 @@ export default function SearchShell({ artists, studios, events }: Props) {
           {matchedEvents.length === 20 && (
             <Link
               href={`/events?q=${encodeURIComponent(urlQuery)}`}
-              style={{ fontSize: "13px", color: "#888888", display: "block", marginTop: "16px" }}
+              style={{ fontSize: "13px", color: "#767676", display: "block", marginTop: "16px" }}
             >
               see all event results →
             </Link>

@@ -34,10 +34,10 @@ export default async function StudiosPage() {
             padding: "28px 0",
           }}>
             <div>
-              <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.06em", marginBottom: "6px" }}>
+              <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginBottom: "6px" }}>
                 {studio.neighborhood}
                 {studio.collectiveMember && (
-                  <span style={{ marginLeft: "12px", color: "#bbbbbb" }}>mot+++ collective</span>
+                  <span style={{ marginLeft: "12px", color: "#767676" }}>mot+++ collective</span>
                 )}
               </p>
               <h2 style={{ fontSize: "20px", fontWeight: 300, marginBottom: studio.artistName !== studio.name ? "2px" : "4px", lineHeight: 1.2 }}>
@@ -46,7 +46,7 @@ export default async function StudiosPage() {
                 </Link>
               </h2>
               {studio.artistName !== studio.name && (
-                <p style={{ fontSize: "13px", color: "#888888", marginBottom: "0px" }}>{studio.artistName}</p>
+                <p style={{ fontSize: "13px", color: "#767676", marginBottom: "0px" }}>{studio.artistName}</p>
               )}
             </div>
 
@@ -77,7 +77,7 @@ export default async function StudiosPage() {
           padding: "28px 0",
         }}>
           <div>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.06em", marginBottom: "6px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginBottom: "6px" }}>
               thảo điền — hotel track
             </p>
             <h2 style={{ fontSize: "20px", fontWeight: 300, marginBottom: "4px", lineHeight: 1.2 }}>
@@ -85,7 +85,7 @@ export default async function StudiosPage() {
                 {hotel.name}
               </Link>
             </h2>
-            <p style={{ fontSize: "13px", color: "#888888" }}>{hotel.tagline}</p>
+            <p style={{ fontSize: "13px", color: "#767676" }}>{hotel.tagline}</p>
           </div>
 
           <Link

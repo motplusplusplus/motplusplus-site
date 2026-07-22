@@ -138,15 +138,15 @@ export default function TrashPageShell({ items }: Props) {
   return (
     <>
       {/* quotes */}
-      <p style={{ fontSize: '13px', color: '#888888', fontStyle: 'italic', lineHeight: 1.7, marginBottom: '10px' }}>
+      <p style={{ fontSize: '13px', color: '#767676', fontStyle: 'italic', lineHeight: 1.7, marginBottom: '10px' }}>
         &ldquo;collecting trash is always an act to make the world a better place &nbsp;—&nbsp; thu gom rác luôn là một hành vi làm đẹp cho đời&rdquo;
-        <br /><span style={{ fontSize: '11px', fontStyle: 'normal', color: '#aaaaaa' }}>— Cam Xanh</span>
+        <br /><span style={{ fontSize: '11px', fontStyle: 'normal', color: '#767676' }}>— Cam Xanh</span>
       </p>
-      <p style={{ fontSize: '13px', color: '#888888', fontStyle: 'italic', lineHeight: 1.7, marginBottom: '0' }}>
+      <p style={{ fontSize: '13px', color: '#767676', fontStyle: 'italic', lineHeight: 1.7, marginBottom: '0' }}>
         &ldquo;art is among few virtues of human{' '}
         <span onClick={handleTrashClick} style={{ cursor: 'default' }}>trash</span>
         {' '}&nbsp;—&nbsp; nghệ thuật là một trong số ít rác rưởi có đạo đức của loài người&rdquo;
-        <br /><span style={{ fontSize: '11px', fontStyle: 'normal', color: '#aaaaaa' }}>— Cam Xanh</span>
+        <br /><span style={{ fontSize: '11px', fontStyle: 'normal', color: '#767676' }}>— Cam Xanh</span>
       </p>
 
       {/* password modal */}
@@ -163,7 +163,7 @@ export default function TrashPageShell({ items }: Props) {
             onClick={e => e.stopPropagation()}
             style={{ backgroundColor: '#fff', padding: '32px 36px', width: '100%', maxWidth: '300px' }}
           >
-            <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>
+            <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>
               enter password
             </p>
             <input
@@ -195,11 +195,11 @@ export default function TrashPageShell({ items }: Props) {
       {/* inventory */}
       <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: '40px', marginTop: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: '20px' }}>
-          <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.08em' }}>
+          <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.08em' }}>
             inventory
           </p>
           {unlocked && (
-            <span style={{ fontSize: '11px', color: '#bbbbbb', fontWeight: 300, letterSpacing: '0.06em' }}>
+            <span style={{ fontSize: '11px', color: '#767676', fontWeight: 300, letterSpacing: '0.06em' }}>
               · prices visible
             </span>
           )}
@@ -225,12 +225,12 @@ export default function TrashPageShell({ items }: Props) {
             ))}
           </div>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '11px', color: '#cccccc', letterSpacing: '0.06em' }}>sort</span>
+            <span style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.06em' }}>sort</span>
             <select
               value={sort}
               onChange={e => setSort(e.target.value as SortOption)}
               style={{
-                fontSize: '11px', color: '#999999', letterSpacing: '0.06em',
+                fontSize: '11px', color: '#767676', letterSpacing: '0.06em',
                 background: 'none', border: 'none', borderBottom: '1px solid #e8e8e8',
                 padding: '3px 0', cursor: 'pointer', outline: 'none',
                 appearance: 'none', WebkitAppearance: 'none',
@@ -276,7 +276,7 @@ export default function TrashPageShell({ items }: Props) {
                 ) : null}
               </div>
 
-              <p style={{ fontSize: '11px', color: '#aaaaaa', letterSpacing: '0.06em', marginBottom: '4px' }}>
+              <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.06em', marginBottom: '4px' }}>
                 <ArtistCreditLinks artists={item.artists} artistSlug={item.artistSlug} fallback={item.artist} />
               </p>
               <button
@@ -289,11 +289,11 @@ export default function TrashPageShell({ items }: Props) {
               >
                 {item.title}{item.year ? `, ${item.year}` : ''}
               </button>
-              <p style={{ fontSize: '11px', color: '#aaaaaa', lineHeight: 1.5, marginBottom: '12px' }}>
+              <p style={{ fontSize: '11px', color: '#767676', lineHeight: 1.5, marginBottom: '12px' }}>
                 {[item.medium, item.edition].filter(Boolean).join(' · ')}
               </p>
               {unlocked && item.price && !item.sold && (
-                <p style={{ fontSize: '11px', color: '#888888', marginBottom: '10px', letterSpacing: '0.03em' }}>
+                <p style={{ fontSize: '11px', color: '#767676', marginBottom: '10px', letterSpacing: '0.03em' }}>
                   {item.price}
                 </p>
               )}
@@ -389,13 +389,13 @@ export default function TrashPageShell({ items }: Props) {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px 0' }}>
               {displayItems.length > 1 ? (
-                <span style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em' }}>
+                <span style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.08em' }}>
                   {openIdx + 1} / {displayItems.length}
                 </span>
               ) : <span />}
               <button
                 onClick={() => setOpenId(null)}
-                style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#aaa', lineHeight: 1, padding: '4px' }}
+                style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#767676', lineHeight: 1, padding: '4px' }}
               >×</button>
             </div>
 
@@ -410,7 +410,7 @@ export default function TrashPageShell({ items }: Props) {
             )}
 
             <div style={{ padding: '24px 32px 32px' }}>
-              <p style={{ fontSize: '11px', color: '#aaaaaa', letterSpacing: '0.07em', marginBottom: '6px', textTransform: 'uppercase' }}>
+              <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.07em', marginBottom: '6px', textTransform: 'uppercase' }}>
                 <ArtistCreditLinks artists={open.artists} artistSlug={open.artistSlug} fallback={open.artist} />
               </p>
               <p style={{ fontSize: '20px', fontWeight: 300, lineHeight: 1.2, marginBottom: '12px', color: '#111' }}>
@@ -420,7 +420,7 @@ export default function TrashPageShell({ items }: Props) {
                 {[open.medium, open.dimensions, open.edition].filter(Boolean).join(' · ')}
               </p>
               {open.neighbourhood && (
-                <p style={{ fontSize: '12px', color: '#aaa', marginBottom: '16px' }}>
+                <p style={{ fontSize: '12px', color: '#767676', marginBottom: '16px' }}>
                   currently placed — {open.neighbourhood}
                 </p>
               )}
@@ -464,7 +464,7 @@ export default function TrashPageShell({ items }: Props) {
                   />
                 )}
                 {unlocked && open.price && !open.sold && (
-                  <span style={{ fontSize: '12px', color: '#888888', letterSpacing: '0.03em', marginLeft: 'auto' }}>
+                  <span style={{ fontSize: '12px', color: '#767676', letterSpacing: '0.03em', marginLeft: 'auto' }}>
                     {open.price}
                   </span>
                 )}

@@ -148,7 +148,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
 
         {/* breadcrumb */}
         <div style={{ marginBottom: "52px" }}>
-          <Link href="/studios" style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em" }}>
+          <Link href="/studios" style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.06em" }}>
             ← studios
           </Link>
         </div>
@@ -183,7 +183,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
                         style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                       />
                     </div>
-                    <p style={{ fontSize: "11px", color: "#888888", letterSpacing: "0.04em" }}>{p.name}</p>
+                    <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.04em" }}>{p.name}</p>
                   </div>
                 ))}
               </div>
@@ -207,7 +207,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
               </div>
             ) : null}
             <div style={{ minWidth: "240px" }}>
-              <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "8px" }}>
+              <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "8px" }}>
                 hosting artist
               </p>
               <Link
@@ -247,7 +247,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
           </div>
         ) : (
           <div style={{ maxWidth: "680px", marginBottom: "72px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "28px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
               about the space
             </p>
             {studio.description ? (
@@ -260,12 +260,12 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
                 </p>
               ))
             ) : (
-              <p style={{ fontSize: "14px", color: "#aaaaaa", fontWeight: 300 }}>
+              <p style={{ fontSize: "14px", color: "#767676", fontWeight: 300 }}>
                 information coming soon.
               </p>
             )}
             {studio.address && (
-              <p style={{ fontSize: "13px", color: "#888888", marginTop: "20px", lineHeight: 1.6 }}>
+              <p style={{ fontSize: "13px", color: "#767676", marginTop: "20px", lineHeight: 1.6 }}>
                 {studio.address}
               </p>
             )}
@@ -281,7 +281,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
           const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
           return (
             <div style={{ marginBottom: "72px" }}>
-              <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "16px" }}>
+              <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "16px" }}>
                 general location
               </p>
               <iframe
@@ -291,7 +291,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
                 style={{ border: "1px solid #e5e5e5", display: "block" }}
                 title={`Map — ${studio.name}`}
               />
-              <p style={{ fontSize: "10px", color: "#cccccc", marginTop: "8px" }}>
+              <p style={{ fontSize: "10px", color: "#767676", marginTop: "8px" }}>
                 approximate area shown for privacy
               </p>
             </div>
@@ -301,7 +301,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
         {/* practical info */}
         {hasPractical && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "72px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
               practical info
             </p>
             <div
@@ -314,7 +314,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
             >
               {practicalRows.map(({ label, value, type }) => (
                 <div key={label}>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "4px" }}>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "4px" }}>
                     {label}
                   </p>
                   <p style={{ fontSize: "14px", fontWeight: 300, color: "#333333" }}>
@@ -329,7 +329,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
         {/* studio images with lightbox */}
         {studio.images.length > 0 && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "72px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
               images
             </p>
             <StudioGallery images={studio.images} studioName={studio.name} />
@@ -346,7 +346,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
               maxWidth: "560px",
             }}
           >
-            <p style={{ fontSize: "13px", color: "#999999", lineHeight: 1.7, fontWeight: 300 }}>
+            <p style={{ fontSize: "13px", color: "#767676", lineHeight: 1.7, fontWeight: 300 }}>
               {studio.note}
             </p>
           </div>
@@ -355,7 +355,7 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
         {/* events at this space */}
         {studioEvents.length > 0 && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "72px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "28px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
               events at this space
             </p>
             <div>
@@ -376,14 +376,14 @@ export default async function StudioPage({ params }: { params: Promise<{ slug: s
                     }}
                   >
                     <div>
-                      <p style={{ fontSize: "10px", color: "#bbbbbb", letterSpacing: "0.06em", marginBottom: "4px" }}>
+                      <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.06em", marginBottom: "4px" }}>
                         {evt.category}
                       </p>
                       <p style={{ fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.35 }}>
                         {evt.title}
                       </p>
                     </div>
-                    <p style={{ fontSize: "12px", color: "#aaaaaa", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    <p style={{ fontSize: "12px", color: "#767676", whiteSpace: "nowrap", flexShrink: 0 }}>
                       {evt.displayDate || evt.dateISO}
                     </p>
                   </div>

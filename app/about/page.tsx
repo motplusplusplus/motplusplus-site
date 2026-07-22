@@ -16,7 +16,7 @@ export default function AboutPage() {
           >
             about MoT+++
           </h1>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             our ID
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "20px", maxWidth: "640px" }}>
@@ -45,7 +45,7 @@ export default function AboutPage() {
             marginBottom: "80px",
           }}
         >
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
             programs
           </p>
           <div
@@ -87,7 +87,7 @@ export default function AboutPage() {
 
         {/* people */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
             people
           </p>
           <p style={{ fontSize: "15px", color: "#444444", lineHeight: 1.8, maxWidth: "560px", marginBottom: "16px" }}>
@@ -106,7 +106,7 @@ export default function AboutPage() {
 
         {/* press */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
             press
           </p>
           <a

@@ -101,7 +101,7 @@ export default async function StudiosPage() {
                           justifyContent: "center",
                         }}
                       >
-                        <span style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.06em" }}>
+                        <span style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em" }}>
                           {studio.name.slice(0, 1).toUpperCase()}
                         </span>
                       </div>
@@ -141,19 +141,19 @@ export default async function StudiosPage() {
                     </p>
 
                     {host && (
-                      <p style={{ fontSize: "12px", color: "#999999", marginBottom: "4px" }}>
+                      <p style={{ fontSize: "12px", color: "#767676", marginBottom: "4px" }}>
                         {host.name}
                       </p>
                     )}
 
                     {studio.neighborhood && (
-                      <p style={{ fontSize: "11px", color: "#bbbbbb", letterSpacing: "0.04em", marginTop: "8px" }}>
+                      <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.04em", marginTop: "8px" }}>
                         {studio.neighborhood}
                       </p>
                     )}
 
                     {!studio.active && (
-                      <p style={{ fontSize: "11px", color: "#bbbbbb", marginTop: "8px", lineHeight: 1.5 }}>
+                      <p style={{ fontSize: "11px", color: "#767676", marginTop: "8px", lineHeight: 1.5 }}>
                         no longer active
                       </p>
                     )}

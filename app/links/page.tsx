@@ -48,7 +48,7 @@ export default function LinksPage() {
           style={{ objectFit: "contain" }}
           unoptimized
         />
-        <h1 style={{ fontSize: "13px", fontWeight: 400, color: "#999999", letterSpacing: "0.06em", marginTop: "16px", textAlign: "center" }}>
+        <h1 style={{ fontSize: "13px", fontWeight: 400, color: "#767676", letterSpacing: "0.06em", marginTop: "16px", textAlign: "center" }}>
           contemporary art &amp; artist residency, ho chi minh city
         </h1>
       </div>

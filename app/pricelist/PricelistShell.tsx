@@ -194,7 +194,7 @@ export default function PricelistShell({ items }: { items: PricelistItem[] }) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', padding: '64px 0' }}>
         <div style={{ width: '100%', maxWidth: '300px' }}>
-          <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>
+          <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>
             enter password
           </p>
           <input
@@ -225,7 +225,7 @@ export default function PricelistShell({ items }: { items: PricelistItem[] }) {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
-        <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.08em' }}>
+        <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.08em' }}>
           {items.length} available {items.length === 1 ? 'work' : 'works'}
         </p>
         <button
@@ -245,7 +245,7 @@ export default function PricelistShell({ items }: { items: PricelistItem[] }) {
           display: 'grid', gridTemplateColumns: '1.2fr 1.6fr 1.4fr 0.8fr',
           gap: '12px', padding: '10px 0',
           borderBottom: '1px solid #e5e5e5',
-          fontSize: '10px', color: '#aaaaaa', letterSpacing: '0.08em', textTransform: 'uppercase',
+          fontSize: '10px', color: '#767676', letterSpacing: '0.08em', textTransform: 'uppercase',
         }}>
           <span>Artist</span>
           <span>Title</span>
@@ -261,7 +261,7 @@ export default function PricelistShell({ items }: { items: PricelistItem[] }) {
           }}>
             <span>{item.artist}</span>
             <span style={{ color: '#111111' }}>{item.title}</span>
-            <span style={{ color: '#888888' }}>{mediumYear(item)}</span>
+            <span style={{ color: '#767676' }}>{mediumYear(item)}</span>
             <span>{item.price}</span>
           </div>
         ))}

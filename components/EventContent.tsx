@@ -230,7 +230,7 @@ export default function EventContent({
         flexWrap: "wrap",
         gap: "12px",
       }}>
-        <Link href="/events" style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em" }}>
+        <Link href="/events" style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.06em" }}>
           ← events
         </Link>
         {hasBilingual && (
@@ -276,14 +276,14 @@ export default function EventContent({
         borderBottom: "1px solid #e5e5e5", paddingBottom: "40px", marginBottom: "56px",
       }}>
         <div>
-          <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+          <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
             date
           </p>
           <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>
             {normalizeDisplayDate(displayDate || dateISO)}
           </p>
           {past && (
-            <p style={{ fontSize: "11px", color: "#bbbbbb", letterSpacing: "0.06em", marginTop: "5px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginTop: "5px" }}>
               closed
             </p>
           )}
@@ -291,7 +291,7 @@ export default function EventContent({
 
         {location && (
           <div>
-            <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+            <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
               location
             </p>
             <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>{location}</p>
@@ -299,7 +299,7 @@ export default function EventContent({
         )}
 
         <div>
-          <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+          <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
             program
           </p>
           <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>{category}</p>
@@ -307,7 +307,7 @@ export default function EventContent({
 
         {relatedResidents.length > 0 && (
           <div>
-            <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+            <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
               artist{relatedResidents.length > 1 ? "s" : ""}
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
@@ -326,7 +326,7 @@ export default function EventContent({
 
         {seeAlso && seeAlso.length > 0 && (
           <div>
-            <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "6px" }}>
+            <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
               see also
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
@@ -361,7 +361,7 @@ export default function EventContent({
       {/* description */}
       {activeDescription && (
         <div style={{ maxWidth: "680px", marginBottom: "80px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "28px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
             about
           </p>
           {activeDescription.split(/\n{2,}/).filter(Boolean).map((para, i) => (
@@ -375,7 +375,7 @@ export default function EventContent({
       {/* video embed */}
       {embedUrl && (
         <div style={{ marginBottom: "80px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             video
           </p>
           <div style={{ position: "relative", width: "100%", maxWidth: "800px", aspectRatio: "16/9" }}>
@@ -393,7 +393,7 @@ export default function EventContent({
       {/* image gallery */}
       {contentImages.length > 0 && (
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "32px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
             documentation
           </p>
 
@@ -457,7 +457,7 @@ export default function EventContent({
             <div>
               {prevEvent && (
                 <Link href={`/events/${prevEvent.slug}`} style={{ textDecoration: "none" }}>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.08em", marginBottom: "6px" }}>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.08em", marginBottom: "6px" }}>
                     ← newer
                   </p>
                   <p style={{ fontSize: "13px", fontWeight: 300, color: "#333333", lineHeight: 1.35 }}>
@@ -469,7 +469,7 @@ export default function EventContent({
             <div style={{ textAlign: "right" }}>
               {nextEvent && (
                 <Link href={`/events/${nextEvent.slug}`} style={{ textDecoration: "none" }}>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.08em", marginBottom: "6px" }}>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.08em", marginBottom: "6px" }}>
                     older →
                   </p>
                   <p style={{ fontSize: "13px", fontWeight: 300, color: "#333333", lineHeight: 1.35 }}>
@@ -495,7 +495,7 @@ export default function EventContent({
               href={wpLink}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em" }}
+              style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em" }}
             >
               original post ↗
             </a>

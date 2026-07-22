@@ -23,9 +23,9 @@ export default async function PressPage() {
         <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8 }}>
           coverage of MoT+++ and the a.Farm international art residency.
         </p>
-        <p style={{ fontSize: "13px", color: "#aaaaaa", marginTop: "12px" }}>
+        <p style={{ fontSize: "13px", color: "#767676", marginTop: "12px" }}>
           for media inquiries:{" "}
-          <a href={`mailto:${CONTACTS.press}`} style={{ color: "#888888" }}>
+          <a href={`mailto:${CONTACTS.press}`} style={{ color: "#767676" }}>
             {CONTACTS.press}
           </a>
         </p>
@@ -50,18 +50,18 @@ export default async function PressPage() {
           >
             <div className="press-row-inner">
               <div>
-                <p style={{ fontSize: "11px", color: "#aaaaaa", letterSpacing: "0.06em", marginBottom: "6px" }}>
+                <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginBottom: "6px" }}>
                   {item.outlet}
                 </p>
                 {item.date && (
-                  <p style={{ fontSize: "11px", color: "#cccccc" }}>{item.date}</p>
+                  <p style={{ fontSize: "11px", color: "#767676" }}>{item.date}</p>
                 )}
                 <span style={{
                   display: "inline-block",
                   marginTop: "8px",
                   fontSize: "10px",
                   letterSpacing: "0.08em",
-                  color: "#bbbbbb",
+                  color: "#767676",
                   border: "1px solid #e5e5e5",
                   padding: "2px 8px",
                 }}>
@@ -72,7 +72,7 @@ export default async function PressPage() {
                 <p style={{ fontSize: "16px", fontWeight: 300, color: "#111111", marginBottom: "10px", lineHeight: 1.35 }}>
                   {item.title} ↗
                 </p>
-                <p style={{ fontSize: "13px", color: "#888888", lineHeight: 1.7, maxWidth: "640px" }}>
+                <p style={{ fontSize: "13px", color: "#767676", lineHeight: 1.7, maxWidth: "640px" }}>
                   {item.excerpt}
                 </p>
               </div>
@@ -87,7 +87,7 @@ export default async function PressPage() {
           href="/luke-tramy"
           style={{
             fontSize: "11px",
-            color: "#aaaaaa",
+            color: "#767676",
             textDecoration: "none",
             borderBottom: "1px solid #e0e0e0",
           }}

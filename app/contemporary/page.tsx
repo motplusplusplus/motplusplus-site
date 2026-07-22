@@ -113,7 +113,7 @@ export default function ContemporaryPage() {
         >
           +1 contemporary project
         </h1>
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+        <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
           program
         </p>
         <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", maxWidth: "640px" }}>
@@ -145,7 +145,7 @@ export default function ContemporaryPage() {
                       {ex.artist}
                     </p>
                   )}
-                  <p style={{ fontSize: "12px", color: "#999999" }}>{ex.dates}</p>
+                  <p style={{ fontSize: "12px", color: "#767676" }}>{ex.dates}</p>
                 </div>
               </>
             );

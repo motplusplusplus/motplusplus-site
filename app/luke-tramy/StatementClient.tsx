@@ -260,7 +260,7 @@ export default function StatementClient() {
           <span
             style={{
               fontSize: "11px",
-              color: "#aaaaaa",
+              color: "#767676",
               margin: "0 7px",
               userSelect: "none",
             }}
@@ -298,7 +298,7 @@ export default function StatementClient() {
           <p
             style={{
               fontSize: "11px",
-              color: "#aaaaaa",
+              color: "#767676",
               letterSpacing: "0.06em",
               marginBottom: "16px",
             }}
@@ -327,7 +327,7 @@ export default function StatementClient() {
                 <p
                   style={{
                     fontSize: "11px",
-                    color: "#999999",
+                    color: "#767676",
                     letterSpacing: "0.08em",
                     marginTop: "52px",
                     marginBottom: "18px",

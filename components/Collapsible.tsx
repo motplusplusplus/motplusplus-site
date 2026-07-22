@@ -21,7 +21,7 @@ export default function Collapsible({ label, openLabel, children, defaultOpen = 
           alignItems: "center",
           gap: "8px",
           fontSize: "13px",
-          color: "#888888",
+          color: "#767676",
           letterSpacing: "0.04em",
           background: "none",
           border: "none",

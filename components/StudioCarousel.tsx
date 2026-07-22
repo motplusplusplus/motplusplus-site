@@ -234,7 +234,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
               />
             ) : (
               <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <p style={{ fontSize: "11px", color: "#cccccc", letterSpacing: "0.06em" }}>
+                <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em" }}>
                   {front.name}
                 </p>
               </div>
@@ -308,7 +308,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
 
       {/* front card meta */}
       <div style={{ marginBottom: "28px", transition: "opacity 0.2s ease" }}>
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.06em", marginBottom: "8px" }}>
+        <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginBottom: "8px" }}>
           {front.neighborhood}
         </p>
         <Link href={front.href}>
@@ -325,7 +325,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
           </h3>
         </Link>
         {front.artistName && front.artistName !== front.name && (
-          <p style={{ fontSize: "14px", color: "#888888", fontWeight: 300, marginBottom: "6px" }}>
+          <p style={{ fontSize: "14px", color: "#767676", fontWeight: 300, marginBottom: "6px" }}>
             {front.artistName}
           </p>
         )}
@@ -420,7 +420,7 @@ export default function StudioCarousel({ items }: { items: CarouselItem[] }) {
           </svg>
         </button>
 
-        <span style={{ fontSize: "12px", color: "#aaaaaa", marginLeft: isMobile ? "0" : "4px" }}>
+        <span style={{ fontSize: "12px", color: "#767676", marginLeft: isMobile ? "0" : "4px" }}>
           {index + 1} / {total}
         </span>
       </div>

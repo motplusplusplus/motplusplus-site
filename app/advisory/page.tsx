@@ -17,7 +17,7 @@ export default function AdvisoryPage() {
           borderBottom: "1px solid #e5e5e5",
         }}
       >
-        <p style={{ fontSize: "12px", color: "#aaaaaa", letterSpacing: "0.08em" }}>
+        <p style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.08em" }}>
           +1 art advisory — image
         </p>
       </div>
@@ -37,7 +37,7 @@ export default function AdvisoryPage() {
           >
             +1 art advisory
           </h1>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             program
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", marginBottom: "20px", maxWidth: "640px" }}>
@@ -57,7 +57,7 @@ export default function AdvisoryPage() {
             marginBottom: "80px",
           }}
         >
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "40px" }}>
             clients
           </p>
           <div
@@ -105,7 +105,7 @@ export default function AdvisoryPage() {
             paddingTop: "48px",
           }}
         >
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             inquiries
           </p>
           <a

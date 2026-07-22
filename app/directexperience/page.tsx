@@ -32,10 +32,10 @@ export default function DirectExperiencePage() {
         >
           +1 direct experience meditation residency
         </h1>
-        <p style={{ fontSize: "15px", color: "#999999", fontWeight: 300 }}>
+        <p style={{ fontSize: "15px", color: "#767676", fontWeight: 300 }}>
           a meditative awareness with the art of non doer
         </p>
-        <p style={{ fontSize: "13px", color: "#999999", fontWeight: 300, marginTop: "12px" }}>
+        <p style={{ fontSize: "13px", color: "#767676", fontWeight: 300, marginTop: "12px" }}>
           a program by{" "}
           <Link href="/profiles/cam-xanh" style={{ color: "#666666", borderBottom: "1px solid #999999", paddingBottom: "1px" }}>
             cam xanh
@@ -57,7 +57,7 @@ export default function DirectExperiencePage() {
 
         {/* the inner portrait */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "56px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             the inner portrait
           </p>
           <p style={{ fontSize: "18px", fontWeight: 300, color: "#222222", marginBottom: "24px", lineHeight: 1.5 }}>
@@ -73,7 +73,7 @@ export default function DirectExperiencePage() {
 
         {/* the setting */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "56px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             the setting
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}>
@@ -86,7 +86,7 @@ export default function DirectExperiencePage() {
 
         {/* the gathering */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "56px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             the gathering itself
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}>
@@ -99,7 +99,7 @@ export default function DirectExperiencePage() {
 
         {/* what you may see */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "56px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             what you may see
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}>
@@ -115,7 +115,7 @@ export default function DirectExperiencePage() {
 
         {/* if you come */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "56px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             if you come
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444" }}>
@@ -125,7 +125,7 @@ export default function DirectExperiencePage() {
 
         {/* a note on form */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "56px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             a note on form
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444" }}>
@@ -135,7 +135,7 @@ export default function DirectExperiencePage() {
 
         {/* fees */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "56px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             fees
           </p>
           <p
@@ -157,7 +157,7 @@ export default function DirectExperiencePage() {
 
         {/* accommodation */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "56px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             accommodation
           </p>
           <p style={{ fontSize: "14px", color: "#666666", lineHeight: 1.9 }}>

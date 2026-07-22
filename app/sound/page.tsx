@@ -38,7 +38,7 @@ export default function MoTsoundPage() {
         }}>
           MoTsound
         </h1>
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+        <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
           mot | mọt | termite
         </p>
         <p style={{ fontSize: "14px", color: "#666666", lineHeight: 1.8, marginBottom: "20px", fontStyle: "italic" }}>
@@ -52,15 +52,15 @@ export default function MoTsoundPage() {
           sound artists. pieces vary greatly, but together they hope to offer and encourage conceptual
           sonic expression unfettered by genre-based preconditions.
         </p>
-        <p style={{ fontSize: "13px", color: "#aaaaaa" }}>
+        <p style={{ fontSize: "13px", color: "#767676" }}>
           if you are an artist that would like to be involved, message{" "}
-          <a href={`mailto:${CONTACTS.general}`} style={{ color: "#888888" }}>{CONTACTS.general}</a>
+          <a href={`mailto:${CONTACTS.general}`} style={{ color: "#767676" }}>{CONTACTS.general}</a>
         </p>
       </div>
 
       {/* poster grid */}
       <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px" }}>
-        <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+        <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "40px" }}>
           archive — {editions.length} editions, 2017—present
         </p>
 
@@ -102,7 +102,7 @@ export default function MoTsoundPage() {
               </div>
 
               {/* label */}
-              <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.06em", marginBottom: "4px" }}>
+              <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginBottom: "4px" }}>
                 #{ed.number}
               </p>
               <p style={{ fontSize: "13px", fontWeight: 300, color: "#111111", lineHeight: 1.3 }}>

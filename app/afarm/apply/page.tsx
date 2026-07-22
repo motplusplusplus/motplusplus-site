@@ -117,7 +117,7 @@ function ApplyForm() {
 
   const labelStyle = {
     fontSize: "11px",
-    color: "#999999",
+    color: "#767676",
     letterSpacing: "0.08em",
     display: "block",
     marginBottom: "8px",

@@ -82,7 +82,7 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto", padding: "64px 24px" }}>
-      <Link href="/trash" style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em" }}>
+      <Link href="/trash" style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.06em" }}>
         ← back to all works
       </Link>
 
@@ -97,17 +97,17 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
           </div>
         )}
 
-        <p style={{ fontSize: "12px", color: "#aaaaaa", letterSpacing: "0.07em", marginBottom: "10px", textTransform: "uppercase" }}>
+        <p style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.07em", marginBottom: "10px", textTransform: "uppercase" }}>
           <ArtistCreditLinks artists={item.artists} artistSlug={item.artistSlug} fallback={item.artist} />
         </p>
         <h1 style={{ fontSize: "clamp(24px, 3vw, 40px)", fontWeight: 300, lineHeight: 1.2, marginBottom: "16px", color: "#111111" }}>
           {item.title}{item.year ? `, ${item.year}` : ""}
         </h1>
-        <p style={{ fontSize: "14px", color: "#888888", lineHeight: 1.7, marginBottom: "8px" }}>
+        <p style={{ fontSize: "14px", color: "#767676", lineHeight: 1.7, marginBottom: "8px" }}>
           {[item.medium, item.dimensions, item.edition].filter(Boolean).join(" · ")}
         </p>
         {item.neighbourhood && (
-          <p style={{ fontSize: "13px", color: "#aaaaaa", marginBottom: "20px" }}>
+          <p style={{ fontSize: "13px", color: "#767676", marginBottom: "20px" }}>
             currently placed — {item.neighbourhood}
           </p>
         )}
@@ -149,7 +149,7 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
                 buttonLabel="inquire"
                 buttonStyle={{ fontSize: "13px", color: "#ffffff", backgroundColor: "#111111", padding: "10px 22px", letterSpacing: "0.03em" }}
               />
-              <span style={{ fontSize: "13px", color: "#888888", letterSpacing: "0.03em" }}>
+              <span style={{ fontSize: "13px", color: "#767676", letterSpacing: "0.03em" }}>
                 price on inquiry
               </span>
             </>

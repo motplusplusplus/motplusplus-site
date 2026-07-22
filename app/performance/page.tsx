@@ -79,7 +79,7 @@ export default function PerformancePage() {
           >
             +1 performance
           </h1>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
             program
           </p>
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444", maxWidth: "640px" }}>
@@ -90,7 +90,7 @@ export default function PerformancePage() {
 
         {/* photo grid */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "40px" }}>
             performance plus 2019 - november 18 - december 22, 2019
           </p>
           <div
@@ -122,7 +122,7 @@ export default function PerformancePage() {
 
         {/* participating artists */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "40px" }}>
             participating artists
           </p>
           <div style={{
@@ -152,7 +152,7 @@ export default function PerformancePage() {
 
         {/* event list */}
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "40px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "40px" }}>
             archive
           </p>
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -175,7 +175,7 @@ export default function PerformancePage() {
                   <span style={{ fontSize: "15px", fontWeight: 300, color: "#111111", lineHeight: 1.4 }}>
                     {e.title}
                   </span>
-                  <span style={{ fontSize: "12px", color: "#999999", whiteSpace: "nowrap", flexShrink: 0 }}>
+                  <span style={{ fontSize: "12px", color: "#767676", whiteSpace: "nowrap", flexShrink: 0 }}>
                     {e.date}
                   </span>
                 </div>

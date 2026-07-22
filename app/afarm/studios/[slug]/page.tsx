@@ -70,16 +70,16 @@ export default async function StudioPage({
 
       {/* breadcrumb + header */}
       <div style={{ marginBottom: "64px" }}>
-        <p style={{ fontSize: "12px", color: "#999999", letterSpacing: "0.06em", marginBottom: "16px" }}>
-          <Link href="/afarm" style={{ color: "#999999" }}>a.Farm</Link>
+        <p style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.06em", marginBottom: "16px" }}>
+          <Link href="/afarm" style={{ color: "#767676" }}>a.Farm</Link>
           {" / "}
-          <Link href="/afarm/studios" style={{ color: "#999999" }}>studios</Link>
+          <Link href="/afarm/studios" style={{ color: "#767676" }}>studios</Link>
           {" / "}
           {studio.neighborhood}
           {studio.collectiveMember && (
             <span style={{ marginLeft: "12px" }}>
               ·{" "}
-              <Link href="/collective" style={{ color: "#999999" }}>
+              <Link href="/collective" style={{ color: "#767676" }}>
                 mot+++ collective member
               </Link>
             </span>
@@ -97,7 +97,7 @@ export default async function StudioPage({
             {studio.artistName}
           </p>
         )}
-        <p style={{ fontSize: "14px", color: "#aaaaaa", fontWeight: 300 }}>
+        <p style={{ fontSize: "14px", color: "#767676", fontWeight: 300 }}>
           {studio.neighborhood}
         </p>
         {studio.hostSlug && (
@@ -127,7 +127,7 @@ export default async function StudioPage({
               <div style={{ width: "80px", height: "80px", borderRadius: "50%", overflow: "hidden", backgroundColor: "#f0f0f0", marginBottom: "8px" }}>
                 <img src={p.url} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
               </div>
-              <p style={{ fontSize: "11px", color: "#888888", letterSpacing: "0.04em" }}>{p.name}</p>
+              <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.04em" }}>{p.name}</p>
             </div>
           ))}
         </div>
@@ -161,7 +161,7 @@ export default async function StudioPage({
           </div>
         ) : studio.description ? (
           <div style={{ marginBottom: "48px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
               about the space
             </p>
             {studio.description.split(/\n{2,}/).filter(Boolean).map((para, i) => (
@@ -177,7 +177,7 @@ export default async function StudioPage({
       {/* walkthrough video — full width */}
       {(embedSrc || isDirectVideo) && (
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "48px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             walkthrough
           </p>
           {embedSrc ? (
@@ -204,7 +204,7 @@ export default async function StudioPage({
       {/* gallery with lightbox */}
       {galleryImages.length > 0 && (
         <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "48px" }}>
-          <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "24px" }}>
+          <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             studio &amp; work
           </p>
           <StudioGallery images={galleryImages} studioName={profile?.studioName || studio.name} />
@@ -216,49 +216,49 @@ export default async function StudioPage({
         {/* practical details */}
         {profile && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "48px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "28px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
               practical
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "20px 40px" }}>
               {profile.environment && (
                 <div>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "4px" }}>environment</p>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "4px" }}>environment</p>
                   <p style={{ fontSize: "14px", fontWeight: 300, color: "#333333" }}>{profile.environment}</p>
                 </div>
               )}
               {profile.availability && (
                 <div>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "4px" }}>availability</p>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "4px" }}>availability</p>
                   <p style={{ fontSize: "14px", fontWeight: 300, color: "#333333" }}>{profile.availability}</p>
                 </div>
               )}
               {profile.residentRoom && (
                 <div>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "4px" }}>accommodation</p>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "4px" }}>accommodation</p>
                   <p style={{ fontSize: "14px", fontWeight: 300, color: "#333333" }}>{profile.residentRoom}</p>
                 </div>
               )}
               {profile.languages && profile.languages.length > 0 && (
                 <div>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "4px" }}>languages</p>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "4px" }}>languages</p>
                   <p style={{ fontSize: "14px", fontWeight: 300, color: "#333333" }}>{profile.languages.join(", ")}</p>
                 </div>
               )}
               {profile.transport && (
                 <div>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "4px" }}>transport</p>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "4px" }}>transport</p>
                   <p style={{ fontSize: "14px", fontWeight: 300, color: "#333333" }}>{profile.transport}</p>
                 </div>
               )}
               {profile.amenities && (
                 <div>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "4px" }}>nearby</p>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "4px" }}>nearby</p>
                   <p style={{ fontSize: "14px", fontWeight: 300, color: "#333333" }}>{profile.amenities}</p>
                 </div>
               )}
               {typeof profile.smoking === "boolean" && (
                 <div>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "4px" }}>smoking</p>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "4px" }}>smoking</p>
                   <p style={{ fontSize: "14px", fontWeight: 300, color: "#333333" }}>
                     {profile.smoking ? "yes" : "no"}
                     {profile.smokingDetail ? ` — ${profile.smokingDetail}` : ""}
@@ -267,7 +267,7 @@ export default async function StudioPage({
               )}
               {typeof profile.guests === "boolean" && (
                 <div>
-                  <p style={{ fontSize: "10px", color: "#aaaaaa", letterSpacing: "0.1em", marginBottom: "4px" }}>guests</p>
+                  <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "4px" }}>guests</p>
                   <p style={{ fontSize: "14px", fontWeight: 300, color: "#333333" }}>
                     {profile.guests ? "yes" : "no"}
                     {profile.guestsDetail ? ` — ${profile.guestsDetail}` : ""}
@@ -281,7 +281,7 @@ export default async function StudioPage({
         {/* house rules */}
         {profile?.rules && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "48px" }}>
-            <p style={{ fontSize: "11px", color: "#999999", letterSpacing: "0.08em", marginBottom: "20px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "20px" }}>
               house rules
             </p>
             <p style={{ fontSize: "14px", lineHeight: 1.8, color: "#555555" }}>
