@@ -46,3 +46,6 @@ next-env.d.ts
 
 # sanity backup exports (machine-generated, see scripts/export-sanity-backup.mjs)
 /sanity-backup/
+
+# local worker secrets for `wrangler dev` (never commit)
+.dev.vars

@@ -133,6 +133,57 @@ async function handleInquiry(request, env) {
   return inquiryJson({ ok: true }, 200, request);
 }
 
+// Pricelist / +1 Trash price-reveal gate. The trashItem `price` values are
+// deliberately NOT serialized into the static export (see app/pricelist/page.tsx,
+// app/trash/page.tsx, app/trash/[slug]/page.tsx) -- otherwise they ship in the
+// public HTML/flight payload where anyone can read them regardless of any
+// client-side "password". Prices are delivered ONLY here, after a server-side
+// check against the PRICELIST_PASSWORD secret. ONE endpoint serves BOTH trigger
+// points -- the /pricelist password screen and the /trash seven-click modal --
+// because they share one secret and one set of price data, keyed by document
+// _id. Reads use Sanity's public read API at request time (same data the build
+// reads; no token needed). Fail closed: if the secret is unset, every attempt
+// is 401.
+const PRICELIST_PRICE_QUERY =
+  `*[_type == "trashItem" && active == true && (sold == true || (defined(price) && price != "")) && sold != true && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])]{ _id, price }`;
+
+async function handlePricelist(request, env) {
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: inquiryCorsHeaders(request) });
+  }
+  if (request.method !== "POST") {
+    return inquiryJson({ error: "method not allowed" }, 405, request);
+  }
+
+  let payload;
+  try {
+    payload = await request.json();
+  } catch {
+    return inquiryJson({ error: "invalid json" }, 400, request);
+  }
+
+  const password = payload && payload.password;
+  if (typeof password !== "string" || !env.PRICELIST_PASSWORD || password !== env.PRICELIST_PASSWORD) {
+    return inquiryJson({ error: "incorrect" }, 401, request);
+  }
+
+  const prices = {};
+  try {
+    const res = await fetch(
+      `https://t5nsm79o.api.sanity.io/v2026-03-20/data/query/production?query=${encodeURIComponent(PRICELIST_PRICE_QUERY)}`
+    );
+    if (!res.ok) throw new Error("sanity query failed");
+    const data = await res.json();
+    for (const row of data.result || []) {
+      if (row && row._id) prices[row._id] = typeof row.price === "string" ? row.price : "";
+    }
+  } catch {
+    return inquiryJson({ error: "could not load prices" }, 502, request);
+  }
+
+  return inquiryJson({ ok: true, prices }, 200, request);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -142,6 +193,13 @@ export default {
     // asset, so this is safe ahead of the redirect + asset-first routing below.
     if (path === "/api/inquiry") {
       return handleInquiry(request, env);
+    }
+
+    // Price-reveal gate for /pricelist and the /trash seven-click modal. POST
+    // only, so (like /api/inquiry) it never shadows a static asset -- no
+    // run_worker_first needed.
+    if (path === "/api/pricelist") {
+      return handlePricelist(request, env);
     }
 
     // Legacy event-announcement URLs for individual residents → bio pages

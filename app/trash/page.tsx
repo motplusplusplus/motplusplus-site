@@ -21,7 +21,11 @@ export default async function TrashPage() {
     museumLocationId: r.museumLocationId,
     neighbourhood: r.neighbourhood,
     sold: r.sold ?? false,
-    price: r.price,
+    // price is deliberately NOT serialized into the static export -- it would
+    // otherwise ship in the public HTML/flight payload where anyone could read
+    // it regardless of the seven-click password. The worker (POST /api/pricelist)
+    // delivers prices only after a server-side check; TrashPageShell merges them
+    // in on unlock.
   }));
 
   return (

@@ -77,7 +77,9 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
     museumLocationId: raw.museumLocationId,
     neighbourhood: raw.neighbourhood,
     sold: raw.sold ?? false,
-    price: raw.price,
+    // price is intentionally omitted: this page never displays it (it shows
+    // "price on inquiry"), and serializing it would leak the value into the
+    // public static payload with no gate at all.
   };
 
   return (

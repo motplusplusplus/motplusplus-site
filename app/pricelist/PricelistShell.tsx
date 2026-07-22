@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { PRICE_REVEAL_PASSWORD } from '@/lib/priceReveal';
 import { registerVietnameseFont, VIETNAMESE_FONT_NAME } from '@/lib/pdfFonts';
 
 export type PricelistItem = {
@@ -172,21 +171,43 @@ async function downloadPdf(items: PricelistItem[]) {
   doc.save(`motplusplusplus-pricelist-${stamp}.pdf`);
 }
 
-export default function PricelistShell({ items }: { items: PricelistItem[] }) {
+export default function PricelistShell({ items: initialItems }: { items: PricelistItem[] }) {
+  // Items arrive from the static export WITHOUT prices (see page.tsx). The prices
+  // are merged in only after the worker verifies the password server-side.
+  const [items, setItems] = useState(initialItems);
   const [unlocked, setUnlocked] = useState(false);
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = () => {
-    if (input === PRICE_REVEAL_PASSWORD) {
+  const rejectPassword = () => {
+    setError(true);
+    setInput('');
+    setTimeout(() => inputRef.current?.focus(), 50);
+  };
+
+  // Real gate: POST the password to the worker, which checks it against the
+  // PRICELIST_PASSWORD secret and returns prices only on success. A wrong or
+  // absent password gets a 401 and no price data ever reaches the browser.
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch('/api/pricelist', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({password: input}),
+      });
+      if (!res.ok) {
+        rejectPassword();
+        return;
+      }
+      const data = await res.json();
+      const prices: Record<string, string> = data.prices || {};
+      setItems(prev => prev.map(i => ({...i, price: prices[i._id] ?? i.price})));
       setUnlocked(true);
       setInput('');
       setError(false);
-    } else {
-      setError(true);
-      setInput('');
-      setTimeout(() => inputRef.current?.focus(), 50);
+    } catch {
+      rejectPassword();
     }
   };
 

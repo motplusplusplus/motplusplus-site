@@ -37,7 +37,10 @@ export default async function PricelistPage() {
       edition: item.edition,
       description: item.description,
       image: item.images[0] ?? null,
-      price: item.price,
+      // price is deliberately NOT serialized into the static export -- it would
+      // otherwise ship in the public HTML/flight payload where anyone could read
+      // it without the password. The worker (POST /api/pricelist) delivers prices
+      // only after a server-side password check; PricelistShell merges them in.
     };
   });
 

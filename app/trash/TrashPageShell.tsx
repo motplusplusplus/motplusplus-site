@@ -7,10 +7,8 @@ import ArtistCreditLinks from '@/components/ArtistCreditLinks';
 import InquiryForm from '@/components/InquiryForm';
 import { CONTACTS } from '@/lib/contacts';
 import { compareNames } from '@/lib/sortName';
-import { PRICE_REVEAL_PASSWORD } from '@/lib/priceReveal';
 import { shuffleArray } from '@/lib/shuffle';
 
-const PASSWORD = PRICE_REVEAL_PASSWORD;
 const CLICKS_NEEDED = 7;
 
 type SortOption = 'random' | 'date' | 'artist';
@@ -31,6 +29,11 @@ export default function TrashPageShell({ items }: Props) {
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
+  // Prices are NOT in the static export (see page.tsx). They are fetched from the
+  // worker only after the password is verified server-side, then held here keyed
+  // by document _id. Kept separate from `items` so unlocking does not re-shuffle
+  // or re-sort the gallery.
+  const [prices, setPrices] = useState<Record<string, string>>({});
   const inputRef = useRef<HTMLInputElement>(null);
 
   // gallery state
@@ -68,13 +71,29 @@ export default function TrashPageShell({ items }: Props) {
     }
   };
 
-  const handleSubmit = () => {
-    if (input === PASSWORD) {
+  // Real gate: POST the password to the worker, which checks it against the
+  // PRICELIST_PASSWORD secret and returns prices only on success. A wrong or
+  // absent password gets a 401 and no price data ever reaches the browser.
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch('/api/pricelist', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({password: input}),
+      });
+      if (!res.ok) {
+        setError(true);
+        setInput('');
+        setTimeout(() => inputRef.current?.focus(), 50);
+        return;
+      }
+      const data = await res.json();
+      setPrices(data.prices || {});
       setUnlocked(true);
       setShowModal(false);
       setInput('');
       setError(false);
-    } else {
+    } catch {
       setError(true);
       setInput('');
       setTimeout(() => inputRef.current?.focus(), 50);
@@ -292,9 +311,9 @@ export default function TrashPageShell({ items }: Props) {
               <p style={{ fontSize: '11px', color: '#767676', lineHeight: 1.5, marginBottom: '12px' }}>
                 {[item.medium, item.edition].filter(Boolean).join(' · ')}
               </p>
-              {unlocked && item.price && !item.sold && (
+              {unlocked && prices[item._id] && !item.sold && (
                 <p style={{ fontSize: '11px', color: '#767676', marginBottom: '10px', letterSpacing: '0.03em' }}>
-                  {item.price}
+                  {prices[item._id]}
                 </p>
               )}
 
@@ -463,9 +482,9 @@ export default function TrashPageShell({ items }: Props) {
                     buttonStyle={{ fontSize: '12px', color: '#fff', backgroundColor: '#111', padding: '8px 18px', letterSpacing: '0.03em' }}
                   />
                 )}
-                {unlocked && open.price && !open.sold && (
+                {unlocked && prices[open._id] && !open.sold && (
                   <span style={{ fontSize: '12px', color: '#767676', letterSpacing: '0.03em', marginLeft: 'auto' }}>
-                    {open.price}
+                    {prices[open._id]}
                   </span>
                 )}
               </div>
