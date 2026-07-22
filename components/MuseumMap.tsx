@@ -14,6 +14,10 @@ import { compareNames } from '@/lib/sortName';
 // chunk-rehash nudge (Workers Assets large-file 404 workaround, 2026-06-15)
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? '';
 const STATIC_MAP_URL = getStaticMapUrl(MAPBOX_TOKEN);
+// The map switches from demo to real data only at this many published, coordinate-valid
+// locations — publishing one draft must not silently un-demo the flagship page. Raise/lower
+// deliberately.
+const REAL_DATA_MIN_LOCATIONS = 3;
 
 const ACCESS_LABELS: Record<AccessType, string> = {
   open: 'open access',
@@ -141,10 +145,13 @@ export default function MuseumMap() {
     `).then((data: MuseumLocation[]) => {
       // Only use Sanity data if we have locations with valid coordinates
       const validData = data?.filter(d => d.coordinates?.lat && d.coordinates?.lng) ?? [];
-      if (validData.length > 0) {
+      if (validData.length >= REAL_DATA_MIN_LOCATIONS) {
         setLocations(validData);
         setIsDemo(false);
       } else {
+        if (validData.length > 0) {
+          console.info(`+1 museum: ${validData.length} real location(s) published — demo remains until ${REAL_DATA_MIN_LOCATIONS} (REAL_DATA_MIN_LOCATIONS in MuseumMap.tsx)`);
+        }
         setLocations(DEMO_LOCATIONS);
         setIsDemo(true);
       }
