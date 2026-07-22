@@ -1,8 +1,15 @@
 import Link from "next/link";
-import { pressItems } from "@/lib/press";
+import { pressItems as fallbackPressItems } from "@/lib/press";
+import { getPressItems } from "@/lib/sanity";
 import { CONTACTS } from "@/lib/contacts";
 
-export default function PressPage() {
+export default async function PressPage() {
+  // Sanity is the source of truth; fall back to the static list ONLY if Sanity
+  // returns zero items (same merge philosophy as events). This keeps the build
+  // green even before the migration has run.
+  const sanityItems = await getPressItems();
+  const pressItems = sanityItems.length > 0 ? sanityItems : fallbackPressItems;
+
   return (
     <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
 

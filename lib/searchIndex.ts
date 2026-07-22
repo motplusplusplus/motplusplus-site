@@ -12,7 +12,6 @@
 // News/press items carry an external `url` but are deliberately linked to /press;
 // `isInternalHref` is enforced again at filter time so nothing external can leak.
 
-import { pressItems } from "./press";
 import { compareNames } from "./sortName";
 
 // ─── Sanity public read endpoint (no token — dataset ACL is `public`) ──────────
@@ -30,6 +29,7 @@ const API_VERSION = "2026-03-20";
 //    scope -- importing from it would pull the whole SDK into this client
 //    bundle). Keep the two in sync if that rule ever changes.
 //  - museumLocation: active == true
+//  - pressItem: active == true (news/press; badged "News", linked to /press)
 const INDEX_QUERY = `{
   "profiles": *[_type == "artist" && active == true && defined(slug.current)]{
     "slug": slug.current, name, alternateNames,
@@ -50,6 +50,9 @@ const INDEX_QUERY = `{
   },
   "museum": *[_type == "museumLocation" && active == true]{
     title, artist, medium
+  },
+  "press": *[_type == "pressItem" && active == true]{
+    title, outlet, excerpt, tag
   }
 }`;
 
@@ -110,6 +113,7 @@ type RawIndex = {
   studios?: { slug: string; name: string; studioName?: string; neighbourhood?: string }[];
   trash?: { title?: string; artist?: string; medium?: string }[];
   museum?: { title?: string; artist?: string; medium?: string }[];
+  press?: { title?: string; outlet?: string; excerpt?: string; tag?: string }[];
 };
 
 function buildDocs(raw: RawIndex): SearchDoc[] {
@@ -183,9 +187,10 @@ function buildDocs(raw: RawIndex): SearchDoc[] {
     });
   }
 
-  // News/press — not in Sanity. Linked to the internal /press page, never the
-  // external source URL.
-  for (const n of pressItems) {
+  // News/press — Sanity `pressItem` docs. Linked to the internal /press page,
+  // never the external source URL.
+  for (const n of raw.press ?? []) {
+    if (!n.title) continue;
     docs.push({
       type: "news",
       title: n.title,

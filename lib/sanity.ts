@@ -419,3 +419,39 @@ export async function getAllEventSlugs(): Promise<string[]> {
   );
   return results.map(r => r.slug);
 }
+
+// ─── Press items ───────────────────────────────────────────────────────────────
+// Press coverage lives in Sanity `pressItem` docs (migrated from lib/press.ts,
+// task 06). Shape matches lib/press.ts's PressItem so app/press/page.tsx can use
+// the static list as a build-time fallback interchangeably. Ordered newest-first
+// by sortDate (undated items last, tie-broken by outlet for determinism);
+// `displayDate` is the verbatim human string rendered on /press (may be null).
+export type PressItem = {
+  outlet: string;
+  title: string;
+  date: string | null;
+  url: string;
+  excerpt: string;
+  tag: string;
+};
+
+export async function getPressItems(): Promise<PressItem[]> {
+  const raw: PressItem[] = await buildClient.fetch(
+    `*[_type == "pressItem" && active == true] | order(coalesce(sortDate, "0001-01-01") desc, outlet asc){
+      outlet,
+      title,
+      "date": displayDate,
+      url,
+      "excerpt": coalesce(excerpt, ""),
+      tag
+    }`
+  );
+  return (raw ?? []).map(r => ({
+    outlet: r.outlet ?? "",
+    title: r.title ?? "",
+    date: r.date ?? null,
+    url: r.url ?? "",
+    excerpt: r.excerpt ?? "",
+    tag: r.tag ?? "",
+  }));
+}
