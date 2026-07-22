@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { DEFAULT_OG_IMAGE } from "@/lib/og";
+import { CONTACTS } from "@/lib/contacts";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
@@ -82,7 +83,7 @@ export default function RootLayout({
         url: "https://motplusplusplus.com",
         logo: "https://motplusplusplus.com/motpluspluspluslogo.jpg",
         sameAs: ["https://www.instagram.com/motplusplusplus"],
-        contactPoint: { "@type": "ContactPoint", email: "motplusplusplus@gmail.com", contactType: "general" },
+        contactPoint: { "@type": "ContactPoint", email: CONTACTS.general, contactType: "general" },
         address: {
           "@type": "PostalAddress",
           streetAddress: "383 Nguyễn Duy Trinh, La Astoria Tower 2",

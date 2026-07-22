@@ -1,3 +1,5 @@
+import { CONTACTS } from "@/lib/contacts";
+
 export default function ContactPage() {
   return (
     <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "72px 24px" }}>
@@ -28,10 +30,10 @@ export default function ContactPage() {
             general
           </p>
           <a
-            href="mailto:motplusplusplus@gmail.com"
+            href={`mailto:${CONTACTS.general}`}
             style={{ fontSize: "16px", fontWeight: 300, color: "#111111", display: "block", marginBottom: "8px" }}
           >
-            motplusplusplus@gmail.com
+            {CONTACTS.general}
           </a>
           <p style={{ fontSize: "13px", color: "#aaaaaa", lineHeight: 1.7 }}>
             MoT+++, la astoria tower 2<br />
@@ -46,10 +48,10 @@ export default function ContactPage() {
             +a.Farm residency
           </p>
           <a
-            href="mailto:a.farm.saigon@gmail.com"
+            href={`mailto:${CONTACTS.residency}`}
             style={{ fontSize: "16px", fontWeight: 300, color: "#111111", display: "block", marginBottom: "16px" }}
           >
-            a.farm.saigon@gmail.com
+            {CONTACTS.residency}
           </a>
           <a
             href="/afarm/apply"

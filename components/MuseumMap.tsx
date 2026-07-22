@@ -5,6 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { sanityClient } from '@/lib/sanity';
 import { DEMO_LOCATIONS } from '@/lib/demoLocations';
+import { CONTACTS } from '@/lib/contacts';
 import { MUSEUM_TO_TRASH } from '@/lib/demoTrashItems';
 import type { MuseumLocation, AccessType } from '@/lib/museumTypes';
 import { HCMC_CENTER, MAP_DEFAULT_ZOOM, getStaticMapUrl } from '@/lib/mapConstants';
@@ -988,7 +989,7 @@ export default function MuseumMap() {
 
             <p style={{ fontSize: '14px', color: '#888888', lineHeight: 1.8 }}>
               get in touch at{' '}
-              <a href="mailto:motplusplusplus@gmail.com" style={{ color: '#666666' }}>motplusplusplus@gmail.com</a>.
+              <a href={`mailto:${CONTACTS.museum}`} style={{ color: '#666666' }}>{CONTACTS.museum}</a>.
             </p>
             </>)}
           </div>

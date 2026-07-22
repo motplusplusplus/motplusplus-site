@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { submitInquiry } from "@/lib/inquiry";
+import { CONTACTS } from "@/lib/contacts";
 
 const content = {
   en: {
@@ -61,7 +63,8 @@ const content = {
     ],
     submit: "send inquiry",
     successHeading: "inquiry received",
-    successMessage: "your email client should open with this inquiry pre-filled. if it doesn't open automatically, email us directly at motplusplusplus@gmail.com.",
+    successMessage: `your email client should open with this inquiry pre-filled. if it doesn't open automatically, email us directly at ${CONTACTS.museum}.`,
+    successRecorded: "thank you — your inquiry has been received. we'll be in touch.",
     optional: "(optional)",
   },
   vi: {
@@ -122,7 +125,8 @@ const content = {
     ],
     submit: "gửi yêu cầu",
     successHeading: "đã nhận yêu cầu",
-    successMessage: "email của bạn sẽ tự động mở với yêu cầu này đã được điền sẵn. nếu không tự động mở, vui lòng email trực tiếp cho chúng tôi tại motplusplusplus@gmail.com.",
+    successMessage: `email của bạn sẽ tự động mở với yêu cầu này đã được điền sẵn. nếu không tự động mở, vui lòng email trực tiếp cho chúng tôi tại ${CONTACTS.museum}.`,
+    successRecorded: "cảm ơn bạn — chúng tôi đã nhận được yêu cầu và sẽ liên hệ với bạn.",
     optional: "(không bắt buộc)",
   },
 };
@@ -143,8 +147,10 @@ export default function MuseumInquirePage() {
   const [website, setWebsite] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  // true when the endpoint was unreachable and we fell back to opening mailto
+  const [viaMailto, setViaMailto] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const spaceLabel = t.spaceTypes.find((s) => s.value === spaceType)?.label || spaceType;
@@ -153,6 +159,7 @@ export default function MuseumInquirePage() {
     const securityLabel = t.securityOptions.find((s) => s.value === security)?.label || security;
     const lightLabel = t.lightOptions.find((s) => s.value === light)?.label || light;
 
+    // pre-built mailto used only if the capture endpoint is unreachable
     const subject = `+1 museum by any other name space inquiry: ${name}`;
     const body = [
       `${t.fields.name}: ${name}`,
@@ -167,8 +174,37 @@ export default function MuseumInquirePage() {
       website ? `${t.fields.website}: ${website}` : null,
       message ? `\n${message}` : null,
     ].filter((line) => line !== null).join("\n");
+    const mailtoHref = `mailto:${CONTACTS.museum}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    window.location.href = `mailto:motplusplusplus@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    // the Sanity `inquiry` schema's museum fields are locationName/locationId/
+    // hostEmail only, so fold the structured space details into `message` so
+    // nothing collected here is lost in the captured document.
+    const detailLines = [
+      `location: ${location}`,
+      spaceType ? `space type: ${spaceLabel}` : null,
+      numSpaces ? `number of spaces: ${numSpaces}` : null,
+      size ? `approximate size: ${sizeLabel}` : null,
+      climate ? `climate controlled: ${climateLabel}` : null,
+      security ? `security: ${securityLabel}` : null,
+      light ? `natural light: ${lightLabel}` : null,
+      website ? `website: ${website}` : null,
+    ].filter((line) => line !== null);
+    const fullMessage = [message.trim(), message.trim() ? "" : null, ...detailLines]
+      .filter((line) => line !== null)
+      .join("\n");
+
+    const ok = await submitInquiry({
+      type: "museum",
+      name,
+      email,
+      message: fullMessage,
+      locationName: location,
+    });
+
+    if (!ok) {
+      setViaMailto(true);
+      window.location.href = mailtoHref;
+    }
 
     setSubmitted(true);
   };
@@ -209,7 +245,7 @@ export default function MuseumInquirePage() {
             {t.successHeading}
           </h1>
           <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8, maxWidth: "480px" }}>
-            {t.successMessage}
+            {viaMailto ? t.successMessage : t.successRecorded}
           </p>
         </div>
       </div>

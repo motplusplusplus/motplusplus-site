@@ -23,10 +23,126 @@ const EVENT_TO_PROFILE_SLUGS = new Set([
   "x-o-veron-xio", "yeonjeong", "yui-nguyen", "z1-studio",
 ]);
 
+// Inquiry-capture endpoint (task 01). Writes a Sanity `inquiry` document as the
+// source of truth; the site forms fall back to mailto if this is unreachable.
+// The write token lives ONLY as a Worker secret (SANITY_INQUIRY_TOKEN) — never
+// in the repo or in NEXT_PUBLIC_*.
+const INQUIRY_ALLOWED_ORIGINS = new Set([
+  "https://motplusplusplus.com",
+  "https://www.motplusplusplus.com",
+]);
+
+// Per-type whitelist of extra fields that may be stored, matching the Sanity
+// `inquiry` schema's type-conditional fields. Anything not listed is dropped so
+// a client can't inject arbitrary document fields. `general` is intentionally
+// absent: the schema's `type` list has only these three values.
+const INQUIRY_TYPE_FIELDS = {
+  trash: ["artworkTitle", "artworkId"],
+  residency: ["studioType", "startMonth", "duration", "portfolioUrl"],
+  museum: ["locationName", "locationId", "hostEmail"],
+};
+
+function inquiryCorsHeaders(request) {
+  const origin = request.headers.get("Origin");
+  const headers = {
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Vary": "Origin",
+  };
+  if (origin && INQUIRY_ALLOWED_ORIGINS.has(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+  return headers;
+}
+
+function inquiryJson(body, status, request) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", ...inquiryCorsHeaders(request) },
+  });
+}
+
+async function handleInquiry(request, env) {
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: inquiryCorsHeaders(request) });
+  }
+  if (request.method !== "POST") {
+    return inquiryJson({ error: "method not allowed" }, 405, request);
+  }
+
+  let payload;
+  try {
+    payload = await request.json();
+  } catch {
+    return inquiryJson({ error: "invalid json" }, 400, request);
+  }
+
+  const { type, name, email, message } = payload || {};
+  if (!INQUIRY_TYPE_FIELDS[type]) {
+    return inquiryJson({ error: "invalid type" }, 400, request);
+  }
+  if (typeof name !== "string" || name.trim() === "") {
+    return inquiryJson({ error: "name is required" }, 400, request);
+  }
+  if (typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return inquiryJson({ error: "a valid email is required" }, 400, request);
+  }
+  if (typeof message !== "string" || message.length > 5000) {
+    return inquiryJson({ error: "message is too long" }, 400, request);
+  }
+
+  // whitelist the type-conditional fields (strings only)
+  const extra = {};
+  for (const key of INQUIRY_TYPE_FIELDS[type]) {
+    if (typeof payload[key] === "string" && payload[key] !== "") {
+      extra[key] = payload[key];
+    }
+  }
+
+  const doc = {
+    _type: "inquiry",
+    type,
+    status: "new",
+    submittedAt: new Date().toISOString(),
+    name: name.trim(),
+    email: email.trim(),
+    message: typeof message === "string" ? message : "",
+    ...extra,
+  };
+
+  let sanityRes;
+  try {
+    sanityRes = await fetch(
+      "https://t5nsm79o.api.sanity.io/v2026-03-20/data/mutate/production",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + env.SANITY_INQUIRY_TOKEN,
+        },
+        body: JSON.stringify({ mutations: [{ create: doc }] }),
+      }
+    );
+  } catch {
+    return inquiryJson({ error: "could not record inquiry" }, 502, request);
+  }
+  if (!sanityRes.ok) {
+    return inquiryJson({ error: "could not record inquiry" }, 502, request);
+  }
+
+  return inquiryJson({ ok: true }, 200, request);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
+
+    // Inquiry-capture API — handled first. POST/OPTIONS never match a static
+    // asset, so this is safe ahead of the redirect + asset-first routing below.
+    if (path === "/api/inquiry") {
+      return handleInquiry(request, env);
+    }
 
     // Legacy event-announcement URLs for individual residents → bio pages
     const eventSlugMatch = path.match(/^\/events\/([^/]+)\/?$/);

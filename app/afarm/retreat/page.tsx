@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Reveal from "@/components/Reveal";
 import Collapsible from "@/components/Collapsible";
+import { CONTACTS } from "@/lib/contacts";
 
 const R2 = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/retreat";
 const APPLY_URL =
@@ -243,10 +244,10 @@ export default function RetreatPage() {
             cv / linkedin
           </a>
           <a
-            href="mailto:dave.a.willis@gmail.com"
+            href={`mailto:${CONTACTS.residency}`}
             style={{ fontSize: "13px", color: "#888888" }}
           >
-            dave.a.willis@gmail.com
+            {CONTACTS.residency}
           </a>
         </div>
       </ContentBlock>
@@ -523,13 +524,9 @@ export default function RetreatPage() {
           </Link>
         </div>
         <p style={{ fontSize: "13px", color: "#888888" }}>
-          for questions, contact david willis directly —{" "}
-          <a href="mailto:dave.a.willis@gmail.com" style={{ color: "#888888" }}>
-            dave.a.willis@gmail.com
-          </a>{" "}
-          or{" "}
-          <a href="mailto:a.farm.saigon@gmail.com" style={{ color: "#888888" }}>
-            a.farm.saigon@gmail.com
+          for questions about the retreat, contact us at{" "}
+          <a href={`mailto:${CONTACTS.residency}`} style={{ color: "#888888" }}>
+            {CONTACTS.residency}
           </a>
         </p>
       </ContentBlock>

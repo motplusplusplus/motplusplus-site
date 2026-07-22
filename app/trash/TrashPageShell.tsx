@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { buildTrashInquiryEmail, type TrashItem } from '@/lib/demoTrashItems';
 import ArtistCreditLinks from '@/components/ArtistCreditLinks';
+import InquiryForm from '@/components/InquiryForm';
+import { CONTACTS } from '@/lib/contacts';
 import { compareNames } from '@/lib/sortName';
 import { PRICE_REVEAL_PASSWORD } from '@/lib/priceReveal';
 import { shuffleArray } from '@/lib/shuffle';
@@ -310,12 +312,15 @@ export default function TrashPageShell({ items }: Props) {
                     <span style={{ fontSize: '16px', lineHeight: 1 }}>●</span> sold
                   </span>
                 ) : (
-                  <a
-                    href={buildTrashInquiryEmail(item)}
-                    style={{ fontSize: '11px', color: '#fff', backgroundColor: '#111', padding: '5px 12px', textDecoration: 'none', letterSpacing: '0.03em' }}
-                  >
-                    inquire
-                  </a>
+                  <InquiryForm
+                    type="trash"
+                    recipient={CONTACTS.sales}
+                    mailtoHref={buildTrashInquiryEmail(item)}
+                    artworkTitle={item.title}
+                    artworkId={item._id}
+                    buttonLabel="inquire"
+                    buttonStyle={{ fontSize: '11px', color: '#fff', backgroundColor: '#111', padding: '5px 12px', letterSpacing: '0.03em' }}
+                  />
                 )}
               </div>
             </div>
@@ -324,7 +329,7 @@ export default function TrashPageShell({ items }: Props) {
 
         <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '40px' }}>
           <a
-            href="mailto:motplusplusplus@gmail.com?subject=+1%20trash%20%E2%99%BB%20inquiry"
+            href={`mailto:${CONTACTS.sales}?subject=+1%20trash%20%E2%99%BB%20inquiry`}
             style={{ display: 'inline-block', fontSize: '13px', color: '#ffffff', backgroundColor: '#111111', padding: '12px 28px', textDecoration: 'none' }}
           >
             general inquiry
@@ -448,12 +453,15 @@ export default function TrashPageShell({ items }: Props) {
                     <span style={{ fontSize: '18px', lineHeight: 1 }}>●</span> sold
                   </span>
                 ) : (
-                  <a
-                    href={buildTrashInquiryEmail(open)}
-                    style={{ fontSize: '12px', color: '#fff', backgroundColor: '#111', padding: '8px 18px', textDecoration: 'none', letterSpacing: '0.03em' }}
-                  >
-                    inquire through +1 trash
-                  </a>
+                  <InquiryForm
+                    type="trash"
+                    recipient={CONTACTS.sales}
+                    mailtoHref={buildTrashInquiryEmail(open)}
+                    artworkTitle={open.title}
+                    artworkId={open._id}
+                    buttonLabel="inquire through +1 trash"
+                    buttonStyle={{ fontSize: '12px', color: '#fff', backgroundColor: '#111', padding: '8px 18px', letterSpacing: '0.03em' }}
+                  />
                 )}
                 {unlocked && open.price && !open.sold && (
                   <span style={{ fontSize: '12px', color: '#888888', letterSpacing: '0.03em', marginLeft: 'auto' }}>

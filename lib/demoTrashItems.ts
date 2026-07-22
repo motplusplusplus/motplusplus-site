@@ -1,3 +1,5 @@
+import { CONTACTS } from './contacts';
+
 const D = 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/museum/demo';
 
 export type ArtistCredit = { _id: string; name: string; slug: string | null };
@@ -44,7 +46,7 @@ export function buildTrashInquiryEmail(item: TrashItem) {
     (item.edition ? `Edition: ${item.edition}\n` : '') +
     `\nI would like to learn more about its availability and price.\n\nThank you.`
   );
-  return `mailto:motplusplusplus@gmail.com?subject=${subject}&body=${body}`;
+  return `mailto:${CONTACTS.sales}?subject=${subject}&body=${body}`;
 }
 
 export const DEMO_TRASH_ITEMS: TrashItem[] = [

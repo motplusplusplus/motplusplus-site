@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CONTACTS } from "@/lib/contacts";
 
 export default function AdvisoryPage() {
   return (
@@ -108,7 +109,7 @@ export default function AdvisoryPage() {
             inquiries
           </p>
           <a
-            href="mailto:motplusplusplus@gmail.com?subject=art advisory inquiry"
+            href={`mailto:${CONTACTS.general}?subject=art advisory inquiry`}
             style={{
               display: "inline-block",
               fontSize: "14px",
@@ -117,7 +118,7 @@ export default function AdvisoryPage() {
               paddingBottom: "2px",
             }}
           >
-            motplusplusplus@gmail.com
+            {CONTACTS.general}
           </a>
         </div>
 

@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { getTrashItemBySlug, getAllTrashItemSlugs } from "@/lib/sanity";
 import { buildTrashInquiryEmail, type TrashItem } from "@/lib/demoTrashItems";
 import ArtistCreditLinks from "@/components/ArtistCreditLinks";
+import InquiryForm from "@/components/InquiryForm";
+import { CONTACTS } from "@/lib/contacts";
 import { ogImage } from "@/lib/og";
 
 function artistLabel(raw: { artist: string; artists?: { name: string }[] | null }) {
@@ -138,12 +140,15 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
             </span>
           ) : (
             <>
-              <a
-                href={buildTrashInquiryEmail(item)}
-                style={{ fontSize: "13px", color: "#ffffff", backgroundColor: "#111111", padding: "10px 22px", textDecoration: "none", letterSpacing: "0.03em" }}
-              >
-                inquire
-              </a>
+              <InquiryForm
+                type="trash"
+                recipient={CONTACTS.sales}
+                mailtoHref={buildTrashInquiryEmail(item)}
+                artworkTitle={item.title}
+                artworkId={item._id}
+                buttonLabel="inquire"
+                buttonStyle={{ fontSize: "13px", color: "#ffffff", backgroundColor: "#111111", padding: "10px 22px", letterSpacing: "0.03em" }}
+              />
               <span style={{ fontSize: "13px", color: "#888888", letterSpacing: "0.03em" }}>
                 price on inquiry
               </span>

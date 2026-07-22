@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { pressItems } from "@/lib/press";
+import { CONTACTS } from "@/lib/contacts";
 
 export default function PressPage() {
   return (
@@ -19,8 +20,8 @@ export default function PressPage() {
         </p>
         <p style={{ fontSize: "13px", color: "#aaaaaa", marginTop: "12px" }}>
           for media inquiries:{" "}
-          <a href="mailto:motplusplusplus@gmail.com" style={{ color: "#888888" }}>
-            motplusplusplus@gmail.com
+          <a href={`mailto:${CONTACTS.press}`} style={{ color: "#888888" }}>
+            {CONTACTS.press}
           </a>
         </p>
       </div>

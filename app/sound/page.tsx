@@ -1,3 +1,5 @@
+import { CONTACTS } from "@/lib/contacts";
+
 const editions = [
   { number: 25, title: "MoTsound #25 — Nikola H. Mounoud & Writher",           slug: "mot-sound-25-with-nikola-h-mounoud-and-writher",                        image: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/motsound/25-poster.jpg" },
   { number: 24, title: "MoTsound #24 — Out of Landscape / Future Basketball",  slug: "mot-sound-24-out-of-landscape-into-mindscape-future-basketball",         image: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/motsound/24-poster.jpg" },
@@ -52,7 +54,7 @@ export default function MoTsoundPage() {
         </p>
         <p style={{ fontSize: "13px", color: "#aaaaaa" }}>
           if you are an artist that would like to be involved, message{" "}
-          <a href="mailto:motplusplusplus@gmail.com" style={{ color: "#888888" }}>motplusplusplus@gmail.com</a>
+          <a href={`mailto:${CONTACTS.general}`} style={{ color: "#888888" }}>{CONTACTS.general}</a>
         </p>
       </div>
 

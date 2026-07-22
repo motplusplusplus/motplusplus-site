@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { CONTACTS } from "@/lib/contacts";
 
 export const metadata: Metadata = {
   title: "+1 Direct Experience Meditation Residency",
@@ -185,7 +186,7 @@ export default function DirectExperiencePage() {
           to inquire, reach out directly by email.
         </p>
         <a
-          href="mailto:motplusplusplus@gmail.com?subject=+1 direct experience inquiry"
+          href={`mailto:${CONTACTS.general}?subject=+1 direct experience inquiry`}
           style={{
             display: "inline-block",
             fontSize: "15px",

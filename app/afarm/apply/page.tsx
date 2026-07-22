@@ -3,6 +3,8 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { studios, hotel } from "@/lib/studios";
+import { submitInquiry } from "@/lib/inquiry";
+import { CONTACTS } from "@/lib/contacts";
 
 // studios (lib/studios.ts) is an unfiltered 1:1 map of studios-data.json --
 // excludes retired/non-current hosts (active:false or hidden:true in the JSON
@@ -46,6 +48,8 @@ function ApplyForm() {
   const [portfolio, setPortfolio] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  // true when the endpoint was unreachable and we fell back to opening mailto
+  const [viaMailto, setViaMailto] = useState(false);
 
   useEffect(() => {
     if (preselectedStudio) setStudio(preselectedStudio);
@@ -53,7 +57,7 @@ function ApplyForm() {
 
   const monthOptions = getMonthOptions();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const studioLabel =
@@ -63,6 +67,7 @@ function ApplyForm() {
     const durationLabel =
       durationOptions.find((o) => o.value === duration)?.label || duration;
 
+    // pre-built mailto used only if the capture endpoint is unreachable
     const subject = `a.farm residency application: ${name}`;
     const body = [
       `studio preference: ${studioLabel}`,
@@ -74,8 +79,23 @@ function ApplyForm() {
       "",
       message,
     ].filter((line) => line !== null).join("\n");
+    const mailtoHref = `mailto:${CONTACTS.residency}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    window.location.href = `mailto:a.farm.saigon@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const ok = await submitInquiry({
+      type: "residency",
+      name,
+      email,
+      message,
+      studioType: studioLabel,
+      startMonth: monthLabel,
+      duration: durationLabel,
+      ...(portfolio ? { portfolioUrl: portfolio } : {}),
+    });
+
+    if (!ok) {
+      setViaMailto(true);
+      window.location.href = mailtoHref;
+    }
 
     setSubmitted(true);
   };
@@ -123,7 +143,9 @@ function ApplyForm() {
             inquiry received
           </h1>
           <p style={{ fontSize: "15px", color: "#666666", lineHeight: 1.8, maxWidth: "480px" }}>
-            your email client should open with this inquiry pre-filled. if it doesn't open automatically, email us directly at a.farm.saigon@gmail.com.
+            {viaMailto
+              ? `your email client should open with this inquiry pre-filled. if it doesn't open automatically, email us directly at ${CONTACTS.residency}.`
+              : "thank you — your residency inquiry has been received. we'll be in touch."}
           </p>
         </div>
       </div>

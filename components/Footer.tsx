@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CONTACTS } from "@/lib/contacts";
 
 export default function Footer() {
   return (
@@ -53,8 +54,8 @@ export default function Footer() {
           >
             instagram
           </a>
-          <a href="mailto:motplusplusplus@gmail.com">
-            motplusplusplus@gmail.com
+          <a href={`mailto:${CONTACTS.general}`}>
+            {CONTACTS.general}
           </a>
         </div>
 
