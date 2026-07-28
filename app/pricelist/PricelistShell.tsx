@@ -64,6 +64,7 @@ async function downloadPdf(items: PricelistItem[]) {
   const margin = 14;
   const contentWidth = pageWidth - margin * 2;
   const imageMaxHeight = 110;
+  const placeholderHeight = 20;
   const qrSize = 22;
 
   // per-line height (mm) at a given font size, matching jsPDF's own text-layout math --
@@ -119,7 +120,7 @@ async function downloadPdf(items: PricelistItem[]) {
     const qrBlockHeight = qrImage ? qrSize + 8 : 0;
 
     const totalHeight =
-      (imgRenderHeight ? imgRenderHeight + 6 : 0) +
+      (workImage ? imgRenderHeight + 6 : placeholderHeight + 6) +
       artistBlockHeight +
       titleBlockHeight + 3 +
       metaBlockHeight +
@@ -133,10 +134,20 @@ async function downloadPdf(items: PricelistItem[]) {
       y = margin;
     }
 
-    // 1. image, contained within the box (no stretching), centered
+    // 1. image, contained within the box (no stretching), centered --
+    // falls back to a labeled placeholder so a missing photo reads as a known
+    // data gap (add a photo in Sanity) rather than a silent rendering glitch.
     if (workImage) {
       doc.addImage(workImage.dataUrl, workImage.format, margin + imgOffsetX, y, imgRenderWidth, imgRenderHeight);
       y += imgRenderHeight + 6;
+    } else {
+      doc.setDrawColor(220, 220, 220);
+      doc.setFillColor(248, 248, 248);
+      doc.rect(margin, y, contentWidth, placeholderHeight, 'FD');
+      doc.setFontSize(9);
+      doc.setTextColor(170, 170, 170);
+      doc.text('no image on file', margin + contentWidth / 2, y + placeholderHeight / 2 + 2, { align: 'center' });
+      y += placeholderHeight + 6;
     }
 
     // 2. artist, title, dimensions, medium, edition, description
