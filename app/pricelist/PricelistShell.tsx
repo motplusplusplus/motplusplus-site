@@ -63,7 +63,7 @@ async function downloadPdf(items: PricelistItem[]) {
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 14;
   const contentWidth = pageWidth - margin * 2;
-  const imageMaxHeight = 85;
+  const imageMaxHeight = 110;
   const qrSize = 22;
 
   // per-line height (mm) at a given font size, matching jsPDF's own text-layout math --
@@ -90,9 +90,21 @@ async function downloadPdf(items: PricelistItem[]) {
   for (const item of items) {
     const workImage = item.image ? await fetchImageForPdf(item.image, 'image/jpeg') : null;
 
-    const imgRenderHeight = workImage
-      ? Math.min(contentWidth * (workImage.height / workImage.width), imageMaxHeight)
-      : 0;
+    // Fit within a (contentWidth x imageMaxHeight) box like CSS object-fit: contain --
+    // scale by whichever dimension is more constraining so the image never stretches,
+    // then center it horizontally if it doesn't use the full width.
+    let imgRenderWidth = 0;
+    let imgRenderHeight = 0;
+    let imgOffsetX = 0;
+    if (workImage) {
+      const scale = Math.min(contentWidth / workImage.width, imageMaxHeight / workImage.height);
+      imgRenderWidth = workImage.width * scale;
+      imgRenderHeight = workImage.height * scale;
+      imgOffsetX = (contentWidth - imgRenderWidth) / 2;
+    }
+
+    doc.setFontSize(10);
+    const artistBlockHeight = item.artist ? lineHeight(10) + 2 : 0;
 
     doc.setFontSize(13);
     const titleLines = doc.splitTextToSize(`${item.title || 'untitled'}${item.year ? `, ${item.year}` : ''}`, contentWidth);
@@ -108,6 +120,7 @@ async function downloadPdf(items: PricelistItem[]) {
 
     const totalHeight =
       (imgRenderHeight ? imgRenderHeight + 6 : 0) +
+      artistBlockHeight +
       titleBlockHeight + 3 +
       metaBlockHeight +
       (descLines.length ? descBlockHeight + 4 : 0) +
@@ -120,14 +133,21 @@ async function downloadPdf(items: PricelistItem[]) {
       y = margin;
     }
 
-    // 1. image, full width
+    // 1. image, contained within the box (no stretching), centered
     if (workImage) {
-      doc.addImage(workImage.dataUrl, workImage.format, margin, y, contentWidth, imgRenderHeight);
+      doc.addImage(workImage.dataUrl, workImage.format, margin + imgOffsetX, y, imgRenderWidth, imgRenderHeight);
       y += imgRenderHeight + 6;
     }
 
-    // 2. title, dimensions, medium, edition, description
+    // 2. artist, title, dimensions, medium, edition, description
     doc.setFont(VIETNAMESE_FONT_NAME, 'normal');
+    if (item.artist) {
+      doc.setFontSize(10);
+      doc.setTextColor(120, 120, 120);
+      doc.text(item.artist, margin, y + lineHeight(10) * 0.75);
+      y += artistBlockHeight;
+    }
+
     doc.setFontSize(13);
     doc.setTextColor(17, 17, 17);
     doc.text(titleLines, margin, y + lineHeight(13) * 0.75);
