@@ -18,6 +18,8 @@ export type PricelistItem = {
 
 const MOT_PAYMENT_QR_URL = '/pricelist/mot-payment-qr.png';
 
+type PricelistMode = 'pricelist' | 'catalog';
+
 function mediumYear(item: PricelistItem): string {
   return [item.medium, item.year ? String(item.year) : null].filter(Boolean).join(', ');
 }
@@ -51,8 +53,9 @@ async function fetchImageForPdf(url: string, mime: 'image/jpeg' | 'image/png' = 
   }
 }
 
-async function downloadPdf(items: PricelistItem[]) {
+async function downloadPdf(items: PricelistItem[], mode: PricelistMode) {
   const { jsPDF } = await import('jspdf');
+  const showPriceAndQr = mode === 'pricelist';
 
   const doc = new jsPDF();
   registerVietnameseFont(doc); // embeds + activates a Vietnamese-safe font for ALL text below --
@@ -77,7 +80,7 @@ async function downloadPdf(items: PricelistItem[]) {
 
   doc.setFontSize(11);
   doc.setTextColor(85, 85, 85);
-  doc.text('+1 trash — pricelist', margin, 26);
+  doc.text(`+1 trash — ${mode}`, margin, 26);
 
   const generated = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
   doc.setFontSize(9);
@@ -86,7 +89,7 @@ async function downloadPdf(items: PricelistItem[]) {
 
   let y = 42;
 
-  const qrImage = await fetchImageForPdf(MOT_PAYMENT_QR_URL, 'image/png');
+  const qrImage = showPriceAndQr ? await fetchImageForPdf(MOT_PAYMENT_QR_URL, 'image/png') : null;
 
   for (const item of items) {
     const workImage = item.image ? await fetchImageForPdf(item.image, 'image/jpeg') : null;
@@ -116,8 +119,8 @@ async function downloadPdf(items: PricelistItem[]) {
     const titleBlockHeight = titleLines.length * lineHeight(13);
     const descBlockHeight = descLines.length * lineHeight(10);
     const metaBlockHeight = metaLine ? lineHeight(10) + 2 : 0;
-    const priceBlockHeight = lineHeight(13) + 4;
-    const qrBlockHeight = qrImage ? qrSize + 8 : 0;
+    const priceBlockHeight = showPriceAndQr ? lineHeight(13) + 4 : 0;
+    const qrBlockHeight = showPriceAndQr && qrImage ? qrSize + 8 : 0;
 
     const totalHeight =
       (workImage ? imgRenderHeight + 6 : placeholderHeight + 6) +
@@ -178,14 +181,16 @@ async function downloadPdf(items: PricelistItem[]) {
       y += descBlockHeight + 4;
     }
 
-    // 3. price
-    doc.setFontSize(13);
-    doc.setTextColor(17, 17, 17);
-    doc.text(item.price || 'price on inquiry', margin, y + lineHeight(13) * 0.75);
-    y += priceBlockHeight;
+    // 3. price (pricelist mode only)
+    if (showPriceAndQr) {
+      doc.setFontSize(13);
+      doc.setTextColor(17, 17, 17);
+      doc.text(item.price || 'price on inquiry', margin, y + lineHeight(13) * 0.75);
+      y += priceBlockHeight;
+    }
 
-    // 4. QR code, below every item
-    if (qrImage) {
+    // 4. QR code, below every item (pricelist mode only)
+    if (showPriceAndQr && qrImage) {
       doc.addImage(qrImage.dataUrl, qrImage.format, margin, y, qrSize, qrSize);
       doc.setFontSize(8);
       doc.setTextColor(153, 153, 153);
@@ -199,7 +204,7 @@ async function downloadPdf(items: PricelistItem[]) {
   }
 
   const stamp = new Date().toISOString().slice(0, 10);
-  doc.save(`motplusplusplus-pricelist-${stamp}.pdf`);
+  doc.save(`motplusplusplus-${mode}-${stamp}.pdf`);
 }
 
 export default function PricelistShell({ items: initialItems }: { items: PricelistItem[] }) {
@@ -209,6 +214,7 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
   const [unlocked, setUnlocked] = useState(false);
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
+  const [mode, setMode] = useState<PricelistMode>('pricelist');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const rejectPassword = () => {
@@ -274,14 +280,35 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
     );
   }
 
+  const showPrice = mode === 'pricelist';
+  const gridColumns = showPrice ? '1.2fr 1.6fr 1.4fr 0.8fr' : '1.2fr 1.6fr 1.4fr';
+
   return (
     <div>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+        {(['pricelist', 'catalog'] as const).map(m => (
+          <button
+            key={m}
+            onClick={() => setMode(m)}
+            style={{
+              fontSize: '11px', letterSpacing: '0.04em', fontFamily: 'inherit',
+              padding: '8px 18px', cursor: 'pointer',
+              border: `1px solid ${mode === m ? '#111111' : '#dddddd'}`,
+              backgroundColor: mode === m ? '#111111' : 'transparent',
+              color: mode === m ? '#ffffff' : '#767676',
+            }}
+          >
+            {m}
+          </button>
+        ))}
+      </div>
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.08em' }}>
           {items.length} available {items.length === 1 ? 'work' : 'works'}
         </p>
         <button
-          onClick={() => downloadPdf(items)}
+          onClick={() => downloadPdf(items, mode)}
           style={{
             fontSize: '11px', color: '#ffffff', backgroundColor: '#111111',
             padding: '8px 18px', border: 'none', cursor: 'pointer',
@@ -294,7 +321,7 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
 
       <div style={{ borderTop: '1px solid #e5e5e5' }}>
         <div style={{
-          display: 'grid', gridTemplateColumns: '1.2fr 1.6fr 1.4fr 0.8fr',
+          display: 'grid', gridTemplateColumns: gridColumns,
           gap: '12px', padding: '10px 0',
           borderBottom: '1px solid #e5e5e5',
           fontSize: '10px', color: '#767676', letterSpacing: '0.08em', textTransform: 'uppercase',
@@ -302,11 +329,11 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
           <span>Artist</span>
           <span>Title</span>
           <span>Medium / Year</span>
-          <span>Price</span>
+          {showPrice && <span>Price</span>}
         </div>
         {items.map(item => (
           <div key={item._id} style={{
-            display: 'grid', gridTemplateColumns: '1.2fr 1.6fr 1.4fr 0.8fr',
+            display: 'grid', gridTemplateColumns: gridColumns,
             gap: '12px', padding: '14px 0',
             borderBottom: '1px solid #f0f0f0',
             fontSize: '13px', color: '#333333', alignItems: 'baseline',
@@ -314,7 +341,7 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
             <span>{item.artist}</span>
             <span style={{ color: '#111111' }}>{item.title}</span>
             <span style={{ color: '#767676' }}>{mediumYear(item)}</span>
-            <span>{item.price}</span>
+            {showPrice && <span>{item.price}</span>}
           </div>
         ))}
       </div>
