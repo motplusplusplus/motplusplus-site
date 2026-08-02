@@ -18,7 +18,7 @@ const STATIC_MAP_URL = getStaticMapUrl(MAPBOX_TOKEN);
 // The map switches from demo to real data only at this many published, coordinate-valid
 // locations — publishing one draft must not silently un-demo the flagship page. Raise/lower
 // deliberately.
-const REAL_DATA_MIN_LOCATIONS = 3;
+const REAL_DATA_MIN_LOCATIONS = 5;
 
 const ACCESS_LABELS: Record<AccessType, string> = {
   open: 'open access',
