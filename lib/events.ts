@@ -64,6 +64,10 @@ export const BIO_SLUGS = new Set([
 export const HIDDEN_SLUGS = new Set([
   'self-funded-residency-program',
   'post-vidai',
+  // Funded residency for Vietnamese artists — program does not currently
+  // exist; Sanity doc deleted 2026-08-03, this suppresses the events-data.json
+  // fallback (JSON archive is read-only, not edited) from resurfacing it.
+  'chuong-trinh-luu-tru-a-farm-duoc-tai-tro-danh-cho-nghe-si-viet-nam',
   // Duplicate slugs — images merged into canonical counterpart
   'mot-sound-8-amoeba-2',
   'nuoc-water-resistance-a-solo-exhibition-by-thom-nguyen',

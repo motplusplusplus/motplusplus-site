@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getAllEvents, getAllEventSlugs, getEventBySlug, getAllEventsFromJson } from "@/lib/sanity";
-import { getListingEvents, getAdjacentEvents, isPast, BIO_SLUGS } from "@/lib/events";
+import { getListingEvents, getAdjacentEvents, isPast, BIO_SLUGS, HIDDEN_SLUGS } from "@/lib/events";
 import EventContent from "@/components/EventContent";
 import { isJunkImage } from "@/lib/junk-images";
 import type { Metadata } from "next";
@@ -8,6 +8,7 @@ import { ogImage } from "@/lib/og";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
+  if (HIDDEN_SLUGS.has(slug)) return {};
   const jsonEvents = getAllEventsFromJson();
   const sanityEvent = await getEventBySlug(slug);
   const event = sanityEvent ?? jsonEvents.find(e => e.slug === slug) ?? null;
@@ -50,11 +51,12 @@ export async function generateStaticParams() {
   const sanitySlugSet = new Set(sanitySlugs);
   const jsonOnlySlugs = jsonEvents.map(e => e.slug).filter(s => !sanitySlugSet.has(s));
   const allSlugs = [...sanitySlugs, ...jsonOnlySlugs];
-  return allSlugs.filter(slug => !BIO_SLUGS.has(slug)).map(slug => ({ slug }));
+  return allSlugs.filter(slug => !BIO_SLUGS.has(slug) && !HIDDEN_SLUGS.has(slug)).map(slug => ({ slug }));
 }
 
 export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  if (HIDDEN_SLUGS.has(slug)) notFound();
   const jsonEvents = getAllEventsFromJson();
   const [sanityEvent, sanityAllEvents] = await Promise.all([
     getEventBySlug(slug),
