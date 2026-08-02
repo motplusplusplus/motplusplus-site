@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import artistsData from "@/artists-data.json";
 import { compareNames } from "@/lib/sortName";
@@ -43,6 +44,10 @@ type ArtistEntry = { slug: string; name: string; performancePlus?: boolean };
 const performanceArtists = (artistsData as ArtistEntry[])
   .filter(a => a.performancePlus)
   .sort((a, b) => compareNames(a.name, b.name));
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://motplusplusplus.com/performance" },
+};
 
 export default function PerformancePage() {
   return (

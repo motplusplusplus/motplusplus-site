@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Pricelist',
   robots: { index: false, follow: false },
+  alternates: { canonical: 'https://motplusplusplus.com/pricelist' },
 };
 
 export default async function PricelistPage() {

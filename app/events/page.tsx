@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getAllEvents, getAllEventsFromJson } from "@/lib/sanity";
 import { getListingEvents } from "@/lib/events";
 import { EventsShell } from "./EventsShell";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://motplusplusplus.com/events" },
+};
 
 export default async function EventsPage() {
   // Sanity is the source of truth; fill gaps with events-data.json entries

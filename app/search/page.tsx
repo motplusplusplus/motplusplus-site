@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Search",
+  alternates: { canonical: "https://motplusplusplus.com/search" },
 };
 
 export default async function SearchPage() {

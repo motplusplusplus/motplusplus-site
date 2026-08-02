@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getArtists, getMotsoundPerformerEditions } from '@/lib/sanity';
 import { artistsFromData, CONSOLIDATED_BIO_SLUGS } from '@/lib/artists';
 import { computeBadges } from '@/lib/badges';
@@ -7,6 +8,10 @@ import ArtistsShell, { type ArtistEntry } from './ArtistsShell';
 const jsonBySlug = new Map(artistsFromData.map(a => [a.slug, a]));
 // JSON is authoritative for resident status — Sanity isAfarmResident is often not set
 const jsonResidentSlugs = new Set(artistsFromData.filter(a => a.resident).map(a => a.slug));
+
+export const metadata: Metadata = {
+  alternates: { canonical: 'https://motplusplusplus.com/profiles' },
+};
 
 export default async function ArtistsPage() {
   const [sanityRaw, motsound] = await Promise.all([

@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { hotel, getStudio } from "@/lib/studios";
 import StudioGallery from "@/app/studios/[slug]/StudioGallery";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://motplusplusplus.com/afarm/hotel" },
+};
 
 export default async function HotelPage() {
   const amanakiStudio = await getStudio("amanaki-hotel");

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 const R2 = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/contemporary";
@@ -95,6 +96,10 @@ const exhibitions = [
     slug: "renaissance-international-school-now-features-work-by-regis-golay",
   },
 ];
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://motplusplusplus.com/contemporary" },
+};
 
 export default function ContemporaryPage() {
   return (

@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllStudios, hotel } from "@/lib/studios";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://motplusplusplus.com/afarm/studios" },
+};
 
 export default async function StudiosPage() {
   const allStudios = await getAllStudios();

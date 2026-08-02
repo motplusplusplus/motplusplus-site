@@ -26,6 +26,13 @@ export const metadata: Metadata = {
     url: "https://motplusplusplus.com/afarm",
     images: [{ url: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/studios/hoang-nam-viet/ass05503.jpg", width: 1600, height: 1067 }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Artist Residency in Vietnam — +a.Farm by MoT+++",
+    description:
+      "Live and work alongside a local artist in Ho Chi Minh City. International residency pairing residents with hosting artists across Saigon studios. From $3,000/month.",
+    images: ["https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/studios/hoang-nam-viet/ass05503.jpg"],
+  },
   alternates: { canonical: "https://motplusplusplus.com/afarm" },
 };
 

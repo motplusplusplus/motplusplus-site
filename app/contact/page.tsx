@@ -1,4 +1,9 @@
+import type { Metadata } from "next";
 import { CONTACTS } from "@/lib/contacts";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://motplusplusplus.com/contact" },
+};
 
 export default function ContactPage() {
   return (

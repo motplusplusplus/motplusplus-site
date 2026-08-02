@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getPressItems } from "@/lib/sanity";
 import { CONTACTS } from "@/lib/contacts";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://motplusplusplus.com/press" },
+};
 
 export default async function PressPage() {
   // Press coverage is sourced entirely from Sanity `pressItem` docs (editors

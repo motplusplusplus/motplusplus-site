@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     title: "Studios | MoT+++",
     description: "Artist studios associated with MoT+++, Ho Chi Minh City — spaces for making, hosting, and exchange.",
   },
+  alternates: { canonical: "https://motplusplusplus.com/studios" },
 };
 
 export default async function StudiosPage() {

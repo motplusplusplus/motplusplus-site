@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { CONTACTS } from "@/lib/contacts";
 
 const editions = [
@@ -24,6 +25,10 @@ const editions = [
   { number:  2, title: "MoTsound #2",                                           slug: "mot-sound-2",                                                             image: null },
   { number:  1, title: "MoTsound #1",                                           slug: "mot-sound-1",                                                             image: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/motsound/01-poster.jpg" },
 ];
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://motplusplusplus.com/sound" },
+};
 
 export default function MoTsoundPage() {
   return (

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import CollectiveMembers from "./CollectiveMembers";
 
@@ -119,6 +120,10 @@ const members = [
     ],
   },
 ];
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://motplusplusplus.com/collective" },
+};
 
 export default function CollectivePage() {
   return (

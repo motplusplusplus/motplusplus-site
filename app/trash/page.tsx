@@ -1,6 +1,11 @@
+import type { Metadata } from 'next';
 import { getTrashItems } from '@/lib/sanity';
 import TrashPageShell from './TrashPageShell';
 import type { TrashItem } from '@/lib/demoTrashItems';
+
+export const metadata: Metadata = {
+  alternates: { canonical: 'https://motplusplusplus.com/trash' },
+};
 
 export default async function TrashPage() {
   const raw = await getTrashItems();

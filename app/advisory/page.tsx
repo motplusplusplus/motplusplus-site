@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { CONTACTS } from "@/lib/contacts";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://motplusplusplus.com/advisory" },
+};
 
 export default function AdvisoryPage() {
   return (
