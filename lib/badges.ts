@@ -18,17 +18,29 @@ export const COLLECTIVE_SLUGS = new Set([
 /** Founder / director — Cam Xanh only (Sanity role "Founder"). */
 export const FOUNDER_SLUGS = new Set(["cam-xanh"]);
 
-// +1 residency — pre-2018 MoT+++ residents, manually curated. The data does NOT
-// cleanly identify these: "+1 a nice place for experimentation" is a 2017–2025
-// program series (presenters, not residents) and no bio/record says "+1 residency".
-// Uncertain candidates exhibited in the "+1 museum by any other name" collection
-// (NOT confirmed residents): "dao-tung", "tran-minh-duc". Populate as confirmed.
-export const PLUS1_RESIDENCY_SLUGS = new Set<string>([]);
+// +1 residency — the 2018 "performance plus 2018" inaugural residency, distinct
+// from a.Farm (which also starts 2018 — these are two separate programs, not an
+// a.Farm alias). Sourced from a passing mention in the WP export's
+// "performance-plus-2019-introduction" post (2026-08): "the inaugural six-month
+// 2018 programme... artists that joined as a resident included Phu Luc,
+// Aliansyah Caniago, Enkhbold Togmidshiirev and Lai Dieu Ha." No dedicated 2018
+// program post exists in this WP export — it lived on the pre-migration site
+// (motplus.xyz) and is only reachable via a Wayback Machine link, not migrated
+// content, so these 4 have no bio/photo source available here.
+// wu-chi-tsung and kim-duy are included on information from outside this WP
+// export (confirmed by Andrew, 2026-08) — same "uncertain/external" pattern as
+// the tran-minh-duc/dao-tung note that used to live here for PLUS1_MUSEUM_SLUGS.
+export const PLUS1_RESIDENCY_SLUGS = new Set<string>([
+  "phu-luc", "aliansyah-caniago", "enkhbold-togmidshiirev", "lai-dieu-ha",
+  "wu-chi-tsung", "kim-duy",
+]);
 
 // +1 museum — artists with work placed in the decentralized "+1 museum by any
-// other name" collection (Sanity museumLocation docs with an artistRef).
-// populated when museumLocation artist refs exist in Sanity — currently empty
-export const PLUS1_MUSEUM_SLUGS = new Set<string>([]);
+// other name" collection. Sourced from the WP export's "1-museum-by-any-
+// other-name" category (2026-08): tran-minh-duc, cian-duggan, dao-tung.
+export const PLUS1_MUSEUM_SLUGS = new Set<string>([
+  "tran-minh-duc", "cian-duggan", "dao-tung",
+]);
 
 /** Sanity `role` values that denote a non-artist primary identity. */
 const CURATOR_ROLES = new Set(["curator", "writer", "researcher"]);
@@ -85,22 +97,27 @@ export function computeBadges(p: PersonSignals): BadgeResult {
   const editions = p.motsoundEditions ?? [];
   const roleCat = roleCategory(p.role);
 
-  // Primary identity, highest priority first.
+  // Primary identity, highest priority first. +1 residency is checked before
+  // a.Farm: it's the rarer, more specific program (6 people vs. the much
+  // larger a.Farm cohort), and some people (e.g. wu-chi-tsung, kim-duy) have
+  // both a residencyStartDate (a.Farm) AND a +1 residency slug — without this
+  // ordering their card would only ever say "a.Farm" and the +1 residency
+  // distinction would never surface on the listing.
   let primary = "artist";
   if (isFounder) primary = "founder/director";
   else if (isHost) primary = "hosting artist";
   else if (roleCat && !p.hasResidency) primary = roleCat;       // curator/writer/researcher
-  else if (p.hasResidency) primary = "a.Farm";
   else if (isPlus1Residency) primary = "+1 residency";
+  else if (p.hasResidency) primary = "a.Farm";
   else if (p.isPerformancePlus) primary = "+1 performance";
 
-  // Filterable tags — a person can match several. "founder/director" and
-  // "+1 residency" are intentionally excluded: founder/director has only one
-  // member (the badge still renders via primary/bioBadges) and +1 residency
-  // has no data (PLUS1_RESIDENCY_SLUGS is empty) — neither is a useful filter.
+  // Filterable tags — a person can match several. "founder/director" is
+  // intentionally excluded: it has only one member (the badge still renders
+  // via primary/bioBadges), so it isn't a useful filter.
   const filters: string[] = [];
   if (isHost) filters.push("hosting artist");
   if (p.hasResidency) filters.push("a.Farm");
+  if (isPlus1Residency) filters.push("+1 residency");
   if (isPlus1Museum) filters.push("+1 museum");
   if (p.isPerformancePlus) filters.push("+1 performance");
   if (editions.length) filters.push("MoTSound");

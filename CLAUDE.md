@@ -206,7 +206,14 @@ chunks missing).
 - `PLUS1_RESIDENCY_SLUGS` (in `lib/badges.ts`) should be sourced from the WP
   XML export — only add slugs confirmed in that XML
   (`/Volumes/MoT/EXPORTED DATA/wordpress/motplusplusplus.wordpress.com-2026-03-17-04_52_48/`)
-- Do NOT include: Luke Schneider, Tra My, or any removed staff anywhere on the site
+- **EXCLUDED PEOPLE (2026-08, permanent)**: **Luke Schneider** and **Nguyễn
+  Trà My** (aka "Tra My" / "My Nguyen") must never be created, mentioned, or
+  referenced anywhere on this site or in its data — no profile page, no bio
+  text, no photo, no event credit, no mention under any name variant. This
+  is a deliberate policy due to a legal/trust matter, not an oversight — do
+  not "fix" it by adding either person back, including while backfilling
+  from the WordPress export. Mirrored in `motplus-sanity/CLAUDE.md` (the
+  Studio repo, where artist docs are created).
 - Lowercase convention throughout all UI text (intentional MoT+++ voice)
 - MoT+++ exact capitalization always
 
