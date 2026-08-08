@@ -17,6 +17,7 @@ const { execSync } = require('child_process');
 const { rmSync } = require('fs');
 const { join } = require('path');
 const { loadEnvConfig } = require('@next/env');
+const { tokenProblem } = require('./mapboxToken');
 
 const ROOT = join(__dirname, '..');
 
@@ -35,6 +36,14 @@ function checkRequiredEnv() {
   if (missing.length > 0) {
     console.error(`\n❌  Missing required env var(s): ${missing.join(', ')}`);
     console.error('    Add them to .env.local and re-run npm run deploy.\n');
+    process.exit(1);
+  }
+  // Present is not the same as usable. A token carrying a line break is
+  // non-empty, inlines fine, and still takes the map down — see scripts/mapboxToken.js.
+  const problem = tokenProblem(process.env.NEXT_PUBLIC_MAPBOX_TOKEN);
+  if (problem) {
+    console.error(`\n❌  NEXT_PUBLIC_MAPBOX_TOKEN ${problem}`);
+    console.error('    Fix it in .env.local and re-run npm run deploy.\n');
     process.exit(1);
   }
 }

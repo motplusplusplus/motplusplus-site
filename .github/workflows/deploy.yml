@@ -40,9 +40,35 @@ jobs:
 
       - name: Build
         run: |
+          # "Set" is not the same as "usable". On 2026-08-08 this secret held a
+          # value with a line break in the middle; it passed the old -z test,
+          # inlined correctly, and Mapbox answered 401 — the live map read
+          # "map unavailable" until it was found. Validate the shape.
           if [ -z "$NEXT_PUBLIC_MAPBOX_TOKEN" ]; then
             echo "❌ NEXT_PUBLIC_MAPBOX_TOKEN secret is not set — map will be broken. Add it in GitHub → Settings → Secrets and variables → Actions."
             exit 1
+          fi
+          if printf '%s' "$NEXT_PUBLIC_MAPBOX_TOKEN" | LC_ALL=C grep -q '[[:space:]]'; then
+            echo "❌ NEXT_PUBLIC_MAPBOX_TOKEN contains whitespace (probably pasted line-wrapped)."
+            echo "   Re-enter it in GitHub → Settings → Secrets and variables → Actions as ONE unbroken line."
+            exit 1
+          fi
+          if ! printf '%s' "$NEXT_PUBLIC_MAPBOX_TOKEN" | LC_ALL=C grep -Eq '^pk\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$'; then
+            echo "❌ NEXT_PUBLIC_MAPBOX_TOKEN is not of the form pk.<base64url>.<base64url>."
+            exit 1
+          fi
+          # Ask Mapbox whether it actually works — catches revocation, billing and
+          # URL restrictions, none of which a shape check can see.
+          MB_STATUS=$(curl -s -o /dev/null -w '%{http_code}' \
+            "https://api.mapbox.com/styles/v1/mapbox/light-v11?access_token=$NEXT_PUBLIC_MAPBOX_TOKEN" || echo 000)
+          if [ "$MB_STATUS" = "401" ] || [ "$MB_STATUS" = "403" ]; then
+            echo "❌ Mapbox rejected the token (HTTP $MB_STATUS) — revoked, restricted, or billing suspended."
+            exit 1
+          fi
+          if [ "$MB_STATUS" = "000" ]; then
+            echo "⚠️  could not reach Mapbox to verify the token — continuing"
+          else
+            echo "✓ Mapbox token validated (HTTP $MB_STATUS)"
           fi
           npm run build
         env:

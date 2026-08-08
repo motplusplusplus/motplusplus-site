@@ -17,6 +17,7 @@
 
 const { readdirSync, statSync, readFileSync, existsSync } = require('fs');
 const { join } = require('path');
+const { isWellFormed, tokenProblem, extractTokens } = require('./mapboxToken');
 
 const ROOT = join(__dirname, '..');
 const OUT = join(ROOT, 'out');
@@ -78,13 +79,29 @@ function checkTokenInlined() {
     console.error(`\nCannot read ${CHUNKS_DIR} — run npm run build first.`);
     process.exit(1);
   }
-  const inlined = files.some((f) => readFileSync(join(CHUNKS_DIR, f), 'utf8').includes('pk.eyJ'));
-  if (!inlined) {
+  // Collect the actual token literals, not just the presence of the prefix. A
+  // token corrupted by a line break still contains "pk.eyJ", so a substring test
+  // passes the exact build that took the map down on 2026-08-08.
+  const found = [];
+  for (const f of files) {
+    for (const t of extractTokens(readFileSync(join(CHUNKS_DIR, f), 'utf8'))) found.push({ file: f, token: t });
+  }
+  if (found.length === 0) {
     console.error('\n❌ CRITICAL: Mapbox token not inlined - build was likely produced without --webpack.');
     console.error('   Run: npm run deploy (not next build directly)');
     process.exit(1);
   }
-  console.log('  ✓ Mapbox token inlined into built chunks (pk.eyJ present)');
+  const broken = found.filter(({ token }) => !isWellFormed(token));
+  if (broken.length > 0) {
+    const { file, token } = broken[0];
+    console.error(`\n❌ CRITICAL: the inlined Mapbox token is malformed — ${tokenProblem(token)}`);
+    console.error(`   chunk: ${file}`);
+    console.error(`   The map will render "map unavailable": Mapbox answers 401 and mapbox-gl`);
+    console.error(`   errors before load. Fix the source value, then rebuild.`);
+    console.error(`   If this build came from CI, the GitHub Actions secret holds the bad value.`);
+    process.exit(1);
+  }
+  console.log(`  ✓ Mapbox token inlined into built chunks and well formed (${found.length} occurrence(s))`);
 }
 
 async function main() {
