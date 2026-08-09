@@ -20,6 +20,32 @@ const STATIC_MAP_URL = getStaticMapUrl(MAPBOX_TOKEN);
 // concept on its own — see the empty-state overlay below.
 const RAILS_MIN = 12;
 
+/** The empty-state intro is dismissible for the current browser session only.
+ *  sessionStorage rather than localStorage is deliberate: closing it should stop
+ *  it reappearing on every navigation within a visit, without hiding the concept
+ *  from someone who comes back another day. */
+const INTRO_DISMISSED_KEY = 'motplus.museum.introDismissed';
+
+/** Storage access is wrapped because it throws outright in private/sandboxed
+ *  contexts; there the control still works, it just does not persist. */
+function readIntroDismissed(): boolean {
+  try {
+    return typeof window !== 'undefined' &&
+      window.sessionStorage.getItem(INTRO_DISMISSED_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function writeIntroDismissed(dismissed: boolean): void {
+  try {
+    if (dismissed) window.sessionStorage.setItem(INTRO_DISMISSED_KEY, '1');
+    else window.sessionStorage.removeItem(INTRO_DISMISSED_KEY);
+  } catch {
+    // storage unavailable — dismissal holds for this page view only
+  }
+}
+
 /** Query the user's motion preference at interaction time (not module load) so
  *  OS-level changes are respected without a reload. */
 function prefersReducedMotion(): boolean {
@@ -65,6 +91,10 @@ export default function MuseumMap() {
   const [loading, setLoading] = useState(true);
   const [mapError, setMapError] = useState(false);
   const [mapVisualReady, setMapVisualReady] = useState(false);
+  // Read at first render rather than in an effect: this component is client-only
+  // (ssr: false in MuseumMapWrapper), so there is no server HTML to mismatch and
+  // an already-dismissed intro never flashes in before being hidden.
+  const [introDismissed, setIntroDismissed] = useState(readIntroDismissed);
   const [artistFilter, setArtistFilter] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<MuseumLocation | null>(null);
   const [lightboxList, setLightboxList] = useState<MuseumLocation[]>([]);
@@ -93,6 +123,11 @@ export default function MuseumMap() {
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
+  }, []);
+
+  const dismissIntro = useCallback((dismissed: boolean) => {
+    setIntroDismissed(dismissed);
+    writeIntroDismissed(dismissed);
   }, []);
 
   // Open lightbox with a list for prev/next navigation
@@ -540,7 +575,7 @@ export default function MuseumMap() {
         {/* empty state — the map carries the concept until the first work is placed.
             confident and invitational, never an apology: no placeholder pins, no
             "coming soon". the same page upgrades continuously as locations publish. */}
-        {!loading && !mapError && locations.length === 0 && (
+        {!loading && !mapError && locations.length === 0 && !introDismissed && (
           <div style={{
             position: 'absolute', bottom: '24px', left: '16px', right: '16px',
             maxWidth: '360px', zIndex: 6,
@@ -548,9 +583,23 @@ export default function MuseumMap() {
             boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
             padding: '20px 22px',
           }}>
-            <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>
-              the museum without walls
-            </p>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' }}>
+              <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                the museum without walls
+              </p>
+              <button
+                type="button"
+                onClick={() => dismissIntro(true)}
+                aria-label="close this introduction"
+                style={{
+                  background: 'none', border: 'none', padding: '0 0 0 8px', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: '11px', color: '#767676',
+                  letterSpacing: '0.06em', lineHeight: 1, flexShrink: 0,
+                }}
+              >
+                close
+              </button>
+            </div>
             <p style={{ fontSize: '13px', color: '#444444', lineHeight: 1.7, marginBottom: '14px' }}>
               single works, hosted in private homes, businesses, and studios, anywhere in the world.
               each appears on this map as it is placed, with what you need to know to see it.
@@ -567,6 +616,25 @@ export default function MuseumMap() {
               host a work
             </Link>
           </div>
+        )}
+
+        {/* closing the intro is never a one-way door: the same corner keeps one
+            lowercase control that brings it back */}
+        {!loading && !mapError && locations.length === 0 && introDismissed && (
+          <button
+            type="button"
+            onClick={() => dismissIntro(false)}
+            style={{
+              position: 'absolute', bottom: '24px', left: '16px', zIndex: 6,
+              backgroundColor: 'rgba(255,255,255,0.96)',
+              boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
+              border: 'none', padding: '10px 16px', cursor: 'pointer',
+              fontFamily: 'inherit', fontSize: '11px', color: '#111111',
+              letterSpacing: '0.06em', lineHeight: 1,
+            }}
+          >
+            about this map
+          </button>
         )}
 
         {/* legend */}
