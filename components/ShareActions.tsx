@@ -19,6 +19,8 @@ export default function ShareActions({ url, title, text }: { url: string; title:
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    // feature-detect after mount so the static HTML and hydration agree
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCanShare(typeof navigator !== "undefined" && typeof navigator.share === "function");
   }, []);
 

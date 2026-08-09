@@ -21,6 +21,9 @@ export default function Reveal({ children, delay = 0, style }: RevealProps) {
     const node = ref.current;
     if (!node) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // one-time client-only media query read; must run after hydration so the
+      // server HTML (hidden state) matches the first client render
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setInstant(true);
       setVisible(true);
       return;

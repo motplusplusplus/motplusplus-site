@@ -58,10 +58,15 @@ export default async function TrashPage() {
   // Shuffle and pick each card's image at build time, not after hydration:
   // the static HTML then paints the full grid immediately (no empty first
   // paint, no post-hydration scramble). The order changes with every deploy,
-  // which content publishes trigger every few minutes anyway.
+  // which content publishes trigger every few minutes anyway. Randomness in a
+  // server component is impure by the lint rule's standard, but this page is
+  // statically exported exactly once per build, and the rolled values ship in
+  // the flight payload, so server HTML and hydration always agree.
+  // eslint-disable-next-line react-hooks/purity
   const items = shuffleArray(canonical).map(item => ({
     ...item,
     cardImageIndex:
+      // eslint-disable-next-line react-hooks/purity
       item.images.length > 1 ? Math.floor(Math.random() * item.images.length) : 0,
   }));
 
