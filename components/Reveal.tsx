@@ -15,10 +15,16 @@ type RevealProps = {
 export default function Reveal({ children, delay = 0, style }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [instant, setInstant] = useState(false);
 
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInstant(true);
+      setVisible(true);
+      return;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -38,7 +44,9 @@ export default function Reveal({ children, delay = 0, style }: RevealProps) {
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(28px)",
-        transition: `opacity 0.9s ease ${delay}s, transform 0.9s ease ${delay}s`,
+        transition: instant
+          ? "none"
+          : `opacity 0.9s ease ${delay}s, transform 0.9s ease ${delay}s`,
         ...style,
       }}
     >
