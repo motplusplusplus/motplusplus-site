@@ -6,6 +6,8 @@ import Link from 'next/link';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { sanityClient } from '@/lib/sanity';
+import { DEMO_LOCATIONS } from '@/lib/demoLocations';
+import { MUSEUM_TO_TRASH } from '@/lib/demoTrashItems';
 import LocationDetails from '@/components/museum/LocationDetails';
 import type { MuseumLocation, AccessType } from '@/lib/museumTypes';
 import { HCMC_CENTER, MAP_DEFAULT_ZOOM, getStaticMapUrl } from '@/lib/mapConstants';
@@ -19,8 +21,13 @@ const STATIC_MAP_URL = getStaticMapUrl(MAPBOX_TOKEN);
 // rail (redundant with a small grid) stays hidden. At 0 the map carries the
 // concept on its own — see the empty-state overlay below.
 const RAILS_MIN = 12;
+// The map switches from demo to real data only at this many published, coordinate-valid
+// locations — publishing one draft must not silently un-demo the flagship page. Raise/lower
+// deliberately (raised 3 -> 5 in 8d994e1: a 3-4 entry partial publish still looked emptier
+// than the demo it replaced).
+const REAL_DATA_MIN_LOCATIONS = 5;
 
-/** The empty-state intro is dismissible for the current browser session only.
+/** The intro overlay is dismissible for the current browser session only.
  *  sessionStorage rather than localStorage is deliberate: closing it should stop
  *  it reappearing on every navigation within a visit, without hiding the concept
  *  from someone who comes back another day. */
@@ -91,6 +98,7 @@ export default function MuseumMap() {
   const [loading, setLoading] = useState(true);
   const [mapError, setMapError] = useState(false);
   const [mapVisualReady, setMapVisualReady] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
   // Read at first render rather than in an effect: this component is client-only
   // (ssr: false in MuseumMapWrapper), so there is no server HTML to mismatch and
   // an already-dismissed intro never flashes in before being hidden.
@@ -165,19 +173,33 @@ export default function MuseumMap() {
   // Locations shown as pins on the map (respects mapFilter toggle)
   const mapLocations = filteredLocations.filter(l => mapFilter === 'current' ? !l.isPast : true);
   const artists = [...new Set(locations.map(l => l.artist))].sort(compareNames);
-  // "latest additions" only earns its place once the collection is large enough
-  // that a small always-open grid can't carry it; "featured works" appears
-  // whenever an editor has marked something featured, at any size.
-  const latestAdditions = locations.length >= RAILS_MIN
-    ? [...locations].sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? '')).slice(0, 12)
-    : [];
-  const featuredWorks = locations.filter(l => l.featured === true).slice(0, 25);
+  // Demo entries curate the two gallery rails via sentinel dateAdded values; real
+  // Sanity docs have no dateAdded field at all, so with real data "latest additions"
+  // only earns its place once the collection is large enough that a small always-open
+  // grid can't carry it, and "featured works" appears whenever an editor has marked
+  // something featured, at any size.
+  const latestAdditions = isDemo
+    ? locations.filter(l => l.dateAdded === 'September 21, 1820')
+    : locations.length >= RAILS_MIN
+      ? [...locations].sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? '')).slice(0, 12)
+      : [];
+  const featuredWorks = (isDemo
+    ? locations.filter(l => l.dateAdded === 'September 22, 1820')
+    : locations.filter(l => l.featured === true)
+  ).slice(0, 25);
   const hasPast = locations.some(l => l.isPast);
 
-  // Fetch the collection from Sanity. The page is designed as one continuous
-  // system across 0, few, and many locations — an empty result renders the
-  // empty-state overlay on the map, never placeholder data.
+  // Fetch the collection from Sanity, falling back to the demo below the
+  // threshold. Either set then flows through the same one continuous system
+  // across 0, few, and many locations — the demo's 118 entries simply land in
+  // the "many" presentation, so demo mode is not a separate layout.
   useEffect(() => {
+    const apply = (next: MuseumLocation[], demo: boolean) => {
+      setLocations(next);
+      setIsDemo(demo);
+      // few-works state: the collection grid starts open instead of collapsed
+      setViewAllOpen(next.length > 0 && next.length < RAILS_MIN);
+    };
     sanityClient.fetch(`
       *[_type == "museumLocation" && active == true] {
         _id, title, vnTitle, artist,
@@ -194,13 +216,19 @@ export default function MuseumMap() {
           && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])][0]._id,
       }
     `).then((data: MuseumLocation[]) => {
+      // Only use Sanity data if we have enough locations with valid coordinates
       const validData = data?.filter(d => d.coordinates?.lat && d.coordinates?.lng) ?? [];
-      setLocations(validData);
-      // few-works state: the collection grid starts open instead of collapsed
-      setViewAllOpen(validData.length > 0 && validData.length < RAILS_MIN);
+      if (validData.length >= REAL_DATA_MIN_LOCATIONS) {
+        apply(validData, false);
+      } else {
+        if (validData.length > 0) {
+          console.info(`+1 museum: ${validData.length} real location(s) published — demo remains until ${REAL_DATA_MIN_LOCATIONS} (REAL_DATA_MIN_LOCATIONS in MuseumMap.tsx)`);
+        }
+        apply(DEMO_LOCATIONS, true);
+      }
       setLoading(false);
     }).catch(() => {
-      setLocations([]);
+      apply(DEMO_LOCATIONS, true);
       setLoading(false);
     });
   }, []);
@@ -572,10 +600,12 @@ export default function MuseumMap() {
           </div>
         )}
 
-        {/* empty state — the map carries the concept until the first work is placed.
-            confident and invitational, never an apology: no placeholder pins, no
-            "coming soon". the same page upgrades continuously as locations publish. */}
-        {!loading && !mapError && locations.length === 0 && !introDismissed && (
+        {/* intro overlay — one box, not two. it carries the concept, and in demo
+            mode it also carries the placeholder disclosure that used to sit in a
+            separate black banner above the map. dismissing it quiets the page; it
+            never removes the per-work "demo content" disclaimers below, which are
+            shown at the point someone is looking at a specific work. */}
+        {!loading && !mapError && (isDemo || locations.length === 0) && !introDismissed && (
           <div style={{
             position: 'absolute', bottom: '24px', left: '16px', right: '16px',
             maxWidth: '360px', zIndex: 6,
@@ -605,6 +635,12 @@ export default function MuseumMap() {
               each appears on this map as it is placed, with what you need to know to see it.
               the map is the floor plan. the city is the building.
             </p>
+            {isDemo && (
+              <p style={{ fontSize: '12px', color: '#111111', lineHeight: 1.7, marginBottom: '14px' }}>
+                the +1 museum map is coming soon. the pins shown are placeholders. real
+                locations will appear here as works are placed in host spaces across the city.
+              </p>
+            )}
             <Link
               href="/museum/inquire"
               style={{
@@ -620,7 +656,7 @@ export default function MuseumMap() {
 
         {/* closing the intro is never a one-way door: the same corner keeps one
             lowercase control that brings it back */}
-        {!loading && !mapError && locations.length === 0 && introDismissed && (
+        {!loading && !mapError && (isDemo || locations.length === 0) && introDismissed && (
           <button
             type="button"
             onClick={() => dismissIntro(false)}
@@ -885,17 +921,29 @@ export default function MuseumMap() {
 
               <LocationDetails location={selected} />
 
-              {selected.trashItemId && (
-                <a
-                  href={`/trash?item=${selected.trashItemId}`}
-                  style={{
-                    display: 'inline-block', marginTop: '16px',
-                    fontSize: '12px', color: '#fff', backgroundColor: '#111',
-                    padding: '8px 16px', textDecoration: 'none', letterSpacing: '0.03em',
-                  }}
-                >
-                  inquire through +1 trash
-                </a>
+              {(() => {
+                const trashId = selected.trashItemId || MUSEUM_TO_TRASH[selected._id];
+                if (!trashId) return null;
+                return (
+                  <a
+                    href={`/trash?item=${trashId}`}
+                    style={{
+                      display: 'inline-block', marginTop: '16px',
+                      fontSize: '12px', color: '#fff', backgroundColor: '#111',
+                      padding: '8px 16px', textDecoration: 'none', letterSpacing: '0.03em',
+                    }}
+                  >
+                    inquire through +1 trash
+                  </a>
+                );
+              })()}
+
+              {/* not dismissible, and deliberately not folded into the intro overlay:
+                  the disclosure belongs at the work someone is actually looking at */}
+              {selected._demo && (
+                <p style={{ fontSize: '10px', color: '#cccccc', marginTop: '20px', letterSpacing: '0.06em' }}>
+                  demo content, not a real work or artist
+                </p>
               )}
             </div>
           </div>
@@ -1078,6 +1126,11 @@ export default function MuseumMap() {
             <p style={{ fontSize: '11px', letterSpacing: '0.1em', color: '#999999', marginBottom: '24px', textTransform: 'uppercase' }}>
               latest additions
             </p>
+            {isDemo && (
+              <p style={{ fontSize: '11px', color: '#cccccc', marginBottom: '16px', letterSpacing: '0.04em' }}>
+                September 21, 1820
+              </p>
+            )}
           </div>
           <GalleryRow locations={latestAdditions} onOpen={loc => openLightbox(loc, latestAdditions)} onViewOnMap={flyToLocation} />
         </div>
@@ -1222,17 +1275,27 @@ export default function MuseumMap() {
                 view on map
               </button>
 
-              {lightbox.trashItemId && (
-                <a
-                  href={`/trash?item=${lightbox.trashItemId}`}
-                  style={{
-                    display: 'block', marginTop: '10px', textAlign: 'center',
-                    fontSize: '12px', color: '#111', border: '1px solid #ddd',
-                    padding: '10px 16px', textDecoration: 'none', letterSpacing: '0.03em',
-                  }}
-                >
-                  inquire through +1 trash
-                </a>
+              {(() => {
+                const trashId = lightbox.trashItemId || MUSEUM_TO_TRASH[lightbox._id];
+                if (!trashId) return null;
+                return (
+                  <a
+                    href={`/trash?item=${trashId}`}
+                    style={{
+                      display: 'block', marginTop: '10px', textAlign: 'center',
+                      fontSize: '12px', color: '#111', border: '1px solid #ddd',
+                      padding: '10px 16px', textDecoration: 'none', letterSpacing: '0.03em',
+                    }}
+                  >
+                    inquire through +1 trash
+                  </a>
+                );
+              })()}
+
+              {lightbox._demo && (
+                <p style={{ fontSize: '10px', color: '#dddddd', marginTop: '16px', letterSpacing: '0.06em', textAlign: 'center' }}>
+                  demo content, not a real work or artist
+                </p>
               )}
             </div>
           </div>
@@ -1244,7 +1307,7 @@ export default function MuseumMap() {
         const imgs = [selected.mainImage, ...(selected.images || [])].filter(Boolean) as string[];
         const navImg = (dir: 1 | -1) =>
           setExpandedImgIndex(i => (i + dir + imgs.length) % imgs.length);
-        const trashId = selected.trashItemId;
+        const trashId = selected.trashItemId || MUSEUM_TO_TRASH[selected._id];
         return (
           <div style={{
             position: 'fixed', inset: 0, zIndex: 10000,
@@ -1381,6 +1444,12 @@ export default function MuseumMap() {
                 >
                   inquire through +1 trash
                 </a>
+              )}
+
+              {selected._demo && (
+                <p style={{ fontSize: '10px', color: '#ccc', marginTop: '28px', letterSpacing: '0.06em' }}>
+                  demo content, not a real work or artist
+                </p>
               )}
 
             </div>
