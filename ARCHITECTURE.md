@@ -353,9 +353,14 @@ render — both curated sets are empty.
 
 1. **Populate `PLUS1_MUSEUM_SLUGS`** once Sanity `museumLocation` documents
    carry artist refs. Confirmed 2026-06-15: Sanity currently has **zero**
-   `museumLocation` documents (the live map renders `DEMO_LOCATIONS` with
-   `isDemo=true` by design until real docs are added) — this item has no
-   data to consume yet.
+   `museumLocation` documents — this item has no data to consume yet.
+   (2026-08-09: the museum page's demo layer — `DEMO_LOCATIONS`/`isDemo` —
+   was deleted. `/museum` is now one continuous system over the real
+   location count: a designed empty state at 0, an open collection grid
+   under 12, accordion + latest-additions rail at 12+. The concept text and
+   manifesto are server-rendered by `app/museum/page.tsx`, not the map
+   chunk, and museum→trash linking resolves real `trashItem` references in
+   the client GROQ instead of the deleted demo lookup table.)
 2. **Add a role enum to the Sanity `artist` schema** — role is still
    free-text. See ISSUE-005.
 3. **Retire the JSON flags** (`resident`, `curator`, `performancePlus`, etc.)
