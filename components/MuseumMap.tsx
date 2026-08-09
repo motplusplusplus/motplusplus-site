@@ -2,12 +2,11 @@
 // deploy-cache-bust: 2026-08-01
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import Link from 'next/link';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { sanityClient } from '@/lib/sanity';
-import { DEMO_LOCATIONS } from '@/lib/demoLocations';
-import { CONTACTS } from '@/lib/contacts';
-import { MUSEUM_TO_TRASH } from '@/lib/demoTrashItems';
+import LocationDetails from '@/components/museum/LocationDetails';
 import type { MuseumLocation, AccessType } from '@/lib/museumTypes';
 import { HCMC_CENTER, MAP_DEFAULT_ZOOM, getStaticMapUrl } from '@/lib/mapConstants';
 import { compareNames } from '@/lib/sortName';
@@ -15,10 +14,24 @@ import { compareNames } from '@/lib/sortName';
 // chunk-rehash nudge (Workers Assets large-file 404 workaround, 2026-06-15)
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? '';
 const STATIC_MAP_URL = getStaticMapUrl(MAPBOX_TOKEN);
-// The map switches from demo to real data only at this many published, coordinate-valid
-// locations — publishing one draft must not silently un-demo the flagship page. Raise/lower
-// deliberately.
-const REAL_DATA_MIN_LOCATIONS = 5;
+// Below this many locations the page is in its "few works" state: the
+// collection grid sits open instead of collapsed, and the "latest additions"
+// rail (redundant with a small grid) stays hidden. At 0 the map carries the
+// concept on its own — see the empty-state overlay below.
+const RAILS_MIN = 12;
+
+/** Query the user's motion preference at interaction time (not module load) so
+ *  OS-level changes are respected without a reload. */
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+/** Animation duration helper — collapses to 0 under prefers-reduced-motion so
+ *  map easing/flying happens instantly instead of animating. */
+function dur(ms: number): number {
+  return prefersReducedMotion() ? 0 : ms;
+}
 
 const ACCESS_LABELS: Record<AccessType, string> = {
   open: 'open access',
@@ -48,7 +61,6 @@ export default function MuseumMap() {
   const mapLoaded = useRef(false);
 
   const [locations, setLocations] = useState<MuseumLocation[]>([]);
-  const [isDemo, setIsDemo] = useState(false);
   const [selected, setSelected] = useState<MuseumLocation | null>(null);
   const [loading, setLoading] = useState(true);
   const [mapError, setMapError] = useState(false);
@@ -65,10 +77,11 @@ export default function MuseumMap() {
   const touchStartX = useRef<number | null>(null);
   // Image viewer for the detail panel (per-work image navigation)
   const [imgViewerOpen, setImgViewerOpen] = useState(false);
-  const [manifestoOpen, setManifestoOpen] = useState(false);
   const [imgViewerIndex, setImgViewerIndex] = useState(0);
   const imgTouchStartX = useRef<number | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  // manifestoOpen removed — the concept text and manifesto are server-rendered
+  // by app/museum/page.tsx now, so they paint before this chunk even loads.
   const [pseudoFullscreen, setPseudoFullscreen] = useState(false);
   const isMapFullscreen = isFullscreen || pseudoFullscreen;
   const [expandedOpen, setExpandedOpen] = useState(false);
@@ -117,19 +130,18 @@ export default function MuseumMap() {
   // Locations shown as pins on the map (respects mapFilter toggle)
   const mapLocations = filteredLocations.filter(l => mapFilter === 'current' ? !l.isPast : true);
   const artists = [...new Set(locations.map(l => l.artist))].sort(compareNames);
-  // Demo entries curate the two gallery rails via sentinel dateAdded values; real
-  // Sanity docs have no dateAdded field at all, so with real data "latest additions"
-  // derives from _createdAt and "featured works" from the optional `featured` boolean
-  // (rail simply stays hidden until an editor marks something featured).
-  const latestAdditions = isDemo
-    ? locations.filter(l => l.dateAdded === 'September 21, 1820')
-    : [...locations].sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? '')).slice(0, 12);
-  const featuredWorks = (isDemo
-    ? locations.filter(l => l.dateAdded === 'September 22, 1820')
-    : locations.filter(l => l.featured === true)
-  ).slice(0, 25);
+  // "latest additions" only earns its place once the collection is large enough
+  // that a small always-open grid can't carry it; "featured works" appears
+  // whenever an editor has marked something featured, at any size.
+  const latestAdditions = locations.length >= RAILS_MIN
+    ? [...locations].sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? '')).slice(0, 12)
+    : [];
+  const featuredWorks = locations.filter(l => l.featured === true).slice(0, 25);
+  const hasPast = locations.some(l => l.isPast);
 
-  // Fetch from Sanity, fall back to demo
+  // Fetch the collection from Sanity. The page is designed as one continuous
+  // system across 0, few, and many locations — an empty result renders the
+  // empty-state overlay on the map, never placeholder data.
   useEffect(() => {
     sanityClient.fetch(`
       *[_type == "museumLocation" && active == true] {
@@ -142,24 +154,18 @@ export default function MuseumMap() {
         "coordinates": location,
         "mainImage": mainImage.asset->url,
         "images": images[].asset->url,
+        "trashItemId": *[_type == "trashItem" && references(^._id) && active == true
+          && (sold == true || (defined(price) && price != ""))
+          && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])][0]._id,
       }
     `).then((data: MuseumLocation[]) => {
-      // Only use Sanity data if we have locations with valid coordinates
       const validData = data?.filter(d => d.coordinates?.lat && d.coordinates?.lng) ?? [];
-      if (validData.length >= REAL_DATA_MIN_LOCATIONS) {
-        setLocations(validData);
-        setIsDemo(false);
-      } else {
-        if (validData.length > 0) {
-          console.info(`+1 museum: ${validData.length} real location(s) published — demo remains until ${REAL_DATA_MIN_LOCATIONS} (REAL_DATA_MIN_LOCATIONS in MuseumMap.tsx)`);
-        }
-        setLocations(DEMO_LOCATIONS);
-        setIsDemo(true);
-      }
+      setLocations(validData);
+      // few-works state: the collection grid starts open instead of collapsed
+      setViewAllOpen(validData.length > 0 && validData.length < RAILS_MIN);
       setLoading(false);
     }).catch(() => {
-      setLocations(DEMO_LOCATIONS);
-      setIsDemo(true);
+      setLocations([]);
       setLoading(false);
     });
   }, []);
@@ -231,7 +237,7 @@ export default function MuseumMap() {
           background: ${color};
           border: 2px solid white;
           box-shadow: 0 1px 4px rgba(0,0,0,0.25);
-          transition: transform 0.15s, border-color 0.15s;
+          transition: ${prefersReducedMotion() ? 'none' : 'transform 0.15s, border-color 0.15s'};
         `;
         el.appendChild(dot);
         markerDotsRef.current.set(loc._id, dot);
@@ -245,7 +251,7 @@ export default function MuseumMap() {
 
         const selectLoc = () => {
           setSelected(loc);
-          map.easeTo({ center: [loc.coordinates.lng, loc.coordinates.lat], duration: 400 });
+          map.easeTo({ center: [loc.coordinates.lng, loc.coordinates.lat], duration: dur(400) });
         };
         el.addEventListener('click', selectLoc);
         // On mobile, touchend fires before Mapbox can intercept the gesture
@@ -260,7 +266,7 @@ export default function MuseumMap() {
         markersRef.current.push(marker);
       });
 
-      // Fit map to show all markers
+      // Fit map to show all markers; a single work gets a gentle center instead
       const withCoords = mapLocations.filter(l => l.coordinates?.lng && l.coordinates?.lat);
       if (withCoords.length > 1) {
         const lngs = withCoords.map(l => l.coordinates.lng);
@@ -269,6 +275,12 @@ export default function MuseumMap() {
           [[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]],
           { padding: 60, maxZoom: 14, duration: 0 }
         );
+      } else if (withCoords.length === 1) {
+        map.easeTo({
+          center: [withCoords[0].coordinates.lng, withCoords[0].coordinates.lat],
+          zoom: 13,
+          duration: 0,
+        });
       }
     };
 
@@ -312,12 +324,15 @@ export default function MuseumMap() {
     if (loc.isPast) setMapFilter('all');
     setSelected(loc);
     if (mapRef.current && loc.coordinates) {
-      mapSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      mapSectionRef.current?.scrollIntoView({
+        behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+        block: 'start',
+      });
       const map = mapRef.current;
       const ease = () => map.easeTo({
         center: [loc.coordinates.lng, loc.coordinates.lat],
         zoom: 15,
-        duration: 700,
+        duration: dur(700),
       });
       if (map.isStyleLoaded()) {
         ease();
@@ -405,7 +420,7 @@ export default function MuseumMap() {
         mapRef.current.easeTo({
           center: [loc.coordinates.lng, loc.coordinates.lat],
           zoom: 13.5,
-          duration: 500,
+          duration: dur(500),
         });
       }
     }
@@ -428,34 +443,21 @@ export default function MuseumMap() {
         .pin-selected {
           animation: pin-pulse 0.7s ease-out 3;
         }
-        @keyframes map-icon-pulse {
-          0%, 100% { opacity: 0.18; transform: scale(0.97); }
-          50%       { opacity: 0.38; transform: scale(1.03); }
+        .museum-thumb { overflow: hidden; }
+        .museum-thumb img { transition: transform 0.35s ease; display: block; }
+        @media (hover: hover) {
+          .museum-thumb-card:hover .museum-thumb img { transform: scale(1.04); }
         }
-        .map-loading-icon {
-          animation: map-icon-pulse 2s ease-in-out infinite;
-          filter: grayscale(1);
-          font-size: 52px;
-          line-height: 1;
-          display: block;
-          margin-top: 10px;
-          user-select: none;
+        .museum-thumb-card:active .museum-thumb img { transform: scale(1.02); }
+        @media (prefers-reduced-motion: reduce) {
+          .pin-selected { animation: none; }
+          .museum-thumb img { transition: none; }
+          .museum-thumb-card:hover .museum-thumb img,
+          .museum-thumb-card:active .museum-thumb img { transform: none; }
         }
       `}</style>
 
       {/* ─── MAP ─── */}
-
-      {/* demo banner — sits above the map in normal flow so it doesn't offset pin positioning */}
-      {isDemo && !loading && (
-        <div style={{
-          backgroundColor: '#111111', color: 'white',
-          fontSize: '11px', letterSpacing: '0.08em',
-          padding: '8px 16px',
-          display: 'flex', alignItems: 'center',
-        }}>
-          <span>the +1 museum map is coming soon. the pins shown are placeholders — real locations will appear here as works are placed in host spaces across the city.</span>
-        </div>
-      )}
 
       <div ref={mapSectionRef} style={{
         borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5',
@@ -535,8 +537,50 @@ export default function MuseumMap() {
           </div>
         )}
 
+        {/* empty state — the map carries the concept until the first work is placed.
+            confident and invitational, never an apology: no placeholder pins, no
+            "coming soon". the same page upgrades continuously as locations publish. */}
+        {!loading && !mapError && locations.length === 0 && (
+          <div style={{
+            position: 'absolute', bottom: '24px', left: '16px', right: '16px',
+            maxWidth: '360px', zIndex: 6,
+            backgroundColor: 'rgba(255,255,255,0.96)',
+            boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
+            padding: '20px 22px',
+          }}>
+            <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>
+              the museum without walls
+            </p>
+            <p style={{ fontSize: '13px', color: '#444444', lineHeight: 1.7, marginBottom: '14px' }}>
+              single works, hosted in private homes, businesses, and studios, anywhere in the world.
+              each appears on this map as it is placed, with what you need to know to see it.
+              the map is the floor plan. the city is the building.
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
+              <Link
+                href="/museum/inquire"
+                style={{
+                  fontSize: '12px', color: '#ffffff', backgroundColor: '#111111',
+                  padding: '9px 18px', textDecoration: 'none', letterSpacing: '0.03em',
+                }}
+              >
+                host a work
+              </Link>
+              <a
+                href="#manifesto"
+                style={{
+                  fontSize: '12px', color: '#666666', textDecoration: 'underline',
+                  textUnderlineOffset: '3px', letterSpacing: '0.03em', padding: '9px 0',
+                }}
+              >
+                read the manifesto
+              </a>
+            </div>
+          </div>
+        )}
+
         {/* legend */}
-        {!loading && (
+        {!loading && mapLocations.length > 0 && (
           <div style={{
             position: 'absolute', bottom: '24px', left: '16px',
             backgroundColor: 'rgba(255,255,255,0.95)',
@@ -573,8 +617,8 @@ export default function MuseumMap() {
           </div>
         )}
 
-        {/* current / all map toggle */}
-        {!loading && (
+        {/* current / all map toggle — only meaningful once past installations exist */}
+        {!loading && hasPast && (
           <div style={{
             position: 'absolute', bottom: '24px', right: '16px',
             backgroundColor: 'rgba(255,255,255,0.95)',
@@ -781,239 +825,36 @@ export default function MuseumMap() {
                 </p>
               )}
 
-              <div style={{ borderTop: '1px solid #eeeeee', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {selected.neighbourhood && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '2px' }}>neighbourhood</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300 }}>{selected.neighbourhood}</p>
-                  </div>
-                )}
-                {selected.hostName && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '2px' }}>hosted by</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300 }}>{selected.hostName}</p>
-                  </div>
-                )}
-                {selected.dateAdded && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '2px' }}>added to the collection</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300 }}>{selected.dateAdded}</p>
-                  </div>
-                )}
-                {selected.hours && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '2px' }}>hours</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300 }}>{selected.hours}</p>
-                  </div>
-                )}
-                {selected.accessDetails && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '2px' }}>how to visit</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300, lineHeight: 1.65 }}>{selected.accessDetails}</p>
-                  </div>
-                )}
-                {selected.contactMethod && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '2px' }}>contact</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300 }}>{selected.contactMethod}</p>
-                  </div>
-                )}
-              </div>
+              <LocationDetails location={selected} />
 
-              {(() => {
-                const trashId = selected.trashItemId || MUSEUM_TO_TRASH[selected._id];
-                if (!trashId) return null;
-                return (
-                  <a
-                    href={`/trash?item=${trashId}`}
-                    style={{
-                      display: 'inline-block', marginTop: '16px',
-                      fontSize: '12px', color: '#fff', backgroundColor: '#111',
-                      padding: '8px 16px', textDecoration: 'none', letterSpacing: '0.03em',
-                    }}
-                  >
-                    inquire through +1 trash
-                  </a>
-                );
-              })()}
-
-              {selected._demo && (
-                <p style={{ fontSize: '10px', color: '#cccccc', marginTop: '20px', letterSpacing: '0.06em' }}>
-                  demo content — not a real work or artist
-                </p>
+              {selected.trashItemId && (
+                <a
+                  href={`/trash?item=${selected.trashItemId}`}
+                  style={{
+                    display: 'inline-block', marginTop: '16px',
+                    fontSize: '12px', color: '#fff', backgroundColor: '#111',
+                    padding: '8px 16px', textDecoration: 'none', letterSpacing: '0.03em',
+                  }}
+                >
+                  inquire through +1 trash
+                </a>
               )}
             </div>
           </div>
         )}
       </div>
 
-      {/* ─── DESCRIPTION ─── */}
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '64px 24px 48px' }}>
-        <div style={{ maxWidth: '720px' }}>
-
-          {/* intro */}
-          <h2 style={{ fontSize: 'clamp(22px, 2.5vw, 36px)', fontWeight: 300, lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: '32px' }}>
-            +1 museum by any other name
-          </h2>
-          <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '20px' }}>
-            +1 museum by any other name is a decentralized collection sited across the city, in private homes, businesses, studios, and public spaces. the works are real, documented, and curated. what is unconventional is where they live and what it takes to see them. each work has its own location, its own host, and its own conditions of access: some are freely visible, others require a phone call, an introduction, a time of day. the platform maps all of this and tells you what you need to know to get there.
-          </p>
-          <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '20px' }}>
-            navigating the collection means navigating the world. someone might plan an afternoon across several works in different neighborhoods, or discover a piece while already somewhere else entirely. the map is the floor plan. the city is the building.
-          </p>
-          <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '48px' }}>
-            works enter the collection through artists, through collectors who open their spaces, and through the a.Farm residency program. the collection grows as the network does.
-          </p>
-
-          {/* manifesto */}
-          <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: '48px' }}>
-            <button
-              onClick={() => setManifestoOpen(o => !o)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                background: 'none',
-                border: 'none',
-                padding: 0,
-                cursor: 'pointer',
-                marginBottom: manifestoOpen ? '32px' : '0',
-              }}
-            >
-              <h3 style={{ fontSize: '18px', fontWeight: 400, letterSpacing: '0.04em', color: '#111111', margin: 0 }}>
-                a manifesto for virgin lands
-              </h3>
-              <span style={{ fontSize: '12px', color: '#aaaaaa', userSelect: 'none' }}>
-                {manifestoOpen ? '▲' : '▼'}
-              </span>
-            </button>
-
-            {manifestoOpen && (<>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              ho chi minh city has no contemporary art museum.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              this is not a failure. it is not a missing building. it is not a gap on a cultural map waiting to be filled by a foreign foundation or a state-approved monument.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              it is virgin land.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              untouched by the monumental classical model. unburdened by legacy. uncaptured by the corruption of power, the domination of ownership, the agenda of any flag or party.
-              what grows here will not be a copy of the white cube. it will be something else entirely.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
-              +1 museum by any other name is that something.
-            </p>
-
-            <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.1em', marginBottom: '16px' }}>i. the museum without walls</p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              there is no building. instead, +1 is a decentralized collection sited across the city: in private homes, businesses, studios, and public spaces. the works are real. they are documented. they are curated. what is unconventional is where they live and what it takes to see them.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              each work has its own location, its own host, its own conditions of access. some are freely visible. others require a phone call, an introduction, a time of day. one piece can only be seen at dawn. another only during rain.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              navigating the collection means navigating the world. someone plans an afternoon across five works in three neighborhoods. someone else discovers a piece while already somewhere else entirely. the map is the floor plan. the city is the building.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              there is no central lobby, no admissions desk, no gift shop, no board of directors to be captured by developers. +1 cannot be closed. it cannot be captured. it has no single point of control.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
-              works enter the collection through artists, through collectors who open their spaces, and through the a.Farm residency program. the collection grows as the network does.
-            </p>
-
-            <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.1em', marginBottom: '16px' }}>ii. the unheld exhibition</p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              +1 also makes room for the unheld exhibition: art that appears where attention lands. a drawing on a steamed window. a melody hummed into a busy market and never repeated. a sentence scratched into wet cement and gone by morning. these are not works in the institutional sense. they have no permanent form. they arise, they meet a witness, they dissolve.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              art as event, not object. as gift, not commodity. as breath, not property.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              no one can sell the result. if a political party claims it, it becomes propaganda. if a corporation buys the residue, it becomes a product. if an artist insists on credit or control, the work collapses into ego. art survives only in the absence of domination.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
-              you cannot build this concept. building implies control. the only way to give rise to art itself is to stop trying to give rise to it. to make, to vanish, to let the making stand alone.
-              +1 holds space for that vanishing.
-            </p>
-
-            <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.1em', marginBottom: '16px' }}>iii. the virgin lands</p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              there are cities across the world with no contemporary art museum. ho chi minh city. phnom penh. yangon. dhaka. addis ababa. karachi. lagos. they are already cultural producers, just without the monumental container.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              each is virgin land. each can invent its own logic from the ground up, with one shared principle: innovation over monument.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              monument: permanent, heavy, expensive, exclusive, static.<br />
-              innovation: temporary, light, low-cost, porous, adaptive.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              +1 expands through a simple protocol. survey the territory first: map what already exists, artist-run spaces, cafe galleries, studio open days, street interventions. the map is the gift back to the city. then introduce the lightest possible structure, not a building, not a foundation, but a protocol: any space can host art for any duration, any person can be a host, no permanent accession, no ownership. connect virgin lands to each other.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              a residency sends an artist from ho chi minh city to lagos, not to a studio but to live in someone's home and leave a work in a local market. a traveling library of manifestos: each city writes its own, passes it on.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              the museum exists as a time-based event, present for three months in any fixed form, then gone. then reappearing somewhere else. no permanent address. you have to follow it.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
-              every six months, one question: do we still need to exist? if yes, it reinvents. if no, it dissolves. no legacy. no endowment. no ego.
-            </p>
-
-            <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.1em', marginBottom: '16px' }}>iv. why start here. why start now.</p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              ho chi minh city has no contemporary art museum. that absence is not a problem to solve. it is a platform to build from.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              the monumental classical concept is exhausted. it produces debt, exclusion, spectacle, and corruption. the virgin lands can leapfrog it entirely, just as mobile phones leapfrogged landlines.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              you do not need a building to have a museum. you do not need a collection to have art. you do not need permission to show a work.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
-              one host, one work, one visitor at a time. then another. then another.<br />
-              the map grows. the city becomes the building. the world becomes the collection.<br />
-              no walls. no owners. no domination. only art, rising where it is needed most.
-            </p>
-
-            <p style={{ fontSize: '11px', color: '#999999', letterSpacing: '0.1em', marginBottom: '16px' }}>v. the name</p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              +1 museum by any other name.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              the "+1" is an invitation. you are always the next guest, the next host, the next work. the museum grows by one every time someone participates.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '16px' }}>
-              "by any other name" means it refuses to be a brand. call it what you want. it has no trademark, no logo, no director to interview.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '40px' }}>
-              it is simply what happens when people in a city without a contemporary art museum decide to show art outside the monument.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: 1.85, color: '#444444', marginBottom: '32px' }}>
-              you are already part of it. no application. no fee. no permission.
-            </p>
-
-            <p style={{ fontSize: '14px', color: '#888888', lineHeight: 1.8 }}>
-              get in touch at{' '}
-              <a href={`mailto:${CONTACTS.museum}`} style={{ color: '#666666' }}>{CONTACTS.museum}</a>.
-            </p>
-            </>)}
-          </div>
-
-        </div>
-      </div>
-
       {/* ─── BROWSE DROPDOWNS ─── */}
-      {!loading && (
+      {!loading && locations.length > 0 && (
         <div style={{ borderTop: '1px solid #e5e5e5' }}>
 
-          {/* view all */}
+          {/* the collection — open by default in the few-works state, an
+              accordion once the collection is big enough to need one */}
           <div style={{ borderBottom: '1px solid #e5e5e5' }}>
             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
               <button
                 onClick={() => setViewAllOpen(!viewAllOpen)}
+                aria-expanded={viewAllOpen}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   width: '100%', padding: '12px 24px',
@@ -1021,14 +862,15 @@ export default function MuseumMap() {
                 }}
               >
                 <span style={{ fontSize: '11px', letterSpacing: '0.1em', color: '#999999', textTransform: 'uppercase' }}>
-                  view all
+                  the collection
                   <span style={{ color: '#cccccc', marginLeft: '10px', fontWeight: 300 }}>{locations.length}</span>
                 </span>
                 <span style={{ fontSize: '14px', color: '#bbbbbb', transform: viewAllOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>↓</span>
               </button>
               {viewAllOpen && (
                 <div style={{ padding: '0 24px 32px' }}>
-                  {/* current / past filter */}
+                  {/* current / past filter — only once a past installation exists */}
+                  {hasPast && (
                   <div style={{ display: 'flex', gap: '20px', marginBottom: '24px' }}>
                     {(['current', 'past'] as const).map(f => (
                       <button
@@ -1045,6 +887,7 @@ export default function MuseumMap() {
                       </button>
                     ))}
                   </div>
+                  )}
                   {/* grid */}
                   {(() => {
                     const gridItems = locations.filter(l =>
@@ -1062,27 +905,29 @@ export default function MuseumMap() {
                         gap: '28px 16px',
                       }}>
                         {gridItems.map(loc => (
-                          <div
+                          <button
                             key={loc._id}
                             onClick={() => openLightbox(loc, gridItems)}
-                            style={{ cursor: 'pointer' }}
+                            className="museum-thumb-card"
+                            style={{
+                              cursor: 'pointer', background: 'none', border: 'none',
+                              padding: 0, textAlign: 'left', fontFamily: 'inherit', display: 'block',
+                            }}
                           >
-                            <div style={{ aspectRatio: '4/3', overflow: 'hidden', backgroundColor: '#f0f0f0', marginBottom: '8px' }}>
+                            <div className="museum-thumb" style={{ aspectRatio: '4/3', backgroundColor: '#f0f0f0', marginBottom: '8px' }}>
                               {loc.mainImage && (
                                 <img
                                   src={loc.mainImage}
                                   alt={loc.title}
                                   loading="lazy"
-                                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }}
-                                  onMouseEnter={e => { (e.target as HTMLImageElement).style.transform = 'scale(1.04)'; }}
-                                  onMouseLeave={e => { (e.target as HTMLImageElement).style.transform = 'scale(1)'; }}
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 />
                               )}
                             </div>
                             <p style={{ fontSize: '12px', color: '#222222', fontWeight: 300, lineHeight: 1.3, marginBottom: '2px' }}>{loc.title}</p>
                             <p style={{ fontSize: '11px', color: '#999999', fontWeight: 300 }}>{loc.artist}{loc.year ? `, ${loc.year}` : ''}</p>
-                            {loc.neighbourhood && <p style={{ fontSize: '10px', color: '#bbbbbb', marginTop: '2px' }}>{loc.neighbourhood}</p>}
-                          </div>
+                            {loc.neighbourhood && <p style={{ fontSize: '10px', color: '#999999', marginTop: '2px' }}>{loc.neighbourhood}</p>}
+                          </button>
                         ))}
                       </div>
                     );
@@ -1175,11 +1020,6 @@ export default function MuseumMap() {
             <p style={{ fontSize: '11px', letterSpacing: '0.1em', color: '#999999', marginBottom: '24px', textTransform: 'uppercase' }}>
               latest additions
             </p>
-            {isDemo && (
-              <p style={{ fontSize: '11px', color: '#cccccc', marginBottom: '16px', letterSpacing: '0.04em' }}>
-                September 21, 1820
-              </p>
-            )}
           </div>
           <GalleryRow locations={latestAdditions} onOpen={loc => openLightbox(loc, latestAdditions)} onViewOnMap={flyToLocation} />
         </div>
@@ -1307,43 +1147,8 @@ export default function MuseumMap() {
                 </p>
               )}
 
-              <div style={{ borderTop: '1px solid #eeeeee', paddingTop: '20px', display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '28px' }}>
-                {lightbox.neighbourhood && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#cccccc', letterSpacing: '0.08em', marginBottom: '2px' }}>neighbourhood</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300 }}>{lightbox.neighbourhood}</p>
-                  </div>
-                )}
-                {lightbox.hostName && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#cccccc', letterSpacing: '0.08em', marginBottom: '2px' }}>hosted by</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300 }}>{lightbox.hostName}</p>
-                  </div>
-                )}
-                {lightbox.dateAdded && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#cccccc', letterSpacing: '0.08em', marginBottom: '2px' }}>added to the collection</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300 }}>{lightbox.dateAdded}</p>
-                  </div>
-                )}
-                {lightbox.hours && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#cccccc', letterSpacing: '0.08em', marginBottom: '2px' }}>hours</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300 }}>{lightbox.hours}</p>
-                  </div>
-                )}
-                {lightbox.accessDetails && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#cccccc', letterSpacing: '0.08em', marginBottom: '2px' }}>how to visit</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300, lineHeight: 1.65 }}>{lightbox.accessDetails}</p>
-                  </div>
-                )}
-                {lightbox.contactMethod && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#cccccc', letterSpacing: '0.08em', marginBottom: '2px' }}>contact</p>
-                    <p style={{ fontSize: '13px', color: '#444444', fontWeight: 300 }}>{lightbox.contactMethod}</p>
-                  </div>
-                )}
+              <div style={{ marginBottom: '28px' }}>
+                <LocationDetails location={lightbox} />
               </div>
 
               <button
@@ -1359,27 +1164,17 @@ export default function MuseumMap() {
                 view on map
               </button>
 
-              {(() => {
-                const trashId = lightbox.trashItemId || MUSEUM_TO_TRASH[lightbox._id];
-                if (!trashId) return null;
-                return (
-                  <a
-                    href={`/trash?item=${trashId}`}
-                    style={{
-                      display: 'block', marginTop: '10px', textAlign: 'center',
-                      fontSize: '12px', color: '#111', border: '1px solid #ddd',
-                      padding: '10px 16px', textDecoration: 'none', letterSpacing: '0.03em',
-                    }}
-                  >
-                    inquire through +1 trash
-                  </a>
-                );
-              })()}
-
-              {lightbox._demo && (
-                <p style={{ fontSize: '10px', color: '#dddddd', marginTop: '16px', letterSpacing: '0.06em', textAlign: 'center' }}>
-                  demo content — not a real work or artist
-                </p>
+              {lightbox.trashItemId && (
+                <a
+                  href={`/trash?item=${lightbox.trashItemId}`}
+                  style={{
+                    display: 'block', marginTop: '10px', textAlign: 'center',
+                    fontSize: '12px', color: '#111', border: '1px solid #ddd',
+                    padding: '10px 16px', textDecoration: 'none', letterSpacing: '0.03em',
+                  }}
+                >
+                  inquire through +1 trash
+                </a>
               )}
             </div>
           </div>
@@ -1391,7 +1186,7 @@ export default function MuseumMap() {
         const imgs = [selected.mainImage, ...(selected.images || [])].filter(Boolean) as string[];
         const navImg = (dir: 1 | -1) =>
           setExpandedImgIndex(i => (i + dir + imgs.length) % imgs.length);
-        const trashId = selected.trashItemId || MUSEUM_TO_TRASH[selected._id];
+        const trashId = selected.trashItemId;
         return (
           <div style={{
             position: 'fixed', inset: 0, zIndex: 10000,
@@ -1515,44 +1310,7 @@ export default function MuseumMap() {
                 </p>
               )}
 
-              <div style={{ borderTop: '1px solid #eeeeee', paddingTop: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                {selected.neighbourhood && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>neighbourhood</p>
-                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300 }}>{selected.neighbourhood}</p>
-                  </div>
-                )}
-                {selected.hostName && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>hosted by</p>
-                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300 }}>{selected.hostName}</p>
-                  </div>
-                )}
-                {selected.dateAdded && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>added to the collection</p>
-                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300 }}>{selected.dateAdded}</p>
-                  </div>
-                )}
-                {selected.hours && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>hours</p>
-                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300 }}>{selected.hours}</p>
-                  </div>
-                )}
-                {selected.accessDetails && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>how to visit</p>
-                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300, lineHeight: 1.7 }}>{selected.accessDetails}</p>
-                  </div>
-                )}
-                {selected.contactMethod && (
-                  <div>
-                    <p style={{ fontSize: '10px', color: '#bbbbbb', letterSpacing: '0.08em', marginBottom: '3px' }}>contact</p>
-                    <p style={{ fontSize: '14px', color: '#444', fontWeight: 300 }}>{selected.contactMethod}</p>
-                  </div>
-                )}
-              </div>
+              <LocationDetails location={selected} size="large" />
 
               {trashId && (
                 <a
@@ -1567,11 +1325,6 @@ export default function MuseumMap() {
                 </a>
               )}
 
-              {selected._demo && (
-                <p style={{ fontSize: '10px', color: '#ccc', marginTop: '28px', letterSpacing: '0.06em' }}>
-                  demo content — not a real work or artist
-                </p>
-              )}
             </div>
           </div>
         );
@@ -1679,20 +1432,19 @@ function GalleryRow({
           >
             <button
               onClick={() => onOpen(loc)}
+              className="museum-thumb-card"
               style={{
                 display: 'block', background: 'none', border: 'none', cursor: 'pointer',
-                padding: 0, textAlign: 'left', width: '100%',
+                padding: 0, textAlign: 'left', width: '100%', fontFamily: 'inherit',
               }}
             >
-              <div style={{ width: '220px', height: '160px', overflow: 'hidden', backgroundColor: '#f0f0f0' }}>
+              <div className="museum-thumb" style={{ width: '220px', height: '160px', backgroundColor: '#f0f0f0' }}>
                 {loc.mainImage ? (
                   <img
                     src={loc.mainImage}
                     alt={loc.title}
                     loading="lazy"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.35s ease' }}
-                    onMouseEnter={e => { (e.target as HTMLImageElement).style.transform = 'scale(1.04)'; }}
-                    onMouseLeave={e => { (e.target as HTMLImageElement).style.transform = 'scale(1)'; }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 ) : (
                   <div style={{ width: '100%', height: '100%', backgroundColor: '#e8e8e8' }} />
