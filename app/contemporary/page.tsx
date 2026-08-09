@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ogImage } from "@/lib/og";
 
 const R2 = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/contemporary";
 
@@ -98,6 +99,23 @@ const exhibitions = [
 ];
 
 export const metadata: Metadata = {
+  title: "+1 contemporary project | exhibition space, ho chi minh city",
+  description:
+    "+1 contemporary project is a fashionable exhibition space showing work by local and international artists, with an archive of past shows in ho chi minh city.",
+  openGraph: {
+    title: "+1 contemporary project | exhibition space, ho chi minh city",
+    description:
+      "+1 contemporary project is a fashionable exhibition space showing work by local and international artists, with an archive of past shows in ho chi minh city.",
+    url: "https://motplusplusplus.com/contemporary",
+    images: [ogImage(undefined, "MoT+++")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "+1 contemporary project | exhibition space, ho chi minh city",
+    description:
+      "+1 contemporary project is a fashionable exhibition space showing work by local and international artists, with an archive of past shows in ho chi minh city.",
+    images: [ogImage(undefined, "MoT+++").url],
+  },
   alternates: { canonical: "https://motplusplusplus.com/contemporary" },
 };
 
