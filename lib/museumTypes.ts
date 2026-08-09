@@ -8,7 +8,8 @@ export type MuseumLocation = {
   artistSlug?: string;
   medium?: string;
   year?: number;
-  createdAt?: string;   // Sanity _createdAt (ISO)
+  dateAdded?: string;   // demo data only — the real Sanity schema has no such field
+  createdAt?: string;   // Sanity _createdAt (ISO); absent on demo entries
   featured?: boolean;   // editor-curated "featured works" rail (optional schema field)
   description?: string;
   vnDescription?: string;
@@ -22,6 +23,7 @@ export type MuseumLocation = {
   mainImage?: string;
   images?: string[];
   isPast?: boolean;     // true for past site-specific installations (still shown in the collection, filtered by current/past)
+  _demo?: boolean;
   trashItemId?: string; // first active +1 trash item referencing this location, if the work is also available for acquisition
 };
 
