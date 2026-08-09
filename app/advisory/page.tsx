@@ -1,8 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CONTACTS } from "@/lib/contacts";
+import { ogImage } from "@/lib/og";
 
 export const metadata: Metadata = {
+  title: "+1 art advisory | art collection advisory, ho chi minh city",
+  description:
+    "+1 art advisory helps private collectors and foundations build, manage, and grow collections rooted in contemporary practice from vietnam and southeast asia.",
+  openGraph: {
+    title: "+1 art advisory | art collection advisory, ho chi minh city",
+    description:
+      "+1 art advisory helps private collectors and foundations build, manage, and grow collections rooted in contemporary practice from vietnam and southeast asia.",
+    url: "https://motplusplusplus.com/advisory",
+    images: [ogImage(undefined, "MoT+++")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "+1 art advisory | art collection advisory, ho chi minh city",
+    description:
+      "+1 art advisory helps private collectors and foundations build, manage, and grow collections rooted in contemporary practice from vietnam and southeast asia.",
+    images: [ogImage(undefined, "MoT+++").url],
+  },
   alternates: { canonical: "https://motplusplusplus.com/advisory" },
 };
 

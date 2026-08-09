@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CONTACTS } from "@/lib/contacts";
+import { ogImage } from "@/lib/og";
 
 const editions = [
   { number: 25, title: "MoTsound #25 — Nikola H. Mounoud & Writher",           slug: "mot-sound-25-with-nikola-h-mounoud-and-writher",                        image: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/motsound/25-poster.jpg" },
@@ -27,6 +28,23 @@ const editions = [
 ];
 
 export const metadata: Metadata = {
+  title: "MoTsound | experimental sound project, ho chi minh city",
+  description:
+    "an experimental sound project bringing local and international sound artists together for conceptual sonic performances, free of genre, in ho chi minh city.",
+  openGraph: {
+    title: "MoTsound | experimental sound project, ho chi minh city",
+    description:
+      "an experimental sound project bringing local and international sound artists together for conceptual sonic performances, free of genre, in ho chi minh city.",
+    url: "https://motplusplusplus.com/sound",
+    images: [ogImage(undefined, "MoT+++")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MoTsound | experimental sound project, ho chi minh city",
+    description:
+      "an experimental sound project bringing local and international sound artists together for conceptual sonic performances, free of genre, in ho chi minh city.",
+    images: [ogImage(undefined, "MoT+++").url],
+  },
   alternates: { canonical: "https://motplusplusplus.com/sound" },
 };
 

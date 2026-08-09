@@ -22,6 +22,8 @@ export type TrashItem = {
   neighbourhood?: string;      // neighbourhood of museum placement
   sold?: boolean;
   price?: string;              // internal — not rendered unless unlocked
+  orderIndex?: number;         // index in canonical Sanity order — "date added" sort key on /trash
+  cardImageIndex?: number;     // build-time image pick for the /trash grid card
 };
 
 /** Joined artist credit, e.g. "A & B" for a collaborative work, falling back

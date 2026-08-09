@@ -22,6 +22,27 @@ function matchesAvailability(item: TrashItem, filter: AvailabilityFilter): boole
   return filter === 'sold' ? !!item.sold : !item.sold;
 }
 
+/** CSS-ident-safe view-transition-name for a Sanity _id. */
+function vtName(id: string): string {
+  return `trash-${id.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+}
+
+/** Runs a state update inside a view transition when the browser supports it and
+ *  the user hasn't asked for reduced motion; otherwise applies it instantly. The
+ *  grid cells carry per-item view-transition-names, so filter/sort changes animate
+ *  items to their new positions instead of snapping the whole grid. */
+function withGridTransition(update: () => void) {
+  const reduced =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const doc = document as Document & { startViewTransition?: (cb: () => void) => void };
+  if (!reduced && typeof doc.startViewTransition === 'function') {
+    doc.startViewTransition(update);
+  } else {
+    update();
+  }
+}
+
 export default function TrashPageShell({ items }: Props) {
   // unlock state
   const [clicks, setClicks] = useState(0);
@@ -36,27 +57,18 @@ export default function TrashPageShell({ items }: Props) {
   const [prices, setPrices] = useState<Record<string, string>>({});
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // gallery state
-  const [shuffled, setShuffled] = useState<TrashItem[]>([]);
+  // gallery state — `randomOrder` starts as the build-time shuffle baked into the
+  // static HTML (page.tsx), so the first paint already shows the full grid.
+  // Tapping "random" again reshuffles client-side.
+  const [randomOrder, setRandomOrder] = useState<TrashItem[]>(items);
   const [sort, setSort] = useState<SortOption>('random');
   const [availability, setAvailability] = useState<AvailabilityFilter>('all');
   const [openId, setOpenId] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const lastFocusRef = useRef<HTMLElement | null>(null);
   const touchStartX = useRef<number | null>(null);
-
-  // for items with multiple images, pick a random image index per item (client-side
-  // only, after mount, to avoid an SSR/hydration mismatch). The lightbox reuses the
-  // same index so it matches whichever image the card happened to show.
-  const [cardImageIdx, setCardImageIdx] = useState<Record<string, number>>({});
-  useEffect(() => {
-    const idx: Record<string, number> = {};
-    for (const item of items) {
-      if (item.images && item.images.length > 1) {
-        idx[item._id] = Math.floor(Math.random() * item.images.length);
-      }
-    }
-    setCardImageIdx(idx);
-  }, [items]);
 
   // unlock handlers
   const handleTrashClick = () => {
@@ -106,30 +118,81 @@ export default function TrashPageShell({ items }: Props) {
     setError(false);
   };
 
-  // shuffle once on mount
-  useEffect(() => {
-    setShuffled(shuffleArray(items));
-  }, [items]);
-
   // sorted, then availability-filtered display list
   const sortedItems = useMemo(() => {
     if (sort === 'artist') return [...items].sort((a, b) => compareNames(a.artist, b.artist));
-    if (sort === 'date') return items;
-    return shuffled;
-  }, [sort, shuffled, items]);
+    if (sort === 'date') return [...items].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
+    return randomOrder;
+  }, [sort, randomOrder, items]);
 
   const displayItems = useMemo(
     () => sortedItems.filter(i => matchesAvailability(i, availability)),
     [sortedItems, availability]
   );
 
+  const counts = useMemo(() => ({
+    all: items.length,
+    available: items.filter(i => !i.sold).length,
+    sold: items.filter(i => !!i.sold).length,
+  }), [items]);
+
+  const setAvailabilityAnimated = (f: AvailabilityFilter) => {
+    if (f === availability) return;
+    withGridTransition(() => setAvailability(f));
+  };
+
+  const setSortAnimated = (s: SortOption) => {
+    if (s === sort) {
+      // tapping "random" again reshuffles in place
+      if (s === 'random') withGridTransition(() => setRandomOrder(shuffleArray(items)));
+      return;
+    }
+    withGridTransition(() => setSort(s));
+  };
+
+  // scroll-triggered reveal for below-the-fold cards. Above-the-fold cards are
+  // never hidden (no flash, no CLS); with reduced motion or no IO support the
+  // grid simply stays fully visible.
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    if (typeof IntersectionObserver === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let first = true;
+    const observer = new IntersectionObserver((entries) => {
+      if (first) {
+        // initial callback covers every observed card: hide only the offscreen ones
+        for (const e of entries) {
+          if (!e.isIntersecting) e.target.classList.add('trash-card-pending');
+        }
+        first = false;
+        // reveal anything already visible stays untouched
+        return;
+      }
+      let i = 0;
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          const el = e.target as HTMLElement;
+          el.style.transitionDelay = `${Math.min(i * 45, 180)}ms`;
+          el.classList.add('trash-card-in');
+          observer.unobserve(el);
+          i++;
+        }
+      }
+    }, { rootMargin: '0px 0px -40px 0px', threshold: 0.05 });
+
+    for (const child of Array.from(grid.children)) observer.observe(child);
+    return () => observer.disconnect();
+    // re-run when the rendered set changes so new cards get observed
+  }, [displayItems]);
+
   // auto-open from URL param ?item=
   useEffect(() => {
-    if (displayItems.length === 0) return;
     const params = new URLSearchParams(window.location.search);
     const itemId = params.get('item');
-    if (itemId && displayItems.some(i => i._id === itemId)) setOpenId(itemId);
-  }, [displayItems]);
+    if (itemId && items.some(i => i._id === itemId)) setOpenId(itemId);
+  }, [items]);
 
   const open = openId ? displayItems.find(i => i._id === openId) ?? null : null;
   const openIdx = openId ? displayItems.findIndex(i => i._id === openId) : -1;
@@ -143,8 +206,9 @@ export default function TrashPageShell({ items }: Props) {
     });
   }, [displayItems]);
 
-  // keyboard nav
+  // keyboard nav (only while the lightbox is open)
   useEffect(() => {
+    if (!openId) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpenId(null);
       else if (e.key === 'ArrowRight') nav(1);
@@ -152,7 +216,22 @@ export default function TrashPageShell({ items }: Props) {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [nav]);
+  }, [openId, nav]);
+
+  // lightbox: lock background scroll, move focus in, restore focus on close
+  const lightboxOpen = !!openId;
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    lastFocusRef.current = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = 'hidden';
+    const t = setTimeout(() => closeBtnRef.current?.focus(), 30);
+    return () => {
+      clearTimeout(t);
+      document.body.style.overflow = '';
+      lastFocusRef.current?.focus?.();
+    };
+    // depend on open/closed only — navigating between works keeps focus state
+  }, [lightboxOpen]);
 
   return (
     <>
@@ -211,89 +290,107 @@ export default function TrashPageShell({ items }: Props) {
         </div>
       )}
 
-      {/* inventory */}
+      {/* gallery */}
       <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: '40px', marginTop: '32px' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: '20px' }}>
-          <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.08em' }}>
-            inventory
-          </p>
-          {unlocked && (
-            <span style={{ fontSize: '11px', color: '#767676', fontWeight: 300, letterSpacing: '0.06em' }}>
-              · prices visible
-            </span>
-          )}
-        </div>
-        <p style={{ fontSize: '15px', color: '#555555', lineHeight: 1.85, maxWidth: '480px', marginBottom: '36px' }}>
-          works available for acquisition, consigned directly by artists. to inquire about what is currently available, get in touch.
-        </p>
 
         {/* availability filter + sort control */}
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {AVAILABILITY_FILTERS.map(f => (
-              <button key={f} onClick={() => setAvailability(f)} style={{
-                padding: '8px 18px', fontSize: '11px', letterSpacing: '0.06em',
-                border: '1px solid',
-                borderColor: availability === f ? '#111111' : '#dddddd',
-                backgroundColor: availability === f ? '#111111' : 'transparent',
-                color: availability === f ? '#ffffff' : '#888888',
-                cursor: 'pointer', fontFamily: 'inherit',
-              }}>
+              <button
+                key={f}
+                onClick={() => setAvailabilityAnimated(f)}
+                aria-pressed={availability === f}
+                className="trash-filter-btn"
+                style={{
+                  padding: '10px 18px', fontSize: '11px', letterSpacing: '0.06em',
+                  border: '1px solid',
+                  borderColor: availability === f ? '#111111' : '#dddddd',
+                  backgroundColor: availability === f ? '#111111' : 'transparent',
+                  color: availability === f ? '#ffffff' : '#767676',
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >
                 {f}
+                <span style={{
+                  marginLeft: '7px', fontSize: '10px',
+                  color: availability === f ? 'rgba(255,255,255,0.55)' : '#bbbbbb',
+                }}>
+                  {counts[f]}
+                </span>
               </button>
             ))}
           </div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.06em' }}>sort</span>
-            <select
-              value={sort}
-              onChange={e => setSort(e.target.value as SortOption)}
-              style={{
-                fontSize: '11px', color: '#767676', letterSpacing: '0.06em',
-                background: 'none', border: 'none', borderBottom: '1px solid #e8e8e8',
-                padding: '3px 0', cursor: 'pointer', outline: 'none',
-                appearance: 'none', WebkitAppearance: 'none',
-                paddingRight: '14px',
-                backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'5\' viewBox=\'0 0 8 5\'%3E%3Cpath d=\'M0 0l4 5 4-5z\' fill=\'%23cccccc\'/%3E%3C/svg%3E")',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'right 0 center',
-              }}
-            >
-              <option value="random">random</option>
-              <option value="date">date added</option>
-              <option value="artist">artist</option>
-            </select>
-          </label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            {unlocked && (
+              <span style={{ fontSize: '11px', color: '#767676', fontWeight: 300, letterSpacing: '0.06em' }}>
+                prices visible
+              </span>
+            )}
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.06em' }}>sort</span>
+              <select
+                value={sort}
+                onChange={e => setSortAnimated(e.target.value as SortOption)}
+                style={{
+                  fontSize: '11px', color: '#767676', letterSpacing: '0.06em',
+                  background: 'none', border: 'none', borderBottom: '1px solid #e8e8e8',
+                  padding: '3px 0', cursor: 'pointer', outline: 'none',
+                  appearance: 'none', WebkitAppearance: 'none',
+                  paddingRight: '14px',
+                  backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'5\' viewBox=\'0 0 8 5\'%3E%3Cpath d=\'M0 0l4 5 4-5z\' fill=\'%23cccccc\'/%3E%3C/svg%3E")',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0 center',
+                }}
+              >
+                <option value="random">random</option>
+                <option value="date">date added</option>
+                <option value="artist">artist</option>
+              </select>
+            </label>
+          </div>
         </div>
 
         {/* grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-          gap: '40px 24px',
-        }}>
+        <div
+          ref={gridRef}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+            gap: '40px 24px',
+          }}
+        >
           {displayItems.map((item) => (
-            <div key={item._id}>
-              <div
+            <div
+              key={item._id}
+              className="trash-card"
+              style={{ viewTransitionName: vtName(item._id) } as React.CSSProperties}
+            >
+              <button
                 onClick={() => setOpenId(item._id)}
-                style={{ aspectRatio: '4/3', overflow: 'hidden', backgroundColor: '#f5f5f5', cursor: 'pointer', marginBottom: '12px' }}
+                aria-label={`view ${item.title || 'untitled'} by ${item.artist}`}
+                className="trash-card-imgbtn"
+                style={{
+                  display: 'block', width: '100%', padding: 0, border: 'none',
+                  aspectRatio: '4/3', overflow: 'hidden', backgroundColor: '#f5f5f5',
+                  cursor: 'pointer', marginBottom: '12px',
+                }}
               >
                 {item.images && item.images.length > 0 ? (
                   <img
-                    src={item.images[cardImageIdx[item._id] ?? 0]}
+                    src={item.images[item.cardImageIndex ?? 0]}
                     alt={item.title}
+                    loading="lazy"
                     style={{
                       width: '100%', height: '100%',
                       // items with a multi-image set (e.g. wide/landscape dataset stills)
                       // show the full frame instead of cropping a random crop of it
                       objectFit: item.images.length > 1 ? 'contain' : 'cover',
-                      transition: 'transform 0.3s ease',
+                      display: 'block',
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.03)')}
-                    onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
                   />
                 ) : null}
-              </div>
+              </button>
 
               <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.06em', marginBottom: '4px' }}>
                 <ArtistCreditLinks artists={item.artists} artistSlug={item.artistSlug} fallback={item.artist} />
@@ -304,6 +401,7 @@ export default function TrashPageShell({ items }: Props) {
                   background: 'none', border: 'none', padding: 0, cursor: 'pointer',
                   textAlign: 'left', display: 'block', width: '100%',
                   fontSize: '13px', color: '#333333', lineHeight: 1.4, marginBottom: '4px',
+                  fontFamily: 'inherit',
                 }}
               >
                 {item.title}{item.year ? `, ${item.year}` : ''}
@@ -346,7 +444,7 @@ export default function TrashPageShell({ items }: Props) {
           ))}
         </div>
 
-        <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '40px' }}>
+        <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '40px', marginTop: '48px' }}>
           <a
             href={`mailto:${CONTACTS.sales}?subject=+1%20trash%20%E2%99%BB%20inquiry`}
             style={{ display: 'inline-block', fontSize: '13px', color: '#ffffff', backgroundColor: '#111111', padding: '12px 28px', textDecoration: 'none' }}
@@ -361,6 +459,10 @@ export default function TrashPageShell({ items }: Props) {
         <div
           ref={overlayRef}
           onClick={(e) => { if (e.target === overlayRef.current) setOpenId(null); }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${open.title || 'untitled'} by ${open.artist}`}
+          className="trash-lightbox-backdrop"
           style={{
             position: 'fixed', inset: 0, zIndex: 1200,
             backgroundColor: 'rgba(0,0,0,0.85)',
@@ -372,6 +474,7 @@ export default function TrashPageShell({ items }: Props) {
             <>
               <button
                 onClick={e => { e.stopPropagation(); nav(-1); }}
+                aria-label="previous work"
                 style={{
                   position: 'fixed', left: '12px', top: '50%', transform: 'translateY(-50%)',
                   background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer',
@@ -381,6 +484,7 @@ export default function TrashPageShell({ items }: Props) {
               >‹</button>
               <button
                 onClick={e => { e.stopPropagation(); nav(1); }}
+                aria-label="next work"
                 style={{
                   position: 'fixed', right: '12px', top: '50%', transform: 'translateY(-50%)',
                   background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer',
@@ -400,6 +504,7 @@ export default function TrashPageShell({ items }: Props) {
               if (Math.abs(dx) > 50) nav(dx < 0 ? 1 : -1);
               touchStartX.current = null;
             }}
+            className="trash-lightbox-panel"
             style={{
               backgroundColor: '#fff', maxWidth: '720px', width: '100%',
               maxHeight: '90vh', overflowY: 'auto',
@@ -413,15 +518,17 @@ export default function TrashPageShell({ items }: Props) {
                 </span>
               ) : <span />}
               <button
+                ref={closeBtnRef}
                 onClick={() => setOpenId(null)}
-                style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#767676', lineHeight: 1, padding: '4px' }}
+                aria-label="close"
+                style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#767676', lineHeight: 1, padding: '4px 10px' }}
               >×</button>
             </div>
 
             {open.images && open.images.length > 0 && (
               <div>
                 <img
-                  src={open.images[cardImageIdx[open._id] ?? 0]}
+                  src={open.images[open.cardImageIndex ?? 0]}
                   alt={open.title}
                   style={{ width: '100%', maxHeight: '380px', objectFit: 'contain', backgroundColor: '#f5f5f5', display: 'block' }}
                 />
@@ -455,7 +562,7 @@ export default function TrashPageShell({ items }: Props) {
                     href={`/trash/${open.slug}`}
                     style={{ fontSize: '12px', color: '#333', border: '1px solid #ccc', padding: '8px 18px', textDecoration: 'none', letterSpacing: '0.03em' }}
                   >
-                    share this work →
+                    more information/share →
                   </Link>
                 )}
                 {open.museumLocationId && (

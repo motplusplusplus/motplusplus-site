@@ -22,7 +22,16 @@ export type MuseumLocation = {
   coordinates: { lat: number; lng: number };
   mainImage?: string;
   images?: string[];
-  isPast?: boolean;     // true for past site-specific installations (still shown in view all, filtered by current/past)
+  isPast?: boolean;     // true for past site-specific installations (still shown in the collection, filtered by current/past)
   _demo?: boolean;
-  trashItemId?: string; // links to a +1 trash item, if this work is also available for acquisition
+  trashItemId?: string; // first active +1 trash item referencing this location, if the work is also available for acquisition
+};
+
+/** Placeholder shape for a future per-visitor visit state (logging visits,
+ *  rewards, etc. -- none of it built yet). Location components accept an
+ *  optional `visit` prop of this type so wiring real visit data in later is
+ *  additive, not a rewrite. */
+export type LocationVisit = {
+  visited?: boolean;
+  visitedAt?: string;
 };

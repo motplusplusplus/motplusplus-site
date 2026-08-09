@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CollectiveMembers from "./CollectiveMembers";
+import { ogImage } from "@/lib/og";
 
 const members = [
   {
@@ -122,6 +123,23 @@ const members = [
 ];
 
 export const metadata: Metadata = {
+  title: "MoT+++ collective | artist collective, ho chi minh city",
+  description:
+    "MoT+++ collective was founded in 2017 by cam xanh and wu chi-tsung to support artists and create real opportunities for them. it grows by one new member a year.",
+  openGraph: {
+    title: "MoT+++ collective | artist collective, ho chi minh city",
+    description:
+      "MoT+++ collective was founded in 2017 by cam xanh and wu chi-tsung to support artists and create real opportunities for them. it grows by one new member a year.",
+    url: "https://motplusplusplus.com/collective",
+    images: [ogImage(undefined, "MoT+++")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MoT+++ collective | artist collective, ho chi minh city",
+    description:
+      "MoT+++ collective was founded in 2017 by cam xanh and wu chi-tsung to support artists and create real opportunities for them. it grows by one new member a year.",
+    images: [ogImage(undefined, "MoT+++").url],
+  },
   alternates: { canonical: "https://motplusplusplus.com/collective" },
 };
 

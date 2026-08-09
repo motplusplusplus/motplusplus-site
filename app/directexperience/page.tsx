@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     description: "A one-on-one meditation residency in a private penthouse in Ho Chi Minh City. Unstructured, silent, and deeply personal.",
     url: "https://motplusplusplus.com/directexperience",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "+1 Direct Experience Meditation Residency — MoT+++",
+    description: "A one-on-one meditation residency in a private penthouse in Ho Chi Minh City. Unstructured, silent, and deeply personal.",
+  },
   alternates: { canonical: "https://motplusplusplus.com/directexperience" },
 };
 

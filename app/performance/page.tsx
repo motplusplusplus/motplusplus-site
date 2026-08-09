@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import artistsData from "@/artists-data.json";
 import { compareNames } from "@/lib/sortName";
+import { ogImage } from "@/lib/og";
 
 const R2 = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/performance";
 
@@ -46,6 +47,23 @@ const performanceArtists = (artistsData as ArtistEntry[])
   .sort((a, b) => compareNames(a.name, b.name));
 
 export const metadata: Metadata = {
+  title: "+1 performance | live performance program, ho chi minh city",
+  description:
+    "+1 performance encourages artists to explore live performance, collaborative practice, and experimentation with form in ho chi minh city.",
+  openGraph: {
+    title: "+1 performance | live performance program, ho chi minh city",
+    description:
+      "+1 performance encourages artists to explore live performance, collaborative practice, and experimentation with form in ho chi minh city.",
+    url: "https://motplusplusplus.com/performance",
+    images: [ogImage(undefined, "MoT+++")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "+1 performance | live performance program, ho chi minh city",
+    description:
+      "+1 performance encourages artists to explore live performance, collaborative practice, and experimentation with form in ho chi minh city.",
+    images: [ogImage(undefined, "MoT+++").url],
+  },
   alternates: { canonical: "https://motplusplusplus.com/performance" },
 };
 

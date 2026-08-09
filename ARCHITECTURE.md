@@ -355,7 +355,8 @@ render — both curated sets are empty.
    carry artist refs. Confirmed 2026-06-15: Sanity currently has **zero**
    `museumLocation` documents (the live map renders `DEMO_LOCATIONS` with
    `isDemo=true` by design until real docs are added) — this item has no
-   data to consume yet.
+   data to consume yet. See §12 for how the demo layer and the
+   empty/few/many presentation fit together.
 2. **Add a role enum to the Sanity `artist` schema** — role is still
    free-text. See ISSUE-005.
 3. **Retire the JSON flags** (`resident`, `curator`, `performancePlus`, etc.)
@@ -839,3 +840,71 @@ since the switch to `wrangler deploy` — it does not have the newer schema
 fields/Studio tools (e.g. `vnTitle`/`vnDescription`, the Deploy tool, the
 EN↔VI translation view). Treat it as a stale fallback only, not a second
 maintained Studio.
+
+---
+
+## 12. The +1 museum demo layer
+
+Sanity has **zero** published `museumLocation` documents. Until that changes,
+`/museum` — a flagship page — is carried by a demo layer, and **the demo is the
+point, not a placeholder to be tidied away.**
+
+### How it works
+
+`components/MuseumMap.tsx` fetches `museumLocation` client-side and switches to
+real data only at `REAL_DATA_MIN_LOCATIONS` (**5**) published, coordinate-valid
+locations. Below that, and on a failed fetch, it renders `DEMO_LOCATIONS` with
+`isDemo = true` and logs how many real locations exist. The threshold is
+deliberate (raised 3 → 5 in `8d994e1`): publishing one or two drafts must not
+silently replace a 118-pin museum with a near-empty one.
+
+The demo is fed in as `locations`, so the empty/few/many presentation applies to
+it unchanged — its 118 entries land in the "many" state (accordion collection +
+latest-additions rail). `isDemo` branches in exactly two places:
+
+1. **The gallery rails.** Demo entries curate the two rails via sentinel
+   `dateAdded` values: `September 21, 1820` → "latest additions" (24 entries),
+   `September 22, 1820` → "featured works" (94). Real docs have no `dateAdded`
+   field at all, so with real data the rails derive from `_createdAt` and the
+   optional `featured` boolean instead.
+2. **The intro overlay** on the map, which in demo mode also carries the
+   placeholder disclosure ("the pins shown are placeholders…"). This was a
+   separate black banner above the map until 2026-08-09; it is now one
+   dismissible overlay rather than two competing ones. Dismissal persists in
+   `sessionStorage` and is reversible via an "about this map" control in the
+   same corner.
+
+**The three per-work "demo content, not a real work or artist" disclaimers**
+(detail panel, lightbox, expanded view, all keyed on `MuseumLocation._demo`) are
+**not** dismissible and **not** part of the intro overlay, by design. Dismissing
+the intro quiets the page; it must never remove the disclosure at the point
+someone is looking at a specific work. Do not fold them into the overlay.
+
+`MUSEUM_TO_TRASH` (`lib/demoTrashItems.ts`) maps demo locations to demo trash
+works, used only as a fallback *behind* the real GROQ-resolved `trashItemId`.
+It is read only by the museum map — `/trash` imports only the `TrashItem` type
+and helpers from that file, so the demo layer never reaches the +1 trash page
+or its price gating.
+
+### The placeholder content is intentional — do not regenerate or sanitize it
+
+The placeholder artist names, work titles, access details, and sentinel dates in
+`lib/demoLocations.ts` and `DEMO_TRASH_ITEMS` are a **deliberate authorial
+choice**. They are not generator noise, not lorem ipsum awaiting replacement,
+and not an oversight.
+
+**Do not regenerate, sanitize, substitute, or "improve" any of it** — not the
+names, not the titles, not the access details, not the sentinel dates. If the
+demo data is ever restored, moved, or reformatted, it is copied **verbatim**.
+This mirrors the excluded-people rule in `CLAUDE.md`: a standing content
+decision, to be respected rather than fixed.
+
+**History:** commit `69ecc9a` (2026-08-09) deleted this layer entirely —
+`lib/demoLocations.ts`, `DEMO_TRASH_ITEMS`/`MUSEUM_TO_TRASH`, the `_demo` and
+`dateAdded` fields, the threshold, the banner, and all three disclaimers —
+leaving the flagship page as an empty map, and declared
+`tasks/04-museum-deliberate-go-live.md` superseded. That was wrong and was
+reverted. The presentation work from the same commit (server-rendered concept
+and manifesto, the `LocationDetails` component, reduced-motion handling, real
+GROQ museum→trash resolution) was correct and was kept; only the demo layer came
+back. `tasks/04` stands.
