@@ -5,6 +5,7 @@ import { getTrashItemBySlug, getAllTrashItemSlugs } from "@/lib/sanity";
 import { buildTrashInquiryEmail, type TrashItem } from "@/lib/demoTrashItems";
 import ArtistCreditLinks from "@/components/ArtistCreditLinks";
 import InquiryForm from "@/components/InquiryForm";
+import ShareActions from "@/components/ShareActions";
 import { CONTACTS } from "@/lib/contacts";
 import { ogImage } from "@/lib/og";
 
@@ -164,6 +165,11 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
               +1 museum by any other name
             </Link>
           )}
+          <ShareActions
+            url={`https://motplusplusplus.com/trash/${slug}/`}
+            title={`${item.title} by ${artistLabel(raw)}`}
+            text="via +1 trash, MoT+++"
+          />
         </div>
 
         <div style={{ marginTop: "48px", borderTop: "1px solid #f0f0f0", paddingTop: "32px" }}>
