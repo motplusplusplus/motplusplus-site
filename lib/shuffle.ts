@@ -1,7 +1,9 @@
-/** Fisher-Yates shuffle. Shared by anything that wants a randomized display
- *  order without baking a fixed order into the static export -- call this
- *  client-side (e.g. in a useEffect) so each visit gets its own order rather
- *  than every visitor getting the same "random" order until the next deploy. */
+/** Fisher-Yates shuffle. Two sanctioned call sites, with opposite tradeoffs:
+ *  client-side (per-visit order, but the shuffled content is absent from the
+ *  static HTML until hydration) or build-time in a server component (order is
+ *  fixed until the next deploy, but the grid paints with the first HTML --
+ *  /trash uses this, since content deploys re-roll the order every few
+ *  minutes anyway). */
 export function shuffleArray<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
