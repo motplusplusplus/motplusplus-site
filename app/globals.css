@@ -89,6 +89,52 @@ a {
   }
 }
 
+/* +1 trash gallery */
+.trash-card-imgbtn img {
+  transition: transform 0.35s ease;
+}
+@media (hover: hover) {
+  .trash-card:hover .trash-card-imgbtn img { transform: scale(1.03); }
+}
+.trash-card-imgbtn:active img { transform: scale(1.01); }
+
+.trash-filter-btn {
+  transition: background-color 0.15s ease, color 0.15s ease,
+    border-color 0.15s ease, transform 0.12s ease;
+}
+.trash-filter-btn:active { transform: scale(0.96); }
+
+/* scroll reveal — JS adds .trash-card-pending only to below-the-fold cards
+   (never above the fold, so no flash and no CLS), then .trash-card-in when
+   they scroll into view. Declared in this order so -in always wins. */
+.trash-card-pending { opacity: 0; transform: translateY(14px); }
+.trash-card-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* lightbox entrance — opacity/transform only, holds no layout */
+@keyframes trash-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes trash-rise-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+.trash-lightbox-backdrop { animation: trash-fade-in 0.22s ease both; }
+.trash-lightbox-panel { animation: trash-rise-in 0.26s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .trash-card-imgbtn img,
+  .trash-filter-btn { transition: none; }
+  .trash-card:hover .trash-card-imgbtn img,
+  .trash-card-imgbtn:active img,
+  .trash-filter-btn:active { transform: none; }
+  .trash-card-pending { opacity: 1; transform: none; }
+  .trash-card-in { transition: none; }
+  .trash-lightbox-backdrop,
+  .trash-lightbox-panel { animation: none; }
+}
+
 /* profile hero — mobile keeps the original full-bleed banner-with-overlay
    treatment (already correct there, untouched). Desktop replaces it entirely
    with a framed-portrait + plain-text layout (see the two
