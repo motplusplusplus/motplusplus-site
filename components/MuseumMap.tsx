@@ -556,26 +556,16 @@ export default function MuseumMap() {
               each appears on this map as it is placed, with what you need to know to see it.
               the map is the floor plan. the city is the building.
             </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
-              <Link
-                href="/museum/inquire"
-                style={{
-                  fontSize: '12px', color: '#ffffff', backgroundColor: '#111111',
-                  padding: '9px 18px', textDecoration: 'none', letterSpacing: '0.03em',
-                }}
-              >
-                host a work
-              </Link>
-              <a
-                href="#manifesto"
-                style={{
-                  fontSize: '12px', color: '#666666', textDecoration: 'underline',
-                  textUnderlineOffset: '3px', letterSpacing: '0.03em', padding: '9px 0',
-                }}
-              >
-                read the manifesto
-              </a>
-            </div>
+            <Link
+              href="/museum/inquire"
+              style={{
+                display: 'inline-block',
+                fontSize: '12px', color: '#ffffff', backgroundColor: '#111111',
+                padding: '9px 18px', textDecoration: 'none', letterSpacing: '0.03em',
+              }}
+            >
+              host a work
+            </Link>
           </div>
         )}
 
