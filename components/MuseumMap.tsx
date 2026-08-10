@@ -632,159 +632,171 @@ export default function MuseumMap() {
           </div>
         )}
 
-        {/* intro overlay — one box, not two. it carries the concept, and in demo
-            mode it also carries the placeholder disclosure that used to sit in a
-            separate black banner above the map. dismissing it quiets the page; it
-            never removes the per-work "demo content" disclaimers below, which are
-            shown at the point someone is looking at a specific work. */}
-        {!loading && !mapError && (isDemo || locations.length === 0) && !introDismissed && (
+        {/* bottom-left corner stack — the legend and the intro/"about this map"
+            control share this corner, each independently open or collapsed
+            (separate sessionStorage keys, §ISSUE history: commit 545d8f9 moved
+            the legend to top-right because four separately absolute-positioned
+            elements could land on the exact same spot once both were at their
+            smallest). One flex column instead: whichever pieces are visible
+            stack directly against each other, aligned and evenly spaced, in all
+            four open/collapsed combinations, at any width. The wrapper itself
+            ignores pointer events so the empty space around the compact buttons
+            doesn't block map dragging/clicks; each visible control re-enables
+            them on itself. */}
+        {!loading && (
           <div style={{
             position: 'absolute', bottom: '24px', left: '16px', right: '16px',
             maxWidth: '360px', zIndex: 6,
-            backgroundColor: 'rgba(255,255,255,0.96)',
-            boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
-            padding: '20px 22px',
+            display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px',
+            pointerEvents: 'none',
           }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' }}>
-              <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                the museum without walls
-              </p>
-              <button
-                type="button"
-                onClick={() => dismissIntro(true)}
-                aria-label="close this introduction"
-                style={{
-                  background: 'none', border: 'none', padding: '0 0 0 8px', cursor: 'pointer',
-                  fontFamily: 'inherit', fontSize: '11px', color: '#767676',
-                  letterSpacing: '0.06em', lineHeight: 1, flexShrink: 0,
-                }}
-              >
-                close
-              </button>
-            </div>
-            <p style={{ fontSize: '13px', color: '#444444', lineHeight: 1.7, marginBottom: '14px' }}>
-              single works, hosted in private homes, businesses, and studios, anywhere in the world.
-              each appears on this map as it is placed, with what you need to know to see it.
-              the map is the floor plan. the city is the building.
-            </p>
-            {isDemo && (
-              <p style={{ fontSize: '12px', color: '#111111', lineHeight: 1.7, marginBottom: '14px' }}>
-                the +1 museum map is coming soon. the pins shown are placeholders. real
-                locations will appear here as works are placed in host spaces across the city.
-              </p>
-            )}
-            <Link
-              href="/museum/inquire"
-              style={{
-                display: 'inline-block',
-                fontSize: '12px', color: '#ffffff', backgroundColor: '#111111',
-                padding: '9px 18px', textDecoration: 'none', letterSpacing: '0.03em',
-              }}
-            >
-              host a work
-            </Link>
-          </div>
-        )}
-
-        {/* closing the intro is never a one-way door: the same corner keeps one
-            lowercase control that brings it back */}
-        {!loading && !mapError && (isDemo || locations.length === 0) && introDismissed && (
-          <button
-            type="button"
-            onClick={() => dismissIntro(false)}
-            style={{
-              position: 'absolute', bottom: '24px', left: '16px', zIndex: 6,
-              backgroundColor: 'rgba(255,255,255,0.96)',
-              boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
-              border: 'none', padding: '10px 16px', cursor: 'pointer',
-              fontFamily: 'inherit', fontSize: '11px', color: '#111111',
-              letterSpacing: '0.06em', lineHeight: 1,
-            }}
-          >
-            about this map
-          </button>
-        )}
-
-        {/* legend — collapsible like the intro overlay, same visual language and
-            sessionStorage pattern, under its own key so the two collapse
-            independently. Default collapsed: this is reference material, not
-            something a first-time visitor needs open in front of the map. Placed
-            in its own corner (top-right) rather than sharing the intro's
-            bottom-left one — the two would otherwise land on the exact same
-            anchor point once both can be their smallest, collapsed size. */}
-        {!loading && mapLocations.length > 0 && legendOpen && (
-          <div style={{
-            position: 'absolute', top: '54px', right: '16px', zIndex: 6,
-            backgroundColor: 'rgba(255,255,255,0.95)',
-            padding: '10px 14px',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', marginBottom: '8px' }}>
-              <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                legend
-              </p>
-              <button
-                type="button"
-                onClick={() => toggleLegend(false)}
-                aria-label="close legend"
-                style={{
-                  background: 'none', border: 'none', padding: '0 0 0 8px', cursor: 'pointer',
-                  fontFamily: 'inherit', fontSize: '11px', color: '#767676',
-                  letterSpacing: '0.06em', lineHeight: 1, flexShrink: 0,
-                }}
-              >
-                close
-              </button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {(Object.entries(ACCESS_COLORS) as [AccessType, string][])
-                .filter(([type]) => mapLocations.some(l => l.accessType === type && !l.isPast))
-                .map(([type, color]) => (
-                  <div key={type} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{
-                      width: '9px', height: '9px', borderRadius: '50%',
-                      backgroundColor: color, border: '1.5px solid white',
-                      boxShadow: '0 0 0 1px rgba(0,0,0,0.1)', flexShrink: 0,
-                    }} />
-                    <span style={{ fontSize: '10px', color: '#666666', letterSpacing: '0.06em' }}>
-                      {ACCESS_LABELS[type]}
-                    </span>
-                  </div>
-                ))}
-              {mapFilter === 'all' && locations.some(l => l.isPast) && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{
-                    width: '9px', height: '9px', borderRadius: '50%',
-                    backgroundColor: PAST_COLOR, border: '1.5px solid white',
-                    boxShadow: '0 0 0 1px rgba(0,0,0,0.1)', flexShrink: 0,
-                  }} />
-                  <span style={{ fontSize: '10px', color: '#666666', letterSpacing: '0.06em' }}>
-                    past installation
-                  </span>
+            {/* legend */}
+            {mapLocations.length > 0 && legendOpen && (
+              <div style={{
+                pointerEvents: 'auto',
+                backgroundColor: 'rgba(255,255,255,0.95)',
+                padding: '10px 14px',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', marginBottom: '8px' }}>
+                  <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    legend
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => toggleLegend(false)}
+                    aria-label="close legend"
+                    style={{
+                      background: 'none', border: 'none', padding: '0 0 0 8px', cursor: 'pointer',
+                      fontFamily: 'inherit', fontSize: '11px', color: '#767676',
+                      letterSpacing: '0.06em', lineHeight: 1, flexShrink: 0,
+                    }}
+                  >
+                    close
+                  </button>
                 </div>
-              )}
-            </div>
-          </div>
-        )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {(Object.entries(ACCESS_COLORS) as [AccessType, string][])
+                    .filter(([type]) => mapLocations.some(l => l.accessType === type && !l.isPast))
+                    .map(([type, color]) => (
+                      <div key={type} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{
+                          width: '9px', height: '9px', borderRadius: '50%',
+                          backgroundColor: color, border: '1.5px solid white',
+                          boxShadow: '0 0 0 1px rgba(0,0,0,0.1)', flexShrink: 0,
+                        }} />
+                        <span style={{ fontSize: '10px', color: '#666666', letterSpacing: '0.06em' }}>
+                          {ACCESS_LABELS[type]}
+                        </span>
+                      </div>
+                    ))}
+                  {mapFilter === 'all' && locations.some(l => l.isPast) && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{
+                        width: '9px', height: '9px', borderRadius: '50%',
+                        backgroundColor: PAST_COLOR, border: '1.5px solid white',
+                        boxShadow: '0 0 0 1px rgba(0,0,0,0.1)', flexShrink: 0,
+                      }} />
+                      <span style={{ fontSize: '10px', color: '#666666', letterSpacing: '0.06em' }}>
+                        past installation
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
-        {/* collapsed legend control — the same corner keeps one lowercase
-            control that reopens it, never a one-way door, mirroring "about
-            this map" above */}
-        {!loading && mapLocations.length > 0 && !legendOpen && (
-          <button
-            type="button"
-            onClick={() => toggleLegend(true)}
-            style={{
-              position: 'absolute', top: '54px', right: '16px', zIndex: 6,
-              backgroundColor: 'rgba(255,255,255,0.96)',
-              boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
-              border: 'none', padding: '10px 16px', cursor: 'pointer',
-              fontFamily: 'inherit', fontSize: '11px', color: '#111111',
-              letterSpacing: '0.06em', lineHeight: 1,
-            }}
-          >
-            legend
-          </button>
+            {/* collapsed legend control — reopens it, never a one-way door */}
+            {mapLocations.length > 0 && !legendOpen && (
+              <button
+                type="button"
+                onClick={() => toggleLegend(true)}
+                style={{
+                  pointerEvents: 'auto',
+                  backgroundColor: 'rgba(255,255,255,0.96)',
+                  boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
+                  border: 'none', padding: '10px 16px', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: '11px', color: '#111111',
+                  letterSpacing: '0.06em', lineHeight: 1,
+                }}
+              >
+                legend
+              </button>
+            )}
+
+            {/* intro overlay — one box, not two. it carries the concept, and in
+                demo mode it also carries the placeholder disclosure that used to
+                sit in a separate black banner above the map. dismissing it
+                quiets the page; it never removes the per-work "demo content"
+                disclaimers below, which are shown at the point someone is
+                looking at a specific work. */}
+            {!mapError && (isDemo || locations.length === 0) && !introDismissed && (
+              <div style={{
+                pointerEvents: 'auto', alignSelf: 'stretch',
+                backgroundColor: 'rgba(255,255,255,0.96)',
+                boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
+                padding: '20px 22px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' }}>
+                  <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    the museum without walls
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => dismissIntro(true)}
+                    aria-label="close this introduction"
+                    style={{
+                      background: 'none', border: 'none', padding: '0 0 0 8px', cursor: 'pointer',
+                      fontFamily: 'inherit', fontSize: '11px', color: '#767676',
+                      letterSpacing: '0.06em', lineHeight: 1, flexShrink: 0,
+                    }}
+                  >
+                    close
+                  </button>
+                </div>
+                <p style={{ fontSize: '13px', color: '#444444', lineHeight: 1.7, marginBottom: '14px' }}>
+                  single works, hosted in private homes, businesses, and studios, anywhere in the world.
+                  each appears on this map as it is placed, with what you need to know to see it.
+                  the map is the floor plan. the city is the building.
+                </p>
+                {isDemo && (
+                  <p style={{ fontSize: '12px', color: '#111111', lineHeight: 1.7, marginBottom: '14px' }}>
+                    the +1 museum map is coming soon. the pins shown are placeholders. real
+                    locations will appear here as works are placed in host spaces across the city.
+                  </p>
+                )}
+                <Link
+                  href="/museum/inquire"
+                  style={{
+                    display: 'inline-block',
+                    fontSize: '12px', color: '#ffffff', backgroundColor: '#111111',
+                    padding: '9px 18px', textDecoration: 'none', letterSpacing: '0.03em',
+                  }}
+                >
+                  host a work
+                </Link>
+              </div>
+            )}
+
+            {/* closing the intro is never a one-way door: the same corner keeps
+                one lowercase control that brings it back */}
+            {!mapError && (isDemo || locations.length === 0) && introDismissed && (
+              <button
+                type="button"
+                onClick={() => dismissIntro(false)}
+                style={{
+                  pointerEvents: 'auto',
+                  backgroundColor: 'rgba(255,255,255,0.96)',
+                  boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
+                  border: 'none', padding: '10px 16px', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: '11px', color: '#111111',
+                  letterSpacing: '0.06em', lineHeight: 1,
+                }}
+              >
+                about this map
+              </button>
+            )}
+          </div>
         )}
 
         {/* current / all map toggle — only meaningful once past installations exist */}
