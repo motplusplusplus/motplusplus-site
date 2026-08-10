@@ -72,7 +72,28 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   const allEvents = [...sanityAllEvents, ...jsonOnly];
 
   const listing = getListingEvents(allEvents);
-  const relatedResidents = (event.artists ?? []).map(a => ({ slug: a.slug, title: a.name }));
+  // Artists and curators are split out of ONE credits[] array — there is no curatedBy
+  // field, deliberately: credits[] already carries role, and a second writable field for
+  // the same fact is the two-sources-of-truth problem Phase B removed.
+  //
+  // Everything that is NOT a curator goes in the artist list, rather than picking out
+  // role === 'artist'. The enum also holds performer, dj, member, photographer,
+  // participant and partner; an allowlist would silently drop all of them off the page
+  // the first time anyone used one. Today every non-curator credit happens to be
+  // 'artist', so the two rules agree — which is exactly when to choose the one that
+  // stays correct later.
+  //
+  // Events from events-data.json have no credits[] (~26 of them), so they fall back to
+  // the artists[] mirror and render as they always have.
+  const credited = event.credits ?? [];
+  const curators = credited
+    .filter(c => c.role === 'curator' && c.person)
+    .map(c => ({ slug: c.person!.slug, title: c.person!.name }));
+  const relatedResidents = credited.length
+    ? credited
+        .filter(c => c.role !== 'curator' && c.person)
+        .map(c => ({ slug: c.person!.slug, title: c.person!.name }))
+    : (event.artists ?? []).map(a => ({ slug: a.slug, title: a.name }));
   const { prev, next } = getAdjacentEvents(slug, listing);
   const past = isPast(event);
 
@@ -112,6 +133,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       location={event.location}
       past={past}
       relatedResidents={relatedResidents.map(r => ({ slug: r.slug, title: r.title }))}
+      curators={curators}
       heroImg={heroImg}
       contentImages={contentImages}
       wpLink={event.wpLink}

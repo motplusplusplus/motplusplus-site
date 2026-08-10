@@ -169,9 +169,23 @@ const EVENT_FIELDS = `
   "wpLink": coalesce(wpLink, ""),
   "isBioPage": coalesce(isBioPage, false),
   "artists": artists[]->{_id, name, "slug": slug.current},
+  "credits": credits[]{ role, "person": person->{_id, name, "slug": slug.current} },
 `;
 
 export type LinkedArtist = { _id: string; name: string; slug: string };
+
+/**
+ * A credit as the public site needs it: who, and what they did.
+ *
+ * WHY BOTH THIS AND artists[]. artists[] is the derived mirror
+ * (scripts/resync-artists-from-credits.ts in the Studio repo), and it mirrors EVERY
+ * credit regardless of role — so the curator/artist distinction is destroyed at
+ * derivation, not merely unread here. Reading credits[] is the only way to recover it.
+ *
+ * artists[] stays because ~26 events come from events-data.json and have no credits[]
+ * at all; they keep rendering off the mirror exactly as before.
+ */
+export type EventCredit = { role: string; person: LinkedArtist | null };
 
 // Shape returned by Sanity before JS transformation
 type RawEvent = {
@@ -181,6 +195,7 @@ type RawEvent = {
   uploadedImages: { url: string | null; isPoster: boolean }[] | null; legacyImageUrls: string[];
   videoUrl?: string; bandcampAlbumId?: string; wpLink: string; isBioPage: boolean;
   artists?: LinkedArtist[] | null;
+  credits?: EventCredit[] | null;
 };
 
 // Shape compatible with lib/events.ts Event type
@@ -191,6 +206,7 @@ export type SanityEvent = {
   images: string[]; thumbnail: string; videoUrl?: string;
   bandcampAlbumId?: string; wpLink: string; isBioPage: boolean;
   artists: LinkedArtist[];
+  credits: EventCredit[];
 };
 
 // Junk/logo filename filtering lives in lib/junk-images.ts (isJunkImage), shared
@@ -264,6 +280,7 @@ function toSanityEvent(e: RawEvent): SanityEvent {
     wpLink:          e.wpLink,
     isBioPage:       e.isBioPage,
     artists:         (e.artists ?? []).filter(Boolean) as LinkedArtist[],
+    credits:         (e.credits ?? []).filter(c => c && c.person) as EventCredit[],
   };
 }
 
@@ -298,6 +315,8 @@ function toEventFromJson(e: Record<string, unknown>): SanityEvent {
     wpLink:          (e.wpLink as string) ?? '',
     isBioPage:       (e.isBioPage as boolean) ?? false,
     artists:         [],
+    // events-data.json predates credits[] entirely; these render off artists[] as before.
+    credits:         [],
   };
 }
 

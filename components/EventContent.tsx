@@ -42,6 +42,9 @@ interface EventContentProps {
   location?: string;
   past: boolean;
   relatedResidents: RelatedResident[];
+  /** Credits with role "curator". Empty for every event without one — the section
+   *  is then not rendered at all, heading included. */
+  curators?: RelatedResident[];
   heroImg: string | null;
   contentImages: string[];
   wpLink?: string;
@@ -85,6 +88,7 @@ export default function EventContent({
   location,
   past,
   relatedResidents,
+  curators = [],
   heroImg,
   contentImages,
   wpLink,
@@ -318,6 +322,25 @@ export default function EventContent({
                   style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
                 >
                   {r.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {curators.length > 0 && (
+          <div>
+            <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
+              curated by
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              {curators.map(cur => (
+                <Link
+                  key={cur.slug}
+                  href={`/profiles/${cur.slug}`}
+                  style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
+                >
+                  {cur.title}
                 </Link>
               ))}
             </div>
