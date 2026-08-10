@@ -12,6 +12,8 @@ Usage:
 import requests, json, re, boto3, time, os, html, sys
 from datetime import datetime
 
+from _bodyguard import assert_untruncated
+
 # ─── Config ──────────────────────────────────────────────────────────────────
 
 OLD_SITE    = "motplus.xyz"
@@ -195,7 +197,8 @@ def extract_description(page_html):
     if m:
         text = strip_html(m.group(1))
         if len(text) > 80:
-            return text[:3000]
+            # NEVER truncate. This returned text[:3000] and cut bodies mid-word.
+            return assert_untruncated('description', text)
     return ""
 
 def extract_images(page_html, wayback_ts):

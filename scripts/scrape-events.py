@@ -8,6 +8,8 @@ import requests, json, re, boto3, time, os, html
 from xml.etree import ElementTree as ET
 from datetime import datetime
 
+from _bodyguard import assert_untruncated
+
 # ─── Config ──────────────────────────────────────────────────────────────────
 
 WP_BASE     = "https://motplusplusplus.com"
@@ -197,8 +199,10 @@ def main():
         body = strip_html(full_html)
         if len(body) < 100:
             body = post['description']
-        # Trim very long (keep first 3000 chars ≈ ~5 paragraphs)
-        body = body[:3000]
+        # NEVER truncate the body. A 3000-char cap here silently destroyed the
+        # tails of 41 event descriptions and 5 vnDescriptions, cut mid-word, with
+        # no record that anything was removed. See scripts/_bodyguard.py.
+        body = assert_untruncated('description', body, source=post['link'])
 
         # Category
         category = classify_category(title, full_html)
