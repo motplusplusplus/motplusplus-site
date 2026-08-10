@@ -53,6 +53,31 @@ function writeIntroDismissed(dismissed: boolean): void {
   }
 }
 
+/** The access-type legend follows the same session-scoped pattern as the intro
+ *  overlay, under its own key so the two collapse independently. Unlike the
+ *  intro (open by default, dismissible), the legend defaults to collapsed —
+ *  it's reference material, not something a first-time visitor needs open in
+ *  front of the map. */
+const LEGEND_OPEN_KEY = 'motplus.museum.legendOpen';
+
+function readLegendOpen(): boolean {
+  try {
+    return typeof window !== 'undefined' &&
+      window.sessionStorage.getItem(LEGEND_OPEN_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function writeLegendOpen(open: boolean): void {
+  try {
+    if (open) window.sessionStorage.setItem(LEGEND_OPEN_KEY, '1');
+    else window.sessionStorage.removeItem(LEGEND_OPEN_KEY);
+  } catch {
+    // storage unavailable — state holds for this page view only
+  }
+}
+
 /** Query the user's motion preference at interaction time (not module load) so
  *  OS-level changes are respected without a reload. */
 function prefersReducedMotion(): boolean {
@@ -103,6 +128,8 @@ export default function MuseumMap() {
   // (ssr: false in MuseumMapWrapper), so there is no server HTML to mismatch and
   // an already-dismissed intro never flashes in before being hidden.
   const [introDismissed, setIntroDismissed] = useState(readIntroDismissed);
+  // Read at first render for the same reason as introDismissed above.
+  const [legendOpen, setLegendOpen] = useState(readLegendOpen);
   const [artistFilter, setArtistFilter] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<MuseumLocation | null>(null);
   const [lightboxList, setLightboxList] = useState<MuseumLocation[]>([]);
@@ -136,6 +163,11 @@ export default function MuseumMap() {
   const dismissIntro = useCallback((dismissed: boolean) => {
     setIntroDismissed(dismissed);
     writeIntroDismissed(dismissed);
+  }, []);
+
+  const toggleLegend = useCallback((open: boolean) => {
+    setLegendOpen(open);
+    writeLegendOpen(open);
   }, []);
 
   // Open lightbox with a list for prev/next navigation
@@ -673,42 +705,86 @@ export default function MuseumMap() {
           </button>
         )}
 
-        {/* legend */}
-        {!loading && mapLocations.length > 0 && (
+        {/* legend — collapsible like the intro overlay, same visual language and
+            sessionStorage pattern, under its own key so the two collapse
+            independently. Default collapsed: this is reference material, not
+            something a first-time visitor needs open in front of the map. Placed
+            in its own corner (top-right) rather than sharing the intro's
+            bottom-left one — the two would otherwise land on the exact same
+            anchor point once both can be their smallest, collapsed size. */}
+        {!loading && mapLocations.length > 0 && legendOpen && (
           <div style={{
-            position: 'absolute', bottom: '24px', left: '16px',
+            position: 'absolute', top: '54px', right: '16px', zIndex: 6,
             backgroundColor: 'rgba(255,255,255,0.95)',
             padding: '10px 14px',
             boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
-            display: 'flex', flexDirection: 'column', gap: '6px',
           }}>
-            {(Object.entries(ACCESS_COLORS) as [AccessType, string][])
-              .filter(([type]) => mapLocations.some(l => l.accessType === type && !l.isPast))
-              .map(([type, color]) => (
-                <div key={type} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', marginBottom: '8px' }}>
+              <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                legend
+              </p>
+              <button
+                type="button"
+                onClick={() => toggleLegend(false)}
+                aria-label="close legend"
+                style={{
+                  background: 'none', border: 'none', padding: '0 0 0 8px', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: '11px', color: '#767676',
+                  letterSpacing: '0.06em', lineHeight: 1, flexShrink: 0,
+                }}
+              >
+                close
+              </button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {(Object.entries(ACCESS_COLORS) as [AccessType, string][])
+                .filter(([type]) => mapLocations.some(l => l.accessType === type && !l.isPast))
+                .map(([type, color]) => (
+                  <div key={type} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{
+                      width: '9px', height: '9px', borderRadius: '50%',
+                      backgroundColor: color, border: '1.5px solid white',
+                      boxShadow: '0 0 0 1px rgba(0,0,0,0.1)', flexShrink: 0,
+                    }} />
+                    <span style={{ fontSize: '10px', color: '#666666', letterSpacing: '0.06em' }}>
+                      {ACCESS_LABELS[type]}
+                    </span>
+                  </div>
+                ))}
+              {mapFilter === 'all' && locations.some(l => l.isPast) && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{
                     width: '9px', height: '9px', borderRadius: '50%',
-                    backgroundColor: color, border: '1.5px solid white',
+                    backgroundColor: PAST_COLOR, border: '1.5px solid white',
                     boxShadow: '0 0 0 1px rgba(0,0,0,0.1)', flexShrink: 0,
                   }} />
                   <span style={{ fontSize: '10px', color: '#666666', letterSpacing: '0.06em' }}>
-                    {ACCESS_LABELS[type]}
+                    past installation
                   </span>
                 </div>
-              ))}
-            {mapFilter === 'all' && locations.some(l => l.isPast) && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{
-                  width: '9px', height: '9px', borderRadius: '50%',
-                  backgroundColor: PAST_COLOR, border: '1.5px solid white',
-                  boxShadow: '0 0 0 1px rgba(0,0,0,0.1)', flexShrink: 0,
-                }} />
-                <span style={{ fontSize: '10px', color: '#666666', letterSpacing: '0.06em' }}>
-                  past installation
-                </span>
-              </div>
-            )}
+              )}
+            </div>
           </div>
+        )}
+
+        {/* collapsed legend control — the same corner keeps one lowercase
+            control that reopens it, never a one-way door, mirroring "about
+            this map" above */}
+        {!loading && mapLocations.length > 0 && !legendOpen && (
+          <button
+            type="button"
+            onClick={() => toggleLegend(true)}
+            style={{
+              position: 'absolute', top: '54px', right: '16px', zIndex: 6,
+              backgroundColor: 'rgba(255,255,255,0.96)',
+              boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
+              border: 'none', padding: '10px 16px', cursor: 'pointer',
+              fontFamily: 'inherit', fontSize: '11px', color: '#111111',
+              letterSpacing: '0.06em', lineHeight: 1,
+            }}
+          >
+            legend
+          </button>
         )}
 
         {/* current / all map toggle — only meaningful once past installations exist */}
