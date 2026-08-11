@@ -44,6 +44,14 @@ async function run() {
       videoUrl: event.videoUrl || undefined,
       bandcampAlbumId: event.bandcampAlbumId || undefined,
       isBioPage: event.isBioPage || false,
+      // REQUIRED. Every event query in lib/sanity.ts filters `active == true`, so a
+      // document created without this field is invisible to the site: getEventBySlug
+      // returns nothing and the page silently falls back to events-data.json, the legacy
+      // archive. This script omitted it and produced 36 such events — 43 credits and
+      // 10,527 characters of recovered description sat in Sanity unread until someone
+      // counted. The schema's initialValue only applies in the Studio, not to API writes.
+      // scripts/check-event-active.mjs fails the build if a writer drops it again.
+      active: true,
       wpLink: event.wpLink || undefined,
       sortDate: event.sortDate || event.dateISO || undefined,
     };

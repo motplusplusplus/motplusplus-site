@@ -8,8 +8,9 @@
     "build:cf": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "eslint",
-    "validate": "node scripts/check-no-body-truncation.mjs && node scripts/validate-sanity-images.mjs",
+    "validate": "node scripts/check-no-body-truncation.mjs && node scripts/check-event-active.mjs && node scripts/validate-sanity-images.mjs",
     "check:no-truncation": "node scripts/check-no-body-truncation.mjs",
+    "check:event-active": "node scripts/check-event-active.mjs",
     "verify-deploy": "node scripts/verify-deploy.js",
     "deploy": "node scripts/deploy.js"
   },
