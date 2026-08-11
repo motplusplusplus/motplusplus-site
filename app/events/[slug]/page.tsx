@@ -85,14 +85,28 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   //
   // Events from events-data.json have no credits[] (~26 of them), so they fall back to
   // the artists[] mirror and render as they always have.
+  // Three blocks, and the partition is EXHAUSTIVE — every credit lands in exactly one,
+  // so no role can silently vanish from the page:
+  //
+  //   curated by  role === 'curator'
+  //   artist(s)   role === 'artist', or a credit with no role at all (legacy safety)
+  //   with        everything else, each name suffixed with its role
+  //
+  // The "with" block is the catch-all, which is what makes picking out 'artist' above
+  // safe: a role added to the enum tomorrow displays automatically instead of being
+  // dropped or mislabelled. A role nobody displays is a role nobody fills in.
   const credited = event.credits ?? [];
-  const curators = credited
-    .filter(c => c.role === 'curator' && c.person)
-    .map(c => ({ slug: c.person!.slug, title: c.person!.name }));
+  const named = (c: { person: { slug: string; name: string } | null }) =>
+    ({ slug: c.person!.slug, title: c.person!.name });
+
+  const curators = credited.filter(c => c.role === 'curator' && c.person).map(named);
+  const others = credited
+    .filter(c => c.person && c.role !== 'curator' && c.role !== 'artist' && c.role)
+    .map(c => ({ ...named(c), role: c.role }));
   const relatedResidents = credited.length
-    ? credited
-        .filter(c => c.role !== 'curator' && c.person)
-        .map(c => ({ slug: c.person!.slug, title: c.person!.name }))
+    ? credited.filter(c => c.person && (c.role === 'artist' || !c.role)).map(named)
+    // events-data.json events have no credits[] at all — they keep rendering off the
+    // artists[] mirror exactly as before, with no roles to show.
     : (event.artists ?? []).map(a => ({ slug: a.slug, title: a.name }));
   const { prev, next } = getAdjacentEvents(slug, listing);
   const past = isPast(event);
@@ -134,6 +148,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       past={past}
       relatedResidents={relatedResidents.map(r => ({ slug: r.slug, title: r.title }))}
       curators={curators}
+      otherCredits={others}
       heroImg={heroImg}
       contentImages={contentImages}
       wpLink={event.wpLink}

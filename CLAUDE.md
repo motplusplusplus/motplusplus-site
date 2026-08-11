@@ -214,6 +214,16 @@ chunks missing).
   not "fix" it by adding either person back, including while backfilling
   from the WordPress export. Mirrored in `motplus-sanity/CLAUDE.md` (the
   Studio repo, where artist docs are created).
+- **Never pipe a count through `head` or `tail`.** Count the full set first, then
+  truncate only the display, and say so when the display is truncated ("showing 20
+  of 47"). Piping a query into `| tail -40` and reporting the length of what came
+  back reports the truncation, not the data. This produced a real error on
+  2026-08-10: a curator sweep was reported as "about ten, three actionable" when the
+  full set was twelve with seven actionable, and the four missed cases were acted on
+  a day late. The same rule applies to `head`, `sed -n`, `.slice()` in a reporting
+  script, and any `limit` in a GROQ query used for counting — count in JS over the
+  whole result set (see also the GROQ-vs-JS counting rule in the Studio repo's
+  HANDOFF).
 - Lowercase convention throughout all UI text (intentional MoT+++ voice)
 - MoT+++ exact capitalization always
 

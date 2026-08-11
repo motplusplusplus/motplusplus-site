@@ -45,6 +45,10 @@ interface EventContentProps {
   /** Credits with role "curator". Empty for every event without one — the section
    *  is then not rendered at all, heading included. */
   curators?: RelatedResident[];
+  /** Every credit that is neither artist nor curator — moderator, dj, performer,
+   *  researcher and so on. Rendered under one "with" heading, each name suffixed with
+   *  its role, so a role added to the enum shows up without a new block. */
+  otherCredits?: (RelatedResident & { role: string })[];
   heroImg: string | null;
   contentImages: string[];
   wpLink?: string;
@@ -89,6 +93,7 @@ export default function EventContent({
   past,
   relatedResidents,
   curators = [],
+  otherCredits = [],
   heroImg,
   contentImages,
   wpLink,
@@ -341,6 +346,26 @@ export default function EventContent({
                   style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
                 >
                   {cur.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {otherCredits.length > 0 && (
+          <div>
+            <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
+              with
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              {otherCredits.map(oc => (
+                <Link
+                  key={`${oc.slug}-${oc.role}`}
+                  href={`/profiles/${oc.slug}`}
+                  style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
+                >
+                  {oc.title}{" "}
+                  <span style={{ color: "#767676" }}>({oc.role})</span>
                 </Link>
               ))}
             </div>
