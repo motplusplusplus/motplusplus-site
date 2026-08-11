@@ -121,18 +121,17 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
 
   const galleryImages = event.images.filter(url => !isJunkImage(url));
 
-  const AFARM_LOGO = 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg';
-  const MOT_LOGO = '/motpluspluspluslogo.jpg';
-  const isAfarm = event.category?.toLowerCase().includes('a.farm');
-
   // Prefer first jpg for hero — png flyers were often not uploaded to R2
   const realHero =
     galleryImages.find(u => /\.(jpg|jpeg)$/i.test(u)) ||
     galleryImages[0] ||
     event.thumbnail ||
     null;
-  const logoFallback = isAfarm ? AFARM_LOGO : MOT_LOGO;
-  const heroImg = realHero || logoFallback;
+  // No logo fallback. Substituting a wordmark as the hero src drew it with
+  // object-fit: cover in a 70vh landscape container, cropping it out of recognition.
+  // heroImg is null when the event has no image, and EventContent renders the
+  // placeholder element instead.
+  const heroImg = realHero;
 
   // contentImages = all gallery images except the one used as hero
   const contentImages = galleryImages.filter(u => u !== heroImg);

@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import EventImagePlaceholder from "@/components/EventImagePlaceholder";
 import { categories, isPast, normalizeDisplayDate, stripDiacritics, type Event } from "@/lib/events";
 
 const ALL = "all";
@@ -72,10 +73,15 @@ export function EventsShell({ events }: { events: Event[] }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Only show events with real documentation (real photos, not placeholder logos)
-  // When searching, use searchFiltered; otherwise use all events
+  // Every event is listed, documented or not. This used to filter on hasRealThumbnail,
+  // which hid 41 image-less events from the index entirely — including real exhibitions
+  // like `girl in red`. They were always reachable by direct link and search, so the
+  // filter was hiding them from browsing only. Cards with no image render the placeholder.
+  //
+  // hasRealThumbnail is still used at line 59 for the randomised hero: the top of the page
+  // should always be a real photograph, never a placeholder.
   const baseEvents = urlQuery ? searchFiltered : events;
-  const documented = baseEvents.filter(hasRealThumbnail);
+  const documented = baseEvents;
 
   const filtered =
     activeCategory === ALL
@@ -378,13 +384,17 @@ function EventCard({ event }: { event: Event }) {
     <Link href={`/events/${event.slug}`} className="evt-card">
       <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
         <div className="evt-card-img" style={{ width: "100%", aspectRatio: "4/3", backgroundColor: "#111111" }}>
-          <img
-            src={event.thumbnail || (event.category?.toLowerCase().includes('a.farm')
-              ? 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg'
-              : '/motpluspluspluslogo.jpg')}
-            alt={event.title}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
+          {event.thumbnail ? (
+            <img
+              src={event.thumbnail}
+              alt={event.title}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            // No image of its own. The logo used to be substituted here as a src, so it
+            // was drawn with object-fit: cover and cropped out of recognition.
+            <EventImagePlaceholder size="card" />
+          )}
         </div>
         <div>
           <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.08em", marginBottom: "8px" }}>
@@ -411,13 +421,15 @@ function PastRow({ event }: { event: Event }) {
     <Link href={`/events/${event.slug}`} className="evt-row" style={{ textDecoration: "none", color: "inherit", display: "block" }}>
       <div className="evt-past-inner" style={{ padding: "16px 8px", borderBottom: "1px solid #f2f2f2" }}>
         <div style={{ width: "80px", height: "60px", overflow: "hidden", backgroundColor: "#111111", flexShrink: 0 }}>
-          <img
-            src={event.thumbnail || (event.category?.toLowerCase().includes('a.farm')
-              ? 'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/michael-atavar/a.farmlogo_500x500-1-2.jpg'
-              : '/motpluspluspluslogo.jpg')}
-            alt=""
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: "saturate(0.5)" }}
-          />
+          {event.thumbnail ? (
+            <img
+              src={event.thumbnail}
+              alt=""
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: "saturate(0.5)" }}
+            />
+          ) : (
+            <EventImagePlaceholder size="thumb" />
+          )}
         </div>
         <div>
           <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.06em", marginBottom: "4px" }}>

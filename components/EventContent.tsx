@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { normalizeDisplayDate } from "@/lib/events";
+import EventImagePlaceholder from "@/components/EventImagePlaceholder";
 
 /** Render a paragraph that may contain [text](url) markdown links */
 function RichPara({ text, style }: { text: string; style: React.CSSProperties }) {
@@ -161,12 +162,17 @@ export default function EventContent({
           cursor: allImages.length > 0 ? "zoom-in" : "default",
         }}
       >
-        {heroImg && (
+        {heroImg ? (
           <img
             src={heroImg}
             alt={title}
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.78 }}
           />
+        ) : (
+          // No image of its own. The wordmark used to be substituted as this src and drawn
+          // with object-fit: cover in a 70vh landscape container, which cropped it out of
+          // recognition. The placeholder contains rather than covers.
+          <EventImagePlaceholder size="hero" title={title} />
         )}
         <div style={{
           position: "absolute", inset: 0,
