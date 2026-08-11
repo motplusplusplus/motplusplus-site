@@ -23,6 +23,26 @@ function RichPara({ text, style }: { text: string; style: React.CSSProperties })
 interface RelatedResident {
   slug: string;
   title: string;
+  /** True when a profile page is actually built for this slug. Inactive stubs have no
+   *  page, so their name renders as plain text rather than a link to a 404. */
+  linked?: boolean;
+}
+
+/**
+ * One credited name. Links to the profile only when a page exists for it — a credit can
+ * name someone whose profile is an inactive stub, and a link there would 404.
+ */
+function CreditName({ person, role }: { person: RelatedResident; role?: string }) {
+  const style = { fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" } as const;
+  const label = (
+    <>
+      {person.title}
+      {role ? <> <span style={{ color: "#767676" }}>({role})</span></> : null}
+    </>
+  );
+  return person.linked === false
+    ? <span style={style}>{label}</span>
+    : <Link href={`/profiles/${person.slug}`} style={style}>{label}</Link>;
 }
 
 interface AdjacentEvent {
@@ -320,15 +340,7 @@ export default function EventContent({
               artist{relatedResidents.length > 1 ? "s" : ""}
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {relatedResidents.map(r => (
-                <Link
-                  key={r.slug}
-                  href={`/profiles/${r.slug}`}
-                  style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
-                >
-                  {r.title}
-                </Link>
-              ))}
+              {relatedResidents.map(r => <CreditName key={r.slug} person={r} />)}
             </div>
           </div>
         )}
@@ -339,15 +351,7 @@ export default function EventContent({
               curated by
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {curators.map(cur => (
-                <Link
-                  key={cur.slug}
-                  href={`/profiles/${cur.slug}`}
-                  style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
-                >
-                  {cur.title}
-                </Link>
-              ))}
+              {curators.map(cur => <CreditName key={cur.slug} person={cur} />)}
             </div>
           </div>
         )}
@@ -359,14 +363,7 @@ export default function EventContent({
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
               {otherCredits.map(oc => (
-                <Link
-                  key={`${oc.slug}-${oc.role}`}
-                  href={`/profiles/${oc.slug}`}
-                  style={{ fontSize: "15px", fontWeight: 300, color: "#333333", textDecoration: "none" }}
-                >
-                  {oc.title}{" "}
-                  <span style={{ color: "#767676" }}>({oc.role})</span>
-                </Link>
+                <CreditName key={`${oc.slug}-${oc.role}`} person={oc} role={oc.role} />
               ))}
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
-import { getAllEvents, getAllEventSlugs, getEventBySlug, getAllEventsFromJson } from "@/lib/sanity";
+import { getAllEvents, getAllEventSlugs, getEventBySlug, getAllEventsFromJson, getAllSanityArtistSlugs } from "@/lib/sanity";
 import { getListingEvents, getAdjacentEvents, isPast, BIO_SLUGS, HIDDEN_SLUGS } from "@/lib/events";
+import { getArtistSlugs } from "@/lib/artists";
 import EventContent from "@/components/EventContent";
 import { isJunkImage } from "@/lib/junk-images";
 import type { Metadata } from "next";
@@ -95,9 +96,16 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   // The "with" block is the catch-all, which is what makes picking out 'artist' above
   // safe: a role added to the enum tomorrow displays automatically instead of being
   // dropped or mislabelled. A role nobody displays is a role nobody fills in.
+  // A credited person does not necessarily have a profile PAGE: profiles are built from
+  // getArtistSlugs() ∪ getAllSanityArtistSlugs(), and the Sanity half is filtered to
+  // active == true. Crediting someone whose profile is an inactive stub would emit a
+  // link to a 404. There are currently zero such links across 198 event pages, and this
+  // keeps it that way — the name still shows, it just isn't a link.
+  const profileSlugs = new Set([...getArtistSlugs(), ...(await getAllSanityArtistSlugs())]);
+
   const credited = event.credits ?? [];
   const named = (c: { person: { slug: string; name: string } | null }) =>
-    ({ slug: c.person!.slug, title: c.person!.name });
+    ({ slug: c.person!.slug, title: c.person!.name, linked: profileSlugs.has(c.person!.slug) });
 
   const curators = credited.filter(c => c.role === 'curator' && c.person).map(named);
   const others = credited
@@ -107,7 +115,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
     ? credited.filter(c => c.person && (c.role === 'artist' || !c.role)).map(named)
     // events-data.json events have no credits[] at all — they keep rendering off the
     // artists[] mirror exactly as before, with no roles to show.
-    : (event.artists ?? []).map(a => ({ slug: a.slug, title: a.name }));
+    : (event.artists ?? []).map(a => ({ slug: a.slug, title: a.name, linked: profileSlugs.has(a.slug) }));
   const { prev, next } = getAdjacentEvents(slug, listing);
   const past = isPast(event);
 
@@ -146,7 +154,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       dateISO={event.dateISO}
       location={event.location}
       past={past}
-      relatedResidents={relatedResidents.map(r => ({ slug: r.slug, title: r.title }))}
+      relatedResidents={relatedResidents}
       curators={curators}
       otherCredits={others}
       heroImg={heroImg}
