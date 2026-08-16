@@ -119,6 +119,30 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const isDavidWillis = slug === "david-willis";
   const isCamXanh = slug === "cam-xanh";
 
+  // Collective membership — see schemaTypes/artistMembership.ts. "collectives" is this
+  // artist's own writable list of groups they belong to; "collectiveRoster" is the
+  // derived (never stored) member list rendered only when THIS artist page is itself a
+  // collective with members pointing at it. Both are empty/undefined for an artist with
+  // no membership on either side, which is the common case.
+  type CollectiveMembership = {
+    role?: string; since?: string;
+    collective?: { _id: string; name: string; slug?: string; active?: boolean } | null;
+  };
+  type RosterMember = {
+    _id: string; name: string; slug?: string; active?: boolean;
+    membership?: { role?: string; since?: string } | null;
+  };
+  const collectives = ((sanityArtist?.collectives as CollectiveMembership[] | undefined) ?? [])
+    .filter(m => m.collective && m.collective.slug);
+  const collectiveRoster = ((sanityArtist?.collectiveRoster as RosterMember[] | undefined) ?? [])
+    .filter(m => m.slug);
+  const MEMBERSHIP_ROLE_LABEL: Record<string, string> = {
+    founder: "founding member",
+    member: "member",
+    former: "former member",
+    associated: "associated",
+  };
+
   const displayName = artist.name;
   const alternateNames = (sanityArtist?.alternateNames as string[] | undefined) ?? [];
 
@@ -308,7 +332,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         </div>
 
         {/* metadata strip */}
-        {(displayDate || artist.website || (artist.instagram && artist.instagram.length > 0)) && (
+        {(displayDate || artist.website || (artist.instagram && artist.instagram.length > 0) || collectives.length > 0) && (
           <div style={{
             display: "flex", flexWrap: "wrap", gap: "40px",
             borderBottom: "1px solid #e5e5e5", paddingBottom: "40px", marginBottom: "56px",
@@ -355,6 +379,28 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                     </a>
                   );
                 })}
+              </div>
+            )}
+            {collectives.length > 0 && (
+              <div>
+                <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                  member of
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                  {collectives.map(({ collective, role }) => {
+                    const label = role && MEMBERSHIP_ROLE_LABEL[role] && MEMBERSHIP_ROLE_LABEL[role] !== "member"
+                      ? `${collective!.name} (${MEMBERSHIP_ROLE_LABEL[role]})`
+                      : collective!.name;
+                    const style = { fontSize: "15px", fontWeight: 300, color: "#333333" } as const;
+                    return collective!.active ? (
+                      <Link key={collective!._id} href={`/profiles/${collective!.slug}`} style={style}>
+                        {label}
+                      </Link>
+                    ) : (
+                      <span key={collective!._id} style={style}>{label}</span>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
@@ -430,6 +476,38 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                 +1 direct experience →
               </Link>
             )}
+          </div>
+        )}
+
+        {/* members — derived roster, rendered only when other artists' memberOf[] points
+            at this profile. Never stored on this document; see the ^.^ note on
+            collectiveRoster in lib/sanity.ts. */}
+        {collectiveRoster.length > 0 && (
+          <div style={{ maxWidth: "680px", marginBottom: "80px" }}>
+            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
+              members
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {collectiveRoster.map((m) => {
+                const role = m.membership?.role;
+                const since = m.membership?.since;
+                const roleLabel = role ? MEMBERSHIP_ROLE_LABEL[role] ?? role : undefined;
+                const suffix = [roleLabel, since ? `since ${since}` : null].filter(Boolean).join(", ");
+                const nameStyle = { fontSize: "15px", fontWeight: 300, color: "#333333" } as const;
+                return (
+                  <div key={m._id}>
+                    {m.active ? (
+                      <Link href={`/profiles/${m.slug}`} style={nameStyle}>{m.name}</Link>
+                    ) : (
+                      <span style={nameStyle}>{m.name}</span>
+                    )}
+                    {suffix && (
+                      <span style={{ fontSize: "13px", color: "#767676" }}> — {suffix}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 

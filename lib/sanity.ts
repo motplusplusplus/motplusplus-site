@@ -111,6 +111,25 @@ const ARTIST_FIELDS = `
   "portrait": portrait.asset->url,
   "images": uploadedImages[].asset->url,
   legacyImageUrls,
+  // The artist's own writable side of collective membership — which group(s) they
+  // belong to. See "collectiveRoster" below for the other direction (derived, never
+  // stored) and schemaTypes/artistMembership.ts for why there is no members[] field.
+  "collectives": memberOf[]{
+    role,
+    since,
+    "collective": collective->{_id, name, "slug": slug.current, active, "portrait": portrait.asset->url},
+  },
+  // DERIVED roster for a collective's own page — never stored, always queried, so it
+  // can't drift the way artists[]/credits[] did. NOTE ON THE ^ DEPTH: this field sits
+  // two projection levels below the artist document it belongs to (this whole block is
+  // itself substituted into a *[_type=="artist"]{ ...ARTIST_FIELDS... } query), so
+  // matching the current artist's _id requires "^.^._id", not "^._id" — verified
+  // empirically against the live dataset (a single ^ silently returns zero rows here,
+  // because count(memberOf[...]) already pushes one scope frame on its own).
+  "collectiveRoster": *[_type == "artist" && count(memberOf[collective._ref == ^.^._id]) > 0] | order(name asc) {
+    _id, name, "slug": slug.current, active, "portrait": portrait.asset->url,
+    "membership": memberOf[collective._ref == ^.^._id][0]{role, since},
+  },
   "trashItems": *[_type == "trashItem" && references(^._id) && active == true && ${TRASH_ITEM_PRICED} && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] {
     _id,
     title,
