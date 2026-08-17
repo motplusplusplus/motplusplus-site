@@ -5,9 +5,9 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { sanityClient } from '@/lib/sanity';
+import { sanityClient, TRASH_ITEM_PRICED } from '@/lib/sanity';
 import { DEMO_LOCATIONS } from '@/lib/demoLocations';
-import { MUSEUM_TO_TRASH } from '@/lib/demoTrashItems';
+import { MUSEUM_TO_TRASH, TRASH_SOLD } from '@/lib/demoTrashItems';
 import LocationDetails from '@/components/museum/LocationDetails';
 import type { MuseumLocation, AccessType } from '@/lib/museumTypes';
 import { HCMC_CENTER, MAP_DEFAULT_ZOOM, getStaticMapUrl } from '@/lib/mapConstants';
@@ -244,8 +244,11 @@ export default function MuseumMap() {
         "mainImage": mainImage.asset->url,
         "images": images[].asset->url,
         "trashItemId": *[_type == "trashItem" && references(^._id) && active == true
-          && (sold == true || (defined(price) && price != ""))
+          && ${TRASH_ITEM_PRICED}
           && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])][0]._id,
+        "trashItemSold": *[_type == "trashItem" && references(^._id) && active == true
+          && ${TRASH_ITEM_PRICED}
+          && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])][0].sold,
       }
     `).then((data: MuseumLocation[]) => {
       // Only use Sanity data if we have enough locations with valid coordinates
@@ -1012,6 +1015,9 @@ export default function MuseumMap() {
               {(() => {
                 const trashId = selected.trashItemId || MUSEUM_TO_TRASH[selected._id];
                 if (!trashId) return null;
+                // Real locations carry their own trashItemSold from Sanity; the
+                // demo-mode fallback (MUSEUM_TO_TRASH) looks it up from TRASH_SOLD.
+                const trashSold = selected.trashItemId ? selected.trashItemSold : TRASH_SOLD[trashId];
                 return (
                   <a
                     href={`/trash?item=${trashId}`}
@@ -1021,7 +1027,7 @@ export default function MuseumMap() {
                       padding: '8px 16px', textDecoration: 'none', letterSpacing: '0.03em',
                     }}
                   >
-                    inquire through +1 trash
+                    {trashSold ? 'view in +1 trash' : 'inquire through +1 trash'}
                   </a>
                 );
               })()}

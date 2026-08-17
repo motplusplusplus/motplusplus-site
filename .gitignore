@@ -49,3 +49,10 @@ next-env.d.ts
 
 # local worker secrets for `wrangler dev` (never commit)
 .dev.vars
+
+# scratch scripts + planning docs from an earlier session, left uncommitted deliberately
+/scripts/backfill-event-vn-translations.mjs
+/scripts/backfill-resident-portraits.mjs
+/scripts/create-heartalk-events.mjs
+/scripts/fix-heartalk-image-sizes.mjs
+/tasks/

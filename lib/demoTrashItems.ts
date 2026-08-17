@@ -200,3 +200,10 @@ export const MUSEUM_TO_TRASH: Record<string, string> = Object.fromEntries(
     .filter(i => i.museumLocationId)
     .map(i => [i.museumLocationId!, i._id])
 );
+
+// Quick lookup: trash item id → sold status, for the museum map's cross-link
+// (real locations carry their own trashItemSold from Sanity; this covers the
+// demo-mode fallback via MUSEUM_TO_TRASH).
+export const TRASH_SOLD: Record<string, boolean> = Object.fromEntries(
+  DEMO_TRASH_ITEMS.map(i => [i._id, !!i.sold])
+);

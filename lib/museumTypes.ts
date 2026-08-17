@@ -24,7 +24,8 @@ export type MuseumLocation = {
   images?: string[];
   isPast?: boolean;     // true for past site-specific installations (still shown in the collection, filtered by current/past)
   _demo?: boolean;
-  trashItemId?: string; // first active +1 trash item referencing this location, if the work is also available for acquisition
+  trashItemId?: string;   // first active +1 trash item referencing this location, if the work is also available for acquisition
+  trashItemSold?: boolean; // sold status of that trash item, if any (drives "inquire" vs "view" on the map)
 };
 
 /** Placeholder shape for a future per-visitor visit state (logging visits,
