@@ -9,6 +9,7 @@ import { isJunkImage } from "@/lib/junk-images";
 import { allStudios } from "@/lib/studios";
 import ArtistGallery from "./ArtistGallery";
 import PartnerCredit from "@/components/PartnerCredit";
+import { extractBioFromEventDescription } from "@/lib/bioExtract";
 import type { Metadata } from "next";
 import { ogImage } from "@/lib/og";
 
@@ -83,7 +84,12 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
 
   const rawSanityBio = sanityArtist?.bio;
   const ptBio = Array.isArray(rawSanityBio) ? rawSanityBio as any[] : null;
-  const bioText = (localArtist?.bio ?? '') || (typeof rawSanityBio === 'string' ? rawSanityBio : '') || eventEntry?.description || '';
+  // Bio-page events carry no heading to extract from — the funder-credit template
+  // paragraph is the boundary. See lib/bioExtract.ts.
+  const eventBioText = eventEntry?.description
+    ? extractBioFromEventDescription(eventEntry.description, artist.name)
+    : '';
+  const bioText = (localArtist?.bio ?? '') || (typeof rawSanityBio === 'string' ? rawSanityBio : '') || eventBioText;
   // Use PT rendering when Sanity returned a block array and no plain-text source overrides it
   const usePtBio = ptBio !== null && !(localArtist?.bio) && !(eventEntry?.description);
   const hasBio = usePtBio || bioText.length > 0;
