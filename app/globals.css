@@ -27,6 +27,42 @@ a {
   text-decoration: none;
 }
 
+/* event description — mobile keeps the original size/measure; desktop (>=768px, same
+   breakpoint as .evt-hero-title below) gets the enlargement. */
+.evt-desc { max-width: 680px; }
+.evt-desc-text { font-size: 15px; line-height: 1.85; margin-bottom: 20px; }
+@media (min-width: 768px) {
+  .evt-desc-text { font-size: 27px; line-height: 1.75; margin-bottom: 24px; }
+}
+
+/* event page — ONE shared desktop content width. Below 768px each element keeps its own
+   original mobile max-width via its own class (or no cap, for the metadata strip, which
+   was never capped before). At >=768px every .evt-w element (hero title, description,
+   video, metadata strip) shares this single number instead of each picking its own.
+   Change ONE value here to change the whole page's measure. The image gallery
+   deliberately carries no .evt-w — it's meant to run wider than the text column.
+   ORDER MATTERS: the .evt-w media-query rule below must stay textually after the
+   per-element base rules, since equal-specificity classes resolve by source order, not
+   by which one is "more specific" to the element. */
+.evt-title-w { max-width: 860px; }
+.evt-video-w { max-width: 800px; }
+/* metadata strip carries only .evt-w — no base rule needed, matching its original
+   unconstrained mobile behavior (it never had its own max-width before). */
+
+@media (min-width: 768px) {
+  .evt-w { max-width: 1200px; }
+}
+
+/* hero title/category overlay — lives OUTSIDE the 1400px content shell (it's positioned
+   over the full-bleed hero image), so it needs its OWN left edge fixed to match the
+   content shell's 24px side padding on desktop, or the two "align" in width only and
+   still visibly start at different x-offsets. Mobile keeps the original fluid clamp()
+   padding on all four sides, untouched. */
+.evt-hero-pad { padding: clamp(24px, 4vw, 56px); }
+@media (min-width: 768px) {
+  .evt-hero-pad { padding: clamp(24px, 4vw, 56px) 24px; }
+}
+
 /* events hero title — always visible on mobile, hover-reveal on desktop */
 .evt-hero-title { opacity: 1; transition: opacity 0.3s ease; }
 @media (min-width: 768px) {

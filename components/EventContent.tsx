@@ -6,10 +6,10 @@ import { normalizeDisplayDate } from "@/lib/events";
 import EventImagePlaceholder from "@/components/EventImagePlaceholder";
 
 /** Render a paragraph that may contain [text](url) markdown links */
-function RichPara({ text, style }: { text: string; style: React.CSSProperties }) {
+function RichPara({ text, style, className }: { text: string; style: React.CSSProperties; className?: string }) {
   const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
   return (
-    <p style={style}>
+    <p className={className} style={style}>
       {parts.map((part, i) => {
         const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
         if (m) {
@@ -174,11 +174,10 @@ export default function EventContent({
           // recognition. The placeholder contains rather than covers.
           <EventImagePlaceholder size="hero" title={title} />
         )}
-        <div style={{
+        <div className="evt-hero-pad" style={{
           position: "absolute", inset: 0,
           background: "linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.72) 100%)",
           display: "flex", flexDirection: "column", justifyContent: "flex-end",
-          padding: "clamp(24px, 4vw, 56px)",
           pointerEvents: "none",
         }}>
           <p style={{
@@ -187,10 +186,10 @@ export default function EventContent({
           }}>
             {category}
           </p>
-          <h1 style={{
+          <h1 className="evt-title-w evt-w" style={{
             fontSize: "clamp(22px, 3.5vw, 44px)",
             fontWeight: 300, lineHeight: 1.15, letterSpacing: "-0.02em",
-            color: "#ffffff", maxWidth: "860px",
+            color: "#ffffff",
           }}>
             {title}
           </h1>
@@ -257,7 +256,7 @@ export default function EventContent({
       )}
 
       {/* breadcrumb + bilingual toggle row */}
-      <div style={{
+      <div className="evt-w" style={{
         marginBottom: "52px",
         display: "flex",
         justifyContent: "space-between",
@@ -306,7 +305,7 @@ export default function EventContent({
       </div>
 
       {/* metadata strip */}
-      <div style={{
+      <div className="evt-w" style={{
         display: "flex", flexWrap: "wrap", gap: "40px",
         borderBottom: "1px solid #e5e5e5", paddingBottom: "40px", marginBottom: "56px",
       }}>
@@ -409,15 +408,17 @@ export default function EventContent({
         </h2>
       )}
 
-      {/* description */}
+      {/* description — mobile keeps the original size/measure untouched; desktop gets
+          the enlargement via .evt-desc-* classes + a min-width breakpoint in
+          globals.css, since inline styles can't carry a media query. */}
       {activeDescription && (
-        <div style={{ maxWidth: "680px", marginBottom: "80px" }}>
+        <div className="evt-desc evt-w" style={{ marginBottom: "80px" }}>
           <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
             about
           </p>
           {activeDescription.split(/\n{2,}/).filter(Boolean).map((para, i) => (
-            <RichPara key={i} text={para.trim()} style={{
-              fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px",
+            <RichPara key={i} text={para.trim()} className="evt-desc-text" style={{
+              color: "#444444",
             }} />
           ))}
         </div>
@@ -429,7 +430,7 @@ export default function EventContent({
           <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "24px" }}>
             video
           </p>
-          <div style={{ position: "relative", width: "100%", maxWidth: "800px", aspectRatio: "16/9" }}>
+          <div className="evt-video-w evt-w" style={{ position: "relative", width: "100%", aspectRatio: "16/9" }}>
             <iframe
               src={embedUrl}
               title={title}
@@ -494,7 +495,7 @@ export default function EventContent({
       )}
 
       {/* footer nav */}
-      <div style={{
+      <div className="evt-w" style={{
         borderTop: "1px solid #e5e5e5", paddingTop: "40px",
       }}>
         {/* prev / next */}
