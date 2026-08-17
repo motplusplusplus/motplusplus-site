@@ -8,6 +8,7 @@ import { computeBadges } from "@/lib/badges";
 import { isJunkImage } from "@/lib/junk-images";
 import { allStudios } from "@/lib/studios";
 import ArtistGallery from "./ArtistGallery";
+import PartnerCredit from "@/components/PartnerCredit";
 import type { Metadata } from "next";
 import { ogImage } from "@/lib/og";
 
@@ -478,6 +479,8 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             )}
           </div>
         )}
+
+        <PartnerCredit partners={eventEntry?.partners ?? []} />
 
         {/* members — derived roster, rendered only when other artists' memberOf[] points
             at this profile. Never stored on this document; see the ^.^ note on

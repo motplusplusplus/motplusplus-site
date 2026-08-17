@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { normalizeDisplayDate } from "@/lib/events";
 import EventImagePlaceholder from "@/components/EventImagePlaceholder";
+import PartnerCredit, { type EventPartner } from "@/components/PartnerCredit";
 
 /** Render a paragraph that may contain [text](url) markdown links */
 function RichPara({ text, style, className }: { text: string; style: React.CSSProperties; className?: string }) {
@@ -44,48 +45,6 @@ function CreditName({ person, role }: { person: RelatedResident; role?: string }
   return person.linked === false
     ? <span style={style}>{label}</span>
     : <Link href={`/profiles/${person.slug}`} style={style}>{label}</Link>;
-}
-
-interface EventPartner {
-  name: string;
-  url?: string | null;
-  role: string;
-}
-
-/**
- * Organizations credited on an event — funder, venue, co-manager, lender, collaborator.
- * Renders below the description, only when non-empty. No public partner page exists: the
- * name links straight to the partner's own site when one is on file, plain text when it
- * isn't (some partners are defunct — the dead link stays, it's a historical fact).
- */
-function PartnerCredit({ partners }: { partners: EventPartner[] }) {
-  if (partners.length === 0) return null;
-  return (
-    <div style={{ marginBottom: "80px" }}>
-      <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "16px" }}>
-        partners
-      </p>
-      <p style={{ fontSize: "15px", fontWeight: 300, color: "#444444", lineHeight: 1.7 }}>
-        {partners.map((p, i) => (
-          <span key={p.name}>
-            {p.url ? (
-              <a
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}
-              >
-                {p.name}
-              </a>
-            ) : (
-              p.name
-            )}
-            {i < partners.length - 1 ? ", " : ""}
-          </span>
-        ))}
-      </p>
-    </div>
-  );
 }
 
 interface AdjacentEvent {
