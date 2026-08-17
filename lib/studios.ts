@@ -194,17 +194,6 @@ export async function getStudioSlugs(): Promise<string[]> {
   return studios.map(s => s.slug);
 }
 
-// ─── Backward-compatible sync exports (afarm/* pages still use these) ─────────
-// These read from studios-data.json directly (no Sanity fetch needed at build time
-// for the afarm-internal pages).
-export const allStudios: StudioEntry[] = (studiosRaw as StudioEntry[]);
-
-export const studios = allStudios.map(s => ({
-  ...s,
-  artistName: s.artistName ?? s.name,
-  tagline: s.tagline ?? s.neighborhood,
-}));
-
 export const hotel = {
   slug: 'amanaki',
   name: 'Amanaki Thao Dien Hotel',

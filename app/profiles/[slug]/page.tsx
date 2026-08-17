@@ -6,7 +6,7 @@ import { getEventBySlug, getArtistBySlug, getAllSanityArtistSlugs, getEventsByAr
 import { BIO_SLUGS } from "@/lib/events";
 import { computeBadges } from "@/lib/badges";
 import { isJunkImage } from "@/lib/junk-images";
-import { allStudios } from "@/lib/studios";
+import { getAllStudios } from "@/lib/studios";
 import ArtistGallery from "./ArtistGallery";
 import PartnerCredit from "@/components/PartnerCredit";
 import { extractBioFromEventDescription } from "@/lib/bioExtract";
@@ -61,10 +61,11 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   // event (consolidated duplicates). Map profile slug → bio-event slug.
   const BIO_EVENT_SLUG: Record<string, string> = { "alex-williams": "pug-alex-williams" };
   const bioEventSlug = BIO_EVENT_SLUG[slug] ?? slug;
-  const [sanityArtist, eventEntry, motsound] = await Promise.all([
+  const [sanityArtist, eventEntry, motsound, allStudios] = await Promise.all([
     getArtistBySlug(slug),
     isBioSlug ? getEventBySlug(bioEventSlug) : Promise.resolve(null),
     getMotsoundPerformerEditions(),
+    getAllStudios(),
   ]);
   if (!localArtist && !sanityArtist) notFound();
 
