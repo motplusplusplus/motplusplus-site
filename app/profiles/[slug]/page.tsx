@@ -90,8 +90,14 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
     ? extractBioFromEventDescription(eventEntry.description, artist.name)
     : '';
   const bioText = (localArtist?.bio ?? '') || (typeof rawSanityBio === 'string' ? rawSanityBio : '') || eventBioText;
-  // Use PT rendering when Sanity returned a block array and no plain-text source overrides it
-  const usePtBio = ptBio !== null && !(localArtist?.bio) && !(eventEntry?.description);
+  // Use PT rendering whenever Sanity returned a block array and no local plain-text bio
+  // overrides it — an authored bio must win over a bio-page event's leftover announcement
+  // copy, not the reverse. Previously gated on !(eventEntry?.description) too, which meant
+  // any bio-page event with a description silently discarded a real portable-text bio
+  // (e.g. Michael Atavar) in favor of that event's text. Fixed 2026-08-17. Does NOT cover
+  // localArtist.bio shadowing a newer Sanity bio (e.g. Linh Lê) — that's a separate,
+  // larger precedence question (artists-data.json vs Sanity), reported but not yet acted on.
+  const usePtBio = ptBio !== null && !(localArtist?.bio);
   const hasBio = usePtBio || bioText.length > 0;
   const displayDate = eventEntry?.displayDate || "";
 
