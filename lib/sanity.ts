@@ -30,7 +30,7 @@ const buildClient = createClient({
  *  (the /trash grid, /trash/[slug], /pricelist, and the artist profile's
  *  embedded work-history list). Independent of and additional to each call
  *  site's own active/sold filters -- does not replace them. */
-const TRASH_ITEM_PRICED = `(sold == true || (defined(price) && price != ""))`;
+export const TRASH_ITEM_PRICED = `(sold == true || (defined(price) && price != ""))`;
 
 const TRASH_ITEM_FIELDS = `
   _id,
@@ -189,6 +189,7 @@ const EVENT_FIELDS = `
   "isBioPage": coalesce(isBioPage, false),
   "artists": artists[]->{_id, name, "slug": slug.current},
   "credits": credits[]{ role, "person": person->{_id, name, "slug": slug.current} },
+  "partners": partners[]->{name, url, role},
 `;
 
 export type LinkedArtist = { _id: string; name: string; slug: string };
@@ -206,6 +207,11 @@ export type LinkedArtist = { _id: string; name: string; slug: string };
  */
 export type EventCredit = { role: string; person: LinkedArtist | null };
 
+/** An organization credited on an event — funder, venue, co-manager, lender, etc. No
+ *  public partner page exists; url is optional (some partners are defunct and keep a
+ *  dead link deliberately — a dead link is more honest than no link). */
+export type EventPartner = { name: string; url?: string | null; role: string };
+
 // Shape returned by Sanity before JS transformation
 type RawEvent = {
   slug: string; title: string; vnTitle?: string; dateISO: string;
@@ -215,6 +221,7 @@ type RawEvent = {
   videoUrl?: string; bandcampAlbumId?: string; wpLink: string; isBioPage: boolean;
   artists?: LinkedArtist[] | null;
   credits?: EventCredit[] | null;
+  partners?: EventPartner[] | null;
 };
 
 // Shape compatible with lib/events.ts Event type
@@ -226,6 +233,7 @@ export type SanityEvent = {
   bandcampAlbumId?: string; wpLink: string; isBioPage: boolean;
   artists: LinkedArtist[];
   credits: EventCredit[];
+  partners: EventPartner[];
 };
 
 // Junk/logo filename filtering lives in lib/junk-images.ts (isJunkImage), shared
@@ -300,6 +308,7 @@ function toSanityEvent(e: RawEvent): SanityEvent {
     isBioPage:       e.isBioPage,
     artists:         (e.artists ?? []).filter(Boolean) as LinkedArtist[],
     credits:         (e.credits ?? []).filter(c => c && c.person) as EventCredit[],
+    partners:        (e.partners ?? []).filter(Boolean) as EventPartner[],
   };
 }
 
@@ -334,8 +343,10 @@ function toEventFromJson(e: Record<string, unknown>): SanityEvent {
     wpLink:          (e.wpLink as string) ?? '',
     isBioPage:       (e.isBioPage as boolean) ?? false,
     artists:         [],
-    // events-data.json predates credits[] entirely; these render off artists[] as before.
+    // events-data.json predates credits[] and partners[] entirely; neither exists for
+    // these events.
     credits:         [],
+    partners:        [],
   };
 }
 

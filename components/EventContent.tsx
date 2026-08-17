@@ -46,6 +46,48 @@ function CreditName({ person, role }: { person: RelatedResident; role?: string }
     : <Link href={`/profiles/${person.slug}`} style={style}>{label}</Link>;
 }
 
+interface EventPartner {
+  name: string;
+  url?: string | null;
+  role: string;
+}
+
+/**
+ * Organizations credited on an event — funder, venue, co-manager, lender, collaborator.
+ * Renders below the description, only when non-empty. No public partner page exists: the
+ * name links straight to the partner's own site when one is on file, plain text when it
+ * isn't (some partners are defunct — the dead link stays, it's a historical fact).
+ */
+function PartnerCredit({ partners }: { partners: EventPartner[] }) {
+  if (partners.length === 0) return null;
+  return (
+    <div style={{ marginBottom: "80px" }}>
+      <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "16px" }}>
+        partners
+      </p>
+      <p style={{ fontSize: "15px", fontWeight: 300, color: "#444444", lineHeight: 1.7 }}>
+        {partners.map((p, i) => (
+          <span key={p.name}>
+            {p.url ? (
+              <a
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}
+              >
+                {p.name}
+              </a>
+            ) : (
+              p.name
+            )}
+            {i < partners.length - 1 ? ", " : ""}
+          </span>
+        ))}
+      </p>
+    </div>
+  );
+}
+
 interface AdjacentEvent {
   slug: string;
   title: string;
@@ -70,6 +112,9 @@ interface EventContentProps {
    *  researcher and so on. Rendered under one "with" heading, each name suffixed with
    *  its role, so a role added to the enum shows up without a new block. */
   otherCredits?: (RelatedResident & { role: string })[];
+  /** Organizations credited on this event. Empty for every event without one — see
+   *  PartnerCredit. */
+  partners?: EventPartner[];
   heroImg: string | null;
   contentImages: string[];
   wpLink?: string;
@@ -115,6 +160,7 @@ export default function EventContent({
   relatedResidents,
   curators = [],
   otherCredits = [],
+  partners = [],
   heroImg,
   contentImages,
   wpLink,
@@ -423,6 +469,8 @@ export default function EventContent({
           ))}
         </div>
       )}
+
+      <PartnerCredit partners={partners} />
 
       {/* video embed */}
       {embedUrl && (

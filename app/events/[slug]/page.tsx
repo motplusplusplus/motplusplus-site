@@ -156,6 +156,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       relatedResidents={relatedResidents}
       curators={curators}
       otherCredits={others}
+      partners={event.partners}
       heroImg={heroImg}
       contentImages={contentImages}
       wpLink={event.wpLink}
