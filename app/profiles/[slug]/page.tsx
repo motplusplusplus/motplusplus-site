@@ -68,18 +68,34 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   ]);
   if (!localArtist && !sanityArtist) notFound();
 
-  // Merge: local data wins, Sanity fills gaps
-  const artist: Artist = localArtist ?? {
+  // Merge: Sanity wins per field, local fills only what Sanity doesn't have — reversed
+  // 2026-08-17 from "local wins, Sanity fills gaps". Sanity is where every piece of work
+  // this month landed; a local-JSON record existing at all used to blank out any Sanity
+  // portrait/links/images/instagram for that artist even when Sanity had them. collective/
+  // studioHost/curator/performancePlus stay local-only — no Sanity field to shadow, see
+  // the 2026-08-17 JSON-precedence report.
+  const sanityWebsite = (sanityArtist?.links?.[0] as { url?: string } | undefined)?.url
+    ?.replace(/^https?:\/\//, "");
+  const sanityInstagram = sanityArtist?.instagram
+    ? [sanityArtist.instagram as string]
+    : undefined;
+  const artist: Artist = {
     slug,
-    name:       sanityArtist!.name as string,
-    collective: false,
-    resident:   !!(sanityArtist!.isAfarmResident),
-    studioHost: false,
-    origin:     ([sanityArtist!.originCity, sanityArtist!.nationality] as string[]).filter(Boolean).join(", "),
-    website:    ((sanityArtist!.links?.[0] as { url?: string })?.url ?? "").replace(/^https?:\/\//, ""),
-    bio:        "",
-    photo:      (sanityArtist!.portrait as string) ?? "",
-    workImages: (sanityArtist!.images as string[]) ?? [],
+    name:       (sanityArtist?.name as string) || localArtist?.name || slug,
+    collective: localArtist?.collective ?? false,
+    resident:   !!(sanityArtist?.isAfarmResident) || !!localArtist?.resident,
+    studioHost: localArtist?.studioHost ?? false,
+    curator:    localArtist?.curator,
+    performancePlus: localArtist?.performancePlus,
+    origin:     ([sanityArtist?.originCity, sanityArtist?.nationality] as (string | undefined)[])
+                  .filter(Boolean).join(", ") || localArtist?.origin || "",
+    website:    sanityWebsite || localArtist?.website || "",
+    instagram:  sanityInstagram ?? localArtist?.instagram,
+    bio:        localArtist?.bio ?? "", // unused for rendering — see bioText/ptBio below
+    photo:      (sanityArtist?.portrait as string) || localArtist?.photo || "",
+    workImages: (sanityArtist?.images as string[] | undefined)?.length
+                  ? (sanityArtist!.images as string[])
+                  : (localArtist?.workImages ?? []),
   };
 
   const rawSanityBio = sanityArtist?.bio;
