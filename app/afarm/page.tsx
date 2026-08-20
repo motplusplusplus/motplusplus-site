@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getAllStudios, hotel } from "@/lib/studios";
 import StudioCarousel from "@/components/StudioCarousel";
-import AnnouncementBanner from "@/components/AnnouncementBanner";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -63,12 +62,6 @@ export default async function AFarmPage() {
 
   return (
     <>
-      <AnnouncementBanner
-        text="special announcement — a.farm saigon artist intensive retreat — aug. 22–28, 2026 —"
-        linkLabel="learn more →"
-        href="/afarm/retreat"
-      />
-
       <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "72px 24px" }}>
 
         {/* page header */}
