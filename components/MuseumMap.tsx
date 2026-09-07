@@ -24,8 +24,14 @@ const RAILS_MIN = 12;
 // The map switches from demo to real data only at this many published, coordinate-valid
 // locations — publishing one draft must not silently un-demo the flagship page. Raise/lower
 // deliberately (raised 3 -> 5 in 8d994e1: a 3-4 entry partial publish still looked emptier
-// than the demo it replaced).
-const REAL_DATA_MIN_LOCATIONS = 5;
+// than the demo it replaced; 5 -> 10 in 2026-08 as the collection grew).
+//
+// What this counts, confirmed 2026-08-28: the query below fetches
+// `active == true` only, and validData then drops anything without lat/lng, so
+// the threshold is VISIBLE, PUBLISHED, MAPPABLE locations rather than documents
+// created. Today there are 5 museumLocation documents and 0 of them active, so
+// the map is in demo mode with nothing of its own showing.
+const REAL_DATA_MIN_LOCATIONS = 10;
 
 /** The intro overlay is dismissible for the current browser session only.
  *  sessionStorage rather than localStorage is deliberate: closing it should stop
