@@ -77,7 +77,7 @@ export default function MoTsoundPage() {
         </p>
         <p style={{ fontSize: "13px", color: "#767676" }}>
           if you are an artist that would like to be involved, message{" "}
-          <a href={`mailto:${CONTACTS.general}`} style={{ color: "#767676" }}>{CONTACTS.general}</a>
+          <a href={`mailto:${CONTACTS.sound}`} style={{ color: "#767676" }}>{CONTACTS.sound}</a>
         </p>
       </div>
 

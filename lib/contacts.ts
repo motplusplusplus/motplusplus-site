@@ -17,6 +17,7 @@ export const CONTACTS = {
   museum:    "museum@motplusplusplus.com",   // +1 museum
   residency: "afarm@motplusplusplus.com",    // a.Farm
   press:     "info@motplusplusplus.com",     // no press@ alias exists
+  sound:     "motsound@motplusplusplus.com", // MoT sound
 } as const;
 
 export type ContactKey = keyof typeof CONTACTS;

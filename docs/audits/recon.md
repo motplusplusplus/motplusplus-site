@@ -572,7 +572,14 @@ render — both curated sets are empty.
 - ~~**Fix `/submit-inquiry`**~~ — **Done.** All three contact forms now
   submit via `mailto:` links instead of a POST endpoint (commit `299adc5`),
   not the `worker.js` + Sanity write-token approach originally proposed here.
-  `functions/` remains unused but harmless.
+  `functions/submit-inquiry.js` was DELETED on 2026-09-07: it was never
+  invoked (wrangler.toml sets `main = "worker.js"` with an assets binding,
+  so this is a Workers deploy, not Pages — `functions/` is not built), yet
+  it contained plausible-looking per-type notification code sending from
+  `inquiries@motplusplus.com` (wrong domain). Reading it as live is why it
+  went unnoticed that `/api/inquiry` emails NOBODY — it only writes a Sanity
+  `inquiry` doc. Recover the old logic at blob 997e23bd if wiring up
+  notifications in `handleInquiry`.
 - ~~**Harden the deploy script**~~ — **Done.** `scripts/deploy.js` now
   refuses to run if the working tree is dirty or local `main` isn't in sync
   with `origin/main` (commit `cf7ab9b`).
