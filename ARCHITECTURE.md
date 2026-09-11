@@ -552,12 +552,31 @@ URL, so any link already shared externally keeps working.
 ### `inquiry`
 
 Defines `type` (`trash`/`residency`/`museum`), `status`, `submittedAt`,
-`name`, `email`, `message`, plus type-conditional fields — but **`lib/sanity.ts`
-has no read or write for `inquiry` at all**. All three contact surfaces
-(`/trash`, `/afarm/apply`, `/museum/inquire`) submit via `mailto:` links (§7
-"Completed", commit `299adc5`). The schema exists for a possible future
-Studio-side inquiry inbox but is currently dead on the content side — not a
-bug, just unused.
+`name`, `email`, `message`, plus type-conditional fields.
+
+**Live since `55df83d` (2026-07-22).** The three contact surfaces (`/trash`,
+`/afarm/apply`, `/museum/inquire`) POST to `/api/inquiry`, handled in
+`worker.js` ahead of everything else in the fetch handler, which writes an
+`inquiry` document to Sanity as the source of truth. `lib/inquiry.ts` is the
+client-safe submit helper; it returns `true` only on `{ok:true}` so callers
+fall back to `mailto:` on any network error, non-2xx or malformed response
+rather than silently dropping a lead. The endpoint validates `type`,
+`name`/`email`/`message`, whitelists the per-type conditional fields so a
+client cannot inject arbitrary document fields, limits CORS to the production
+origins, and returns 502 on a Sanity failure. It authenticates with the
+`SANITY_INQUIRY_TOKEN` Worker secret only — no token in the repo, none in a
+`NEXT_PUBLIC_*`.
+
+`lib/sanity.ts` still has no read or write for `inquiry`, which is correct:
+the write happens in the Worker, and the read side is Thi Tiên, who polls the
+document type and notifies whoever is on it. So this type is no longer "dead
+on the content side" — it is the only contact surface with a durable record
+behind it, and a form submission that reaches Sanity but reaches nobody is the
+failure mode that produced the backlog (see ISSUE-017).
+
+This paragraph described the `mailto:`-only arrangement for seven weeks after
+it stopped being true. Anything here that says a surface is unused is worth
+checking against `git log` before relying on it.
 
 ---
 

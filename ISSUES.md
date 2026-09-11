@@ -175,6 +175,50 @@ Full per-key data in `scripts/r2-migration-missing.json` (315 keys,
 unchanged); classification breakdown was done in a scratch script, not
 checked into the repo.
 
+### [ISSUE-017] Inquiry submissions reached Sanity and reached nobody
+**Reported:** 2026-09-11
+**Priority:** HIGH
+**Status:** resolved in Thi Tiên 2026-09-07 (`5430001`, `d56f39e`); logged here
+retrospectively
+
+`/api/inquiry` shipped 2026-07-22 (`55df83d`) and writes an `inquiry` document
+to Sanity as the source of truth for the `/trash`, `/afarm/apply` and
+`/museum/inquire` forms. It notifies nobody. `lib/sanity.ts` has no read for
+the type, the Studio has no inquiry inbox, and nothing on the site side ever
+looks at what was written.
+
+So for roughly six weeks every enquiry from the three public contact surfaces
+landed in a document nobody opened. The forms reported success to the person
+who filled them in, correctly — the write did succeed — which is what made it
+invisible from both ends: the sender believed they had made contact, and
+nobody here had anything to read.
+
+This was never logged. It surfaced on 2026-09-11 during unrelated work, from
+the Thi Tiên side.
+
+**Fixed there, not here.** Thi Tiên polls the `inquiry` type each scheduler
+tick, queues an alert for whoever owns that kind of enquiry, and keeps asking
+until the Sanity document's status moves — being alerted once is not the end
+of it, and an alert nobody happened to read is what produced the backlog.
+Duplicate replies are suppressed by watching the Sent folder.
+
+**What is still true and worth knowing:**
+
+- The Worker remains the only writer and Thi Tiên the only reader. There is
+  still no Studio-side inquiry inbox, so a person with no Telegram access
+  cannot see an enquiry except by querying Sanity directly.
+- If Thi Tiên is down, enquiries accumulate silently again. Her watchdog
+  (`run.py --watchdog`) covers the process being dead; it does not know
+  anything about this site.
+- ARCHITECTURE.md §8 described these forms as `mailto:`-only for seven weeks
+  after that stopped being true, which is the second half of why nobody
+  noticed. Corrected 2026-09-11.
+
+**The general lesson, and why this is filed rather than just fixed:** a write
+endpoint with no reader is not a feature, it is a silent drop with a success
+message on it. Anything added here that records something should say, at the
+time it is added, who reads it and what happens when nobody does.
+
 ## Resolved
 
 ### [ISSUE-016] Second overnight health check — security headers, OG image content gap, heading hierarchy
