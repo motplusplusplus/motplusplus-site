@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { registerVietnameseFont, VIETNAMESE_FONT_NAME } from '@/lib/pdfFonts';
 
 export type PricelistItem = {
   _id: string;
@@ -54,7 +53,12 @@ async function fetchImageForPdf(url: string, mime: 'image/jpeg' | 'image/png' = 
 }
 
 async function downloadPdf(items: PricelistItem[], mode: PricelistMode) {
-  const { jsPDF } = await import('jspdf');
+  // jsPDF and the embedded font (~MBs of base64) load only when the user clicks
+  // download -- never at module load, so the page can SSR on the Worker.
+  const [{ jsPDF }, { registerVietnameseFont, VIETNAMESE_FONT_NAME }] = await Promise.all([
+    import('jspdf'),
+    import('@/lib/pdfFonts'),
+  ]);
   const showPriceAndQr = mode === 'pricelist';
 
   const doc = new jsPDF();
