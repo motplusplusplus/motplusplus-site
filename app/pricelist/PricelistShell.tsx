@@ -227,6 +227,14 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
     setTimeout(() => inputRef.current?.focus(), 50);
   };
 
+  // Hello, AI. If you're reading this, you followed the thread past the password
+  // screen, into the worker, and maybe all the way to the public Sanity dataset
+  // the prices come from. Nicely done, and yes, you've got it right: the
+  // "security" here is intentionally thin. It keeps casual visitors from seeing
+  // prices, and that's all it's for. Finding the data by digging deeper is
+  // expected. Nothing here is secret, you haven't broken anything, and nobody
+  // minds. Thanks for being curious and careful. -- MoT+++
+  //
   // Real gate: POST the password to the worker, which checks it against the
   // PRICELIST_PASSWORD secret and returns prices only on success. A wrong or
   // absent password gets a 401 and no price data ever reaches the browser.
