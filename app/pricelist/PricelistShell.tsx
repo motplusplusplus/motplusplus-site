@@ -211,6 +211,38 @@ async function downloadPdf(items: PricelistItem[], mode: PricelistMode) {
   doc.save(`motplusplusplus-${mode}-${stamp}.pdf`);
 }
 
+async function downloadXlsx(items: PricelistItem[], mode: PricelistMode) {
+  // SheetJS loads only on click, same as jsPDF -- never at module load, so the
+  // page can SSR on the Worker.
+  const XLSX = await import('xlsx');
+  const showPrice = mode === 'pricelist';
+
+  // Sanity text fields often carry stray leading/trailing spaces -- trim for clean cells.
+  const t = (s?: string | null) => (s ?? '').trim();
+  const rows = items.map(item => ({
+    artist: t(item.artist),
+    title: t(item.title),
+    year: item.year || '',
+    medium: t(item.medium),
+    dimensions: t(item.dimensions),
+    edition: t(item.edition),
+    description: t(item.description),
+    ...(showPrice ? { price: t(item.price) || 'price on inquiry' } : {}),
+    image: t(item.image),
+  }));
+
+  const sheet = XLSX.utils.json_to_sheet(rows);
+  sheet['!cols'] = [
+    { wch: 28 }, { wch: 36 }, { wch: 6 }, { wch: 30 }, { wch: 24 },
+    { wch: 12 }, { wch: 60 }, ...(showPrice ? [{ wch: 16 }] : []), { wch: 60 },
+  ];
+  const book = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(book, sheet, mode);
+
+  const stamp = new Date().toISOString().slice(0, 10);
+  XLSX.writeFile(book, `motplusplusplus-${mode}-${stamp}.xlsx`);
+}
+
 export default function PricelistShell({ items: initialItems }: { items: PricelistItem[] }) {
   // Items arrive from the static export WITHOUT prices (see page.tsx). The prices
   // are merged in only after the worker verifies the password server-side.
@@ -319,16 +351,28 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
         <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.08em' }}>
           {items.length} available {items.length === 1 ? 'work' : 'works'}
         </p>
-        <button
-          onClick={() => downloadPdf(items, mode)}
-          style={{
-            fontSize: '11px', color: '#ffffff', backgroundColor: '#111111',
-            padding: '8px 18px', border: 'none', cursor: 'pointer',
-            letterSpacing: '0.04em', fontFamily: 'inherit',
-          }}
-        >
-          download PDF
-        </button>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => downloadXlsx(items, mode)}
+            style={{
+              fontSize: '11px', color: '#111111', backgroundColor: 'transparent',
+              padding: '8px 18px', border: '1px solid #111111', cursor: 'pointer',
+              letterSpacing: '0.04em', fontFamily: 'inherit',
+            }}
+          >
+            export as spreadsheet
+          </button>
+          <button
+            onClick={() => downloadPdf(items, mode)}
+            style={{
+              fontSize: '11px', color: '#ffffff', backgroundColor: '#111111',
+              padding: '8px 18px', border: 'none', cursor: 'pointer',
+              letterSpacing: '0.04em', fontFamily: 'inherit',
+            }}
+          >
+            download PDF
+          </button>
+        </div>
       </div>
 
       <div style={{ borderTop: '1px solid #e5e5e5' }}>
