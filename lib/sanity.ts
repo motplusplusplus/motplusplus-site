@@ -32,6 +32,29 @@ const buildClient = createClient({
  *  site's own active/sold filters -- does not replace them. */
 export const TRASH_ITEM_PRICED = `(sold == true || (defined(price) && price != ""))`;
 
+/** Whether a work is still on consignment today. RULES.md R28 (owner,
+ *  2026-09-25; wired 2026-09-28): the end date comes from the work's
+ *  appendix entry (Studio: consignmentEntry), not trashItem.consignmentEnd.
+ *
+ *  - An entry binds only once the artist has ACKNOWLEDGED it, from the day
+ *    it was added and acknowledged, until it ends -- the Studio's own
+ *    isInForce() in lib/consignmentAppendix.ts, restated in GROQ.
+ *  - A work with no acknowledged entry falls back to consignmentEnd, so
+ *    nothing already on the site moves until its entry is signed.
+ *  - An entry that ended because the work SOLD keeps it on the site, shown
+ *    as sold, the same as before entries existed: /trash displays sold
+ *    works, and "sold" ending the consignment must not make them vanish.
+ *
+ *  Always used inside a trashItem filter, so `^` is the work. Mirrored in
+ *  Thi Tien (thitien/plus_one_stock.py); her suite compares the two. */
+export const CONSIGNMENT_CURRENT = `(
+  (count(*[_type == "consignmentEntry" && !(_id in path("drafts.**")) && trashItem._ref == ^._id && defined(acknowledgedAt)]) == 0
+    && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0]))
+  || count(*[_type == "consignmentEntry" && !(_id in path("drafts.**")) && trashItem._ref == ^._id && defined(acknowledgedAt)
+      && addedAt <= string::split(now(), "T")[0] && acknowledgedAt <= string::split(now(), "T")[0]
+      && (!defined(endedAt) || endedAt >= string::split(now(), "T")[0] || endReason == "sold")]) > 0
+)`;
+
 const TRASH_ITEM_FIELDS = `
   _id,
   artist,
@@ -58,7 +81,7 @@ const TRASH_ITEM_FIELDS = `
 
 export async function getTrashItems() {
   return buildClient.fetch(`
-    *[_type == "trashItem" && active == true && ${TRASH_ITEM_PRICED} && (count(images) > 0 || count(legacyImageUrls) > 0) && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(sortOrder asc, artist asc) { ${TRASH_ITEM_FIELDS} }
+    *[_type == "trashItem" && active == true && ${TRASH_ITEM_PRICED} && (count(images) > 0 || count(legacyImageUrls) > 0) && ${CONSIGNMENT_CURRENT}] | order(sortOrder asc, artist asc) { ${TRASH_ITEM_FIELDS} }
   `);
 }
 
@@ -67,14 +90,14 @@ export async function getTrashItems() {
  *  -- Karlie needs every sellable work, not just publicly gallery-ready ones. */
 export async function getPricelistItems() {
   return buildClient.fetch(`
-    *[_type == "trashItem" && active == true && ${TRASH_ITEM_PRICED} && sold != true && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] | order(artist asc) { ${TRASH_ITEM_FIELDS} }
+    *[_type == "trashItem" && active == true && ${TRASH_ITEM_PRICED} && sold != true && ${CONSIGNMENT_CURRENT}] | order(artist asc) { ${TRASH_ITEM_FIELDS} }
   `);
 }
 
 /** Single trash item by slug, for the shareable /trash/[slug] page */
 export async function getTrashItemBySlug(slug: string) {
   return buildClient.fetch(
-    `*[_type == "trashItem" && slug.current == $slug && active == true && ${TRASH_ITEM_PRICED} && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])][0] { ${TRASH_ITEM_FIELDS} }`,
+    `*[_type == "trashItem" && slug.current == $slug && active == true && ${TRASH_ITEM_PRICED} && ${CONSIGNMENT_CURRENT}][0] { ${TRASH_ITEM_FIELDS} }`,
     { slug }
   );
 }
@@ -130,7 +153,7 @@ const ARTIST_FIELDS = `
     _id, name, "slug": slug.current, active, "portrait": portrait.asset->url,
     "membership": memberOf[collective._ref == ^.^._id][0]{role, since},
   },
-  "trashItems": *[_type == "trashItem" && references(^._id) && active == true && ${TRASH_ITEM_PRICED} && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])] {
+  "trashItems": *[_type == "trashItem" && references(^._id) && active == true && ${TRASH_ITEM_PRICED} && ${CONSIGNMENT_CURRENT}] {
     _id,
     title,
     medium,

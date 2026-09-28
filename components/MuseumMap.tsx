@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { sanityClient, TRASH_ITEM_PRICED } from '@/lib/sanity';
+import { sanityClient, TRASH_ITEM_PRICED, CONSIGNMENT_CURRENT } from '@/lib/sanity';
 import { DEMO_LOCATIONS } from '@/lib/demoLocations';
 import { MUSEUM_TO_TRASH, TRASH_SOLD } from '@/lib/demoTrashItems';
 import LocationDetails from '@/components/museum/LocationDetails';
@@ -251,10 +251,10 @@ export default function MuseumMap() {
         "images": images[].asset->url,
         "trashItemId": *[_type == "trashItem" && references(^._id) && active == true
           && ${TRASH_ITEM_PRICED}
-          && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])][0]._id,
+          && ${CONSIGNMENT_CURRENT}][0]._id,
         "trashItemSold": *[_type == "trashItem" && references(^._id) && active == true
           && ${TRASH_ITEM_PRICED}
-          && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])][0].sold,
+          && ${CONSIGNMENT_CURRENT}][0].sold,
       }
     `).then((data: MuseumLocation[]) => {
       // Only use Sanity data if we have enough locations with valid coordinates
