@@ -144,8 +144,20 @@ async function handleInquiry(request, env) {
 // _id. Reads use Sanity's public read API at request time (same data the build
 // reads; no token needed). Fail closed: if the secret is unset, every attempt
 // is 401.
+//
+// Hidden works are included (2026-09-28): the pricelist now lists every work
+// for sale, marked on the site or not, so its price must come back too. The
+// consignment rule is lib/sanity.ts CONSIGNMENT_CURRENT copied VERBATIM (this
+// file cannot import TypeScript); Thi Tien's suite fails if the two differ.
+const CONSIGNMENT_CURRENT = `(
+  (count(*[_type == "consignmentEntry" && !(_id in path("drafts.**")) && trashItem._ref == ^._id && defined(acknowledgedAt)]) == 0
+    && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0]))
+  || count(*[_type == "consignmentEntry" && !(_id in path("drafts.**")) && trashItem._ref == ^._id && defined(acknowledgedAt)
+      && addedAt <= string::split(now(), "T")[0] && acknowledgedAt <= string::split(now(), "T")[0]
+      && (!defined(endedAt) || endedAt >= string::split(now(), "T")[0] || endReason == "sold")]) > 0
+)`;
 const PRICELIST_PRICE_QUERY =
-  `*[_type == "trashItem" && active == true && (sold == true || (defined(price) && price != "")) && sold != true && (!defined(consignmentEnd) || consignmentEnd >= string::split(now(), "T")[0])]{ _id, price }`;
+  `*[_type == "trashItem" && (sold == true || (defined(price) && price != "")) && sold != true && ${CONSIGNMENT_CURRENT}]{ _id, price }`;
 
 async function handlePricelist(request, env) {
   if (request.method === "OPTIONS") {

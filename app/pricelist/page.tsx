@@ -10,6 +10,17 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://motplusplusplus.com/pricelist' },
 };
 
+// A small square from Sanity's image CDN, so forty-odd rows load on a phone
+// on a foreign network. Anything that is not a Sanity asset (legacy URLs from
+// the old site) is used as it is.
+function thumbnail(url?: string | null): string | null {
+  if (!url) return null;
+  if (url.startsWith('https://cdn.sanity.io/')) {
+    return `${url}${url.includes('?') ? '&' : '?'}w=144&h=144&fit=crop&auto=format`;
+  }
+  return url;
+}
+
 export default async function PricelistPage() {
   const raw = await getPricelistItems();
 
@@ -38,6 +49,14 @@ export default async function PricelistPage() {
       edition: item.edition,
       description: item.description,
       image: item.images[0] ?? null,
+      thumb: thumbnail(item.images[0]),
+      slug: r.slug ?? null,
+      // Whether a collector can find it on motplusplusplus.com/trash: the
+      // grid's own rule, computed in the query (lib/sanity.ts).
+      onSite: r.onSite === true,
+      hiddenBecause: r.onSite === true ? null
+        : [r.active !== true ? 'switched off' : null, r.hasPhoto ? null : 'no photo']
+            .filter(Boolean).join(', '),
       // price is deliberately NOT serialized into the static export -- it would
       // otherwise ship in the public HTML/flight payload where anyone could read
       // it without the password. The worker (POST /api/pricelist) delivers prices
@@ -61,7 +80,7 @@ export default async function PricelistPage() {
           +1 trash — pricelist
         </h1>
         <p style={{ fontSize: '13px', color: '#767676', letterSpacing: '0.04em' }}>
-          internal — currently available works only
+          internal — every work for sale, including those not on the site
         </p>
       </div>
 

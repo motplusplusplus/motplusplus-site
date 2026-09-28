@@ -88,9 +88,20 @@ export async function getTrashItems() {
 /** All currently available (active, unsold) trash items, for the internal
  *  /pricelist sales tool. Unlike getTrashItems(), does not require an image
  *  -- Karlie needs every sellable work, not just publicly gallery-ready ones. */
+/** Everything Karlie can sell, INCLUDING works hidden from the site, each
+ *  marked with whether a collector can find it there (owner, 2026-09-28: "so
+ *  she knows when a collector can look it up and when they cannot").
+ *  `onSite` is getTrashItems' own rule, so the label cannot disagree with
+ *  what /trash actually shows. Priced, unsold and on consignment, as before;
+ *  what changed is that `active` and a photo no longer decide inclusion. */
 export async function getPricelistItems() {
   return buildClient.fetch(`
-    *[_type == "trashItem" && active == true && ${TRASH_ITEM_PRICED} && sold != true && ${CONSIGNMENT_CURRENT}] | order(artist asc) { ${TRASH_ITEM_FIELDS} }
+    *[_type == "trashItem" && ${TRASH_ITEM_PRICED} && sold != true && ${CONSIGNMENT_CURRENT}] | order(artist asc) {
+      ${TRASH_ITEM_FIELDS}
+      active,
+      "hasPhoto": count(images) > 0 || count(legacyImageUrls) > 0,
+      "onSite": active == true && (count(images) > 0 || count(legacyImageUrls) > 0),
+    }
   `);
 }
 

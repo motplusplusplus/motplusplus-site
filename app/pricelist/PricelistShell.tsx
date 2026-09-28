@@ -12,6 +12,10 @@ export type PricelistItem = {
   edition?: string;
   description?: string;
   image?: string | null;
+  thumb?: string | null;
+  slug?: string | null;
+  onSite: boolean;
+  hiddenBecause?: string | null;
   price?: string;
 };
 
@@ -250,6 +254,11 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
   const [unlocked, setUnlocked] = useState(false);
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
+  // Anything other than a 401 is NOT a wrong password: a dropped connection,
+  // Cloudflare's browser check, Sanity being slow. Until 2026-09-28 all of
+  // them said "incorrect", which on a hotel network in front of a collector
+  // reads as "your password is wrong".
+  const [unreachable, setUnreachable] = useState(false);
   const [mode, setMode] = useState<PricelistMode>('pricelist');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -277,8 +286,12 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({password: input}),
       });
-      if (!res.ok) {
+      if (res.status === 401) {
         rejectPassword();
+        return;
+      }
+      if (!res.ok) {
+        setUnreachable(true);
         return;
       }
       const data = await res.json();
@@ -287,8 +300,9 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
       setUnlocked(true);
       setInput('');
       setError(false);
+      setUnreachable(false);
     } catch {
-      rejectPassword();
+      setUnreachable(true);
     }
   };
 
@@ -304,7 +318,7 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
             type="password"
             value={input}
             autoFocus
-            onChange={e => { setInput(e.target.value); setError(false); }}
+            onChange={e => { setInput(e.target.value); setError(false); setUnreachable(false); }}
             onKeyDown={e => { if (e.key === 'Enter') handleSubmit(); }}
             style={{
               width: '100%', border: 'none',
@@ -319,13 +333,18 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
               incorrect
             </p>
           )}
+          {unreachable && (
+            <p style={{ fontSize: '10px', color: '#cc2222', marginTop: '10px', letterSpacing: '0.06em' }}>
+              could not reach the price list. the password was not checked. try again
+            </p>
+          )}
         </div>
       </div>
     );
   }
 
   const showPrice = mode === 'pricelist';
-  const gridColumns = showPrice ? '1.2fr 1.6fr 1.4fr 0.8fr' : '1.2fr 1.6fr 1.4fr';
+  const onSiteCount = items.filter(i => i.onSite).length;
 
   return (
     <div>
@@ -349,7 +368,7 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.08em' }}>
-          {items.length} available {items.length === 1 ? 'work' : 'works'}
+          {items.length} {items.length === 1 ? 'work' : 'works'} for sale · {onSiteCount} on the site · {items.length - onSiteCount} not
         </p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button
@@ -376,28 +395,50 @@ export default function PricelistShell({ items: initialItems }: { items: Priceli
       </div>
 
       <div style={{ borderTop: '1px solid #e5e5e5' }}>
-        <div style={{
-          display: 'grid', gridTemplateColumns: gridColumns,
-          gap: '12px', padding: '10px 0',
-          borderBottom: '1px solid #e5e5e5',
-          fontSize: '10px', color: '#767676', letterSpacing: '0.08em', textTransform: 'uppercase',
-        }}>
-          <span>Artist</span>
-          <span>Title</span>
-          <span>Medium / Year</span>
-          {showPrice && <span>Price</span>}
-        </div>
         {items.map(item => (
           <div key={item._id} style={{
-            display: 'grid', gridTemplateColumns: gridColumns,
-            gap: '12px', padding: '14px 0',
-            borderBottom: '1px solid #f0f0f0',
-            fontSize: '13px', color: '#333333', alignItems: 'baseline',
+            display: 'flex', gap: '14px', padding: '14px 0',
+            borderBottom: '1px solid #f0f0f0', alignItems: 'flex-start',
           }}>
-            <span>{item.artist}</span>
-            <span style={{ color: '#111111' }}>{item.title}</span>
-            <span style={{ color: '#767676' }}>{mediumYear(item)}</span>
-            {showPrice && <span>{item.price}</span>}
+            {/* A thumbnail where one exists: titles and prices alone are no use
+                standing next to a buyer (owner, 2026-09-28). */}
+            {item.thumb ? (
+              <img src={item.thumb} alt="" loading="lazy" width={72} height={72}
+                   style={{ width: '72px', height: '72px', objectFit: 'cover', flexShrink: 0, backgroundColor: '#f4f4f4' }} />
+            ) : (
+              <div style={{
+                width: '72px', height: '72px', flexShrink: 0, backgroundColor: '#f4f4f4',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '9px', color: '#aaaaaa', letterSpacing: '0.06em', textAlign: 'center',
+              }}>no photo</div>
+            )}
+            <div style={{ flex: 1, minWidth: 0, fontSize: '13px', color: '#333333', lineHeight: 1.45 }}>
+              <div style={{ color: '#767676', fontSize: '12px' }}>{item.artist}</div>
+              <div style={{ color: '#111111' }}>{item.title}</div>
+              <div style={{ color: '#767676', fontSize: '12px' }}>{mediumYear(item)}</div>
+              {/* Whether a collector can look it up themselves. */}
+              <div style={{ fontSize: '11px', marginTop: '4px', letterSpacing: '0.02em' }}>
+                {item.onSite ? (
+                  item.slug ? (
+                    <a href={`/trash/${item.slug}`} target="_blank" rel="noopener noreferrer"
+                       style={{ color: '#1a7f37', textDecoration: 'none' }}>
+                      ● on the site: motplusplusplus.com/trash/{item.slug}
+                    </a>
+                  ) : (
+                    <span style={{ color: '#1a7f37' }}>● on the site</span>
+                  )
+                ) : (
+                  <span style={{ color: '#b35900' }}>
+                    ○ not on the site{item.hiddenBecause ? `: ${item.hiddenBecause}` : ''}. a collector cannot look it up
+                  </span>
+                )}
+              </div>
+            </div>
+            {showPrice && (
+              <div style={{ fontSize: '13px', color: '#111111', textAlign: 'right', flexShrink: 0, maxWidth: '38%' }}>
+                {item.price || 'price on inquiry'}
+              </div>
+            )}
           </div>
         ))}
       </div>
