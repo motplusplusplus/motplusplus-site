@@ -57,8 +57,9 @@ export default async function TrashPage() {
 
   // Shuffle and pick each card's image at build time, not after hydration:
   // the static HTML then paints the full grid immediately (no empty first
-  // paint, no post-hydration scramble). The order changes with every deploy,
-  // which content publishes trigger every few minutes anyway. Randomness in a
+  // paint). This order is the FIRST PAINT only: TrashPageShell reshuffles on
+  // every visit once hydrated (2026-10-03), because builds can be days apart
+  // when nobody publishes, and one order for everyone is not random. Randomness in a
   // server component is impure by the lint rule's standard, but this page is
   // statically exported exactly once per build, and the rolled values ship in
   // the flight payload, so server HTML and hydration always agree.

@@ -61,6 +61,18 @@ export default function TrashPageShell({ items }: Props) {
   // static HTML (page.tsx), so the first paint already shows the full grid.
   // Tapping "random" again reshuffles client-side.
   const [randomOrder, setRandomOrder] = useState<TrashItem[]>(items);
+
+  // ...and every visit then gets its own order (2026-10-03). The build-time
+  // shuffle alone assumed content publishes would rebuild the site every few
+  // minutes; with nobody editing in the Studio the last build stood for five
+  // days and every visitor saw the identical "random" grid. So the static
+  // order is only the first paint, and once hydrated the grid reshuffles,
+  // through the same fade the "random" button uses so it does not jump.
+  useEffect(() => {
+    // Deliberately after hydration: a per-visit order cannot be chosen during
+    // render without the server HTML and the client disagreeing.
+    withGridTransition(() => setRandomOrder(shuffleArray(items)));
+  }, [items]);
   const [sort, setSort] = useState<SortOption>('random');
   const [availability, setAvailability] = useState<AvailabilityFilter>('all');
   const [openId, setOpenId] = useState<string | null>(null);
