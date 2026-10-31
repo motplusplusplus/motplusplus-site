@@ -23,6 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/museum`,          priority: 1.0 },
     { url: `${BASE}/afarm`,           priority: 1.0 },
     { url: `${BASE}/afarm/studios`,   priority: 0.9 },
+    { url: `${BASE}/afarm/track-record`, priority: 0.8 },
     { url: `${BASE}/afarm/hotel`,     priority: 0.8 },
     { url: `${BASE}/directexperience`, priority: 0.8 },
     { url: `${BASE}/events`,          priority: 0.9 },

@@ -56,3 +56,6 @@ next-env.d.ts
 /scripts/create-heartalk-events.mjs
 /scripts/fix-heartalk-image-sizes.mjs
 /tasks/
+
+# working data and briefs (nationality backfill etc.): local only, the repo is public
+/imports/

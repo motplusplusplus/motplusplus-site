@@ -6,6 +6,7 @@ import { getEventBySlug, getArtistBySlug, getAllSanityArtistSlugs, getEventsByAr
 import { BIO_SLUGS } from "@/lib/events";
 import { computeBadges } from "@/lib/badges";
 import { isJunkImage } from "@/lib/junk-images";
+import { countryName } from "@/lib/countries";
 import { getAllStudios } from "@/lib/studios";
 import ArtistGallery from "./ArtistGallery";
 import PartnerCredit from "@/components/PartnerCredit";
@@ -88,7 +89,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
     studioHost: localArtist?.studioHost ?? false,
     curator:    localArtist?.curator,
     performancePlus: localArtist?.performancePlus,
-    origin:     ([sanityArtist?.originCity, sanityArtist?.nationality] as (string | undefined)[])
+    origin:     ([sanityArtist?.originCity, ...((sanityArtist?.nationalities as string[] | undefined) ?? []).map(countryName)] as (string | undefined)[])
                   .filter(Boolean).join(", ") || localArtist?.origin || "",
     website:    sanityWebsite || localArtist?.website || "",
     instagram:  sanityInstagram ?? localArtist?.instagram,

@@ -313,6 +313,14 @@ export default async function AFarmPage() {
           <p style={{ fontSize: "15px", lineHeight: 1.8, color: "#444444" }}>
             the residency is hosted by local artists without nationality restriction. participating in the program means contributing your ideas, curiosity, and knowledge; you bring the energy, and together we create something that didn&rsquo;t exist before. the residency is structured around that proximity: time inside a practice, inside a network, inside a city that rewards the curious.
           </p>
+          <p style={{ marginTop: "32px" }}>
+            <Link
+              href="/afarm/track-record"
+              style={{ fontSize: "13px", color: "#767676", borderBottom: "1px solid #cccccc", paddingBottom: "2px" }}
+            >
+              track record: every artist we have hosted →
+            </Link>
+          </p>
         </div>
 
         {/* cta */}

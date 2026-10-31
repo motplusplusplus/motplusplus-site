@@ -130,7 +130,7 @@ const ARTIST_FIELDS = `
   pronouns,
   birthYear,
   deathYear,
-  nationality,
+  nationalities,
   originCity,
   currentCity,
   isAfarmResident,
@@ -537,4 +537,74 @@ export async function getPressItems(): Promise<PressItem[]> {
     excerpt: r.excerpt ?? "",
     tag: r.tag ?? "",
   }));
+}
+
+// ─── a.Farm track record (/afarm/track-record) ────────────────────────────────
+// Everyone the page can list: a.Farm residents, plus any other artist with a
+// nationality on file (the international event artists). `active` is respected like
+// everywhere else. Portrait falls back to the first portfolio image, then the first
+// R2 archive image; the page junk-filters those. eventYears come from the active,
+// non-bio-page events that reference the artist, for the year filter.
+export type TrackRecordHeritage =
+  | { _type: "heritageCountry"; code: string }
+  | { _type: "heritageOther"; label: string };
+
+export type TrackRecordArtist = {
+  _id: string;
+  name: string;
+  slug: string | null;
+  isAfarmResident: boolean;
+  season: string | null;
+  period: string | null;
+  residencyStartDate: string | null;
+  nationalities: string[] | null;
+  heritage: TrackRecordHeritage[] | null;
+  currentCity: string | null;
+  images: (string | null)[];
+  eventYears: (string | null)[];
+};
+
+export type TrackRecordPartner = {
+  _id: string;
+  name: string;
+  url: string | null;
+  logo: string | null;
+  trackRecord: { role: string; former: boolean | null; fromYear: number | null; toYear: number | null }[];
+};
+
+export type TrackRecordPress = {
+  _id: string;
+  outlet: string;
+  title: string;
+  date: string | null;
+  sortDate: string | null;
+  url: string;
+  language: string | null;
+};
+
+export async function getTrackRecord(): Promise<{
+  artists: TrackRecordArtist[];
+  partners: TrackRecordPartner[];
+  press: TrackRecordPress[];
+}> {
+  return buildClient.fetch(`{
+    "artists": *[_type == "artist" && active == true
+                 && (isAfarmResident == true || count(nationalities) > 0)] | order(name asc) {
+      _id, name, "slug": slug.current,
+      "isAfarmResident": isAfarmResident == true,
+      season, period, residencyStartDate, nationalities,
+      heritage[]{_type, code, label},
+      currentCity,
+      "images": [portrait.asset->url, uploadedImages[0].asset->url, legacyImageUrls[0], legacyImageUrls[1]],
+      "eventYears": *[_type == "event" && active == true && isBioPage != true && references(^._id)].dateISO,
+    },
+    "partners": *[_type == "partner" && count(trackRecord) > 0] | order(name asc) {
+      _id, name, url, "logo": logo.asset->url,
+      trackRecord[]{role, former, fromYear, toYear},
+    },
+    "press": *[_type == "pressItem" && active == true && tag == "a.Farm"]
+             | order(coalesce(sortDate, "0001-01-01") desc, outlet asc) {
+      _id, outlet, title, "date": displayDate, sortDate, url, language,
+    },
+  }`);
 }
