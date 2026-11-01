@@ -596,7 +596,12 @@ export async function getTrackRecord(): Promise<{
       heritage[]{_type, code, label},
       currentCity,
       "images": [portrait.asset->url, uploadedImages[0].asset->url, legacyImageUrls[0], legacyImageUrls[1]],
-      "eventYears": *[_type == "event" && active == true && isBioPage != true && references(^._id)].dateISO,
+      // Events that make someone a "MoT+++ event artist": a credit other than curator or
+      // moderator, or a reference with no credit at all. A curating credit alone (Lại Minh
+      // Ngọc, a.Farm curator 2025, on "in between frames") does not list them as an artist.
+      "eventYears": *[_type == "event" && active == true && isBioPage != true && references(^._id)
+                      && (count(credits[person._ref == ^.^._id && !(role in ["curator", "moderator"])]) > 0
+                          || count(credits[person._ref == ^.^._id]) == 0)].dateISO,
     },
     "partners": *[_type == "partner" && count(trackRecord) > 0] | order(name asc) {
       _id, name, url, "logo": logo.asset->url,
