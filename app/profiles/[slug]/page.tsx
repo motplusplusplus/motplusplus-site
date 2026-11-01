@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import { getArtist, getArtistSlugs, type Artist } from "@/lib/artists";
 import { getEventBySlug, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef, getMotsoundPerformerEditions } from "@/lib/sanity";
-import { BIO_SLUGS } from "@/lib/events";
+import { BIO_SLUGS, NON_RESIDENCY_BIO_SLUGS } from "@/lib/events";
 import { computeBadges } from "@/lib/badges";
 import { isJunkImage } from "@/lib/junk-images";
 import { countryName } from "@/lib/countries";
@@ -115,7 +115,8 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const bioText = (typeof rawSanityBio === 'string' ? rawSanityBio : '') || (localArtist?.bio ?? '') || eventBioText;
   const usePtBio = ptBio !== null;
   const hasBio = usePtBio || bioText.length > 0;
-  const displayDate = eventEntry?.displayDate || "";
+  // The bio event's date is shown as "residency"; not for a bio page that isn't one.
+  const displayDate = NON_RESIDENCY_BIO_SLUGS.has(slug) ? "" : eventEntry?.displayDate || "";
 
   // Gallery images from the bio event entry (documentation photos), junk-filtered
   const eventGallery = (eventEntry?.images ?? []).filter(url => !isJunkImage(url));

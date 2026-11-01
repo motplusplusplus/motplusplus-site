@@ -1,5 +1,5 @@
 import artistsRaw from '../artists-data.json';
-import { BIO_SLUGS, type Event } from './events';
+import { BIO_SLUGS, NON_RESIDENCY_BIO_SLUGS, type Event } from './events';
 import { compareNames } from './sortName';
 
 export type Artist = {
@@ -37,7 +37,7 @@ const residentArtists: Artist[] = Array.from(BIO_SLUGS)
     slug,
     name:       slug.replace(/-/g, ' '),
     collective: false,
-    resident:   true,
+    resident:   !NON_RESIDENCY_BIO_SLUGS.has(slug),
     studioHost: false,
     origin:     '',
     website:    '',

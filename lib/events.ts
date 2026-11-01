@@ -2,6 +2,12 @@ import type { SanityEvent } from './sanity';
 
 export type Event = SanityEvent;
 
+/** Bio pages that are NOT a residency: the person has a bio page but was never an a.Farm
+ *  resident, so the page must not show the resident badge or label its date "residency".
+ *  Owner rulings only; add a slug here only when told.
+ *    lai-minh-ngoc: a.Farm curator in 2025 (ruling 2026-11-01). */
+export const NON_RESIDENCY_BIO_SLUGS = new Set(["lai-minh-ngoc"]);
+
 /** Slugs that are resident bio pages (not event announcements) */
 export const BIO_SLUGS = new Set([
   "boynton-yue","michael-atavar","tam-do","ru-marshall",
