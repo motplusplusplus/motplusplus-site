@@ -65,7 +65,7 @@ dirty or the branch is ahead of/behind `origin/main`.
 /press       /search       /sound        /trash
 /events      /profiles     /studios
 /afarm       /afarm/apply  /afarm/hotel   /afarm/retreat  /afarm/studios
-/afarm/track-record  ← funder-facing record; filters in the URL (?country=CH&role=resident&year=2019&heritage=1&q=)
+/afarm/track-record  ← funder-facing record; filters in the URL (?country=CH&role=resident&year=2019&q=); country matches nationality only
 /residents   ← stub only: server redirect() to /profiles (meta-refresh in static export)
 ```
 
@@ -392,7 +392,7 @@ field against the GROQ field lists in `lib/sanity.ts` (`ARTIST_FIELDS`,
 | `pronouns` | string | ✓ |
 | `birthYear` | number | ✓ |
 | `nationalities` | array of ISO 3166-1 alpha-2 codes (2026-10; replaced the free-text `nationality`, retired) | ✓ — profile origin line; `/afarm/track-record`. Names/flags from `lib/countries.ts` (copy of the Studio's `ISO_COUNTRY_LIST`) |
-| `heritage` | array of `heritageCountry {code}` / `heritageOther {label}` | ✓ `/afarm/track-record` only ("include heritage" toggle) |
+| `heritage` | array of `heritageCountry {code}` / `heritageOther {label}` | ✓ `/afarm/track-record` cards only ("Vietnamese heritage"); never filtered on |
 | `originCity` | string | ✓ |
 | `currentCity` | string | ✓ |
 | `role` | string (free text) | ✓ |

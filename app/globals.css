@@ -204,8 +204,6 @@ select.tr-input {
   border: 1px solid #dddddd; background: transparent; color: #888888; min-height: 36px;
 }
 .tr-chip[aria-pressed="true"] { border-color: #111111; background: #111111; color: #ffffff; }
-.tr-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.06em; color: #444444; cursor: pointer; margin-left: 8px; min-height: 36px; }
-.tr-toggle input { accent-color: #111111; width: 16px; height: 16px; margin: 0; }
 .tr-clear { font: inherit; font-size: 12px; color: #767676; background: none; border: 0; padding: 0; border-bottom: 1px solid #cccccc; cursor: pointer; }
 .tr-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 40px 24px; }
 .tr-card { display: block; color: inherit; }
@@ -221,7 +219,6 @@ a.tr-card:hover .tr-card-img img { transform: scale(1.04); }
   .tr-filters { grid-template-columns: 1fr 1fr; }
   .tr-filters input { grid-column: 1 / -1; }
   .tr-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 16px; }
-  .tr-toggle { margin-left: 0; }
   .tr-partner-row, .tr-press-row { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {

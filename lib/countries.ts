@@ -263,3 +263,13 @@ export const countryFlag = (code: string): string =>
   /^[A-Z]{2}$/.test(code)
     ? String.fromCodePoint(...[...code].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65))
     : "";
+
+// Adjective forms for "Vietnamese heritage" on /afarm/track-record cards. Only countries
+// used as heritage need one; any other code reads "<country name> heritage".
+const HERITAGE_ADJECTIVES: Record<string, string> = {
+  CN: "Chinese", FR: "French", IN: "Indian", JP: "Japanese", KH: "Cambodian", KR: "Korean",
+  LA: "Lao", MA: "Moroccan", MX: "Mexican", PH: "Filipino", TH: "Thai", VN: "Vietnamese",
+};
+
+export const heritageLabel = (code: string): string =>
+  `${HERITAGE_ADJECTIVES[code] ?? countryName(code)} heritage`;

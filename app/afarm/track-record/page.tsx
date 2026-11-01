@@ -67,7 +67,7 @@ function toEntry(a: TrackRecordArtist): TrackRecordEntry {
   const period = a.period?.trim() ? noEmDash(a.period.trim()) : null;
   return {
     id: a._id,
-    name: noEmDash(a.name),
+    name: a.name, // exactly as the artist writes it; search folds a copy (TrackRecordShell)
     href: a.slug ? `/profiles/${a.slug}` : null,
     image: image ? thumb(image) : null,
     nationalities: a.nationalities ?? [],
