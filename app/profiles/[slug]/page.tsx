@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import { getArtist, getArtistSlugs, type Artist } from "@/lib/artists";
 import { getEventBySlug, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef, getMotsoundPerformerEditions } from "@/lib/sanity";
-import { BIO_SLUGS, NON_RESIDENCY_BIO_SLUGS } from "@/lib/events";
+import { BIO_SLUGS, NON_RESIDENCY_BIO_SLUGS, residencyLabel } from "@/lib/events";
 import { computeBadges } from "@/lib/badges";
 import { isJunkImage } from "@/lib/junk-images";
 import { countryName } from "@/lib/countries";
@@ -372,7 +372,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                 <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
                   residency
                 </p>
-                <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>{displayDate}</p>
+                <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>{residencyLabel(slug, displayDate)}</p>
               </div>
             )}
             {artist.website && (

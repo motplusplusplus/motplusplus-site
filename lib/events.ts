@@ -5,8 +5,22 @@ export type Event = SanityEvent;
 /** Bio pages that are NOT a residency: the person has a bio page but was never an a.Farm
  *  resident, so the page must not show the resident badge or label its date "residency".
  *  Owner rulings only; add a slug here only when told.
- *    lai-minh-ngoc: a.Farm curator in 2025 (ruling 2026-11-01). */
-export const NON_RESIDENCY_BIO_SLUGS = new Set(["lai-minh-ngoc"]);
+ *    lai-minh-ngoc: a.Farm curator in 2025 (ruling 2026-11-01).
+ *    linh-le: season 6 curator (ruling 2026-11-01). */
+export const NON_RESIDENCY_BIO_SLUGS = new Set(["lai-minh-ngoc", "linh-le"]);
+
+/** Residents whose residency was not an artist residency: the kind is shown with the
+ *  dates, "critic-in-residence (March 2024)", on the profile and the track-record card.
+ *  Owner rulings only (2026-11-01). */
+export const RESIDENCY_KINDS: Record<string, string> = {
+  "david-willis": "critic-in-residence",
+  "blake-palmer": "critic-in-residence",
+};
+
+export function residencyLabel(slug: string | null | undefined, when: string): string {
+  const kind = slug ? RESIDENCY_KINDS[slug] : undefined;
+  return kind ? (when ? `${kind} (${when})` : kind) : when;
+}
 
 /** Slugs that are resident bio pages (not event announcements) */
 export const BIO_SLUGS = new Set([

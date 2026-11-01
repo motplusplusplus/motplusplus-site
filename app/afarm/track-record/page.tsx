@@ -6,6 +6,7 @@ import { isJunkImage } from "@/lib/junk-images";
 import { isExcludedPerson } from "@/lib/excludedPeople";
 import { CONTACTS } from "@/lib/contacts";
 import { FOUNDER_SLUGS, HOSTING_SLUGS } from "@/lib/badges";
+import { RESIDENCY_KINDS, residencyLabel } from "@/lib/events";
 import TrackRecordShell, { TrackRecordList, type TrackRecordEntry } from "./TrackRecordShell";
 
 const OG_IMAGE = "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/studios/hoang-nam-viet/ass05503.jpg";
@@ -76,7 +77,10 @@ function toEntry(a: TrackRecordArtist): TrackRecordEntry {
     role: resident ? "resident" : "event",
     host: !!a.slug && HOSTING_SLUGS.has(a.slug),
     years: [...new Set(years.filter((y): y is string => !!y))].sort(),
-    when: resident ? [season, period].filter(Boolean).join(" · ") || null : null,
+    // "critic-in-residence (March 2024)" for the residents in RESIDENCY_KINDS
+    when: !resident ? null
+      : a.slug && RESIDENCY_KINDS[a.slug] ? residencyLabel(a.slug, period ?? "")
+      : [season, period].filter(Boolean).join(" · ") || null,
     city: a.currentCity?.trim() || null,
   };
 }
