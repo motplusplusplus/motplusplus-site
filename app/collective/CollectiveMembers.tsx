@@ -85,6 +85,7 @@ export default function CollectiveMembers({ members }: { members: CollectiveMemb
                       objectFit: "cover",
                       display: "block",
                       marginBottom: "16px",
+                      filter: "grayscale(1)",
                     }}
                   />
                 ) : (

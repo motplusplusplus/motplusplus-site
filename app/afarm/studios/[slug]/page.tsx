@@ -125,7 +125,7 @@ export default async function StudioPage({
           {studio.portraitPairs.map((p) => (
             <div key={p.name} style={{ textAlign: "center" }}>
               <div style={{ width: "80px", height: "80px", borderRadius: "50%", overflow: "hidden", backgroundColor: "#f0f0f0", marginBottom: "8px" }}>
-                <img src={p.url} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <img src={p.url} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: "grayscale(1)" }} />
               </div>
               <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.04em" }}>{p.name}</p>
             </div>
