@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { CONTACTS } from "@/lib/contacts";
 import { ogImage } from "@/lib/og";
 
-const editions = [
+const editions: { number: number | null; title: string; slug: string; image: string | null }[] = [
+  { number: null, title: "MoTsound workshop — build your own synth with Errorinstruments", slug: "motsound-synth-workshop-errorinstruments", image: "https://cdn.sanity.io/images/t5nsm79o/production/7e057afac0608807603b5c007e5964e3381760c6-1080x1350.jpg" },
+  { number: 26, title: "MoTsound #26 — Ola Moonk + Errorinstruments",          slug: "motsound-26-ola-moonk-errorinstruments",                                  image: "https://cdn.sanity.io/images/t5nsm79o/production/0c47bfacf572a12ef0db921b5fcc066824b53de4-1080x1350.jpg" },
   { number: 25, title: "MoTsound #25 — Nikola H. Mounoud & Writher",           slug: "mot-sound-25-with-nikola-h-mounoud-and-writher",                        image: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/motsound/25-poster.jpg" },
   { number: 24, title: "MoTsound #24 — Out of Landscape / Future Basketball",  slug: "mot-sound-24-out-of-landscape-into-mindscape-future-basketball",         image: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/motsound/24-poster.jpg" },
   { number: 23, title: "MoTsound #23",                                          slug: "motsound-23",                                                             image: "https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/motsound/23-poster.jpg" },
@@ -84,7 +86,7 @@ export default function MoTsoundPage() {
       {/* poster grid */}
       <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px" }}>
         <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "40px" }}>
-          archive — {editions.length} editions, 2017—present
+          archive — {editions.filter((e) => e.number !== null).length} editions, 2017—present
         </p>
 
         <div style={{
@@ -94,7 +96,7 @@ export default function MoTsoundPage() {
         }}>
           {editions.map((ed) => (
             <a
-              key={ed.number}
+              key={ed.slug}
               href={`/events/${ed.slug}`}
               className="snd-card"
               style={{ textDecoration: "none", color: "inherit", display: "block" }}
@@ -118,7 +120,7 @@ export default function MoTsoundPage() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                   }}>
                     <span style={{ fontSize: "11px", color: "#555555", letterSpacing: "0.08em" }}>
-                      #{ed.number}
+                      {ed.number === null ? "workshop" : `#${ed.number}`}
                     </span>
                   </div>
                 )}
@@ -126,10 +128,10 @@ export default function MoTsoundPage() {
 
               {/* label */}
               <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginBottom: "4px" }}>
-                #{ed.number}
+                {ed.number === null ? "workshop" : `#${ed.number}`}
               </p>
               <p style={{ fontSize: "13px", fontWeight: 300, color: "#111111", lineHeight: 1.3 }}>
-                {ed.title.replace(/^MoTsound #\d+ — /, "").replace(/^MoTsound #\d+$/, "—")}
+                {ed.title.replace(/^MoTsound (#\d+|workshop) — /, "").replace(/^MoTsound #\d+$/, "—")}
               </p>
             </a>
           ))}
