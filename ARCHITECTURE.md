@@ -191,7 +191,7 @@ The `event` schema has an `artists[]` array of references to `artist` docs.
 - **Profile page → events:** `getEventsByArtistRef(artistId)` — GROQ
   `*[_type == "event" && active == true && !isBioPage && references($artistId)]`,
   ordered by `dateISO desc`.
-- **MoTSound editions** (badge input, §5): `getMotsoundPerformerEditions()`
+- **MoTsound editions** (badge input, §5): `getMotsoundPerformerEditions()`
   derives performer → edition numbers from the `artists[]` refs on
   `mot-sound-*` events.
 
@@ -259,7 +259,7 @@ the bio page (`app/profiles/[slug]/page.tsx`).
 - `isPlus1Museum` — whether this profile has work in the +1 museum collection.
 - `filters[]` — every tag this person matches, consumed by the listing's
   filter bar (`ArtistsShell.tsx`); a profile can match several at once (e.g.
-  a.Farm + +1 collective + MoTSound).
+  a.Farm + +1 collective + MoTsound).
 - `bioBadges[]` — ordered badges rendered on the bio-page hero; a superset of
   `filters` in places (e.g. "+1 collective" only appears here, not on the
   listing card).
@@ -311,7 +311,7 @@ render — both curated sets are empty.
 - ~~**Profile badge taxonomy**~~ — **Done.** Badges/filters now derive from
   `lib/badges.ts` and `computeBadges()` (§5), covering founder/director,
   hosting artist, a.Farm, +1 residency, +1 museum, +1 performance, +1
-  collective, MoTSound, and curator/writer/researcher (commits `5354c73`,
+  collective, MoTsound, and curator/writer/researcher (commits `5354c73`,
   `babaea2`). Remaining schema/data work is tracked below.
 - ~~**Orphan profile (`pug-alex-williams`)**~~ — **Resolved**, see §6 issue 8.
 - ~~**Luke Schneider purged**~~ from all pages and data; he should never
@@ -446,10 +446,10 @@ populating `deathYear`/`birthYear` for those two docs, querying it in
 **Category taxonomy reconciled (2026-06-12)**: the Sanity `category` field's
 `options.list` now matches the `categories` export in `lib/events.ts` exactly
 (`+a.Farm`, `+1 contemporary project`, `+1 performance`, `+1 nice place for
-experimentation`, `MoTsound`, `MoT+++`). Previously the list had `MoTSound`
+experimentation`, `MoTsound`, `MoT+++`). Previously the list had `MoTsound`
 (capital S, 0 docs), `Performance` (3 `isBioPage:true` docs), and
 `Collaborative` (0 docs), and was missing the three `+1 …` values used by 72
-of 216 active event docs. Fix: removed `MoTSound`/`Collaborative` from
+of 216 active event docs. Fix: removed `MoTsound`/`Collaborative` from
 `options.list`, added the three `+1 …` values, and retagged the 3
 `category:"Performance"` bio-page docs (`ngo-thanh-bac`, `lap-xuan`,
 `enkhbold-togmidshiirev` — all performance plus 2018–2019 program artists) to

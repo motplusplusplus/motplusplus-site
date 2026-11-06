@@ -120,7 +120,7 @@ export function computeBadges(p: PersonSignals): BadgeResult {
   if (isPlus1Residency) filters.push("+1 residency");
   if (isPlus1Museum) filters.push("+1 museum");
   if (p.isPerformancePlus) filters.push("+1 performance");
-  if (editions.length) filters.push("MoTSound");
+  if (editions.length) filters.push("MoTsound");
   if (roleCat) filters.push(roleCat);
   if (isCollective) filters.push("+1 collective");
 
@@ -132,7 +132,7 @@ export function computeBadges(p: PersonSignals): BadgeResult {
   if (isPlus1Residency) bioBadges.push("+1 residency");
   if (isPlus1Museum) bioBadges.push("+1 museum");
   if (p.isPerformancePlus) bioBadges.push("+1 performance");
-  for (const n of editions) bioBadges.push(`MoTSound #${n}`);
+  for (const n of editions) bioBadges.push(`MoTsound #${n}`);
   if (roleCat) bioBadges.push(roleCat);
   if (isCollective) bioBadges.push("+1 collective");
 

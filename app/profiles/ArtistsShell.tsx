@@ -20,7 +20,7 @@ const FILTERS = [
   "a.Farm",
   "+1 museum",
   "+1 performance",
-  "MoTSound",
+  "MoTsound",
   "curator/writer/researcher",
   "+1 collective",
 ] as const;

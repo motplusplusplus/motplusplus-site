@@ -469,9 +469,9 @@ export async function getEventsByArtistRef(artistId: string): Promise<SanityEven
   return raw.map(toSanityEvent);
 }
 
-/** Map of artist slug → sorted MoTSound edition numbers they performed at.
+/** Map of artist slug → sorted MoTsound edition numbers they performed at.
  *  Derived from the `artists[]` refs on `mot-sound-*` events (22 of 23 editions
- *  carry refs; #25 has none). Used to render "MoTSound #n" badges. */
+ *  carry refs; #25 has none). Used to render "MoTsound #n" badges. */
 export async function getMotsoundPerformerEditions(): Promise<Record<string, number[]>> {
   const raw: { slug: string; performers: (string | null)[] | null }[] = await buildClient.fetch(
     `*[_type == "event" && active == true && (category match "*sound" || title match "MoT*sound*")]{
