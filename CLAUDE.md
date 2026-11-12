@@ -214,6 +214,13 @@ chunks missing).
   not "fix" it by adding either person back, including while backfilling
   from the WordPress export. Mirrored in `motplus-sanity/CLAUDE.md` (the
   Studio repo, where artist docs are created).
+- **RARE SEA (2026-11, permanent)**: Rare Sea (raresea.vn, an HCMC art space
+  founded by the two excluded people above) must never be named, linked,
+  credited or described anywhere on this site or in its data, beyond MoT+++'s
+  existing public statement about the two people. Artists who have also shown
+  at Rare Sea keep their normal MoT+++ profiles and credits; just never mention
+  Rare Sea in their bios, captions or event text. The internal overlap list is
+  kept in the profile outreach tracker (not in this repo).
 - **Never pipe a count through `head` or `tail`.** Count the full set first, then
   truncate only the display, and say so when the display is truncated ("showing 20
   of 47"). Piping a query into `| tail -40` and reporting the length of what came
