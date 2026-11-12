@@ -92,11 +92,26 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   // portrait/links/images/instagram for that artist even when Sanity had them. collective/
   // studioHost/curator/performancePlus stay local-only — no Sanity field to shadow, see
   // the 2026-08-17 JSON-precedence report.
-  const sanityWebsite = (sanityArtist?.links?.[0] as { url?: string } | undefined)?.url
-    ?.replace(/^https?:\/\//, "");
-  const sanityInstagram = sanityArtist?.instagram
-    ? [sanityArtist.instagram as string]
-    : undefined;
+  // Every Sanity link is shown (no cap). Instagram URLs in links[] join the
+  // instagram list; the instagram field may hold several handles separated by
+  // commas or spaces. 2026-11-12: profiles previously showed only links[0].
+  const sanityLinkList = ((sanityArtist?.links as { label?: string; url?: string }[] | undefined) ?? [])
+    .filter((l) => l?.url);
+  const igFromLinks = sanityLinkList
+    .map((l) => l.url!.match(/instagram\.com\/([A-Za-z0-9_.]+)/i)?.[1])
+    .filter((h): h is string => !!h);
+  const webLinks = sanityLinkList.filter((l) => !/instagram\.com\//i.test(l.url!));
+  const sanityWebsite = webLinks[0]?.url?.replace(/^https?:\/\//, "");
+  const igField = ((sanityArtist?.instagram as string | undefined) ?? "")
+    .split(/[\s,]+/).map((h) => h.replace(/^@/, "")).filter(Boolean);
+  const igAll = Array.from(new Set([...igField, ...igFromLinks]));
+  const sanityInstagram = igAll.length ? igAll : undefined;
+  const linkLabel = (l: { label?: string; url?: string }) => {
+    const generic = !l.label || /^(website|web|site|homepage|link)$/i.test(l.label.trim());
+    return generic
+      ? l.url!.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")
+      : l.label!.toLowerCase();
+  };
   const artist: Artist = {
     slug,
     name:       (sanityArtist?.name as string) || localArtist?.name || slug,
@@ -410,7 +425,24 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                 <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>{residencyLabel(slug, displayDate)}</p>
               </div>
             )}
-            {artist.website && (
+            {webLinks.length > 0 ? (
+              <div>
+                <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                  {webLinks.length > 1 ? "links" : "website"}
+                </p>
+                {webLinks.map((l, i) => (
+                  <a
+                    key={`${l.url}-${i}`}
+                    href={/^https?:\/\//.test(l.url!) ? l.url : `https://${l.url}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontSize: "15px", fontWeight: 300, color: "#333333", display: "block" }}
+                  >
+                    {linkLabel(l)}
+                  </a>
+                ))}
+              </div>
+            ) : artist.website && (
               <div>
                 <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
                   website
