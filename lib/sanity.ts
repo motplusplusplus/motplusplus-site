@@ -6,6 +6,7 @@ import { createClient } from '@sanity/client';
 // imported and iterated — so the archive notice lives here and in events-data.ARCHIVE.md.)
 import eventsDataRaw from '../events-data.json';
 import { isJunkImage } from './junk-images';
+import { profileImageFallbackFields } from './profileImageFallback';
 
 export const sanityClient = createClient({
   projectId: 't5nsm79o',
@@ -188,9 +189,15 @@ export async function getArtists() {
   return buildClient.fetch(`*[_type == "artist" && active == true] | order(name asc) { ${ARTIST_FIELDS} }`);
 }
 
+// The profile page's portrait-slot fallback candidates (lib/profileImageFallback.ts).
+// Only on the single-artist query, not getArtists(), so the listing stays as cheap
+// as it was. A work's caption links to /trash/[slug] only when getTrashItemBySlug
+// would resolve it, hence the same predicate.
+const PROFILE_FALLBACK_FIELDS = profileImageFallbackFields(`active == true && ${TRASH_ITEM_PRICED} && ${CONSIGNMENT_CURRENT}`);
+
 export async function getArtistBySlug(slug: string) {
   return buildClient.fetch(
-    `*[_type == "artist" && slug.current == $slug][0] { ${ARTIST_FIELDS} }`,
+    `*[_type == "artist" && slug.current == $slug][0] { ${ARTIST_FIELDS} ${PROFILE_FALLBACK_FIELDS} }`,
     { slug }
   );
 }

@@ -13,6 +13,7 @@ import PartnerCredit from "@/components/PartnerCredit";
 import { extractBioFromEventDescription } from "@/lib/bioExtract";
 import type { Metadata } from "next";
 import { ogImage } from "@/lib/og";
+import { pickProfileFallbackImage, type ProfileFallbackImage } from "@/lib/profileImageFallback";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -50,6 +51,21 @@ export async function generateStaticParams() {
   const sanitySlugs = await getAllSanityArtistSlugs();
   const all = new Set([...localSlugs, ...sanitySlugs]);
   return Array.from(all).map(slug => ({ slug }));
+}
+
+/** "from: <source>" under (or over) a fallback image, so nobody reads it as a
+ *  portrait. Internal link when the source has a page. */
+function FallbackCaption({ image, onDark }: { image: ProfileFallbackImage; onDark?: boolean }) {
+  const color = onDark ? "rgba(255,255,255,0.75)" : "#767676";
+  const text = image.label;
+  return (
+    <span style={{ fontSize: "11px", letterSpacing: "0.04em", color, fontWeight: 300 }}>
+      from:{" "}
+      {image.href ? (
+        <Link href={image.href} style={{ color, textDecoration: "underline" }}>{text}</Link>
+      ) : text}
+    </span>
+  );
 }
 
 export default async function ArtistPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -99,6 +115,13 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                   ? (sanityArtist!.images as string[])
                   : (localArtist?.workImages ?? []),
   };
+
+  // No portrait (Sanity or local photo) → borrow an image from their events, works
+  // or a.Farm studio, captioned with its source. Display only; nothing is written
+  // back to Sanity. See lib/profileImageFallback.ts for the order and tie-breaks.
+  const fallbackImage = artist.photo ? null : pickProfileFallbackImage(sanityArtist, isJunkImage);
+  const heroImage = artist.photo || fallbackImage?.url || "";
+  const heroAlt = artist.photo ? artist.name : `${artist.name}, image from ${fallbackImage?.label ?? ""}`;
 
   const rawSanityBio = sanityArtist?.bio;
   const ptBio = Array.isArray(rawSanityBio) ? rawSanityBio as any[] : null;
@@ -212,16 +235,21 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         width: "100%", height: "55vh", minHeight: "360px",
         overflow: "hidden", backgroundColor: "#111111",
       }}>
-        {artist.photo ? (
+        {heroImage ? (
           <img
-            src={artist.photo}
-            alt={artist.name}
+            src={heroImage}
+            alt={heroAlt}
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.72 }}
           />
         ) : null}
+        {fallbackImage && (
+          <div style={{ position: "absolute", top: "14px", right: "16px", left: "16px", textAlign: "right", zIndex: 1 }}>
+            <FallbackCaption image={fallbackImage} onDark />
+          </div>
+        )}
         <div style={{
           position: "absolute", inset: 0,
-          background: artist.photo
+          background: heroImage
             ? "linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.78) 100%)"
             : "none",
           display: "flex", flexDirection: "column", justifyContent: "flex-end",
@@ -348,16 +376,23 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
               </p>
             )}
           </div>
-          {artist.photo && (
-            <img
-              src={artist.photo}
-              alt={artist.name}
-              style={{
-                width: "100%", maxWidth: "340px", maxHeight: "420px",
-                objectFit: "contain", display: "block",
-                border: "1px solid #e5e5e5", backgroundColor: "#f5f5f5",
-              }}
-            />
+          {heroImage && (
+            <figure style={{ margin: 0, width: "100%", maxWidth: "340px" }}>
+              <img
+                src={heroImage}
+                alt={heroAlt}
+                style={{
+                  width: "100%", maxWidth: "340px", maxHeight: "420px",
+                  objectFit: "contain", display: "block",
+                  border: "1px solid #e5e5e5", backgroundColor: "#f5f5f5",
+                }}
+              />
+              {fallbackImage && (
+                <figcaption style={{ marginTop: "8px" }}>
+                  <FallbackCaption image={fallbackImage} />
+                </figcaption>
+              )}
+            </figure>
           )}
         </div>
 

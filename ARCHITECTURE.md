@@ -222,6 +222,21 @@ where noted):
 - `bert-nguyen-san`, `montez-press` — 2 bio-page events with no corresponding
   Sanity `artist` doc; the doc must be created before a ref can point at it.
 
+### Profile portrait-slot fallback (2026-11-12)
+
+When an artist has no `portrait` (and no local `artists-data.json` photo), the
+profile page shows a borrowed image in the portrait slot, captioned
+"from: <source>" so it is never read as a portrait. Display logic only — nothing
+is written to Sanity. Order: a photo from an event that references them (solo
+events first, then newest; `isPoster` uploads and `*poster*` legacy files only if
+nothing else exists) → an image of one of their active trash works → their
+a.Farm host page (exact case-insensitive name match, `visibility != "hidden"`).
+Candidates come back in `getArtistBySlug`'s projection; the choice is made at
+build time in `lib/profileImageFallback.ts`, so it is deterministic and costs the
+browser nothing. Bio-page events are captioned "from: documentation" (no event
+page exists to link to). Dry run: `node scripts/report-profile-image-fallback.mjs`
+(`--all` for every profile). OG/JSON-LD images still use the real portrait only.
+
 ---
 
 ## 5. Profile badge taxonomy
