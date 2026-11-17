@@ -45,7 +45,13 @@ const flatText = (html) => decode(html.replace(/<script[\s\S]*?<\/script>/g, ' '
 const assetHash = (url) => (url ? url.split('/').pop().split('-')[0] : '');
 
 async function fetchCandidates() {
-  const q = `*[_type == "artist" && active == true] | order(_updatedAt desc) [0...40] {
+  // Only profiles with something to compare (bio, portrait, links or images) are picked: a
+  // batch of new name-only profiles (e.g. the AAAE credits pass, 2026-11-17) would otherwise
+  // fill all 40 slots with nothing checkable and fail the run for no real reason.
+  const q = `*[_type == "artist" && active == true && (
+      defined(portrait.asset) || count(links) > 0 || count(uploadedImages) > 0 ||
+      count(bio) > 0 || (defined(bio) && bio != "")
+    )] | order(_updatedAt desc) [0...40] {
     "slug": slug.current, name, _updatedAt,
     "bio": select(bio._type == "string" => bio, pt::text(bio)),
     "portrait": portrait.asset->url, "portraitCredit": portrait.photographerName,
