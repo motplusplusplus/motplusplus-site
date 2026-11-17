@@ -1,4 +1,4 @@
-import { handleSubscribe, handleGeo, upsertSubscriber, splitName, tickByDefaultFor, rateLimited } from "./worker/subscribe.js";
+import { handleSubscribe, handleGeo, handleJoin, upsertSubscriber, splitName, tickByDefaultFor, rateLimited } from "./worker/subscribe.js";
 
 // Legacy event-announcement slugs (e.g. "introducing resident X") that were
 // migrated to /profiles/[slug] bio pages and excluded from /events/ static
@@ -236,6 +236,9 @@ export default {
     // inquiry form uses to decide whether its newsletter box starts ticked.
     if (path === "/api/subscribe") {
       return handleSubscribe(request, env);
+    }
+    if (path === "/api/join") {
+      return handleJoin(request, env);
     }
     if (path === "/api/geo") {
       return handleGeo(request);

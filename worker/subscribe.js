@@ -184,16 +184,21 @@ const memHits = new Map(); // per-isolate fallback when the rate-limit binding i
 
 export async function rateLimited(env, request) {
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-  if (env.SUBSCRIBE_LIMITER) {
-    const { success } = await env.SUBSCRIBE_LIMITER.limit({ key: ip });
-    return !success;
-  }
+  // layer 1: per-isolate counter. exact within one isolate, which is where a quick
+  // burst from one client usually lands.
   const now = Date.now();
   const hits = (memHits.get(ip) || []).filter((t) => now - t < 60_000);
   hits.push(now);
   memHits.set(ip, hits);
   if (memHits.size > 5000) memHits.clear();
-  return hits.length > 5;
+  if (hits.length > 5) return true;
+  // layer 2: cloudflare's rate-limit binding. approximate and per location, so it
+  // catches slower or spread-out abuse but is not a hard cap on its own.
+  if (env.SUBSCRIBE_LIMITER) {
+    const { success } = await env.SUBSCRIBE_LIMITER.limit({ key: ip });
+    return !success;
+  }
+  return false;
 }
 
 async function turnstileOk(env, token, ip) {
@@ -245,4 +250,74 @@ export async function handleSubscribe(request, env) {
     return json(request, { error: "something went wrong on our side. please try again shortly." }, 502);
   }
   return json(request, { ok: true });
+}
+
+// ---- POST /api/join (invite confirmation) ----------------------------------
+// the /join page links look like /join?e=<email>&t=<token>, token = base64url
+// HMAC-SHA256(JOIN_SECRET, lowercased email). Only this POST changes anything, so
+// link-scanning bots that merely GET the page cannot subscribe anyone.
+
+export async function joinToken(secret, email) {
+  const key = await crypto.subtle.importKey(
+    "raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"],
+  );
+  const mac = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(String(email).trim().toLowerCase()));
+  return b64url(mac);
+}
+
+function safeEqual(a, b) {
+  if (typeof a !== "string" || typeof b !== "string" || a.length !== b.length) return false;
+  let d = 0;
+  for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return d === 0;
+}
+
+/** "joined" | "already" | "unavailable" (not found, or excluded/bounced/unsubscribed: left untouched) */
+export async function confirmInvite(env, email) {
+  const addr = String(email).trim().toLowerCase();
+  const rows = (await sheets(env, `values/${TAB}!A:D`)).values || [];
+  let rowNum = -1;
+  for (let i = 1; i < rows.length; i++) {
+    if (String(rows[i][0] || "").trim().toLowerCase() === addr) { rowNum = i + 1; break; }
+  }
+  if (rowNum === -1) return "unavailable";
+  const status = String(rows[rowNum - 1][3] || "").trim().toLowerCase();
+  if (status === "subscribed") return "already";
+  if (status !== "invited") return "unavailable";
+  await sheets(env, "values:batchUpdate", {
+    method: "POST",
+    body: JSON.stringify({
+      valueInputOption: "RAW",
+      data: [
+        { range: `${TAB}!D${rowNum}`, values: [["subscribed"]] },
+        { range: `${TAB}!K${rowNum}:L${rowNum}`, values: [[todayVn(), "confirmed via invite"]] },
+      ],
+    }),
+  });
+  return "joined";
+}
+
+export async function handleJoin(request, env) {
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(request) });
+  if (request.method !== "POST") return json(request, { error: "method not allowed" }, 405);
+  const origin = request.headers.get("Origin");
+  if (origin && !ALLOWED_ORIGINS.has(origin)) return json(request, { error: "forbidden" }, 403);
+
+  let body;
+  try { body = await request.json(); } catch { return json(request, { error: "invalid" }, 400); }
+  const email = typeof body?.e === "string" ? body.e.trim().toLowerCase() : "";
+  const token = typeof body?.t === "string" ? body.t : "";
+  if (!email || email.length > 254 || !EMAIL_RE.test(email) || !env.JOIN_SECRET) return json(request, { error: "invalid" }, 400);
+
+  if (await rateLimited(env, request)) return json(request, { error: "busy" }, 429);
+
+  if (!safeEqual(await joinToken(env.JOIN_SECRET, email), token)) return json(request, { error: "invalid" }, 400);
+
+  try {
+    const result = await confirmInvite(env, email);
+    if (result === "unavailable") return json(request, { error: "unavailable" }, 409);
+    return json(request, { ok: true, result });
+  } catch {
+    return json(request, { error: "failed" }, 502);
+  }
 }
