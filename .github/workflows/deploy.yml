@@ -70,7 +70,13 @@ jobs:
           else
             echo "✓ Mapbox token validated (HTTP $MB_STATUS)"
           fi
-          npm run build
+          # One automatic retry: build-time fetches (Sanity API, etc.) can fail transiently
+          # (2026-11-17: Sanity 524, DNS blip, Google Fonts). A second failure is real.
+          if ! npm run build; then
+            echo "::warning title=Build failed::retrying once in 30s"
+            sleep 30
+            npm run build
+          fi
         env:
           NEXT_PUBLIC_MAPBOX_TOKEN: ${{ secrets.NEXT_PUBLIC_MAPBOX_TOKEN }}
 
@@ -98,5 +104,18 @@ jobs:
 
       # BUILD_ID checks prove the new build is served, not that its CONTENT is. Fetch recently
       # edited profiles from Sanity and fail the run if the live pages don't match.
-      - name: Verify live profile content matches Sanity
+      - name: Verify live profile and event content matches Sanity
         run: npm run verify-content
+
+      # Runs only when something above failed (after the build retry). Emails info@ via
+      # Cloudflare Email Service; without CLOUDFLARE_EMAIL_TOKEN it warns instead of staying silent.
+      - name: Alert info@ on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLOUDFLARE_ACCOUNT_ID: f2a86349fa252c2582bc0f478ccdf9ab
+          CLOUDFLARE_EMAIL_TOKEN: ${{ secrets.CLOUDFLARE_EMAIL_TOKEN }}
+        run: |
+          FAILED_STEP=$(gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" \
+            --jq '[.jobs[].steps[] | select(.conclusion=="failure") | .name][0] // "unknown"' 2>/dev/null || echo unknown)
+          FAILED_STEP="$FAILED_STEP" node scripts/send-alert.js

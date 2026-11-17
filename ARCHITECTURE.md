@@ -688,6 +688,30 @@ the mechanism is inferred from behavior, not from the ruleset.)
   or a photographer credit is missing versus Sanity. Fails (not passes) when it
   finds nothing to compare.
 
+- **Self-hosted fonts** (2026-11-17): Inter (latin + vietnamese, variable, weights 300–500)
+  is served from `public/fonts/` via `@font-face` in `app/globals.css`, with the OFL licence
+  alongside. It used to be `next/font/google`, which fetches Google Fonts at BUILD time; a
+  hiccup there failed a CI content deploy. The build now depends only on Sanity.
+- **Build retry** (2026-11-17): the workflow's Build step and `npm run deploy` each retry a
+  failed `next build` once (transient Sanity/DNS errors). A second failure is treated as real.
+- **`verify-content` also checks events**: the most recently edited published, active
+  event (title, hero image, every uploaded gallery image, `photo:` credit lines).
+
+### 9.7 Failure alerts (info@motplusplusplus.com)
+
+The workflow's last step (`if: failure()`) runs `scripts/send-alert.js`, which emails
+info@motplusplusplus.com through Cloudflare Email Service's REST API with the failed step
+name and run link. **One-time setup required before it can send** (account-level, needs the
+owner):
+1. Onboard the sending domain: `npx wrangler email sending enable motplusplusplus.com`
+   (adds SPF/DKIM records on the zone). The default sender is `alerts@motplusplusplus.com`
+   (override with the `ALERT_FROM` env var).
+2. Create a Cloudflare API token with the **Email Sending** permission, then
+   `gh secret set CLOUDFLARE_EMAIL_TOKEN`. (The deploy token `CLOUDFLARE_API_TOKEN` lacks it:
+   Email API returns `Unauthorized [code: 2036]`.)
+Until the secret exists the step prints a `::warning::` saying no alert was sent; the red run
+itself is then the only signal. Test without sending: `ALERT_DRY_RUN=1 node scripts/send-alert.js`.
+
 ### 9.4 Cache-purge token setup (done 2026-11-17 for CI; local was already set)
 
 The Workers deploy token (`CLOUDFLARE_API_TOKEN`) cannot purge cache or read the

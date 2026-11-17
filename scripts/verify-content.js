@@ -12,7 +12,11 @@
 // was generated (mtime of out/profiles/<slug>/index.html, minus a margin) —
 // an edit made after the build can legitimately be absent, so it is not a failure.
 //
-// Usage: node scripts/verify-content.js [--count N]   (default 3)
+// It also checks the most recently edited published, active event (title, hero image, every
+// uploaded gallery image, and photographer credits) — event pages are built from a different
+// query and template than profiles, so a profile check cannot vouch for them.
+//
+// Usage: node scripts/verify-content.js [--count N] [--events N]   (defaults: 3 artists, 1 event)
 
 'use strict';
 
@@ -26,6 +30,8 @@ const MARGIN_MS = 30 * 1000;
 
 const countArg = process.argv.indexOf('--count');
 const COUNT = countArg > -1 ? Number(process.argv[countArg + 1]) || 3 : 3;
+const evArg = process.argv.indexOf('--events');
+const EVENT_COUNT = evArg > -1 ? Number(process.argv[evArg + 1]) : 1;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -51,9 +57,9 @@ async function fetchCandidates() {
   return (await res.json()).result ?? [];
 }
 
-function builtAt(slug) {
+function builtAt(slug, section = 'profiles') {
   try {
-    return statSync(join(ROOT, 'out', 'profiles', slug, 'index.html')).mtimeMs;
+    return statSync(join(ROOT, 'out', section, slug, 'index.html')).mtimeMs;
   } catch {
     return null;
   }
@@ -79,6 +85,54 @@ function problems(a, html) {
     if (!text.includes(String(c).trim().toLowerCase())) miss.push(`photo credit "${c}"`);
   }
   return miss;
+}
+
+async function fetchEventCandidates() {
+  const q = `*[_type == "event" && active == true && coalesce(isBioPage, false) == false] | order(_updatedAt desc) [0...40] {
+    "slug": slug.current, title, _updatedAt,
+    "imgs": uploadedImages[defined(asset)]{ "url": asset->url, "isPoster": coalesce(isPoster, false), "credit": photographerName }
+  }`;
+  const res = await fetch(`${SANITY}?query=${encodeURIComponent(q)}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Sanity event query failed: HTTP ${res.status}`);
+  return (await res.json()).result ?? [];
+}
+
+function eventProblems(e, html) {
+  const miss = [];
+  const text = flatText(html);
+  const title = String(e.title ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (title && !text.includes(title)) miss.push('title');
+  const imgs = (e.imgs ?? []).filter((i) => i.url);
+  const absent = imgs.filter((i) => !html.includes(assetHash(i.url)));
+  if (absent.length) miss.push(`gallery images ${absent.length}/${imgs.length} missing`);
+  // hero = first .jpg of the page's image list (poster-flagged uploads first), else the first
+  // image. Only assertable when an uploaded image is a jpg (otherwise a legacy jpg may win).
+  const ordered = [...imgs.filter((i) => i.isPoster), ...imgs.filter((i) => !i.isPoster)];
+  const heroSrc = ordered.find((i) => /\.(jpe?g)$/i.test(i.url));
+  if (heroSrc && !html.includes(assetHash(heroSrc.url))) miss.push('hero image');
+  const credited = imgs.filter((i) => i.credit && i.credit.trim());
+  const shown = (text.match(/photo: /g) ?? []).length;
+  if (shown !== credited.length) miss.push(`photo credit lines ${shown} live vs ${credited.length} in Sanity`);
+  for (const c of new Set(credited.map((i) => i.credit.trim().toLowerCase()))) {
+    if (!text.includes(`photo: ${c}`)) miss.push(`photo credit "${c}"`);
+  }
+  return miss;
+}
+
+async function checkLiveEvent(e) {
+  let last = [];
+  for (let i = 0; i < 6; i++) {
+    try {
+      const res = await fetch(`${BASE_URL}/events/${e.slug}/?vc=${Date.now()}`, { cache: 'no-store', redirect: 'follow' });
+      if (res.status !== 200) last = [`HTTP ${res.status}`];
+      else last = eventProblems(e, await res.text());
+    } catch (err) {
+      last = [`fetch error: ${err.message}`];
+    }
+    if (last.length === 0) return [];
+    if (i < 5) await sleep(5000);
+  }
+  return last;
 }
 
 async function checkLive(a) {
@@ -126,12 +180,38 @@ async function main() {
       console.error(`  ✗ /profiles/${a.slug}/  (edited ${a._updatedAt}) — live is missing: ${miss.join('; ')}`);
     }
   }
+  let eventsChecked = 0;
+  if (EVENT_COUNT > 0) {
+    const events = [];
+    for (const e of await fetchEventCandidates()) {
+      if (!e.slug) continue;
+      const built = builtAt(e.slug, 'events');
+      if (built === null) continue;
+      if (new Date(e._updatedAt).getTime() > built - MARGIN_MS) continue;
+      events.push(e);
+      if (events.length >= EVENT_COUNT) break;
+    }
+    if (events.length === 0) {
+      console.error('\n❌ verify-content: found no recently edited published event to compare (is out/ present?).');
+      process.exit(1);
+    }
+    console.log(`\nVerifying live EVENT content for ${events.length} recently edited event(s) against Sanity:\n`);
+    for (const e of events) {
+      const miss = await checkLiveEvent(e);
+      eventsChecked++;
+      if (miss.length === 0) console.log(`  ✓ /events/${e.slug}/  (edited ${e._updatedAt})`);
+      else {
+        failed++;
+        console.error(`  ✗ /events/${e.slug}/  (edited ${e._updatedAt}) — live is missing: ${miss.join('; ')}`);
+      }
+    }
+  }
   if (failed) {
-    console.error(`\n❌ ${failed} live profile page(s) do not match Sanity. Most likely stale edge-cached HTML`);
+    console.error(`\n❌ ${failed} live page(s) do not match Sanity. Most likely stale edge-cached HTML`);
     console.error('   (ARCHITECTURE.md §9.2): purge with `node scripts/purge-cache.js --require`, then re-run.');
     process.exit(1);
   }
-  console.log('\n✅ live profile content matches Sanity.');
+  console.log(`\n✅ live content matches Sanity (${eligible.length} profile(s), ${eventsChecked} event(s)).`);
 }
 
 main().catch((err) => {

@@ -95,7 +95,15 @@ function main() {
   // --webpack: Next 16 defaults `next build` to Turbopack, which does not inline
   // NEXT_PUBLIC_* env vars the way webpack does — leaves process.env.NEXT_PUBLIC_MAPBOX_TOKEN
   // unresolved at runtime (resolves to "" in the browser), silently breaking the museum map.
-  run('npx next build --webpack');
+  // One automatic retry: build-time fetches (Sanity API) fail transiently — 2026-11-17 saw a
+  // Sanity 524 and a DNS blip back to back. A second failure is real, so let it abort.
+  try {
+    run('npx next build --webpack');
+  } catch {
+    console.warn('\n⚠️  build failed — retrying once in 20s (transient network errors are common)');
+    execSync('sleep 20');
+    run('npx next build --webpack');
+  }
   run('npx wrangler deploy');
   run('node scripts/purge-cache.js'); // purge BEFORE verify so verify validates the post-purge state
   run('node scripts/verify-deploy.js');

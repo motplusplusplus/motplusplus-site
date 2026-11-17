@@ -54,8 +54,12 @@
   motplusplusplus.com → Caching → Purge Cache. See ISSUE-011 / ARCHITECTURE.md §9.
 - **`npm run verify-content`** (also run by the Action and `npm run deploy`)
   compares the live pages of the 3 most recently edited artists to Sanity and
-  fails the run on any mismatch. A green BUILD_ID check alone does not prove
-  content is live.
+  fails the run on any mismatch; it also checks the most recently edited event
+  (title, hero, gallery images, credits). A green BUILD_ID check alone does not
+  prove content is live.
+- **Build resilience:** fonts are self-hosted (`public/fonts`, no Google Fonts at build
+  time); a failed build is retried once; a failed Action run emails info@ once
+  `CLOUDFLARE_EMAIL_TOKEN` is set up (ARCHITECTURE.md §9.7 — not yet configured).
 
 ## Content auto-deploy (Sanity → live, no manual deploy needed)
 - **Sanity content changes auto-deploy** within **~3–5 minutes** of publish.
