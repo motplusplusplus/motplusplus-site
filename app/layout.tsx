@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { DEFAULT_OG_IMAGE } from "@/lib/og";
 import { CONTACTS } from "@/lib/contacts";
-
-const inter = Inter({
-  subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "500"],
-  variable: "--font-inter",
-});
 
 const OG_IMAGE = DEFAULT_OG_IMAGE;
 
@@ -124,9 +117,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Self-hosted Inter (see app/globals.css). Preload the latin subset, as next/font did. */}
+        <link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body className={`${inter.variable}`}>
+      <body>
         <Header />
         <main>{children}</main>
         <Footer />
