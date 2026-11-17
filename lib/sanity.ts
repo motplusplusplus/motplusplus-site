@@ -145,6 +145,9 @@ const ARTIST_FIELDS = `
   links,
   "portrait": portrait.asset->url,
   "images": uploadedImages[].asset->url,
+  // photographer credits, parallel to "images" (same index) and for the portrait
+  "imageCredits": uploadedImages[].photographerName,
+  "portraitCredit": portrait.photographerName,
   legacyImageUrls,
   // The artist's own writable side of collective membership — which group(s) they
   // belong to. See "collectiveRoster" below for the other direction (derived, never
@@ -222,7 +225,7 @@ const EVENT_FIELDS = `
   "location": coalesce(location, ""),
   "description": coalesce(description, ""),
   "vnDescription": coalesce(vnDescription, ""),
-  "uploadedImages": uploadedImages[]{ "url": asset->url, "isPoster": coalesce(isPoster, false) },
+  "uploadedImages": uploadedImages[]{ "url": asset->url, "isPoster": coalesce(isPoster, false), "credit": photographerName },
   "legacyImageUrls": coalesce(legacyImageUrls, []),
   videoUrl,
   bandcampAlbumId,
@@ -258,7 +261,7 @@ type RawEvent = {
   slug: string; title: string; vnTitle?: string; dateISO: string;
   endDateISO?: string; displayDate: string; category: string;
   location: string; description: string; vnDescription?: string;
-  uploadedImages: { url: string | null; isPoster: boolean }[] | null; legacyImageUrls: string[];
+  uploadedImages: { url: string | null; isPoster: boolean; credit?: string | null }[] | null; legacyImageUrls: string[];
   videoUrl?: string; bandcampAlbumId?: string; wpLink: string; isBioPage: boolean;
   artists?: LinkedArtist[] | null;
   credits?: EventCredit[] | null;
@@ -271,6 +274,8 @@ export type SanityEvent = {
   sortDate: string; pubDate: string; endDateISO?: string; displayDate: string;
   category: string; location: string; description: string; vnDescription?: string;
   images: string[]; thumbnail: string; videoUrl?: string;
+  /** image url -> photographerName, only for uploaded images that carry one */
+  imageCredits?: Record<string, string>;
   bandcampAlbumId?: string; wpLink: string; isBioPage: boolean;
   artists: LinkedArtist[];
   credits: EventCredit[];
@@ -328,6 +333,11 @@ function toSanityEvent(e: RawEvent): SanityEvent {
   // Merge all sources then deduplicate — handles same photo uploaded to EN+VN folders in R2
   const images = dedupImages([...uploaded, ...legacy, ...jsonImages]);
   const thumbnail    = images[0] ?? '';
+  const imageCredits: Record<string, string> = {};
+  for (const u of uploadedEntries) {
+    const c = (u.credit ?? '').trim();
+    if (c && u.url) imageCredits[u.url] = c;
+  }
   return {
     slug:            e.slug,
     title:           e.title,
@@ -342,6 +352,7 @@ function toSanityEvent(e: RawEvent): SanityEvent {
     description:     e.description,
     vnDescription:   e.vnDescription,
     images,
+    imageCredits,
     thumbnail,
     videoUrl:        e.videoUrl,
     bandcampAlbumId: e.bandcampAlbumId,

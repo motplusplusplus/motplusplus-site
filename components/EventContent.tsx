@@ -5,6 +5,7 @@ import Link from "next/link";
 import { normalizeDisplayDate } from "@/lib/events";
 import EventImagePlaceholder from "@/components/EventImagePlaceholder";
 import PartnerCredit, { type EventPartner } from "@/components/PartnerCredit";
+import PhotoCredit from "@/components/PhotoCredit";
 
 /** Render a paragraph that may contain [text](url) markdown links */
 function RichPara({ text, style, className }: { text: string; style: React.CSSProperties; className?: string }) {
@@ -53,6 +54,8 @@ interface AdjacentEvent {
 }
 
 interface EventContentProps {
+  /** image url -> photographerName (uploaded images only) */
+  imageCredits?: Record<string, string>;
   title: string;
   vnTitle?: string;
   description: string;
@@ -126,6 +129,7 @@ export default function EventContent({
   prevEvent,
   nextEvent,
   seeAlso,
+  imageCredits,
 }: EventContentProps) {
   const hasBilingual = Boolean(vnTitle || vnDescription);
   const [lang, setLang] = useState<"en" | "vi">("en");
@@ -178,6 +182,11 @@ export default function EventContent({
           // with object-fit: cover in a 70vh landscape container, which cropped it out of
           // recognition. The placeholder contains rather than covers.
           <EventImagePlaceholder size="hero" title={title} />
+        )}
+        {heroImg && imageCredits?.[heroImg] && (
+          <div style={{ position: "absolute", top: "14px", right: "16px", pointerEvents: "none" }}>
+            <PhotoCredit name={imageCredits[heroImg]} onDark />
+          </div>
         )}
         <div className="evt-hero-pad" style={{
           position: "absolute", inset: 0,
@@ -471,6 +480,7 @@ export default function EventContent({
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
           </div>
+          <PhotoCredit name={imageCredits?.[contentImages[0]]} style={{ marginBottom: "8px" }} />
 
           {/* remaining images: grid */}
           {contentImages.length > 1 && (
@@ -480,8 +490,8 @@ export default function EventContent({
               gap: "8px",
             }}>
               {contentImages.slice(1).map((img, i) => (
+                <div key={i}>
                 <div
-                  key={i}
                   onClick={() => setLightboxIdx(heroOffset + i + 1)}
                   style={{
                     width: "100%", aspectRatio: "4/3", overflow: "hidden",
@@ -494,6 +504,8 @@ export default function EventContent({
                     loading="lazy"
                     style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                   />
+                </div>
+                <PhotoCredit name={imageCredits?.[img]} style={{ marginTop: "6px" }} />
                 </div>
               ))}
             </div>

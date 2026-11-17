@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import PhotoCredit from '@/components/PhotoCredit';
 
 type Props = {
   images: string[];
   artistName: string;
+  /** photographerName per image, same index as images; null/empty = no caption */
+  credits?: (string | null | undefined)[];
 };
 
-export default function ArtistGallery({ images, artistName }: Props) {
+export default function ArtistGallery({ images, artistName, credits }: Props) {
   const [open, setOpen] = useState<number | null>(null);
 
   const close = useCallback(() => setOpen(null), []);
@@ -40,8 +43,8 @@ export default function ArtistGallery({ images, artistName }: Props) {
         }}
       >
         {images.map((img, i) => (
+          <div key={i}>
           <button
-            key={i}
             onClick={() => setOpen(i)}
             style={{
               display: 'block',
@@ -70,6 +73,8 @@ export default function ArtistGallery({ images, artistName }: Props) {
               onMouseLeave={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1)'; (e.currentTarget as HTMLImageElement).style.opacity = '1'; }}
             />
           </button>
+          <PhotoCredit name={credits?.[i]} style={{ marginTop: '6px' }} />
+          </div>
         ))}
       </div>
 

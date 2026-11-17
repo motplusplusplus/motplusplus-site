@@ -6,6 +6,7 @@ import { getEventBySlug, getArtistBySlug, getAllSanityArtistSlugs, getEventsByAr
 import { BIO_SLUGS, NON_RESIDENCY_BIO_SLUGS, residencyLabel } from "@/lib/events";
 import { computeBadges } from "@/lib/badges";
 import { isJunkImage } from "@/lib/junk-images";
+import PhotoCredit from "@/components/PhotoCredit";
 import { countryName } from "@/lib/countries";
 import { getAllStudios } from "@/lib/studios";
 import ArtistGallery from "./ArtistGallery";
@@ -131,11 +132,19 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                   : (localArtist?.workImages ?? []),
   };
 
+  // Credits align by index with artist.workImages only when those came from Sanity.
+  const workImageCredits: (string | null)[] | undefined =
+    (sanityArtist?.images as string[] | undefined)?.length
+      ? ((sanityArtist!.imageCredits as (string | null)[] | null | undefined) ?? undefined)
+      : undefined;
+
   // No portrait (Sanity or local photo) → borrow an image from their events, works
   // or a.Farm studio, captioned with its source. Display only; nothing is written
   // back to Sanity. See lib/profileImageFallback.ts for the order and tie-breaks.
   const fallbackImage = artist.photo ? null : pickProfileFallbackImage(sanityArtist, isJunkImage);
   const heroImage = artist.photo || fallbackImage?.url || "";
+  // Photographer credit for the portrait: only when the portrait is the Sanity one.
+  const portraitCredit: string | null = sanityArtist?.portrait ? ((sanityArtist.portraitCredit as string | null) ?? null) : null;
   const heroAlt = artist.photo ? artist.name : `${artist.name}, image from ${fallbackImage?.label ?? ""}`;
 
   const rawSanityBio = sanityArtist?.bio;
@@ -260,6 +269,11 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {fallbackImage && (
           <div style={{ position: "absolute", top: "14px", right: "16px", left: "16px", textAlign: "right", zIndex: 1 }}>
             <FallbackCaption image={fallbackImage} onDark />
+          </div>
+        )}
+        {!fallbackImage && portraitCredit && (
+          <div style={{ position: "absolute", top: "14px", right: "16px", left: "16px", textAlign: "right", zIndex: 1 }}>
+            <PhotoCredit name={portraitCredit} onDark />
           </div>
         )}
         <div style={{
@@ -405,6 +419,11 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
               {fallbackImage && (
                 <figcaption style={{ marginTop: "8px" }}>
                   <FallbackCaption image={fallbackImage} />
+                </figcaption>
+              )}
+              {!fallbackImage && portraitCredit && (
+                <figcaption style={{ marginTop: "8px" }}>
+                  <PhotoCredit name={portraitCredit} />
                 </figcaption>
               )}
             </figure>
@@ -654,7 +673,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
               work
             </p>
-            <ArtistGallery images={artist.workImages} artistName={artist.name} />
+            <ArtistGallery images={artist.workImages} artistName={artist.name} credits={workImageCredits} />
           </div>
         )}
 
