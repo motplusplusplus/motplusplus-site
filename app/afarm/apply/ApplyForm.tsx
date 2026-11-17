@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { hotel, type StudioEntry } from "@/lib/studios";
-import { submitInquiry } from "@/lib/inquiry";
+import { submitInquiry, fetchTickByDefault } from "@/lib/inquiry";
 import { CONTACTS } from "@/lib/contacts";
 
 const durationOptions = [
@@ -44,6 +44,11 @@ function ApplyForm({ studios }: { studios: StudioEntry[] }) {
   const [email, setEmail] = useState("");
   const [portfolio, setPortfolio] = useState("");
   const [message, setMessage] = useState("");
+  // newsletter box: starts unticked; ticked on load only where the geo lookup
+  // says that's allowed, and only if the visitor hasn't touched it meanwhile.
+  const [subscribe, setSubscribe] = useState(false);
+  const [subscribeTouched, setSubscribeTouched] = useState(false);
+  const touchedRef = useRef(false);
   const [submitted, setSubmitted] = useState(false);
   // true when the endpoint was unreachable and we fell back to opening mailto
   const [viaMailto, setViaMailto] = useState(false);
@@ -51,6 +56,14 @@ function ApplyForm({ studios }: { studios: StudioEntry[] }) {
   useEffect(() => {
     if (preselectedStudio) setStudio(preselectedStudio);
   }, [preselectedStudio]);
+
+  useEffect(() => {
+    let live = true;
+    fetchTickByDefault().then((tick) => {
+      if (live && tick) setSubscribe((prev) => (touchedRef.current ? prev : true));
+    });
+    return () => { live = false; };
+  }, []);
 
   const monthOptions = getMonthOptions();
 
@@ -87,6 +100,9 @@ function ApplyForm({ studios }: { studios: StudioEntry[] }) {
       startMonth: monthLabel,
       duration: durationLabel,
       ...(portfolio ? { portfolioUrl: portfolio } : {}),
+      ...(subscribe
+        ? { subscribe: true, subscribeOrigin: subscribeTouched ? ("visitor" as const) : ("default" as const) }
+        : {}),
     });
 
     if (!ok) {
@@ -282,6 +298,26 @@ function ApplyForm({ studios }: { studios: StudioEntry[] }) {
               style={{ ...inputStyle, resize: "vertical" }}
             />
           </div>
+
+          {/* newsletter opt-in */}
+          <label
+            style={{
+              display: "flex", alignItems: "flex-start", gap: "12px", marginBottom: "40px",
+              fontSize: "13px", fontWeight: 300, color: "#111111", cursor: "pointer",
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={subscribe}
+              onChange={(e) => {
+                touchedRef.current = true;
+                setSubscribeTouched(true);
+                setSubscribe(e.target.checked);
+              }}
+              style={{ marginTop: "3px", width: "16px", height: "16px", flexShrink: 0 }}
+            />
+            subscribe me to the MoT+++ newsletter
+          </label>
 
           <button
             type="submit"

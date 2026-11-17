@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CONTACTS } from "@/lib/contacts";
+import NewsletterForm from "@/components/NewsletterForm";
 
 export default function Footer() {
   return (
@@ -37,6 +38,8 @@ export default function Footer() {
           <Link href="/press">press</Link>
           <Link href="/contact">contact</Link>
         </div>
+
+        <NewsletterForm />
 
         <div
           style={{

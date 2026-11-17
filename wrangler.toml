@@ -10,3 +10,11 @@ routes = [
 directory = "out"
 binding = "ASSETS"
 not_found_handling = "404-page"
+
+# per-ip limit for /api/subscribe and the inquiry newsletter opt-in
+[[ratelimits]]
+name = "SUBSCRIBE_LIMITER"
+namespace_id = "1001"
+  [ratelimits.simple]
+  limit = 5
+  period = 60

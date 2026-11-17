@@ -1,3 +1,5 @@
+import { handleSubscribe, handleGeo, upsertSubscriber, splitName, tickByDefaultFor, rateLimited } from "./worker/subscribe.js";
+
 // Legacy event-announcement slugs (e.g. "introducing resident X") that were
 // migrated to /profiles/[slug] bio pages and excluded from /events/ static
 // generation (see BIO_SLUGS in lib/events.ts). Their old /events/[slug] URLs
@@ -130,7 +132,30 @@ async function handleInquiry(request, env) {
     return inquiryJson({ error: "could not record inquiry" }, 502, request);
   }
 
-  return inquiryJson({ ok: true }, 200, request);
+  // optional newsletter opt-in (a.Farm inquiry form). best effort: the inquiry
+  // is already recorded, so a sheet failure must never turn this into an error.
+  // consent guard: an untouched pre-ticked box ("default") is only valid where
+  // the visitor's country allows ticking by default (not eu/eea/uk/ch).
+  let subscribed = false;
+  if (type === "residency" && payload.subscribe === true) {
+    const fromDefault = payload.subscribeOrigin === "default";
+    const allowed = !fromDefault || tickByDefaultFor(request.cf);
+    if (allowed && !(await rateLimited(env, request))) {
+      try {
+        const { first, last } = splitName(name);
+        await upsertSubscriber(env, {
+          email: email.trim(), first, last, country: request.cf?.country || "",
+          source: "a.Farm inquiry",
+          note: fromDefault ? "inquiry form, default ticked" : "inquiry form, ticked by visitor",
+        });
+        subscribed = true;
+      } catch {
+        subscribed = false;
+      }
+    }
+  }
+
+  return inquiryJson({ ok: true, subscribed }, 200, request);
 }
 
 // Pricelist / +1 Trash price-reveal gate. The trashItem `price` values are
@@ -205,6 +230,15 @@ export default {
     // asset, so this is safe ahead of the redirect + asset-first routing below.
     if (path === "/api/inquiry") {
       return handleInquiry(request, env);
+    }
+
+    // Newsletter subscribe (site footer) and the country lookup the a.Farm
+    // inquiry form uses to decide whether its newsletter box starts ticked.
+    if (path === "/api/subscribe") {
+      return handleSubscribe(request, env);
+    }
+    if (path === "/api/geo") {
+      return handleGeo(request);
     }
 
     // Price-reveal gate for /pricelist and the /trash seven-click modal. POST

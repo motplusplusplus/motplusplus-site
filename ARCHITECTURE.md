@@ -951,3 +951,16 @@ reverted. The presentation work from the same commit (server-rendered concept
 and manifesto, the `LocationDetails` component, reduced-motion handling, real
 GROQ museum→trash resolution) was correct and was kept; only the demo layer came
 back. `tasks/04` stands.
+
+## Newsletter subscribe + geo (added 2026-11-17)
+- `worker/subscribe.js`, routed from `worker.js`: `POST /api/subscribe` (site footer,
+  `components/NewsletterForm.tsx`) and `GET /api/geo` (returns `{tickByDefault}` from
+  `request.cf`; false for eu/eea, uk, ch and unknown countries). The a.Farm inquiry
+  form (`/api/inquiry`, `subscribe` + `subscribeOrigin`) reuses `upsertSubscriber`.
+- Subscribers are rows in the Google Sheet "MoT+++ newsletter subscribers" (tab
+  `subscribers`) via the thi-tien service account (domain-wide delegation,
+  impersonating info@). Worker secret `GOOGLE_SA_KEY` holds the key JSON.
+- Abuse controls: honeypot, 3s time trap, per-ip rate limit (`SUBSCRIBE_LIMITER`
+  binding), server-side email validation. Turnstile is built in but OFF: set
+  `TURNSTILE_SITE_KEY` in `lib/turnstile.ts` and `wrangler secret put TURNSTILE_SECRET`.
+- Existing rows: excluded / bounced / subscribed untouched; unsubscribed -> subscribed.

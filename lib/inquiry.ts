@@ -20,7 +20,29 @@ export type InquiryPayload = {
   portfolioUrl?: string;
   locationName?: string;
   locationId?: string;
+  // newsletter opt-in (a.Farm form). "default" = box was pre-ticked and left
+  // alone, "visitor" = the visitor ticked it themselves.
+  subscribe?: boolean;
+  subscribeOrigin?: "default" | "visitor";
 };
+
+/** asks the Worker whether the newsletter box may start ticked (false for
+ *  eu/eea, uk, switzerland). Any failure or a slow answer returns false, so the
+ *  box stays unticked. */
+export async function fetchTickByDefault(timeoutMs = 1500): Promise<boolean> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch("/api/geo", { signal: ctrl.signal, cache: "no-store" });
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data?.tickByDefault === true;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 export async function submitInquiry(payload: InquiryPayload): Promise<boolean> {
   try {
