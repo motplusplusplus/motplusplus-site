@@ -12,6 +12,8 @@
     "check:no-truncation": "node scripts/check-no-body-truncation.mjs",
     "check:event-active": "node scripts/check-event-active.mjs",
     "verify-deploy": "node scripts/verify-deploy.js",
+    "verify-content": "node scripts/verify-content.js",
+    "purge-cache": "node scripts/purge-cache.js",
     "deploy": "node scripts/deploy.js"
   },
   "dependencies": {

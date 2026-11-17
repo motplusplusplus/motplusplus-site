@@ -20,17 +20,21 @@
      `main` isn't in sync with `origin/main`.
   3. Does a clean build (`rm -rf .next out && next build`).
   4. Runs `wrangler deploy`, purges the edge cache (if a purge token is set),
-     then `verify-deploy` — which now FAILS if the live site isn't serving the
-     just-built BUILD_ID (catches the stale-asset-manifest bug; ISSUE-011 / §9).
+     then `verify-deploy` — which FAILS if the live site isn't serving the
+     just-built BUILD_ID (catches the stale-asset-manifest bug; ISSUE-011 / §9)
+     — and `verify-content`, which FAILS if the live pages of the most recently
+     edited artists don't match Sanity (portrait, links, bio, photo credits).
 - **Commit and push to `origin/main` must precede every deploy, without
   exception** — `npm run deploy` enforces this. A GitHub Action
   (`.github/workflows/deploy.yml`) can be triggered at any time and
   redeploys whatever is on `origin/main` — any deployed-but-unpushed local
   commits would otherwise be silently reverted on the live site. This has
-  happened before (pages disappeared). **The Action is currently
-  `disabled_manually`** (2026-06-13) — it was racing local deploys and
-  re-shipping a stale asset manifest (ISSUE-011 / ARCHITECTURE.md §9), so the
-  Sanity Studio deploy button is inert until the workflow is re-enabled safely.
+  happened before (pages disappeared). **The Action is ENABLED** (state `active`;
+  check with `gh workflow list --all`). It was disabled 2026-06-13 while it raced
+  local deploys (ISSUE-011), then re-enabled 2026-06-16 as the Sanity-publish
+  auto-deploy target (see "Content auto-deploy" below). Only its `push:` trigger
+  stays commented out; it runs on `workflow_dispatch` / `repository_dispatch`
+  (the Sanity webhook). Do not disable it — that silently breaks Sanity → live.
 - Credentials: `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` /
   `NEXT_PUBLIC_MAPBOX_TOKEN` live in `.env.local` (gitignored, not stored in
   this repo). Workers account ≠ R2 account — they are different Cloudflare
@@ -38,14 +42,20 @@
 - If `verify-deploy` fails (Workers Assets large-file 404 bug): make a
   trivial change to `components/MuseumMap.tsx`, commit, push, and re-run
   `npm run deploy`.
-- **Edge-cache purge is wired into `npm run deploy`** but is **inert until a
-  token is set**: add a `Zone > Cache Purge > Purge` token as
-  `CLOUDFLARE_CACHE_PURGE_TOKEN` in `.env.local` (`CLOUDFLARE_ZONE_ID` is already
-  there). Until then deploy prints a skip warning; `verify-deploy` still fails
-  loudly on stale HTML. To purge manually: Cloudflare dashboard →
-  motplusplusplus.com → Caching → Configuration → Purge Cache. The zone uses
-  `must-revalidate`, so HTML self-corrects once assets are correct. See
-  ISSUE-011 / ARCHITECTURE.md §9.
+- **Edge-cache purge is mandatory after every deploy.** The zone caches HTML at
+  the edge (`cf-cache-status: HIT`) and `must-revalidate` does NOT reliably
+  self-correct it: on 2026-11-17 three CI deploys shipped fresh profile pages
+  that stayed invisible behind stale cached HTML. `scripts/purge-cache.js`
+  (`purge_everything`) runs in `npm run deploy` (skips with a warning only if
+  `CLOUDFLARE_ZONE_ID` / `CLOUDFLARE_CACHE_PURGE_TOKEN` are unset in
+  `.env.local`) and in the Action (`--require`: hard failure if the
+  `CLOUDFLARE_ZONE_ID` / `CLOUDFLARE_CACHE_PURGE_TOKEN` Actions secrets are
+  missing). Manual purge: `npm run purge-cache`, or Cloudflare dashboard →
+  motplusplusplus.com → Caching → Purge Cache. See ISSUE-011 / ARCHITECTURE.md §9.
+- **`npm run verify-content`** (also run by the Action and `npm run deploy`)
+  compares the live pages of the 3 most recently edited artists to Sanity and
+  fails the run on any mismatch. A green BUILD_ID check alone does not prove
+  content is live.
 
 ## Content auto-deploy (Sanity → live, no manual deploy needed)
 - **Sanity content changes auto-deploy** within **~3–5 minutes** of publish.
@@ -53,6 +63,8 @@
   webhook → GitHub Action `deploy.yml` → `next build --webpack` (Node 22) →
   `wrangler deploy`. **No manual `npm run deploy` is needed for content-only
   changes.** (Pipeline + diagram: ARCHITECTURE.md §9.6; verified 2026-06-16.)
+  The Action purges the edge cache and runs `verify-content` after deploying, so
+  a green run means live pages match Sanity.
 - **Code changes** still need a deploy: either **`git push origin main`** (triggers
   the Cloudflare Workers Build, which now builds correctly with `--webpack`
   + token — ISSUE-013) **or** `npm run deploy` from the dev machine.
@@ -155,11 +167,11 @@ The museum map WILL silently break if any of these rules are violated:
 
 3. **GitHub Actions secret.** `.github/workflows/deploy.yml` reads
    `NEXT_PUBLIC_MAPBOX_TOKEN` from `secrets.NEXT_PUBLIC_MAPBOX_TOKEN` and fails
-   the build loudly if it's unset. As of 2026-06-14 this secret has NOT been
-   added to the repo. Until it is, do not re-enable the push trigger in
-   `deploy.yml` (currently commented out / `disabled_manually` — see
-   "Deploy — HARD RULES" above). Once the secret is added, the push trigger can
-   safely be re-enabled.
+   the build loudly if it's unset or malformed. The secret has been set since
+   2026-08-10 and the workflow is enabled (see "Deploy — HARD RULES"). Its
+   `push:` trigger is still intentionally commented out — Sanity webhook
+   dispatches and Cloudflare Workers Builds already cover deploys, and a push
+   trigger would double-fire.
 
 4. **Verifying a deploy fixed the map** — after any deploy, run:
    ```
@@ -231,6 +243,11 @@ chunks missing).
   script, and any `limit` in a GROQ query used for counting — count in JS over the
   whole result set (see also the GROQ-vs-JS counting rule in the Studio repo's
   HANDOFF).
+- **Photo credits** render as a small gray `photo: <photographerName>` line
+  (`components/PhotoCredit.tsx`, formatter `lib/photoCredit.ts`: lowercase except
+  MoT+++, a.Farm, MoTsound, MoTcyclopedia) under the portrait and each gallery
+  image on profiles and events, only when `photographerName` is set. A linked
+  `photographer` profile reference on event images is not rendered yet.
 - Lowercase convention throughout all UI text (intentional MoT+++ voice)
 - MoT+++ exact capitalization always
 

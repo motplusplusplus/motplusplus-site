@@ -84,5 +84,19 @@ jobs:
       # marking them as "already uploaded" — the file is in CF's content store but not served.
       # This has broken the museum map twice. Verify large chunks are reachable post-deploy.
       # If this step fails: make a trivial change to components/MuseumMap.tsx, rebuild, redeploy.
+      # The zone's cache rule pins HTML at the edge, so a correct deploy can sit behind
+      # stale cached pages (2026-11-17: Sanity edits deployed 3x, live stayed stale).
+      # Purge BEFORE verifying; --require makes missing secrets a hard failure, not a skip.
+      - name: Purge Cloudflare edge cache
+        run: node scripts/purge-cache.js --require
+        env:
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          CLOUDFLARE_CACHE_PURGE_TOKEN: ${{ secrets.CLOUDFLARE_CACHE_PURGE_TOKEN }}
+
       - name: Verify large chunks are accessible
         run: npm run verify-deploy
+
+      # BUILD_ID checks prove the new build is served, not that its CONTENT is. Fetch recently
+      # edited profiles from Sanity and fail the run if the live pages don't match.
+      - name: Verify live profile content matches Sanity
+        run: npm run verify-content

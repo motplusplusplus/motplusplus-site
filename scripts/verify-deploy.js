@@ -121,7 +121,7 @@ async function main() {
     console.error('   Likely causes / fixes:');
     console.error('     • Outdated wrangler — upgrade: npm install -D wrangler@latest');
     console.error('     • The GitHub "Deploy site" Action re-deployed an older build over this one');
-    console.error('       — confirm it is disabled: gh workflow list --all');
+    console.error('       (it is ENABLED and fires on every Sanity publish) — check: gh run list --workflow deploy.yml');
     console.error('   See ARCHITECTURE.md §9 and ISSUES.md ISSUE-011, then re-run: npm run deploy');
     process.exit(1);
   }

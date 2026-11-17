@@ -629,9 +629,10 @@ curl -s -o /dev/null -w "%{http_code}" \
   "Deploy site" workflow (`.github/workflows/deploy.yml`) is triggered by the
   Sanity Studio deploy button (`workflow_dispatch`) and `repository_dispatch`.
   It can fire seconds after a local deploy and re-deploy `origin/main`,
-  clobbering a good local deploy with a stale asset set. **It is currently
-  `disabled_manually`** (`gh workflow disable "Deploy site"`). Re-enable only
-  after making it safe; while disabled, the Studio deploy button does nothing.
+  clobbering a good local deploy with a stale asset set. It was disabled
+  2026-06-13 and **re-enabled 2026-06-16** (§9.6) — it is `active` today and is
+  the Sanity-publish auto-deploy target; only its `push:` trigger stays off.
+  Do not disable it: the Sanity webhook would then dispatch into nothing.
 
 **Note on "Total Upload: 3.37 KiB".** This is *normal* and not the bug:
 Workers Assets is content-addressed, so files whose content is unchanged across
@@ -648,8 +649,20 @@ rewritten from the worker's `private, no-store` to `public, max-age=0,
 must-revalidate`. Because of `must-revalidate` the edge revalidates each request
 against origin, so HTML self-corrects once the asset layer is right — which is
 why "Purge Everything" appeared not to help during the incident (it was fighting
-§9.1, which a purge cannot fix). The rule is a latent risk; it could be narrowed
-to exclude `text/html`, but `must-revalidate` currently keeps HTML fresh.
+§9.1, which a purge cannot fix).
+
+**Correction, 2026-11-17: `must-revalidate` does NOT keep HTML fresh.** Profile
+pages for artists edited at 04:45–04:48 UTC stayed stale at the edge through three
+correct Action deploys (04:55, 06:19, 07:05 UTC — builds fetched fresh Sanity data,
+`wrangler deploy` succeeded, `verify-deploy` green) and several local deploys, until
+a `purge_everything` ran at ~10:59 UTC. The Action had no purge step (no purge
+secrets), and `verify-deploy` only compared the homepage's BUILD_ID, which proved
+the new build was served but not that profile HTML was current. Fix: the Action now
+purges (`scripts/purge-cache.js --require`, secrets `CLOUDFLARE_ZONE_ID` +
+`CLOUDFLARE_CACHE_PURGE_TOKEN`) and runs `scripts/verify-content.js` (§9.3). The
+rule could still be narrowed to exclude `text/html`; until then purge-on-deploy is
+mandatory. (The exact cache-rule TTL is unreadable with the available tokens, so
+the mechanism is inferred from behavior, not from the ruleset.)
 
 ### 9.3 Guardrails now in place
 
@@ -664,7 +677,18 @@ to exclude `text/html`, but `must-revalidate` currently keeps HTML fresh.
   `CLOUDFLARE_ZONE_ID` + `CLOUDFLARE_CACHE_PURGE_TOKEN` are set in `.env.local`,
   then runs `verify-deploy`.
 
-### 9.4 Cache-purge token setup (one manual step, optional)
+- **`scripts/purge-cache.js`** (2026-11-17) — shared purge step. `npm run deploy`
+  calls it (skips with a warning if creds unset); the Action calls it with
+  `--require` (fails if the secrets are missing, so it can never silently skip).
+- **`scripts/verify-content.js`** (2026-11-17) — content-level post-deploy check,
+  run by both `npm run deploy` and the Action after `verify-deploy`. Takes the 3
+  most recently edited active artists (skipping any edited after their page was
+  built, judged by `out/profiles/<slug>/index.html` mtime), fetches each LIVE
+  profile and fails if portrait, any link, the bio's first line, a gallery image
+  or a photographer credit is missing versus Sanity. Fails (not passes) when it
+  finds nothing to compare.
+
+### 9.4 Cache-purge token setup (done 2026-11-17 for CI; local was already set)
 
 The Workers deploy token (`CLOUDFLARE_API_TOKEN`) cannot purge cache or read the
 cache ruleset (API auth error 10000). To enable automatic post-deploy purging:
@@ -697,9 +721,8 @@ no runtime injection on this static-export site (§1).
   - Local builds/deploys: `.env.local` (gitignored), loaded by
     `scripts/deploy.js` via `@next/env`.
   - CI (`deploy.yml`): `secrets.NEXT_PUBLIC_MAPBOX_TOKEN` — the workflow's
-    build step fails loudly if this secret is unset. As of 2026-06-14 it has
-    not been added to the repo's Actions secrets (the push trigger is also
-    disabled — see §9.3).
+    build step fails loudly if this secret is unset or malformed. It has been
+    set since 2026-08-10; the push trigger remains disabled by design (§9.6).
 - **Verifying the token is live:** fetch the museum page's JS chunk
   (`/_next/static/chunks/app/museum/page-<hash>.js`) and grep for `pk.eyJ` —
   its presence confirms the token was inlined correctly.
