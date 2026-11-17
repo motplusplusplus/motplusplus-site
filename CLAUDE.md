@@ -58,8 +58,8 @@
   (title, hero, gallery images, credits). A green BUILD_ID check alone does not
   prove content is live.
 - **Build resilience:** fonts are self-hosted (`public/fonts`, no Google Fonts at build
-  time); a failed build is retried once; a failed Action run emails info@ once
-  `CLOUDFLARE_EMAIL_TOKEN` is set up (ARCHITECTURE.md §9.7 — not yet configured).
+  time); a failed build is retried once; a failed Action run emails info@ via the Gmail API
+  (`GMAIL_*` Actions secrets, same as mot-outbox; setup in ARCHITECTURE.md §9.7).
 
 ## Content auto-deploy (Sanity → live, no manual deploy needed)
 - **Sanity content changes auto-deploy** within **~3–5 minutes** of publish.

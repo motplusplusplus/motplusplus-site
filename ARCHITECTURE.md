@@ -700,17 +700,22 @@ the mechanism is inferred from behavior, not from the ruleset.)
 ### 9.7 Failure alerts (info@motplusplusplus.com)
 
 The workflow's last step (`if: failure()`) runs `scripts/send-alert.js`, which emails
-info@motplusplusplus.com through Cloudflare Email Service's REST API with the failed step
-name and run link. **One-time setup required before it can send** (account-level, needs the
-owner):
-1. Onboard the sending domain: `npx wrangler email sending enable motplusplusplus.com`
-   (adds SPF/DKIM records on the zone). The default sender is `alerts@motplusplusplus.com`
-   (override with the `ALERT_FROM` env var).
-2. Create a Cloudflare API token with the **Email Sending** permission, then
-   `gh secret set CLOUDFLARE_EMAIL_TOKEN`. (The deploy token `CLOUDFLARE_API_TOKEN` lacks it:
-   Email API returns `Unauthorized [code: 2036]`.)
-Until the secret exists the step prints a `::warning::` saying no alert was sent; the red run
-itself is then the only signal. Test without sending: `ALERT_DRY_RUN=1 node scripts/send-alert.js`.
+info@motplusplusplus.com **through the Gmail API as info@**, with the failed step name and run
+link. It reuses the mot-outbox repo's send-only OAuth credentials (scope `gmail.send` only: it can
+send but not read, search or delete mail), stored as the Actions secrets `GMAIL_CLIENT_ID`,
+`GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN` (same names as mot-outbox).
+
+- **These values are not kept anywhere locally**: mot-outbox's `scripts/make_refresh_token.py`
+  writes them straight to GitHub secrets and GitHub secrets are write-only. To set them on this repo,
+  mint a token again (needs the Google OAuth client JSON from Cloud project `thi-tien-504414`; sign
+  in as info@ in the browser):
+  `sed 's#^REPO = .*#REPO = "motplusplusplus/motplusplus-site"#' ~/Projects/mot-outbox/scripts/make_refresh_token.py | python3 - ~/Downloads/client_secret_XXXX.json`
+  then delete the downloaded JSON.
+- Without the secrets the step prints a `::warning::` saying no alert was sent; the red run is then
+  the only signal.
+- Test without sending: `ALERT_DRY_RUN=1 node scripts/send-alert.js`. Send a labeled test alert
+  (needs the secrets in the environment): `ALERT_TEST=1 node scripts/send-alert.js`.
+- If it logs `invalid_grant`, the refresh token was revoked/expired: mint a new one as above.
 
 ### 9.4 Cache-purge token setup (done 2026-11-17 for CI; local was already set)
 
