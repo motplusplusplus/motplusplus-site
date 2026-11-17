@@ -86,7 +86,7 @@ export default function LinksPage() {
 
       {/* contact forms */}
       <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", display: "flex", flexDirection: "column", gap: "64px" }}>
-        <MailtoContactForm heading="contact mot+++" recipient={CONTACTS.general} messagePlaceholder="enter your message" />
+        <MailtoContactForm heading="contact MoT+++" recipient={CONTACTS.general} messagePlaceholder="enter your message" />
         <MailtoContactForm heading="contact a.farm" recipient={CONTACTS.residency} messagePlaceholder="i'd like more info on your residency" />
       </div>
 

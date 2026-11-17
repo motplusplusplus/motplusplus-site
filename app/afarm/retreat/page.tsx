@@ -20,7 +20,7 @@ const IMAGES = {
 export const metadata: Metadata = {
   title: "a.Farm Saigon Artist Intensive Retreat",
   description:
-    "A one-week critical intensive for contemporary artists in Ho Chi Minh City. Aug. 22–28, 2026 — individual consultations, group critiques, and exchange with the mot+++ and a.farm communities. USD 3,000 per artist.",
+    "A one-week critical intensive for contemporary artists in Ho Chi Minh City. Aug. 22–28, 2026 — individual consultations, group critiques, and exchange with the MoT+++ and a.farm communities. USD 3,000 per artist.",
   openGraph: {
     title: "a.Farm Saigon Artist Intensive Retreat — MoT+++",
     description:
@@ -156,8 +156,8 @@ export default function RetreatPage() {
       <Reveal>
         <SectionBanner
         src={IMAGES.hero}
-        alt="presentation at the a.farm + mot+++ artist retreat"
-        eyebrow="a.farm × mot+++"
+        alt="presentation at the a.farm + MoT+++ artist retreat"
+        eyebrow="a.farm × MoT+++"
         title="a.farm saigon artist intensive retreat"
         subtitle="aug. 22–28, 2026"
       />
@@ -169,7 +169,7 @@ export default function RetreatPage() {
           deeper critical engagement, and clearer positioning within the contemporary art
           field. designed for artists at various stages of their careers, combining
           intensive one-on-one meetings, group critiques, and informal discussions with
-          artists, curators, and cultural practitioners from the mot+++ and a.farm
+          artists, curators, and cultural practitioners from the MoT+++ and a.farm
           communities.
         </p>
         <p style={body}>
@@ -188,7 +188,7 @@ export default function RetreatPage() {
       <Reveal>
         <SectionBanner
         src={IMAGES.davidWillis}
-        alt="a.farm + mot+++ artist retreat"
+        alt="a.farm + MoT+++ artist retreat"
         objectPosition="center 38%"
         eyebrow="organized by"
         title="david willis"
@@ -211,7 +211,7 @@ export default function RetreatPage() {
           pacific, art &amp; market, art basel stories, and umbigo magazine. david served
           as the original curator of a.farm when it was founded in 2018, and later
           returned as a curator resident in 2024 with the sponsorship of the aura art
-          foundation. he continues to collaborate with mot+++ &amp; a.farm as a curator on
+          foundation. he continues to collaborate with MoT+++ &amp; a.farm as a curator on
           various projects and initiatives.
         </p>
         <Link
@@ -266,8 +266,8 @@ export default function RetreatPage() {
         <ContentBlock>
         <p style={body}>
           <Link href="/afarm/" style={{ color: "#111111" }}>a.farm</Link> was founded in
-          2018 as a collaboration between sàn art, mot+++, and the nguyễn art foundation.
-          it is now administered exclusively by mot+++, one of the top
+          2018 as a collaboration between sàn art, MoT+++, and the nguyễn art foundation.
+          it is now administered exclusively by MoT+++, one of the top
           avant-garde art organizations in saigon (ho chi minh city) over the past decade.
           working with a.farm provides participants exclusive access to many of saigon&apos;s
           leading artists, collectors, and art professionals.
@@ -314,7 +314,7 @@ export default function RetreatPage() {
       <Reveal>
         <SectionBanner
         src={IMAGES.coreProgram}
-        alt="a.farm + mot+++ community dinner"
+        alt="a.farm + MoT+++ community dinner"
         eyebrow="core program"
         title="critical intensive"
       />
@@ -330,7 +330,7 @@ export default function RetreatPage() {
           all participants, invited artists, and guest contributors. by the end of day 5,
           all eight participants will have received both an individual consultation and a
           dedicated group critique. each evening concludes with a communal dinner shared
-          with members of the mot+++ and a.farm artist community.
+          with members of the MoT+++ and a.farm artist community.
         </p>
         <ApplyButton />
       </ContentBlock>
@@ -350,7 +350,7 @@ export default function RetreatPage() {
           participants arrive in ho chi minh city and settle into their accommodation.
           the evening begins with a welcome dinner and introductions, providing an
           opportunity to meet fellow participants, discuss expectations for the week
-          ahead, and become acquainted with the a.farm and mot+++ communities.
+          ahead, and become acquainted with the a.farm and MoT+++ communities.
         </p>
 
         <p style={{ ...body, fontWeight: 400, color: "#222222", marginBottom: "8px" }}>
@@ -393,7 +393,7 @@ export default function RetreatPage() {
         </p>
         <p style={body}>
           each evening concludes with a communal dinner shared with members of the
-          mot+++ and a.farm artist community. these informal gatherings provide
+          MoT+++ and a.farm artist community. these informal gatherings provide
           opportunities for conversation, exchange, networking, and continued reflection
           outside the critique setting.
         </p>
@@ -422,7 +422,7 @@ export default function RetreatPage() {
         <p style={body}>
           participants leave with a clearer understanding of their practice, a stronger
           sense of direction, and ongoing connections with fellow artists and the wider
-          a.farm and mot+++ community.
+          a.farm and MoT+++ community.
         </p>
 
         </Collapsible>
