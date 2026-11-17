@@ -106,7 +106,7 @@ export default function AboutPage() {
             href="/collective"
             style={{ fontSize: "13px", color: "#111111", borderBottom: "1px solid #111111", paddingBottom: "1px" }}
           >
-            mot+++ collective →
+            MoT+++ collective →
           </a>
         </div>
 

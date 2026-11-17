@@ -80,7 +80,7 @@ export default async function StudioPage({
             <span style={{ marginLeft: "12px" }}>
               ·{" "}
               <Link href="/collective" style={{ color: "#767676" }}>
-                mot+++ collective member
+                MoT+++ collective member
               </Link>
             </span>
           )}

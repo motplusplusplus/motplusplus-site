@@ -42,7 +42,7 @@ export default async function StudiosPage() {
               <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em", marginBottom: "6px" }}>
                 {studio.neighborhood}
                 {studio.collectiveMember && (
-                  <span style={{ marginLeft: "12px", color: "#767676" }}>mot+++ collective</span>
+                  <span style={{ marginLeft: "12px", color: "#767676" }}>MoT+++ collective</span>
                 )}
               </p>
               <h2 style={{ fontSize: "20px", fontWeight: 300, marginBottom: studio.artistName !== studio.name ? "2px" : "4px", lineHeight: 1.2 }}>

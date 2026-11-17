@@ -158,7 +158,7 @@ export default function CollectivePage() {
             marginBottom: "20px",
           }}
         >
-          mot+++ collective
+          MoT+++ collective
         </h1>
         <p style={{ fontSize: "15px", color: "#666666", maxWidth: "520px", lineHeight: 1.7, marginBottom: "16px" }}>
           MoT+++ collective was founded 2017 by{" "}

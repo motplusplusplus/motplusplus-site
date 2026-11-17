@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 const TEXT = {
   en: {
     heading: "join the MoT+++ newsletter?",
-    body: "a few emails a year about a.Farm open calls, residency seasons and events.",
+    body: "a few emails a year about a.Farm open calls, new residents and events.",
     button: "yes, add me",
     sending: "adding you...",
     joined: "thank you. you're on the list.",
@@ -17,7 +17,7 @@ const TEXT = {
   },
   vi: {
     heading: "tham gia bản tin MoT+++?",
-    body: "vài email mỗi năm về các đợt open call của a.Farm, các mùa lưu trú và sự kiện.",
+    body: "vài email mỗi năm về các đợt open call của a.Farm, các nghệ sĩ lưu trú mới và sự kiện.",
     button: "vâng, hãy thêm tôi",
     sending: "đang thêm...",
     joined: "cảm ơn bạn. bạn đã có tên trong danh sách.",

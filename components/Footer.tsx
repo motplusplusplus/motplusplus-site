@@ -33,7 +33,7 @@ export default function Footer() {
           <Link href="/afarm">+a.Farm</Link>
           <Link href="/trash">+1 trash</Link>
           <Link href="/events">events</Link>
-          <Link href="/collective">mot+++ collective</Link>
+          <Link href="/collective">MoT+++ collective</Link>
           <Link href="/about">about</Link>
           <Link href="/press">press</Link>
           <Link href="/contact">contact</Link>
