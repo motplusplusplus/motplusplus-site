@@ -230,6 +230,20 @@ chunks missing).
   not "fix" it by adding either person back, including while backfilling
   from the WordPress export. Mirrored in `motplus-sanity/CLAUDE.md` (the
   Studio repo, where artist docs are created).
+- **No works by Luke Schneider, under any name (2026-11-18, permanent).** No work by Luke
+  Schneider under any alias (including **NEW3IM**) may appear anywhere on the site: not as a
+  +1 trash item, a +1 museum entry, an event credit, or a work visible in an event or profile
+  image (crop or drop the image). The guard in `lib/excludedPeople.ts` blocks the name and the
+  NEW3IM alias, but it cannot see images, so check every gallery by eye for events where he
+  showed work (password 0~1, love in the time of cholera ch.1, Đông Chí, One World, One Word).
+  internalNotes must not name him either: write "one artist withheld under the excluded-people
+  policy" with a count only.
+- **provenanceNotes is public (2026-11-18, permanent).** `trashItem.provenanceNotes` is in the
+  public dataset. Keep it to "sold, month/year, source type" (for example `sold, 12/2018,
+  certificate of authenticity and invoice`). Never put doc links, Drive ids, invoice numbers,
+  buyer names or prices in it. The detailed evidence for legacy sales lives in the private
+  Google Sheet "+1 trash legacy sales ledger (internal)" in info@'s Drive, shared with nobody.
+  Never copy ledger contents into Sanity.
 - **RARE SEA (2026-11, permanent)**: Rare Sea (raresea.vn, an HCMC art space
   founded by the two excluded people above) must never be named, linked,
   credited or described anywhere on this site or in its data, beyond MoT+++'s
