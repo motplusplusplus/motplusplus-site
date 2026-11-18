@@ -12,6 +12,7 @@ export type TrashItem = {
   slug?: string;                // links to /trash/[slug]
   title: string;
   medium: string;
+  workType?: string[];          // slugs from lib/trashWorkTypes.ts; drives the /trash type filter
   year: number;
   dimensions: string;
   edition: string;

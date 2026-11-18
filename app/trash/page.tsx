@@ -37,6 +37,7 @@ export default async function TrashPage() {
     slug: r.slug,
     title: r.title ?? '',
     medium: r.medium ?? '',
+    workType: (r.workType ?? []).filter(Boolean),
     year: r.year ?? 0,
     dimensions: r.dimensions ?? '',
     edition: r.edition ?? '',

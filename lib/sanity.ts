@@ -64,6 +64,7 @@ const TRASH_ITEM_FIELDS = `
   "slug": slug.current,
   title,
   medium,
+  workType,
   year,
   dimensions,
   edition,

@@ -8,6 +8,7 @@ import InquiryForm from '@/components/InquiryForm';
 import { CONTACTS } from '@/lib/contacts';
 import { compareNames } from '@/lib/sortName';
 import { shuffleArray } from '@/lib/shuffle';
+import { TRASH_WORK_TYPES, isTrashWorkType, type TrashWorkType } from '@/lib/trashWorkTypes';
 
 const CLICKS_NEEDED = 7;
 
@@ -20,6 +21,18 @@ type AvailabilityFilter = typeof AVAILABILITY_FILTERS[number];
 function matchesAvailability(item: TrashItem, filter: AvailabilityFilter): boolean {
   if (filter === 'all') return true;
   return filter === 'sold' ? !!item.sold : !item.sold;
+}
+
+type TypeFilter = 'all' | TrashWorkType;
+
+function matchesType(item: TrashItem, filter: TypeFilter): boolean {
+  return filter === 'all' || (item.workType ?? []).includes(filter);
+}
+
+/** `?type=` from the address bar; anything unrecognised means "all". */
+function typeFromUrl(): TypeFilter {
+  const t = new URLSearchParams(window.location.search).get('type');
+  return isTrashWorkType(t) ? t : 'all';
 }
 
 /** CSS-ident-safe view-transition-name for a Sanity _id. */
@@ -75,6 +88,10 @@ export default function TrashPageShell({ items }: Props) {
   }, [items]);
   const [sort, setSort] = useState<SortOption>('random');
   const [availability, setAvailability] = useState<AvailabilityFilter>('all');
+  // Type filter state lives in the URL (?type=painting) so a filtered view can be
+  // shared. The static HTML always renders "all"; the real value is read after
+  // hydration (reading window during render would break hydration).
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
   const [openId, setOpenId] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -138,9 +155,20 @@ export default function TrashPageShell({ items }: Props) {
   }, [sort, randomOrder, items]);
 
   const displayItems = useMemo(
-    () => sortedItems.filter(i => matchesAvailability(i, availability)),
-    [sortedItems, availability]
+    () => sortedItems.filter(i => matchesAvailability(i, availability) && matchesType(i, typeFilter)),
+    [sortedItems, availability, typeFilter]
   );
+
+  // Type buttons: hidden when no work at all carries the type. Counts follow the
+  // available/sold view so they match what the button will show.
+  const typeButtons = useMemo(() => {
+    return TRASH_WORK_TYPES
+      .filter(t => items.some(i => (i.workType ?? []).includes(t.value)))
+      .map(t => ({
+        ...t,
+        count: items.filter(i => matchesAvailability(i, availability) && (i.workType ?? []).includes(t.value)).length,
+      }));
+  }, [items, availability]);
 
   const counts = useMemo(() => ({
     all: items.length,
@@ -151,6 +179,15 @@ export default function TrashPageShell({ items }: Props) {
   const setAvailabilityAnimated = (f: AvailabilityFilter) => {
     if (f === availability) return;
     withGridTransition(() => setAvailability(f));
+  };
+
+  const setTypeAnimated = (f: TypeFilter) => {
+    if (f === typeFilter) return;
+    const url = new URL(window.location.href);
+    if (f === 'all') url.searchParams.delete('type');
+    else url.searchParams.set('type', f);
+    window.history.pushState(null, '', url);
+    withGridTransition(() => setTypeFilter(f));
   };
 
   const setSortAnimated = (s: SortOption) => {
@@ -199,11 +236,18 @@ export default function TrashPageShell({ items }: Props) {
     // re-run when the rendered set changes so new cards get observed
   }, [displayItems]);
 
-  // auto-open from URL param ?item=
+  // read ?type= and ?item= from the URL after hydration; follow back/forward too
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const itemId = params.get('item');
-    if (itemId && items.some(i => i._id === itemId)) setOpenId(itemId);
+    const linked = itemId ? items.find(i => i._id === itemId) : undefined;
+    const fromUrl = typeFromUrl();
+    // a link to one specific work wins over a type filter that would hide it
+    setTypeFilter(linked && !matchesType(linked, fromUrl) ? 'all' : fromUrl);
+    if (linked) setOpenId(linked._id);
+    const onPop = () => setTypeFilter(typeFromUrl());
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
   }, [items]);
 
   const open = openId ? displayItems.find(i => i._id === openId) ?? null : null;
@@ -363,6 +407,43 @@ export default function TrashPageShell({ items }: Props) {
           </div>
         </div>
 
+        {/* type filter: ?type=… in the URL; a type with no works gets no button */}
+        {typeButtons.length > 0 && (
+          <div
+            role="group"
+            aria-label="filter by work type"
+            style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '32px' }}
+          >
+            {[{ value: 'all' as TypeFilter, label: 'all', count: undefined as number | undefined },
+              ...typeButtons].map(t => (
+              <button
+                key={t.value}
+                onClick={() => setTypeAnimated(t.value)}
+                aria-pressed={typeFilter === t.value}
+                className="trash-filter-btn"
+                style={{
+                  padding: '10px 18px', fontSize: '11px', letterSpacing: '0.06em',
+                  border: '1px solid',
+                  borderColor: typeFilter === t.value ? '#111111' : '#dddddd',
+                  backgroundColor: typeFilter === t.value ? '#111111' : 'transparent',
+                  color: typeFilter === t.value ? '#ffffff' : '#767676',
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >
+                {t.label}
+                {t.count !== undefined && (
+                  <span style={{
+                    marginLeft: '7px', fontSize: '10px',
+                    color: typeFilter === t.value ? 'rgba(255,255,255,0.55)' : '#bbbbbb',
+                  }}>
+                    {t.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* grid */}
         <div
           ref={gridRef}
@@ -455,6 +536,11 @@ export default function TrashPageShell({ items }: Props) {
             </div>
           ))}
         </div>
+        {displayItems.length === 0 && (
+          <p style={{ fontSize: '13px', color: '#767676', fontStyle: 'italic' }}>
+            no works match this filter.
+          </p>
+        )}
 
         <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '40px', marginTop: '48px' }}>
           <a

@@ -244,6 +244,10 @@ chunks missing).
   buyer names or prices in it. The detailed evidence for legacy sales lives in the private
   Google Sheet "+1 trash legacy sales ledger (internal)" in info@'s Drive, shared with nobody.
   Never copy ledger contents into Sanity.
+- **+1 trash work types (2026-11-18).** `trashItem.workType` (required in the Studio) feeds the
+  type filter on `/trash` (`?type=painting`, shareable; combines with available/sold; a type with
+  no listed works gets no button). The list and order live in `lib/trashWorkTypes.ts` and must
+  match the Studio's `lib/workTypes.ts`. Any script that creates a trashItem must set `workType`.
 - **RARE SEA (2026-11, permanent)**: Rare Sea (raresea.vn, an HCMC art space
   founded by the two excluded people above) must never be named, linked,
   credited or described anywhere on this site or in its data, beyond MoT+++'s
