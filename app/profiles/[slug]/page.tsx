@@ -723,6 +723,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                     <div>
                       <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.06em", marginBottom: "4px" }}>
                         {evt.category}
+                        {(evt.credits ?? []).some(c => c.role === "writer" && c.person?._id === sanityArtistId) ? " · text" : null}
                       </p>
                       <p style={{ fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.35 }}>
                         {evt.title}

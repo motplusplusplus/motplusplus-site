@@ -108,8 +108,12 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
     ({ slug: c.person!.slug, title: c.person!.name, linked: profileSlugs.has(c.person!.slug) });
 
   const curators = credited.filter(c => c.role === 'curator' && c.person).map(named);
+  // Writer credits (author of the event text) get their own "text: name" line, in
+  // lowercase house style, instead of sitting in the "with" list (owner, 2026-11-18).
+  const writers = credited.filter(c => c.role === 'writer' && c.person)
+    .map(c => ({ ...named(c), title: c.person!.name.toLowerCase() }));
   const others = credited
-    .filter(c => c.person && c.role !== 'curator' && c.role !== 'artist' && c.role)
+    .filter(c => c.person && c.role !== 'curator' && c.role !== 'artist' && c.role !== 'writer' && c.role)
     .map(c => ({ ...named(c), role: c.role }));
   const relatedResidents = credited.length
     ? credited.filter(c => c.person && (c.role === 'artist' || !c.role)).map(named)
@@ -156,6 +160,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       relatedResidents={relatedResidents}
       curators={curators}
       otherCredits={others}
+      writers={writers}
       partners={event.partners}
       heroImg={heroImg}
       contentImages={contentImages}

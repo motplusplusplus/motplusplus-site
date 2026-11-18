@@ -74,6 +74,9 @@ interface EventContentProps {
    *  researcher and so on. Rendered under one "with" heading, each name suffixed with
    *  its role, so a role added to the enum shows up without a new block. */
   otherCredits?: (RelatedResident & { role: string })[];
+  /** Credits with role "writer": the author of the event text. Rendered as one
+   *  lowercase "text: name" line; absent when there is none. */
+  writers?: RelatedResident[];
   /** Organizations credited on this event. Empty for every event without one — see
    *  PartnerCredit. */
   partners?: EventPartner[];
@@ -121,6 +124,7 @@ export default function EventContent({
   past,
   relatedResidents,
   curators = [],
+  writers = [],
   otherCredits = [],
   partners = [],
   heroImg,
@@ -373,6 +377,15 @@ export default function EventContent({
               {curators.map(cur => <CreditName key={cur.slug} person={cur} />)}
             </div>
           </div>
+        )}
+
+        {writers.length > 0 && (
+          <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>
+            <span style={{ color: "#767676" }}>text: </span>
+            {writers.map((w, i) => (
+              <span key={w.slug}>{i > 0 ? ", " : ""}<CreditName person={w} /></span>
+            ))}
+          </p>
         )}
 
         {otherCredits.length > 0 && (
