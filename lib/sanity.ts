@@ -148,6 +148,9 @@ const ARTIST_FIELDS = `
   "images": uploadedImages[].asset->url,
   // photographer credits, parallel to "images" (same index) and for the portrait
   "imageCredits": uploadedImages[].photographerName,
+  // captions and alt text, parallel to "images" (same index)
+  "imageCaptions": uploadedImages[].caption,
+  "imageAlts": uploadedImages[].alt,
   "portraitCredit": portrait.photographerName,
   legacyImageUrls,
   // The artist's own writable side of collective membership — which group(s) they

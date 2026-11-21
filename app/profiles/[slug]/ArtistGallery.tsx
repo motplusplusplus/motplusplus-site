@@ -8,9 +8,14 @@ type Props = {
   artistName: string;
   /** photographerName per image, same index as images; null/empty = no caption */
   credits?: (string | null | undefined)[];
+  /** caption per image (title, year, medium, show), same index as images */
+  captions?: (string | null | undefined)[];
+  /** alt text per image, same index as images; falls back to "<name> — <n>" */
+  alts?: (string | null | undefined)[];
 };
 
-export default function ArtistGallery({ images, artistName, credits }: Props) {
+export default function ArtistGallery({ images, artistName, credits, captions, alts }: Props) {
+  const altFor = (i: number) => alts?.[i] || `${artistName} — ${i + 1}`;
   const [open, setOpen] = useState<number | null>(null);
 
   const close = useCallback(() => setOpen(null), []);
@@ -61,7 +66,7 @@ export default function ArtistGallery({ images, artistName, credits }: Props) {
           >
             <img
               src={img}
-              alt={`${artistName} — ${i + 1}`}
+              alt={altFor(i)}
               style={{
                 width: '100%',
                 height: '100%',
@@ -73,7 +78,10 @@ export default function ArtistGallery({ images, artistName, credits }: Props) {
               onMouseLeave={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1)'; (e.currentTarget as HTMLImageElement).style.opacity = '1'; }}
             />
           </button>
-          <PhotoCredit name={credits?.[i]} style={{ marginTop: '6px' }} />
+          {captions?.[i] && (
+            <p style={{ fontSize: '11px', color: '#767676', marginTop: '6px', lineHeight: 1.5 }}>{captions[i]}</p>
+          )}
+          <PhotoCredit name={credits?.[i]} style={{ marginTop: captions?.[i] ? '2px' : '6px' }} />
           </div>
         ))}
       </div>
@@ -147,7 +155,7 @@ export default function ArtistGallery({ images, artistName, credits }: Props) {
           {/* image */}
           <img
             src={images[open]}
-            alt={`${artistName} — ${open + 1}`}
+            alt={altFor(open)}
             onClick={e => e.stopPropagation()}
             style={{
               maxWidth: 'calc(100vw - 120px)',
@@ -157,6 +165,12 @@ export default function ArtistGallery({ images, artistName, credits }: Props) {
               boxShadow: '0 4px 40px rgba(0,0,0,0.6)',
             }}
           />
+
+          {captions?.[open] && (
+            <div style={{ position: 'absolute', bottom: '16px', left: '60px', right: '60px', textAlign: 'center', fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              {captions[open]}
+            </div>
+          )}
 
           {/* next */}
           <button
