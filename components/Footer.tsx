@@ -1,4 +1,6 @@
 import Link from "next/link";
+// No prefetch (2026-11-22): on short pages the footer is in view at load, and
+// prefetching every section pulled ~800 KB on a phone (see Header.tsx).
 import { CONTACTS } from "@/lib/contacts";
 import NewsletterForm from "@/components/NewsletterForm";
 
@@ -29,14 +31,14 @@ export default function Footer() {
             color: "#111111",
           }}
         >
-          <Link href="/museum">+1 museum by any other name</Link>
-          <Link href="/afarm">+a.Farm</Link>
-          <Link href="/trash">+1 trash</Link>
-          <Link href="/events">events</Link>
-          <Link href="/collective">MoT+++ collective</Link>
-          <Link href="/about">about</Link>
-          <Link href="/press">press</Link>
-          <Link href="/contact">contact</Link>
+          <Link prefetch={false} href="/museum">+1 museum by any other name</Link>
+          <Link prefetch={false} href="/afarm">+a.Farm</Link>
+          <Link prefetch={false} href="/trash">+1 trash</Link>
+          <Link prefetch={false} href="/events">events</Link>
+          <Link prefetch={false} href="/collective">MoT+++ collective</Link>
+          <Link prefetch={false} href="/about">about</Link>
+          <Link prefetch={false} href="/press">press</Link>
+          <Link prefetch={false} href="/contact">contact</Link>
         </div>
 
         <NewsletterForm />
@@ -47,7 +49,7 @@ export default function Footer() {
             flexWrap: "wrap",
             gap: "8px 24px",
             fontSize: "12px",
-            color: "#767676",
+            color: "var(--mot-text-quiet, #767676)",
           }}
         >
           <a
@@ -62,7 +64,7 @@ export default function Footer() {
           </a>
         </div>
 
-        <p style={{ fontSize: "11px", color: "#767676" }}>
+        <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)" }}>
           © MoT+++ {new Date().getFullYear()}
         </p>
 

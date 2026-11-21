@@ -248,6 +248,26 @@ chunks missing).
   type filter on `/trash` (`?type=painting`, shareable; combines with available/sold; a type with
   no listed works gets no button). The list and order live in `lib/trashWorkTypes.ts` and must
   match the Studio's `lib/workTypes.ts`. Any script that creates a trashItem must set `workType`.
+- **+1 trash / work pages / profile works rework (2026-11-22).** Code: `app/trash/`,
+  `components/work/` (viewer = PhotoSwipe v5 in `viewer.ts`, with hand-built history),
+  `lib/trashWork.ts` (the one `Work` shape, exclusion guard, mailto, seeded order),
+  `lib/dimensions.ts` (cm + ft/in), `lib/workImage.ts` (Sanity URL params).
+  - **`trashItem.notForSale`**: a work listed on the artist's profile for the record. Never on
+    `/trash`, never in trash search, never priced, never an inquire link. Visibility rule is
+    `TRASH_PAGE_VISIBLE` in `lib/sanity.ts`. **Any artist can have any work listed on their
+    profile on request**: create a trashItem with `notForSale: true` (workType still required).
+  - **`trashItem.shownIn`** (event refs) renders as "shown in" on the work page.
+  - Inquire is a `mailto:` to sales@ with subject `inquiry: <title>, <artist>` (no longer the
+    `/api/inquiry` form on these pages).
+  - `/trash` order is random per visitor, frozen per session; an inline script in
+    `app/trash/page.tsx` applies it before first paint. Constants it shares with the client
+    live in `lib/trashGrid.ts`: **never export values from a `'use client'` file for server
+    use** (they arrive as client-reference stubs).
+  - Header and footer links use `prefetch={false}`: viewport prefetch pulled ~800 KB on every
+    phone page load (the /events payload, and the /afarm hero photo via its preload hint).
+  - Warm off-white pages use `components/work/WarmPage.tsx`. On `#f6f3ee`, `#767676` text
+    fails WCAG AA (4.10:1); use `var(--mot-text-quiet)` / `--mot-quiet` (#6e6a64, 4.85:1).
+    Never `body:has(...)` for page styling (it cost seconds of main thread on phones).
 - **RARE SEA (2026-11, permanent)**: Rare Sea (raresea.vn, an HCMC art space
   founded by the two excluded people above) must never be named, linked,
   credited or described anywhere on this site or in its data, beyond MoT+++'s

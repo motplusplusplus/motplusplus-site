@@ -1,90 +1,72 @@
 import type { Metadata } from 'next';
 import { getTrashItems } from '@/lib/sanity';
 import TrashPageShell from './TrashPageShell';
-import type { TrashItem } from '@/lib/demoTrashItems';
-import { shuffleArray } from '@/lib/shuffle';
+import { BATCH, GRID_ID, GRID_SINGLE_SIZES, ORDER_STYLE_ID } from '@/lib/trashGrid';
+import { imgSrcSet, imgUrl, GRID_SINGLE_WIDTHS } from '@/lib/workImage';
+import { normalizeWork, seededOrder, SEED_KEY, type Work } from '@/lib/trashWork';
 import { ogImage } from '@/lib/og';
+import WarmPage from '@/components/work/WarmPage';
+
+const TITLE = '+1 trash ♻ | artworks for acquisition, ho chi minh city';
+const DESCRIPTION =
+  'works consigned directly by artists through +1 trash, the acquisition program of MoT+++ in ho chi minh city. browse available and sold works, inquire by email.';
 
 export const metadata: Metadata = {
-  title: '+1 trash ♻ | artworks for acquisition, ho chi minh city',
-  description:
-    'works consigned directly by artists through +1 trash, the acquisition program of MoT+++ in ho chi minh city. browse available and sold works, inquire by email.',
+  title: TITLE,
+  description: DESCRIPTION,
   openGraph: {
-    title: '+1 trash ♻ | artworks for acquisition, ho chi minh city',
-    description:
-      'works consigned directly by artists through +1 trash, the acquisition program of MoT+++ in ho chi minh city.',
+    title: TITLE,
+    description: 'works consigned directly by artists through +1 trash, the acquisition program of MoT+++ in ho chi minh city.',
     url: 'https://motplusplusplus.com/trash',
     images: [ogImage(undefined, 'MoT+++')],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: '+1 trash ♻ | artworks for acquisition, ho chi minh city',
-    description:
-      'works consigned directly by artists through +1 trash, the acquisition program of MoT+++ in ho chi minh city.',
-    images: [ogImage(undefined, 'MoT+++').url],
-  },
+  twitter: { card: 'summary_large_image', title: TITLE, images: [ogImage(undefined, 'MoT+++').url] },
   alternates: { canonical: 'https://motplusplusplus.com/trash' },
 };
 
+/** Runs at the top of the page, BEFORE the grid's HTML arrives: decides this
+ *  visitor's session order, writes it as CSS `order` rules (and hides all
+ *  but the first batch), and preloads the first two images at high
+ *  priority. Cards then paint in their final places as they stream in: no
+ *  reshuffle, no layout shift, and the largest image starts downloading
+ *  with the first bytes of the page. React removes the <style> once it
+ *  renders the same order itself. Any failure leaves the canonical order,
+ *  which React reorders on hydration. */
+function orderScript(items: Work[]): string {
+  const data = items.map(w => {
+    const img = w.images[0];
+    return [w._id, imgSrcSet(img.url, GRID_SINGLE_WIDTHS, img.w) ?? imgUrl(img.url, 800)];
+  });
+  return `(function(){try{
+var D=${JSON.stringify(data).replace(/</g, '\\u003c')};
+var K=${JSON.stringify(SEED_KEY)},s=0;
+try{s=Number(sessionStorage.getItem(K))||0}catch(e){}
+if(!s){s=Math.floor(Math.random()*4294967295)+1;try{sessionStorage.setItem(K,String(s))}catch(e){}}
+window.__motTrashSeed=s;
+var seededOrder=${seededOrder.toString()};
+var o=seededOrder(D.map(function(d){return d[0]}),s),src={},css='';
+D.forEach(function(d){src[d[0]]=d[1]});
+for(var i=0;i<o.length;i++){var sel='#${GRID_ID}>[data-id="'+o[i]+'"]';css+=sel+'{order:'+i+'}';if(i<2)css+=sel+' img{opacity:1!important;transition:none}';if(i>=${BATCH})css+=sel+'{display:none}'}
+var st=document.createElement('style');st.id=${JSON.stringify(ORDER_STYLE_ID)};st.textContent=css;document.head.appendChild(st);
+for(var j=0;j<2&&j<o.length;j++){var l=document.createElement('link');l.rel='preload';l.as='image';l.setAttribute('imagesrcset',src[o[j]]);l.setAttribute('imagesizes',${JSON.stringify(GRID_SINGLE_SIZES)});l.setAttribute('fetchpriority','high');document.head.appendChild(l)}
+}catch(e){}})();`;
+}
+
 export default async function TrashPage() {
   const raw = await getTrashItems();
-
-  const canonical: TrashItem[] = raw.map((r: any, i: number) => ({
-    _id: r._id,
-    artist: r.artist,
-    artistSlug: r.artistSlug ?? null,
-    artists: (r.artists ?? []).filter(Boolean),
-    slug: r.slug,
-    title: r.title ?? '',
-    medium: r.medium ?? '',
-    workType: (r.workType ?? []).filter(Boolean),
-    year: r.year ?? 0,
-    dimensions: r.dimensions ?? '',
-    edition: r.edition ?? '',
-    description: r.description ?? '',
-    images: [...(r.directImageUrls ?? []), ...(r.legacyImageUrls ?? [])],
-    museumLocationId: r.museumLocationId,
-    neighbourhood: r.neighbourhood,
-    sold: r.sold ?? false,
-    // "date added" sort key: index in the canonical Sanity order
-    // (sortOrder asc, artist asc), preserved across the shuffle below.
-    orderIndex: i,
-    // price is deliberately NOT serialized into the static export -- it would
-    // otherwise ship in the public HTML/flight payload where anyone could read
-    // it regardless of the seven-click password. The worker (POST /api/pricelist)
-    // delivers prices only after a server-side check; TrashPageShell merges them
-    // in on unlock.
-  }));
-
-  // Shuffle and pick each card's image at build time, not after hydration:
-  // the static HTML then paints the full grid immediately (no empty first
-  // paint). This order is the FIRST PAINT only: TrashPageShell reshuffles on
-  // every visit once hydrated (2026-10-03), because builds can be days apart
-  // when nobody publishes, and one order for everyone is not random. Randomness in a
-  // server component is impure by the lint rule's standard, but this page is
-  // statically exported exactly once per build, and the rolled values ship in
-  // the flight payload, so server HTML and hydration always agree.
-  // eslint-disable-next-line react-hooks/purity
-  const items = shuffleArray(canonical).map(item => ({
-    ...item,
-    cardImageIndex:
-      // eslint-disable-next-line react-hooks/purity
-      item.images.length > 1 ? Math.floor(Math.random() * item.images.length) : 0,
-  }));
+  const items: Work[] = (raw as unknown[])
+    .map((r, i) => normalizeWork(r, i))
+    .filter((w): w is Work => !!w && w.images.length > 0 && !w.notForSale)
+    // the grid and viewer never show these; keep the page payload small
+    .map(w => ({ ...w, description: '', shownIn: [], images: w.images.map(i => ({ ...i, lqip: undefined })) }));
 
   return (
-    <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 24px" }}>
-      <div style={{ maxWidth: "720px", marginBottom: "48px" }}>
-        <h1 style={{
-          fontSize: "clamp(28px, 3.5vw, 48px)",
-          fontWeight: 300, lineHeight: 1.1,
-          letterSpacing: "-0.02em", marginBottom: "32px",
-        }}>
-          +1 trash ♻
-        </h1>
-
-      </div>
-
+    <div className="mot-warm tg">
+      <WarmPage />
+      <header className="tg-head">
+        <h1 className="tg-h1">+1 trash ♻</h1>
+      </header>
+      <script dangerouslySetInnerHTML={{ __html: orderScript(items) }} />
       <TrashPageShell items={items} />
     </div>
   );

@@ -170,7 +170,7 @@ export default function NewsletterForm() {
             style={{ position: "absolute", left: "-10000px", width: "1px", height: "1px", opacity: 0 }}
           />
           <div ref={widgetRef} />
-          <p style={{ fontSize: "11px", color: "#767676", marginTop: "10px" }}>{t.note}</p>
+          <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", marginTop: "10px" }}>{t.note}</p>
           {state === "error" && (
             <p role="alert" style={{ fontSize: "12px", color: "#b00020", marginTop: "8px" }}>{error}</p>
           )}

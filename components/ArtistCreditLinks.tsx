@@ -9,19 +9,22 @@ type Props = {
   fallback: string;
   style?: CSSProperties;
   linkStyle?: CSSProperties;
+  /** Next.js viewport prefetch (default on). Off above the fold on work pages,
+   *  where a profile's payload would compete with the work's own image. */
+  prefetch?: boolean;
 };
 
 /** Renders linked artist name(s) from a trashItem's artists[] refs, joined "A & B" for
  *  collaborations. Falls back to a single artistSlug link (the primary artistRef) when
  *  artists[] is empty, then to the plain display-name string if neither resolves. */
-export default function ArtistCreditLinks({ artists, artistSlug, fallback, style, linkStyle }: Props) {
+export default function ArtistCreditLinks({ artists, artistSlug, fallback, style, linkStyle, prefetch }: Props) {
   const resolved = (artists ?? []).filter((a): a is ArtistCredit => !!a?.name);
 
   if (resolved.length === 0) {
     if (artistSlug) {
       return (
         <span style={style}>
-          <Link href={`/profiles/${artistSlug}`} style={{ color: 'inherit', textDecoration: 'underline', ...linkStyle }}>
+          <Link href={`/profiles/${artistSlug}`} prefetch={prefetch === false ? false : undefined} style={{ color: 'inherit', textDecoration: 'underline', ...linkStyle }}>
             {fallback}
           </Link>
         </span>
@@ -36,7 +39,7 @@ export default function ArtistCreditLinks({ artists, artistSlug, fallback, style
         <span key={a._id ?? a.name}>
           {i > 0 && (i === resolved.length - 1 ? ' & ' : ', ')}
           {a.slug ? (
-            <Link href={`/profiles/${a.slug}`} style={{ color: 'inherit', textDecoration: 'underline', ...linkStyle }}>
+            <Link href={`/profiles/${a.slug}`} prefetch={prefetch === false ? false : undefined} style={{ color: 'inherit', textDecoration: 'underline', ...linkStyle }}>
               {a.name}
             </Link>
           ) : (

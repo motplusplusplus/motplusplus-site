@@ -1,182 +1,171 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getTrashItemBySlug, getAllTrashItemSlugs } from "@/lib/sanity";
-import { buildTrashInquiryEmail, type TrashItem } from "@/lib/demoTrashItems";
+import { getTrashItemBySlug, getAllTrashItemSlugs, getAllPublicWorks } from "@/lib/sanity";
 import ArtistCreditLinks from "@/components/ArtistCreditLinks";
-import InquiryForm from "@/components/InquiryForm";
-import ShareActions from "@/components/ShareActions";
-import { CONTACTS } from "@/lib/contacts";
-import { ogImage } from "@/lib/og";
+import ShareButton from "@/components/work/ShareButton";
+import WorkPageImages from "@/components/work/WorkPageImages";
+import ScaleDrawing from "@/components/work/ScaleDrawing";
+import RelatedRow from "@/components/work/RelatedRow";
+import WarmPage from "@/components/work/WarmPage";
+import { inquiryMailto, isAvailable, normalizeWork, type Work } from "@/lib/trashWork";
+import { ogImageUrl } from "@/lib/workImage";
+import { DEFAULT_OG_IMAGE } from "@/lib/og";
 
-function artistLabel(raw: { artist: string; artists?: { name: string }[] | null }) {
-  const names = (raw.artists ?? []).filter(Boolean).map(a => a.name);
-  return names.length > 0 ? names.join(" & ") : raw.artist;
+const SITE = "https://motplusplusplus.com";
+const SHARE_DESCRIPTION = "+1 trash · MoT+++";
+
+async function load(slug: string) {
+  const raw = await getTrashItemBySlug(slug);
+  if (!raw) return null;
+  const work = normalizeWork(raw);
+  if (!work) return null;
+  return { raw, work };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const raw = await getTrashItemBySlug(slug);
-  if (!raw) return {};
-
-  const label = artistLabel(raw);
-  const images = [...(raw.directImageUrls ?? []), ...(raw.legacyImageUrls ?? [])];
-  const title = `${raw.title || "untitled"} — ${label} | +1 trash`;
-  const socialTitle = `${title} | MoT+++`;
-  const descParts = [label, raw.medium, raw.year ? String(raw.year) : null].filter(Boolean);
-  const description = `${descParts.join(" — ")} — available through +1 trash, MoT+++'s artwork acquisition program in Ho Chi Minh City, Vietnam.`;
-  const image = ogImage(images[0], `${raw.title || "untitled"} by ${label}`);
-
+  const found = await load(slug);
+  if (!found) return {};
+  const { work } = found;
+  // Messenger previews (Zalo, WhatsApp, Facebook, Instagram DMs) read these:
+  // "title, artist" + the work itself, letterboxed 1200x630 JPEG, never cropped.
+  const title = `${work.title}, ${work.artist}`;
+  const url = `${SITE}/trash/${slug}/`;
+  const image = work.images[0]
+    ? { url: ogImageUrl(work.images[0].url), width: 1200, height: 630, alt: work.images[0].alt, type: "image/jpeg" }
+    : { url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: "MoT+++" };
+  const description = [work.medium, work.year ? String(work.year) : null].filter(Boolean).join(", ");
   return {
-    title,
-    description,
-    openGraph: {
-      title: socialTitle,
-      description,
-      url: `https://motplusplusplus.com/trash/${slug}`,
-      images: [image],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: socialTitle,
-      description,
-      images: [image.url],
-    },
-    alternates: { canonical: `https://motplusplusplus.com/trash/${slug}` },
+    title: { absolute: `${title} | +1 trash | MoT+++` },
+    description: description ? `${title}. ${description}. ${SHARE_DESCRIPTION}` : `${title}. ${SHARE_DESCRIPTION}`,
+    openGraph: { type: "article", siteName: "MoT+++", title, description: SHARE_DESCRIPTION, url, images: [image] },
+    twitter: { card: "summary_large_image", title, description: SHARE_DESCRIPTION, images: [image.url] },
+    alternates: { canonical: url },
   };
 }
 
 export async function generateStaticParams() {
   const slugs = await getAllTrashItemSlugs();
-  // output:"export" hard-fails the whole build if a dynamic route resolves to zero
-  // paths (treated identically to a missing generateStaticParams). Guard against that
-  // until at least one trashItem has a published slug — the placeholder 404s via the
-  // !raw check below instead of taking down every other page's deploy.
+  // output:"export" hard-fails the build if a dynamic route resolves to zero
+  // paths; the placeholder 404s via the null check below.
   if (slugs.length === 0) return [{ slug: "_none" }];
   return slugs.map(slug => ({ slug }));
 }
 
+/** More by the same artist first, then the same work type; never itself. */
+async function relatedFor(work: Work): Promise<{ sameArtist: Work[]; sameType: Work[] }> {
+  const all = ((await getAllPublicWorks()) as unknown[])
+    .map((r, i) => normalizeWork(r, i))
+    .filter((w): w is Work => !!w && w._id !== work._id && !!w.slug && w.images.length > 0);
+  const artistKeys = new Set([
+    work.artistSlug, ...work.artists.map(a => a.slug), work.artist.toLowerCase(),
+  ].filter(Boolean) as string[]);
+  const byArtist = (w: Work) =>
+    [w.artistSlug, ...w.artists.map(a => a.slug), w.artist.toLowerCase()].some(k => k && artistKeys.has(k));
+  const sameArtist = all.filter(byArtist).slice(0, 10);
+  const taken = new Set(sameArtist.map(w => w._id));
+  const sameType = all
+    .filter(w => !taken.has(w._id) && w.workType.some(t => work.workType.includes(t)))
+    // listed (for sale or sold) +1 trash works lead the type row
+    .sort((a, b) => Number(a.notForSale) - Number(b.notForSale))
+    .slice(0, 12);
+  return { sameArtist, sameType };
+}
+
 export default async function TrashItemPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const raw = await getTrashItemBySlug(slug);
-  if (!raw) notFound();
-
-  const item: TrashItem = {
-    _id: raw._id,
-    artist: raw.artist,
-    artistSlug: raw.artistSlug ?? null,
-    artists: (raw.artists ?? []).filter(Boolean),
-    slug: raw.slug,
-    title: raw.title ?? "",
-    medium: raw.medium ?? "",
-    year: raw.year ?? 0,
-    dimensions: raw.dimensions ?? "",
-    edition: raw.edition ?? "",
-    description: raw.description ?? "",
-    images: [...(raw.directImageUrls ?? []), ...(raw.legacyImageUrls ?? [])],
-    youtubeUrls: raw.youtubeUrls ?? [],
-    museumLocationId: raw.museumLocationId,
-    neighbourhood: raw.neighbourhood,
-    sold: raw.sold ?? false,
-    // price is intentionally omitted: this page never displays it (it shows
-    // "price on inquiry"), and serializing it would leak the value into the
-    // public static payload with no gate at all.
-  };
+  const found = await load(slug);
+  if (!found) notFound();
+  const { raw, work } = found;
+  const { sameArtist, sameType } = await relatedFor(work);
+  const bio: { name?: string; slug?: string; bio?: string } | null = raw.artistBio ?? null;
+  const bioText = typeof bio?.bio === "string" ? bio.bio.trim() : "";
+  const backHref = work.notForSale && work.artistSlug ? `/profiles/${work.artistSlug}` : "/trash";
+  const backLabel = work.notForSale && work.artistSlug ? work.artist : "+1 trash";
 
   return (
-    <div style={{ maxWidth: "900px", margin: "0 auto", padding: "64px 24px" }}>
-      <Link href="/trash" style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.06em" }}>
-        ← back to all works
-      </Link>
+    <div className="mot-warm wp">
+      <WarmPage />
+      <Link href={backHref} prefetch={false} className="mot-mono mot-back">← {backLabel}</Link>
 
-      <div style={{ marginTop: "32px" }}>
-        {item.images.length > 0 && (
-          <div style={{ backgroundColor: "#f5f5f5", marginBottom: "32px" }}>
-            <img
-              src={item.images[0]}
-              alt={item.title}
-              style={{ width: "100%", maxHeight: "640px", objectFit: "contain", display: "block" }}
-            />
+      <WorkPageImages work={work} />
+
+      <div className="wp-body">
+        <div className="wp-caption">
+          <p className="mot-mono wp-artist">
+            <ArtistCreditLinks artists={work.artists} artistSlug={work.artistSlug} fallback={work.artist} prefetch={false} />
+          </p>
+          <h1 className="wp-title">
+            {work.title}{work.year ? <span className="wp-year">, {work.year}</span> : null}
+          </h1>
+          <dl className="mot-mono wp-dl">
+            {work.medium && <div><dt>medium</dt><dd>{work.medium}</dd></div>}
+            {work.dimensionsText && <div><dt>size</dt><dd>{work.dimensionsText}</dd></div>}
+            {work.edition && <div><dt>edition</dt><dd>{work.edition}</dd></div>}
+            {work.neighbourhood && <div><dt>placed</dt><dd>{work.neighbourhood}</dd></div>}
+          </dl>
+
+          <div className="wp-actions">
+            {work.sold && (
+              <span className="mot-mono wp-sold"><span className="mot-dot" aria-hidden="true" />sold</span>
+            )}
+            {isAvailable(work) && (
+              <>
+                <a className="mot-btn mot-btn-solid" href={inquiryMailto(work)}>inquire</a>
+                <span className="mot-mono mot-quiet">price on inquiry</span>
+              </>
+            )}
+            <ShareButton url={`${SITE}/trash/${slug}/`} title={`${work.title}, ${work.artist}`} />
           </div>
-        )}
+        </div>
 
-        <p style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.07em", marginBottom: "10px", textTransform: "uppercase" }}>
-          <ArtistCreditLinks artists={item.artists} artistSlug={item.artistSlug} fallback={item.artist} />
-        </p>
-        <h1 style={{ fontSize: "clamp(24px, 3vw, 40px)", fontWeight: 300, lineHeight: 1.2, marginBottom: "16px", color: "#111111" }}>
-          {item.title}{item.year ? `, ${item.year}` : ""}
-        </h1>
-        <p style={{ fontSize: "14px", color: "#767676", lineHeight: 1.7, marginBottom: "8px" }}>
-          {[item.medium, item.dimensions, item.edition].filter(Boolean).join(" · ")}
-        </p>
-        {item.neighbourhood && (
-          <p style={{ fontSize: "13px", color: "#767676", marginBottom: "20px" }}>
-            currently placed — {item.neighbourhood}
-          </p>
-        )}
-        {item.description && (
-          <p style={{ fontSize: "15px", color: "#555555", lineHeight: 1.85, marginBottom: "32px", maxWidth: "640px" }}>
-            {item.description}
-          </p>
-        )}
+        {work.dims && <ScaleDrawing dims={work.dims} />}
 
-        {item.youtubeUrls && item.youtubeUrls.length > 0 && (
-          <div style={{ marginBottom: "32px", display: "flex", flexDirection: "column", gap: "24px" }}>
-            {item.youtubeUrls.map((url) => (
-              <div key={url} style={{ position: "relative", width: "100%", paddingBottom: "56.25%", height: 0, overflow: "hidden", backgroundColor: "#000000" }}>
-                <iframe
-                  src={url}
-                  title={item.title}
-                  frameBorder="0"
-                  allowFullScreen
-                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
-                />
+        {work.description ? (
+          <p className="wp-statement">{work.description}</p>
+        ) : bioText && bio?.slug ? (
+          <div className="wp-bio">
+            <p className="wp-bio-text">{bioText}</p>
+            <Link href={`/profiles/${bio.slug}`} className="mot-mono mot-link">
+              more on {bio.name ?? work.artist} →
+            </Link>
+          </div>
+        ) : null}
+
+        {work.youtubeUrls.length > 0 && (
+          <div className="wp-videos">
+            {work.youtubeUrls.map(url => (
+              <div key={url} className="wp-video">
+                <iframe src={url} title={`${work.title}, ${work.artist}`} loading="lazy" allowFullScreen />
               </div>
             ))}
           </div>
         )}
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "14px", alignItems: "center", borderTop: "1px solid #eeeeee", paddingTop: "28px" }}>
-          {item.sold ? (
-            <span style={{ fontSize: "14px", color: "#cc2222", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: "7px" }}>
-              <span style={{ fontSize: "18px", lineHeight: 1 }}>●</span> sold
-            </span>
-          ) : (
-            <>
-              <InquiryForm
-                type="trash"
-                recipient={CONTACTS.sales}
-                mailtoHref={buildTrashInquiryEmail(item)}
-                artworkTitle={item.title}
-                artworkId={item._id}
-                buttonLabel="inquire"
-                buttonStyle={{ fontSize: "13px", color: "#ffffff", backgroundColor: "#111111", padding: "10px 22px", letterSpacing: "0.03em" }}
-              />
-              <span style={{ fontSize: "13px", color: "#767676", letterSpacing: "0.03em" }}>
-                price on inquiry
-              </span>
-            </>
-          )}
-          {item.museumLocationId && (
-            <Link
-              href={`/museum?work=${item.museumLocationId}`}
-              style={{ fontSize: "12px", color: "#333333", border: "1px solid #cccccc", padding: "8px 18px", textDecoration: "none", letterSpacing: "0.03em" }}
-            >
-              +1 museum by any other name
-            </Link>
-          )}
-          <ShareActions
-            url={`https://motplusplusplus.com/trash/${slug}/`}
-            title={`${item.title} by ${artistLabel(raw)}`}
-            text="via +1 trash, MoT+++"
-          />
-        </div>
+        {work.shownIn.length > 0 && (
+          <div className="wp-shown">
+            <h2 className="mot-mono mot-label">shown in</h2>
+            <ul>
+              {work.shownIn.map(e => (
+                <li key={e.slug}><Link href={`/events/${e.slug}`} prefetch={false} className="mot-link">{e.title}</Link></li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-        <div style={{ marginTop: "48px", borderTop: "1px solid #f0f0f0", paddingTop: "32px" }}>
-          <Link href="/trash" style={{ fontSize: "13px", color: "#666666" }}>
-            ← back to all works
+        {work.museumLocationId && (
+          <Link href={`/museum?work=${work.museumLocationId}`} prefetch={false} className="mot-mono mot-link wp-museum">
+            +1 museum by any other name →
           </Link>
-        </div>
+        )}
+      </div>
+
+      <RelatedRow title={`more by ${work.artist}`} works={sameArtist} />
+      <RelatedRow title="more like this" works={sameType} />
+
+      <div className="wp-foot">
+        <Link href="/trash" prefetch={false} className="mot-mono mot-link">all +1 trash works →</Link>
       </div>
     </div>
   );

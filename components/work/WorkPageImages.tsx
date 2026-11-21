@@ -1,0 +1,83 @@
+'use client';
+
+import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import WorkImg from './WorkImg';
+import { openWorkViewer, preloadViewer } from './viewer';
+import { morphArrived } from './morph';
+import { GRID_SINGLE_WIDTHS } from '@/lib/workImage';
+import type { Work } from '@/lib/trashWork';
+
+const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+
+/** The work page's images, full width; each opens the viewer at itself.
+ *  Arriving from outside the site (a shared link) opens the viewer at once,
+ *  over the page, so the link lands on the work; closing it shows the page. */
+export default function WorkPageImages({ work }: { work: Work }) {
+  const router = useRouter();
+  const refs = useRef<(HTMLImageElement | null)[]>([]);
+  const heroWrap = useRef<HTMLDivElement>(null);
+
+  useIsoLayoutEffect(() => {
+    morphArrived(heroWrap.current?.querySelector('img:not(.mot-img-ph)') ?? null);
+  }, []);
+
+  useEffect(() => {
+    preloadViewer();
+    // A landing = this document was loaded AT this work's address, from
+    // outside the site. document.referrer alone is not enough: it never
+    // changes on client-side navigation, so an in-site visit to a work page
+    // would still look "external".
+    let landed = false;
+    try {
+      const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+      const loadedHere = !!nav && new URL(nav.name).pathname.replace(/\/?$/, '/') === window.location.pathname.replace(/\/?$/, '/');
+      const fromOutside = !document.referrer || new URL(document.referrer).origin !== window.location.origin;
+      landed = loadedHere && fromOutside && nav?.type !== 'back_forward' && nav?.type !== 'reload';
+    } catch { /* not a landing */ }
+    if (!landed || work.images.length === 0) return;
+    // once per landing: a reload or back to this entry should not reopen it
+    const key = `mot:landed:${work._id}`;
+    try {
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, '1');
+    } catch { /* storage off: still open once */ }
+    const hero = refs.current[0];
+    const go = () => openWorkViewer({
+      work, index: 0, history: true, onWorkPage: true,
+      thumbFor: i => refs.current[i] ?? null,
+      navigate: (href, { replace }) => (replace ? router.replace(href) : router.push(href)),
+    });
+    if (hero && !hero.complete) hero.addEventListener('load', go, { once: true });
+    else go();
+  }, [work, router]);
+
+  if (work.images.length === 0) return null;
+  return (
+    <div className="wp-images">
+      {work.images.map((img, i) => (
+        <div key={img.url + i} ref={i === 0 ? heroWrap : undefined}>
+          <button
+            type="button"
+            className="wp-img-btn"
+            aria-label={`view image ${i + 1} of ${work.images.length} full screen`}
+            onClick={() => openWorkViewer({
+              work, index: i, history: true, onWorkPage: true,
+              thumbFor: j => refs.current[j] ?? null,
+              navigate: (href, { replace }) => (replace ? router.replace(href) : router.push(href)),
+            })}
+          >
+            <WorkImg
+              img={img}
+              widths={GRID_SINGLE_WIDTHS}
+              sizes="(min-width: 900px) 860px, 100vw"
+              priority={i === 0}
+              imgRef={el => { refs.current[i] = el; }}
+              defaultWidth={1200}
+            />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}

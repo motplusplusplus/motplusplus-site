@@ -10,6 +10,9 @@ import PhotoCredit from "@/components/PhotoCredit";
 import { countryName } from "@/lib/countries";
 import { getAllStudios } from "@/lib/studios";
 import ArtistGallery from "./ArtistGallery";
+import ProfileWorks from "@/components/work/ProfileWorks";
+import WarmPage from "@/components/work/WarmPage";
+import { isAvailable, normalizeWork, type Work } from "@/lib/trashWork";
 import PartnerCredit from "@/components/PartnerCredit";
 import { extractBioFromEventDescription } from "@/lib/bioExtract";
 import type { Metadata } from "next";
@@ -57,7 +60,7 @@ export async function generateStaticParams() {
 /** "from: <source>" under (or over) a fallback image, so nobody reads it as a
  *  portrait. Internal link when the source has a page. */
 function FallbackCaption({ image, onDark }: { image: ProfileFallbackImage; onDark?: boolean }) {
-  const color = onDark ? "rgba(255,255,255,0.75)" : "#767676";
+  const color = onDark ? "rgba(255,255,255,0.75)" : "var(--mot-text-quiet, #767676)";
   const text = image.label;
   return (
     <span style={{ fontSize: "11px", letterSpacing: "0.04em", color, fontWeight: 300 }}>
@@ -174,19 +177,15 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
   const sanityArtistId = sanityArtist?._id as string | undefined;
   const relatedEvents = sanityArtistId ? await getEventsByArtistRef(sanityArtistId) : [];
 
-  // +1 trash — available works for this artist (via artistRef or artists[], "available" = not sold).
-  // The trashItem schema has no "status"/"on hold" field, so "available" mirrors the
-  // /trash page's own availability filter (lib: app/trash/TrashPageShell.tsx).
-  type ProfileTrashWork = { _id: string; title?: string; medium?: string; year?: number; sold?: boolean; slug?: string; images?: string[] };
-  const allTrashWorks = (sanityArtist?.trashItems as ProfileTrashWork[] | undefined) ?? [];
-  const availableTrashWorks = allTrashWorks.filter(w => !w.sold && w.slug);
-  const trashWorksMissingSlug = allTrashWorks.filter(w => !w.sold && !w.slug);
-  if (trashWorksMissingSlug.length > 0) {
-    console.warn(
-      `[profiles/${slug}] ${trashWorksMissingSlug.length} available +1 trash work(s) have no slug yet, omitted from the available-works section:`,
-      trashWorksMissingSlug.map(w => w._id)
-    );
-  }
+  // Works crediting this artist (artistRef or artists[]), newest first. Two
+  // sections: available +1 trash works, then "works": every other active work
+  // with a page, i.e. sold ones and not-for-sale profile listings (2026-11-22;
+  // any artist can have any work listed on request: a notForSale trashItem).
+  const profileWorks = ((sanityArtist?.trashItems as unknown[] | undefined) ?? [])
+    .map((r, i) => normalizeWork(r, i))
+    .filter((w): w is Work => !!w && !!w.slug);
+  const availableTrashWorks = profileWorks.filter(w => isAvailable(w) && w.images.length > 0);
+  const otherWorks = profileWorks.filter(w => !isAvailable(w));
 
   const studio = allStudios.find(s => s.hostSlug === slug);
   // Deceased dates come from the Sanity artist's deathYear/birthYear fields.
@@ -256,6 +255,8 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         // keeps this safe to inline even if a name ever contains one.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
+      {/* page-colour marker: warm off-white page + header (globals.css) */}
+      <WarmPage />
       {/* hero — mobile only; desktop uses the framed-portrait block below instead */}
       <div className="profile-hero-mobile-only" style={{
         position: "relative",
@@ -334,7 +335,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
 
         {/* breadcrumb + hosting artist badge */}
         <div style={{ marginBottom: "52px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
-          <Link href="/profiles" style={{ fontSize: "12px", color: "#767676", letterSpacing: "0.06em" }}>
+          <Link href="/profiles" style={{ fontSize: "12px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.06em" }}>
             ← profiles
           </Link>
           {studio && (
@@ -394,16 +395,16 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
               {displayName}
             </h2>
             {alternateNames.length > 0 && (
-              <p style={{ fontSize: "13px", color: "#767676", marginTop: "8px", fontWeight: 300 }}>
+              <p style={{ fontSize: "13px", color: "var(--mot-text-quiet, #767676)", marginTop: "8px", fontWeight: 300 }}>
                 {alternateNames.join(", ")}
               </p>
             )}
             {deceasedDates ? (
-              <p style={{ fontSize: "13px", color: "#767676", marginTop: "8px", fontWeight: 300 }}>
+              <p style={{ fontSize: "13px", color: "var(--mot-text-quiet, #767676)", marginTop: "8px", fontWeight: 300 }}>
                 {deceasedDates}
               </p>
             ) : artist.origin && (
-              <p style={{ fontSize: "13px", color: "#767676", marginTop: "10px", fontWeight: 300 }}>
+              <p style={{ fontSize: "13px", color: "var(--mot-text-quiet, #767676)", marginTop: "10px", fontWeight: 300 }}>
                 {artist.origin}
               </p>
             )}
@@ -441,7 +442,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           }}>
             {displayDate && (
               <div>
-                <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.1em", marginBottom: "6px" }}>
                   residency
                 </p>
                 <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>{residencyLabel(slug, displayDate)}</p>
@@ -449,7 +450,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             )}
             {webLinks.length > 0 ? (
               <div>
-                <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.1em", marginBottom: "6px" }}>
                   {webLinks.length > 1 ? "links" : "website"}
                 </p>
                 {webLinks.map((l, i) => (
@@ -466,7 +467,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
               </div>
             ) : artist.website && (
               <div>
-                <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.1em", marginBottom: "6px" }}>
                   website
                 </p>
                 <a
@@ -481,7 +482,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             )}
             {artist.instagram && artist.instagram.length > 0 && (
               <div>
-                <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.1em", marginBottom: "6px" }}>
                   instagram
                 </p>
                 {artist.instagram.map((handle) => {
@@ -502,7 +503,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             )}
             {collectives.length > 0 && (
               <div>
-                <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.1em", marginBottom: "6px" }}>
                   member of
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
@@ -528,7 +529,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {/* bio */}
         {hasBio && (
           <div style={{ maxWidth: "680px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
+            <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.08em", marginBottom: "28px" }}>
               practice
             </p>
             {usePtBio ? (
@@ -605,7 +606,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             collectiveRoster in lib/sanity.ts. */}
         {collectiveRoster.length > 0 && (
           <div style={{ maxWidth: "680px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
+            <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.08em", marginBottom: "28px" }}>
               members
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -623,7 +624,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                       <span style={nameStyle}>{m.name}</span>
                     )}
                     {suffix && (
-                      <span style={{ fontSize: "13px", color: "#767676" }}> — {suffix}</span>
+                      <span style={{ fontSize: "13px", color: "var(--mot-text-quiet, #767676)" }}> — {suffix}</span>
                     )}
                   </div>
                 );
@@ -632,48 +633,14 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           </div>
         )}
 
-        {/* +1 trash — available works */}
-        {availableTrashWorks.length > 0 && (
-          <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
-              +1 trash — available works
-            </p>
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-              gap: "32px 20px",
-            }}>
-              {availableTrashWorks.map(work => (
-                <Link
-                  key={work._id}
-                  href={`/trash/${work.slug}`}
-                  style={{ textDecoration: "none", color: "inherit", display: "block" }}
-                >
-                  <div style={{ aspectRatio: "4/3", overflow: "hidden", backgroundColor: "#f5f5f5", marginBottom: "10px" }}>
-                    {work.images?.[0] ? (
-                      <img
-                        src={work.images[0]}
-                        alt={work.title || ""}
-                        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                      />
-                    ) : null}
-                  </div>
-                  <p style={{ fontSize: "13px", color: "#333333", lineHeight: 1.4 }}>
-                    {work.title}{work.year ? `, ${work.year}` : ""}
-                  </p>
-                  {work.medium && (
-                    <p style={{ fontSize: "11px", color: "#767676", marginTop: "2px" }}>{work.medium}</p>
-                  )}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* +1 trash — available works, then every other listed work */}
+        {availableTrashWorks.length > 0 && <ProfileWorks title="+1 trash · available" works={availableTrashWorks} />}
+        {otherWorks.length > 0 && <ProfileWorks title="works" works={otherWorks} />}
 
         {/* work images (collective members) */}
         {artist.workImages.length > 0 && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
+            <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.08em", marginBottom: "32px" }}>
               work
             </p>
             <ArtistGallery images={artist.workImages} artistName={artist.name} credits={workImageCredits} captions={workImageCaptions} alts={workImageAlts} />
@@ -683,7 +650,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {/* documentation gallery from bio event entry (a.Farm residents) */}
         {eventGallery.length > 0 && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
+            <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.08em", marginBottom: "32px" }}>
               documentation
             </p>
             <div style={{
@@ -709,7 +676,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {/* events at MoT+++ */}
         {relatedEvents.length > 0 && (
           <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "28px" }}>
+            <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.08em", marginBottom: "28px" }}>
               at MoT+++
             </p>
             <div>
@@ -724,7 +691,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                     gap: "20px", padding: "14px 0", borderBottom: "1px solid #f2f2f2",
                   }}>
                     <div>
-                      <p style={{ fontSize: "10px", color: "#767676", letterSpacing: "0.06em", marginBottom: "4px" }}>
+                      <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.06em", marginBottom: "4px" }}>
                         {evt.category}
                         {(evt.credits ?? []).some(c => c.role === "writer" && c.person?._id === sanityArtistId) ? " · text" : null}
                       </p>
@@ -732,7 +699,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
                         {evt.title}
                       </p>
                     </div>
-                    <p style={{ fontSize: "12px", color: "#767676", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    <p style={{ fontSize: "12px", color: "var(--mot-text-quiet, #767676)", whiteSpace: "nowrap", flexShrink: 0 }}>
                       {evt.displayDate || evt.dateISO}
                     </p>
                   </div>
@@ -745,7 +712,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
         {/* if no bio and no events: minimal state */}
         {!hasBio && relatedEvents.length === 0 && (
           <div style={{ marginBottom: "80px" }}>
-            <p style={{ fontSize: "14px", color: "#767676", fontWeight: 300 }}>
+            <p style={{ fontSize: "14px", color: "var(--mot-text-quiet, #767676)", fontWeight: 300 }}>
               artist profile — more information to come.
             </p>
           </div>
@@ -763,14 +730,14 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
           {studio ? (
             <Link
               href={`/afarm/studios/${studio.slug}`}
-              style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em" }}
+              style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.06em" }}
             >
               view studio ↗
             </Link>
           ) : artist.collective && (
             <Link
               href={`/collective#${artist.name.toLowerCase().replace(/\s+/g, "-")}`}
-              style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.06em" }}
+              style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.06em" }}
             >
               view on collective page ↗
             </Link>
