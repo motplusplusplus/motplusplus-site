@@ -250,8 +250,10 @@ body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-ins
 .mot-link {
   color: var(--mot-quiet); background: none; border: 0; padding: 0; cursor: pointer;
   text-decoration: underline; text-decoration-color: var(--mot-line);
-  text-underline-offset: 3px; font: inherit; letter-spacing: inherit;
+  text-underline-offset: 3px;
 }
+/* a link-styled <button> takes its text's font, unless it is a mono one */
+button.mot-link:not(.mot-mono) { font: inherit; letter-spacing: inherit; }
 .mot-link:hover { color: var(--mot-ink); text-decoration-color: currentColor; }
 
 /* tap targets: >= 44px even where the drawn control is smaller */
@@ -475,7 +477,7 @@ a.tg-title:hover { text-decoration: underline; text-underline-offset: 3px; text-
 
 /* ── viewer (PhotoSwipe v5) ─────────────────────────────────────────── */
 .pswp.mot-viewer { --pswp-bg: var(--mot-viewer); --pswp-icon-color: #e9e5de; --pswp-icon-color-secondary: transparent; --pswp-icon-stroke-width: 0; }
-.mot-viewer .pswp__top-bar { opacity: 1 !important; }
+.mot-viewer .pswp__top-bar { opacity: 1 !important; z-index: 20 !important; } /* above the desktop caption panel: × always visible */
 .mot-viewer .pswp__button { width: 56px; height: 56px; opacity: 0.9; display: flex; align-items: center; justify-content: center; }
 .mot-viewer .pswp__button--close { margin-right: 4px; }
 .mot-viewer .pswp__button--close .pswp__icn { width: 32px; height: 32px; position: static; }
@@ -489,7 +491,7 @@ a.tg-title:hover { text-decoration: underline; text-underline-offset: 3px; text-
 .mot-viewer .pswp__button--arrow { width: 64px; height: 120px; margin-top: -60px; }
 .mot-viewer .pswp__button--arrow .pswp__icn { width: 32px; height: 32px; left: 16px; top: 44px; margin: 0; }
 .mv-cap {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 10; color: #e9e5de;
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 9; color: #e9e5de;
   padding: 0 16px calc(env(safe-area-inset-bottom)); pointer-events: auto;
   background: linear-gradient(to top, rgba(14,13,12,0.92) 60%, rgba(14,13,12,0));
 }
@@ -529,14 +531,17 @@ a.tg-title:hover { text-decoration: underline; text-underline-offset: 3px; text-
   background: rgba(14,13,12,0.5); padding: 10px 16px; border-radius: 999px;
   animation: mot-fade 0.3s ease 0.35s both; transition: opacity 0.3s ease;
 }
-.mv-hint.is-gone { opacity: 0; }
+/* PhotoSwipe gives every custom element .pswp__hide-on-close, whose rule
+   forces opacity: 1; these two must be able to hide. */
+.pswp .mv-hint.is-gone { opacity: 0 !important; animation: none; }
 .mv-toast {
   position: absolute; left: 50%; top: 68px; transform: translateX(-50%); z-index: 12; pointer-events: none;
   font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.08em; color: #e9e5de;
   background: rgba(40,38,35,0.95); padding: 8px 14px; border-radius: 999px; opacity: 0; transition: opacity 0.2s ease;
   max-width: 90vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.mv-toast.is-on { opacity: 1; }
+.pswp .mv-toast:not(.is-on) { opacity: 0 !important; visibility: hidden; }
+.pswp .mv-toast.is-on { opacity: 1 !important; visibility: visible; }
 
 /* ── motion ─────────────────────────────────────────────────────────── */
 @keyframes mot-fade { from { opacity: 0; } to { opacity: 1; } }
