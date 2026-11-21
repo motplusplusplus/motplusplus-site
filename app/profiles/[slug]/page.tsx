@@ -137,6 +137,9 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
     (sanityArtist?.images as string[] | undefined)?.length
       ? ((sanityArtist!.imageCredits as (string | null)[] | null | undefined) ?? undefined)
       : undefined;
+  const fromSanity = !!(sanityArtist?.images as string[] | undefined)?.length;
+  const workImageCaptions = fromSanity ? ((sanityArtist!.imageCaptions as (string | null)[] | null | undefined) ?? undefined) : undefined;
+  const workImageAlts = fromSanity ? ((sanityArtist!.imageAlts as (string | null)[] | null | undefined) ?? undefined) : undefined;
 
   // No portrait (Sanity or local photo) → borrow an image from their events, works
   // or a.Farm studio, captioned with its source. Display only; nothing is written
@@ -673,7 +676,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             <p style={{ fontSize: "11px", color: "#767676", letterSpacing: "0.08em", marginBottom: "32px" }}>
               work
             </p>
-            <ArtistGallery images={artist.workImages} artistName={artist.name} credits={workImageCredits} />
+            <ArtistGallery images={artist.workImages} artistName={artist.name} credits={workImageCredits} captions={workImageCaptions} alts={workImageAlts} />
           </div>
         )}
 
