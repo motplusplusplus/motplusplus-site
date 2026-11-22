@@ -31,5 +31,5 @@ export function toEntry(e: CEvent): EventEntry {
 
 /** Folded search text: titles (EN and VN), people, venue, descriptions (E6, S5). */
 export function searchText(e: CEvent): string {
-  return fold([e.title, e.vnTitle, e.credits.map(c => c.person.name).join(' '), e.venue?.name, e.venue?.address, e.location, e.category, e.description, e.vnDescription].filter(Boolean).join(' ')).replace(/\s+/g, ' ');
+  return fold([e.title, e.vnTitle, e.credits.map(c => c.person.name).join(' '), ...e.venues.flatMap(v => [v.name, v.address]), e.location, e.category, e.description, e.vnDescription].filter(Boolean).join(' ')).replace(/\s+/g, ' ');
 }

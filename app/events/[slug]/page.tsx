@@ -35,7 +35,7 @@ export async function generateStaticParams() {
 
 function description(e: CEvent): string {
   const t = plainOf(fromText(e.description)).replace(/\s+/g, ' ').trim();
-  const lead = [e.displayDate || e.dateISO, e.venue?.name || (e.location && !/^hồ chí minh$/i.test(e.location) ? e.location : ''), e.category].filter(Boolean).join(' · ');
+  const lead = [e.displayDate || e.dateISO, e.venues.map(v => v.name).join(' + ') || (e.location && !/^hồ chí minh$/i.test(e.location) ? e.location : ''), e.category].filter(Boolean).join(' · ');
   const body = t.length > 150 - lead.length ? t.slice(0, 150 - lead.length).replace(/\s+\S*$/, '') + '…' : t;
   return [lead, body].filter(Boolean).join(': ').slice(0, 165);
 }
@@ -152,7 +152,13 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
           {e.vnTitle && e.vnTitle !== e.title && <p className="c-ev-vn" lang="vi">{e.vnTitle}</p>}
           <dl className="c-ev-dl">
             {date && <div><dt>when</dt><dd>{date}</dd></div>}
-            {where && <div><dt>where</dt><dd>{mapUrl ? <a href={mapUrl} target="_blank" rel="noopener noreferrer">{where}{address ? `, ${address}` : ''}</a> : where}</dd></div>}
+            {e.venues.length > 1
+              ? <div><dt>where</dt><dd>{e.venues.map((v, k) => {
+                  const a = [v.address, v.city].filter(Boolean).join(', ');
+                  const u = v.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([v.name, a].filter(Boolean).join(', '))}`;
+                  return <span key={k} style={{ display: 'block' }}><a href={u} target="_blank" rel="noopener noreferrer">{v.name}{a ? `, ${a}` : ''}</a></span>;
+                })}</dd></div>
+              : where && <div><dt>where</dt><dd>{mapUrl ? <a href={mapUrl} target="_blank" rel="noopener noreferrer">{where}{address ? `, ${address}` : ''}</a> : where}</dd></div>}
             {e.category && <div><dt>program</dt><dd>{e.category}</dd></div>}
             {curators.length > 0 && <div><dt>curated by</dt><dd>{names(curators)}</dd></div>}
             {artists.length > 0 && <div><dt>artists</dt><dd>{names(artists)}</dd></div>}

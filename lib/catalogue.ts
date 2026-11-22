@@ -51,6 +51,8 @@ export type CEvent = {
   category: string;
   location: string;
   venue: Venue | null;
+  /** venue first, then any other venues the event used (event.otherVenues) */
+  venues: Venue[];
   description: string;
   vnDescription: string;
   images: Img[];
@@ -201,6 +203,7 @@ const QUERY = `{
   "events": *[_type == "event" && active == true && !(_id in path("drafts.**"))]{
     _id, "slug": slug.current, title, vnTitle, dateISO, endDateISO, displayDate, category, location,
     "venue": venue->{name, address, city, country, mapUrl},
+    "otherVenues": otherVenues[]->{name, address, city, country, mapUrl},
     description, vnDescription, isBioPage, videoUrl, videos, bandcampAlbumId, wpLink, coverImage, _updatedAt,
     "uploads": uploadedImages[]{ _key, isPoster, "fn": asset->originalFilename, ${IMG} },
     legacyImageUrls,
@@ -287,6 +290,7 @@ async function build(): Promise<Catalogue> {
       year: +(dateISO.slice(0, 4)) || 0,
       category: e.category === '+a.farm' ? '+a.Farm' : (e.category ?? ''),
       location: e.location ?? '', venue: e.venue?.name ? e.venue : null,
+      venues: [e.venue, ...(e.otherVenues ?? [])].filter((v: Venue | null): v is Venue => !!v?.name),
       description: e.description ?? '', vnDescription: e.vnDescription ?? '',
       images, cover, coverIsPoster: !!cover?.poster,
       videos: [...new Set([...(e.videos ?? []), ...(e.videoUrl ? [e.videoUrl] : []), ...videoLinks(e.description, e.vnDescription)])],
@@ -304,7 +308,7 @@ async function build(): Promise<Catalogue> {
     const cover = images.find(i => !i.poster) ?? images[0] ?? null;
     events.push({
       _id: 'json:' + j.slug, slug: j.slug, title: j.title, vnTitle: j.vnTitle ?? null, dateISO: j.dateISO, endDateISO: j.endDateISO ?? null,
-      displayDate: j.displayDate, year: +(j.dateISO ?? '').slice(0, 4) || 0, category: j.category, location: j.location, venue: null,
+      displayDate: j.displayDate, year: +(j.dateISO ?? '').slice(0, 4) || 0, category: j.category, location: j.location, venue: null, venues: [],
       description: j.description ?? '', vnDescription: j.vnDescription ?? '', images: cover ? [cover, ...images.filter(i => i !== cover)] : images,
       cover, coverIsPoster: !!cover?.poster, videos: videoLinks(j.videoUrl, j.description), bandcampAlbumId: j.bandcampAlbumId ?? null, wpLink: j.wpLink || null,
       credits: [], partners: [], isBioPage: !!j.isBioPage, listed: false, updatedAt: '',
