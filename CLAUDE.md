@@ -148,9 +148,12 @@
 - Write tokens: not stored here — see Claude memory / sanity.io manage.
 - **Schema changes ship in two places, together with the site code that reads them:**
   the Studio build (`npm run build` + `npx wrangler deploy` in the Studio repo, see its
-  CLAUDE.md), and the deployed schema record (`npx sanity schema deploy` there), which
-  Sanity's MCP/AI tools validate edits against. A stale record rejects valid edits (it was
-  missing `workType` and `nationalities` until 2026-11-22).
+  CLAUDE.md), and the deployed schema record, which Sanity's MCP/AI tools validate edits
+  against. That record belongs to the Sanity-hosted Studio app (`appId` in `sanity.cli.ts`)
+  and only updates with **`npx sanity deploy -y`** in the Studio repo (which also refreshes
+  the motplusplus.sanity.studio fallback); `sanity schemas deploy` alone writes a legacy
+  copy the tools do not read. A stale record rejects valid edits (it was missing
+  `workType` and `nationalities` until 2026-11-22).
 
 ## Mapbox (+1 Museum map)
 - **NEVER run `next build` directly — always use `npm run deploy`.** Running
