@@ -107,6 +107,13 @@ jobs:
       - name: Verify live profile and event content matches Sanity
         run: npm run verify-content
 
+      # Best effort: ask Sanity's CDN for every /trash grid image size once, so the first
+      # visitors after a deploy (or a newly published work) don't wait on fresh resizes.
+      - name: Pre-warm Sanity image sizes
+        continue-on-error: true
+        timeout-minutes: 10
+        run: node scripts/prewarm-images.mjs
+
       # Runs only when something above failed (after the build retry). Emails info@ through the
       # Gmail API with the same send-only OAuth credentials as the mot-outbox repo; without the
       # GMAIL_* secrets it warns instead of staying silent.

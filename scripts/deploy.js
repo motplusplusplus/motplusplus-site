@@ -11,6 +11,7 @@
 //    then runs verify-deploy (fails loudly if the live site is still serving a stale
 //    build — see ISSUE-011 / ARCHITECTURE.md §9) and verify-content (fails if live
 //    profile pages don't match Sanity).
+// 5. Pre-warms Sanity's image CDN with the /trash grid sizes (best effort, never fails).
 
 'use strict';
 
@@ -108,6 +109,9 @@ function main() {
   run('node scripts/purge-cache.js'); // purge BEFORE verify so verify validates the post-purge state
   run('node scripts/verify-deploy.js');
   run('node scripts/verify-content.js'); // live profile pages must match Sanity, not just the BUILD_ID
+  // Best effort, never fails: ask Sanity's CDN for every /trash grid size once,
+  // so the first real visitors don't wait on fresh resizes (largest paint on phones).
+  try { run('node scripts/prewarm-images.mjs'); } catch { console.warn('⚠️  image prewarm failed (not fatal)'); }
 }
 
 main();

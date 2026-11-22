@@ -158,7 +158,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: IMG_FADE_SCRIPT }} />
         {/* Self-hosted Inter (see app/globals.css). Preload the latin subset, as next/font did. */}
-        <link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/inter-latin-300-400.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body>
