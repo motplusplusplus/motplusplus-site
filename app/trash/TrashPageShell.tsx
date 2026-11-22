@@ -1,702 +1,659 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import Link from 'next/link';
-import { buildTrashInquiryEmail, type TrashItem } from '@/lib/demoTrashItems';
-import ArtistCreditLinks from '@/components/ArtistCreditLinks';
-import InquiryForm from '@/components/InquiryForm';
+/** The /trash grid (2026-11-22 rework). The work comes first; everything else
+ *  is quiet monospace that recedes.
+ *
+ *  ORDER. Random, frozen per visitor for the session (seed in sessionStorage).
+ *  The static HTML lists every work in the canonical Sanity order; an inline
+ *  script right after it (page.tsx) applies this visitor's seeded order with
+ *  CSS `order` and hides all but the first batch, BEFORE first paint, so the
+ *  first image a phone paints is already the right one (no reshuffle after
+ *  hydration, which used to cost the largest-paint metric). On hydration
+ *  React renders the same order for real and the inline styles are cleared.
+ *
+ *  STATE. Filters, search, view and how many are shown are kept in
+ *  sessionStorage when leaving for a work page, and restored (with the scroll
+ *  position) on the way back. ?type= stays in the address, shareable.
+ *
+ *  PRICES. Never in the static export. The seven-click gate on the word
+ *  "trash" asks the worker (/api/pricelist), as before. */
+
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { CONTACTS } from '@/lib/contacts';
 import { compareNames } from '@/lib/sortName';
-import { shuffleArray } from '@/lib/shuffle';
 import { TRASH_WORK_TYPES, isTrashWorkType, type TrashWorkType } from '@/lib/trashWorkTypes';
+import {
+  isTimeBased, matchesSearch, prefersReducedMotion, trashOrder, session,
+  RETURN_KEY, SEED_KEY, VIEW_KEY, type Work,
+} from '@/lib/trashWork';
+import { GRID_DENSE_WIDTHS, GRID_SINGLE_WIDTHS } from '@/lib/workImage';
+import WorkImg from '@/components/work/WorkImg';
+import { openWorkViewer, preloadViewer } from '@/components/work/viewer';
+import { navigateWithMorph } from '@/components/work/morph';
+import FilterSheet from './FilterSheet';
 
+import {
+  BATCH, DENSE_DEFAULT_QUERY, GRID_DENSE_SIZES, GRID_ID, GRID_SINGLE_SIZES, ORDER_STYLE_ID, PANEL_QUERY, PRE_DENSE_CLASS,
+} from '@/lib/trashGrid';
 const CLICKS_NEEDED = 7;
 
-type SortOption = 'random' | 'date' | 'artist';
-type Props = { items: TrashItem[] };
+/** The always-visible two-state switch: "available / all works". */
+export type Availability = 'all' | 'available';
+export type SortOption = 'random' | 'date' | 'artist';
+export type TypeFilter = 'all' | TrashWorkType;
+type View = 'single' | 'dense';
 
-const AVAILABILITY_FILTERS = ['all', 'available', 'sold'] as const;
-type AvailabilityFilter = typeof AVAILABILITY_FILTERS[number];
+type Saved = {
+  availability: Availability; sort: SortOption; type: TypeFilter; q: string;
+  shown: number; scrollY: number; t: number;
+};
 
-function matchesAvailability(item: TrashItem, filter: AvailabilityFilter): boolean {
-  if (filter === 'all') return true;
-  return filter === 'sold' ? !!item.sold : !item.sold;
+const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+
+function readSeed(): number {
+  const w = window as Window & { __motTrashSeed?: number };
+  if (typeof w.__motTrashSeed === 'number') return w.__motTrashSeed;
+  const stored = Number(session.get(SEED_KEY));
+  if (stored > 0) return stored;
+  const fresh = Math.floor(Math.random() * 4294967295) + 1;
+  session.set(SEED_KEY, String(fresh));
+  return fresh;
 }
 
-type TypeFilter = 'all' | TrashWorkType;
-
-function matchesType(item: TrashItem, filter: TypeFilter): boolean {
-  return filter === 'all' || (item.workType ?? []).includes(filter);
+function readReturn(): Saved | null {
+  const raw = session.get(RETURN_KEY);
+  if (!raw) return null;
+  session.remove(RETURN_KEY);
+  try {
+    const s = JSON.parse(raw) as Saved;
+    return Date.now() - s.t < 60 * 60 * 1000 ? s : null;
+  } catch { return null; }
 }
 
-/** `?type=` from the address bar; anything unrecognised means "all". */
 function typeFromUrl(): TypeFilter {
   const t = new URLSearchParams(window.location.search).get('type');
   return isTrashWorkType(t) ? t : 'all';
 }
 
-/** CSS-ident-safe view-transition-name for a Sanity _id. */
-function vtName(id: string): string {
-  return `trash-${id.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+function columnsFor(width: number): number {
+  if (width >= 1200) return 4;
+  if (width >= 720) return 3;
+  return 2;
 }
 
-/** Runs a state update inside a view transition when the browser supports it and
- *  the user hasn't asked for reduced motion; otherwise applies it instantly. The
- *  grid cells carry per-item view-transition-names, so filter/sort changes animate
- *  items to their new positions instead of snapping the whole grid. */
-function withGridTransition(update: () => void) {
-  const reduced =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const doc = document as Document & { startViewTransition?: (cb: () => void) => void };
-  if (!reduced && typeof doc.startViewTransition === 'function') {
-    doc.startViewTransition(update);
-  } else {
-    update();
+/** Shortest-column masonry from known aspect ratios: real proportions, never
+ *  cropped, reading order kept as far as heights allow. */
+function toColumns(items: Work[], cols: number): Work[][] {
+  const out: Work[][] = Array.from({ length: cols }, () => []);
+  const heights = new Array(cols).fill(0);
+  for (const w of items) {
+    const img = w.images[0];
+    const ratio = img ? img.h / img.w : 1;
+    let c = 0;
+    for (let i = 1; i < cols; i++) if (heights[i] < heights[c] - 0.01) c = i;
+    out[c].push(w);
+    heights[c] += ratio + 0.28; // + caption
   }
+  return out;
 }
 
-export default function TrashPageShell({ items }: Props) {
-  // unlock state
+export default function TrashPageShell({ items }: { items: Work[] }) {
+  const router = useRouter();
+
+  // ── first render ─────────────────────────────────────────────────────
+  // While hydrating the static HTML, React must render exactly what the
+  // server did: every work, canonical order. A client-side mount (back from
+  // a work page) has no such constraint and renders the final state at once.
+  const [hydrating] = useState(() => typeof document !== 'undefined' && !!document.getElementById(GRID_ID));
+  const [ready, setReady] = useState(false);
+  const [seed, setSeed] = useState<number | null>(null);
+  const [availability, setAvailability] = useState<Availability>('all');
+  const [sort, setSort] = useState<SortOption>('random');
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
+  const [q, setQ] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [view, setView] = useState<View>('single');
+  const [shown, setShown] = useState(BATCH);
+  const [cols, setCols] = useState(2);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  // desktop: a small panel under the pill; phone: the bottom sheet
+  const [sheetMode, setSheetMode] = useState<'sheet' | 'panel'>('sheet');
+  const pillRef = useRef<HTMLButtonElement>(null);
+  const pendingScroll = useRef<number | null>(null);
+  const prevShown = useRef(BATCH);
+
+  // price gate
   const [clicks, setClicks] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [input, setInput] = useState('');
-  const [error, setError] = useState(false);
-  const [unlocked, setUnlocked] = useState(false);
-  // Prices are NOT in the static export (see page.tsx). They are fetched from the
-  // worker only after the password is verified server-side, then held here keyed
-  // by document _id. Kept separate from `items` so unlocking does not re-shuffle
-  // or re-sort the gallery.
+  const [pw, setPw] = useState('');
+  const [pwError, setPwError] = useState(false);
   const [prices, setPrices] = useState<Record<string, string>>({});
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [unlocked, setUnlocked] = useState(false);
+  const pwRef = useRef<HTMLInputElement>(null);
 
-  // gallery state — `randomOrder` starts as the build-time shuffle baked into the
-  // static HTML (page.tsx), so the first paint already shows the full grid.
-  // Tapping "random" again reshuffles client-side.
-  const [randomOrder, setRandomOrder] = useState<TrashItem[]>(items);
-
-  // ...and every visit then gets its own order (2026-10-03). The build-time
-  // shuffle alone assumed content publishes would rebuild the site every few
-  // minutes; with nobody editing in the Studio the last build stood for five
-  // days and every visitor saw the identical "random" grid. So the static
-  // order is only the first paint, and once hydrated the grid reshuffles,
-  // through the same fade the "random" button uses so it does not jump.
-  useEffect(() => {
-    // Deliberately after hydration: a per-visit order cannot be chosen during
-    // render without the server HTML and the client disagreeing.
-    withGridTransition(() => setRandomOrder(shuffleArray(items)));
-  }, [items]);
-  const [sort, setSort] = useState<SortOption>('random');
-  const [availability, setAvailability] = useState<AvailabilityFilter>('all');
-  // Type filter state lives in the URL (?type=painting) so a filtered view can be
-  // shared. The static HTML always renders "all"; the real value is read after
-  // hydration (reading window during render would break hydration).
-  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
-  const [openId, setOpenId] = useState<string | null>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const lastFocusRef = useRef<HTMLElement | null>(null);
-  const touchStartX = useRef<number | null>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const imgRefs = useRef(new Map<string, HTMLImageElement | null>());
+  const flipRects = useRef<Map<string, DOMRect> | null>(null);
 
-  // unlock handlers
-  const handleTrashClick = () => {
+  // Restore everything before the first client paint.
+  useIsoLayoutEffect(() => {
+    // React now renders this visitor's order itself: drop the inline
+    // script's pre-paint ordering (page.tsx)
+    document.getElementById(ORDER_STYLE_ID)?.remove();
+    document.documentElement.classList.remove(PRE_DENSE_CLASS);
+    setSeed(readSeed());
+    const saved = readReturn();
+    const urlType = typeFromUrl();
+    const storedView = session.get(VIEW_KEY);
+    if (storedView === 'dense' || storedView === 'single') setView(storedView);
+    else setView(window.matchMedia(DENSE_DEFAULT_QUERY).matches ? 'dense' : 'single');
+    setCols(columnsFor(window.innerWidth));
+    if (saved) {
+      setAvailability(saved.availability === 'available' ? 'available' : 'all');
+      setSort(saved.sort);
+      setTypeFilter(urlType !== 'all' ? urlType : saved.type);
+      setQ(saved.q);
+      if (saved.q) setSearchOpen(true);
+      setShown(Math.max(BATCH, saved.shown));
+      prevShown.current = Math.max(BATCH, saved.shown);
+      pendingScroll.current = saved.scrollY;
+    } else {
+      setTypeFilter(urlType);
+    }
+    setReady(true);
+  }, [hydrating]);
+
+  // scroll back to where the visitor left, once the restored list is laid out
+  useIsoLayoutEffect(() => {
+    if (!ready || pendingScroll.current === null) return;
+    const y = pendingScroll.current;
+    pendingScroll.current = null;
+    window.scrollTo(0, y);
+    requestAnimationFrame(() => window.scrollTo(0, y));
+  }, [ready]);
+
+  useEffect(() => {
+    const onResize = () => setCols(columnsFor(window.innerWidth));
+    window.addEventListener('resize', onResize, { passive: true });
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback;
+    if (idle) idle(preloadViewer); else setTimeout(preloadViewer, 1500);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // ── derived lists ────────────────────────────────────────────────────
+  const randomOrder = useMemo(() => {
+    if (seed === null) return items;
+    const byId = new Map(items.map(i => [i._id, i]));
+    return trashOrder(items.map(i => [i._id, i.sold ? 1 : 0] as [string, number]), seed).map(id => byId.get(id)!);
+  }, [items, seed]);
+
+  const sorted = useMemo(() => {
+    if (sort === 'artist') return [...items].sort((a, b) => compareNames(a.artist, b.artist));
+    if (sort === 'date') return [...items].sort((a, b) => a.orderIndex - b.orderIndex);
+    return randomOrder;
+  }, [sort, items, randomOrder]);
+
+  const matching = useMemo(() => sorted.filter(w =>
+    (availability === 'all' || !w.sold) &&
+    (typeFilter === 'all' || w.workType.includes(typeFilter)) &&
+    matchesSearch(w, q)
+  ), [sorted, availability, typeFilter, q]);
+
+  // Until restored, render what the server did: every work, canonical order
+  // (the inline script orders and trims it before paint).
+  const visible = !ready ? items : matching.slice(0, shown);
+
+  const typeOptions = useMemo(() => TRASH_WORK_TYPES
+    .filter(t => items.some(w => w.workType.includes(t.value)))
+    .map(t => ({
+      ...t,
+      count: items.filter(w =>
+        w.workType.includes(t.value) &&
+        (availability === 'all' || !w.sold) &&
+        matchesSearch(w, q)).length,
+    })), [items, availability, q]);
+
+  // ── motion: works glide to their new places ──────────────────────────
+  /** Record where the on-screen cards are, just before a change. */
+  const captureFlip = useCallback(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    const rects = new Map<string, DOMRect>();
+    const vh = window.innerHeight;
+    for (const el of Array.from(grid.querySelectorAll<HTMLElement>('[data-id]'))) {
+      const r = el.getBoundingClientRect();
+      if (r.bottom > -200 && r.top < vh + 200) rects.set(el.dataset.id!, r);
+    }
+    flipRects.current = rects;
+  }, []);
+
+  useIsoLayoutEffect(() => {
+    const before = flipRects.current;
+    flipRects.current = null;
+    const grid = gridRef.current;
+    if (!before || !grid) return;
+    const reduced = prefersReducedMotion();
+    const vh = window.innerHeight;
+    for (const el of Array.from(grid.querySelectorAll<HTMLElement>('[data-id]'))) {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) continue;
+      const prev = before.get(el.dataset.id!);
+      if (prev && !reduced) {
+        const dx = prev.left - r.left, dy = prev.top - r.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) continue;
+        el.animate(
+          [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }],
+          { duration: 260, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' },
+        );
+      } else if (!prev) {
+        el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out' });
+      }
+    }
+  }, [visible, view, cols]);
+
+  const change = (fn: () => void) => { captureFlip(); fn(); setShown(BATCH); prevShown.current = BATCH; };
+
+  const setAvailabilityF = (a: Availability) => change(() => setAvailability(a));
+  const setSortF = (s: SortOption) => change(() => setSort(s));
+  const setQF = (v: string) => change(() => setQ(v));
+  const setTypeF = (t: TypeFilter) => change(() => {
+    setTypeFilter(t);
+    const url = new URL(window.location.href);
+    if (t === 'all') url.searchParams.delete('type'); else url.searchParams.set('type', t);
+    window.history.replaceState(window.history.state, '', url);
+  });
+  // "clear filters" (empty state) clears everything; the sheet's "clear"
+  // leaves the availability switch alone, since it lives outside the sheet
+  const clearAll = () => change(() => {
+    setAvailability('all'); setTypeFilter('all'); setQ('');
+    const url = new URL(window.location.href);
+    url.searchParams.delete('type');
+    window.history.replaceState(window.history.state, '', url);
+  });
+  const toggleView = () => {
+    captureFlip();
+    const next: View = view === 'single' ? 'dense' : 'single';
+    setView(next);
+    session.set(VIEW_KEY, next);
+  };
+
+  // ── loading: two batches on their own, then a quiet button ───────────
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || shown >= BATCH * 2 || shown >= matching.length) return;
+    const io = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) {
+        prevShown.current = shown;
+        setShown(s => Math.max(s, BATCH * 2));
+      }
+    }, { rootMargin: '800px 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [shown, matching.length]);
+
+  const showMore = () => { prevShown.current = shown; setShown(s => s + BATCH); };
+
+  // ── leaving for a work page: remember where we were ──────────────────
+  const rememberReturn = useCallback(() => {
+    const s: Saved = { availability, sort, type: typeFilter, q, shown, scrollY: window.scrollY, t: Date.now() };
+    session.set(RETURN_KEY, JSON.stringify(s));
+  }, [availability, sort, typeFilter, q, shown]);
+
+  const goToWork = (w: Work, img: HTMLImageElement | null) => {
+    if (!w.slug) return;
+    rememberReturn();
+    navigateWithMorph(router.push, `/trash/${w.slug}/`, img);
+  };
+
+  const openViewer = (w: Work) => {
+    openWorkViewer({
+      work: w,
+      history: true,
+      price: prices[w._id],
+      thumbFor: i => (i === 0 ? imgRefs.current.get(w._id) ?? null : null),
+      navigate: (href, { replace }) => {
+        rememberReturn();
+        if (replace) router.replace(href); else router.push(href);
+      },
+    });
+  };
+
+  // ?item=<id> deep links (older shares) open that work's viewer
+  useEffect(() => {
+    if (!ready) return;
+    const id = new URLSearchParams(window.location.search).get('item');
+    const w = id ? items.find(i => i._id === id) : undefined;
+    if (!w) return;
+    const url = new URL(window.location.href);
+    url.searchParams.delete('item');
+    window.history.replaceState(window.history.state, '', url);
+    openViewer(w);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready]);
+
+  // ── price gate ───────────────────────────────────────────────────────
+  const onTrashWord = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (unlocked) return;
     const next = clicks + 1;
     if (next >= CLICKS_NEEDED) {
-      setClicks(0);
-      setShowModal(true);
-      setTimeout(() => inputRef.current?.focus(), 50);
-    } else {
-      setClicks(next);
-    }
+      setClicks(0); setShowModal(true);
+      setTimeout(() => pwRef.current?.focus(), 50);
+    } else setClicks(next);
   };
-
-  // Real gate: POST the password to the worker, which checks it against the
-  // PRICELIST_PASSWORD secret and returns prices only on success. A wrong or
-  // absent password gets a 401 and no price data ever reaches the browser.
-  const handleSubmit = async () => {
+  const submitPw = async () => {
     try {
       const res = await fetch('/api/pricelist', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({password: input}),
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }),
       });
-      if (!res.ok) {
-        setError(true);
-        setInput('');
-        setTimeout(() => inputRef.current?.focus(), 50);
-        return;
-      }
+      if (!res.ok) throw new Error('denied');
       const data = await res.json();
       setPrices(data.prices || {});
       setUnlocked(true);
-      setShowModal(false);
-      setInput('');
-      setError(false);
+      setShowModal(false); setPw(''); setPwError(false);
     } catch {
-      setError(true);
-      setInput('');
-      setTimeout(() => inputRef.current?.focus(), 50);
+      setPwError(true); setPw('');
+      setTimeout(() => pwRef.current?.focus(), 50);
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setInput('');
-    setError(false);
+  // ── render ───────────────────────────────────────────────────────────
+  const chips: { key: string; label: string; clear: () => void }[] = [];
+  if (typeFilter !== 'all') {
+    chips.push({ key: 't', label: TRASH_WORK_TYPES.find(t => t.value === typeFilter)?.label ?? typeFilter, clear: () => setTypeF('all') });
+  }
+  if (q.trim()) chips.push({ key: 'q', label: `“${q.trim()}”`, clear: () => setQF('') });
+  const activeCount = (typeFilter !== 'all' ? 1 : 0) + (sort !== 'random' ? 1 : 0);
+  const clearSheet = () => change(() => {
+    setSort('random'); setTypeFilter('all');
+    const url = new URL(window.location.href);
+    url.searchParams.delete('type');
+    window.history.replaceState(window.history.state, '', url);
+  });
+  const toggleSheet = () => {
+    if (sheetOpen) { setSheetOpen(false); return; }
+    setSheetMode(window.matchMedia(PANEL_QUERY).matches ? 'panel' : 'sheet');
+    setSheetOpen(true);
   };
-
-  // sorted, then availability-filtered display list
-  const sortedItems = useMemo(() => {
-    if (sort === 'artist') return [...items].sort((a, b) => compareNames(a.artist, b.artist));
-    if (sort === 'date') return [...items].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
-    return randomOrder;
-  }, [sort, randomOrder, items]);
-
-  const displayItems = useMemo(
-    () => sortedItems.filter(i => matchesAvailability(i, availability) && matchesType(i, typeFilter)),
-    [sortedItems, availability, typeFilter]
+  const sheet = (mode: 'sheet' | 'panel') => (
+    <FilterSheet
+      mode={mode}
+      open={sheetOpen && sheetMode === mode}
+      onClose={() => setSheetOpen(false)}
+      anchor={pillRef}
+      sort={sort}
+      setSort={setSortF}
+      typeFilter={typeFilter}
+      setType={setTypeF}
+      typeOptions={typeOptions}
+      resultCount={matching.length}
+      onClear={clearSheet}
+    />
   );
 
-  // Type buttons: hidden when no work at all carries the type. Counts follow the
-  // available/sold view so they match what the button will show.
-  const typeButtons = useMemo(() => {
-    return TRASH_WORK_TYPES
-      .filter(t => items.some(i => (i.workType ?? []).includes(t.value)))
-      .map(t => ({
-        ...t,
-        count: items.filter(i => matchesAvailability(i, availability) && (i.workType ?? []).includes(t.value)).length,
-      }));
-  }, [items, availability]);
+  const renderCard = (w: Work, i: number, dense: boolean) => {
+    const img = w.images[0];
+    const timeBased = isTimeBased(w);
+    const isNew = ready && i >= prevShown.current && prevShown.current > 0 && i < shown;
+    const media = img ? (
+      <WorkImg
+        img={img}
+        widths={dense ? GRID_DENSE_WIDTHS : GRID_SINGLE_WIDTHS}
+        sizes={dense ? GRID_DENSE_SIZES : GRID_SINGLE_SIZES}
+        defaultWidth={dense ? 400 : 800}
+        // The first two cards in this visitor's order are the largest paint.
+        // On a fresh load the inline script already preloads them (the
+        // server cannot know the order); on a client-side return React does.
+        priority={ready && i < 2}
+        imgRef={el => { imgRefs.current.set(w._id, el); }}
+      />
+    ) : <span className="mot-img mot-img-empty" />;
 
-  const counts = useMemo(() => ({
-    all: items.length,
-    available: items.filter(i => !i.sold).length,
-    sold: items.filter(i => !!i.sold).length,
-  }), [items]);
-
-  const setAvailabilityAnimated = (f: AvailabilityFilter) => {
-    if (f === availability) return;
-    withGridTransition(() => setAvailability(f));
+    return (
+      <article
+        key={w._id}
+        data-id={w._id}
+        className={`tg-card${isNew ? ' tg-new' : ''}`}
+        style={isNew ? ({ '--i': i - prevShown.current } as React.CSSProperties) : undefined}
+      >
+        {timeBased && w.slug ? (
+          <a
+            href={`/trash/${w.slug}/`}
+            className="tg-media"
+            aria-label={`${w.title}, ${w.artist}: open the work page to play`}
+            onPointerEnter={() => router.prefetch(`/trash/${w.slug}/`)}
+            onClick={e => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+              e.preventDefault();
+              goToWork(w, imgRefs.current.get(w._id) ?? null);
+            }}
+          >
+            {media}
+            <span className="tg-play" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="14" height="14"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg>
+            </span>
+          </a>
+        ) : (
+          <button
+            type="button"
+            className="tg-media"
+            aria-label={`view ${w.title}, ${w.artist}`}
+            onClick={() => openViewer(w)}
+          >
+            {media}
+          </button>
+        )}
+        <div className="tg-cap">
+          {w.slug ? (
+            <a
+              href={`/trash/${w.slug}/`}
+              className="tg-title"
+              onPointerEnter={() => router.prefetch(`/trash/${w.slug}/`)}
+              onClick={e => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+                e.preventDefault();
+                goToWork(w, imgRefs.current.get(w._id) ?? null);
+              }}
+            >
+              {w.title}
+            </a>
+          ) : <span className="tg-title">{w.title}</span>}
+          <p className="mot-mono tg-meta">
+            <span>{w.artist}{w.year ? `, ${w.year}` : ''}</span>
+            {w.sold && <><span className="mot-dot" aria-hidden="true" /><span className="mot-sr">, sold</span></>}
+          </p>
+          {prices[w._id] && !w.sold && <p className="mot-mono tg-meta">{prices[w._id]}</p>}
+        </div>
+      </article>
+    );
   };
 
-  const setTypeAnimated = (f: TypeFilter) => {
-    if (f === typeFilter) return;
-    const url = new URL(window.location.href);
-    if (f === 'all') url.searchParams.delete('type');
-    else url.searchParams.set('type', f);
-    window.history.pushState(null, '', url);
-    withGridTransition(() => setTypeFilter(f));
-  };
-
-  const setSortAnimated = (s: SortOption) => {
-    if (s === sort) {
-      // tapping "random" again reshuffles in place
-      if (s === 'random') withGridTransition(() => setRandomOrder(shuffleArray(items)));
-      return;
-    }
-    withGridTransition(() => setSort(s));
-  };
-
-  // scroll-triggered reveal for below-the-fold cards. Above-the-fold cards are
-  // never hidden (no flash, no CLS); with reduced motion or no IO support the
-  // grid simply stays fully visible.
-  useEffect(() => {
-    const grid = gridRef.current;
-    if (!grid) return;
-    if (typeof IntersectionObserver === 'undefined') return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    let first = true;
-    const observer = new IntersectionObserver((entries) => {
-      if (first) {
-        // initial callback covers every observed card: hide only the offscreen ones
-        for (const e of entries) {
-          if (!e.isIntersecting) e.target.classList.add('trash-card-pending');
-        }
-        first = false;
-        // reveal anything already visible stays untouched
-        return;
-      }
-      let i = 0;
-      for (const e of entries) {
-        if (e.isIntersecting) {
-          const el = e.target as HTMLElement;
-          el.style.transitionDelay = `${Math.min(i * 45, 180)}ms`;
-          el.classList.add('trash-card-in');
-          observer.unobserve(el);
-          i++;
-        }
-      }
-    }, { rootMargin: '0px 0px -40px 0px', threshold: 0.05 });
-
-    for (const child of Array.from(grid.children)) observer.observe(child);
-    return () => observer.disconnect();
-    // re-run when the rendered set changes so new cards get observed
-  }, [displayItems]);
-
-  // read ?type= and ?item= from the URL after hydration; follow back/forward too
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const itemId = params.get('item');
-    const linked = itemId ? items.find(i => i._id === itemId) : undefined;
-    const fromUrl = typeFromUrl();
-    // a link to one specific work wins over a type filter that would hide it
-    setTypeFilter(linked && !matchesType(linked, fromUrl) ? 'all' : fromUrl);
-    if (linked) setOpenId(linked._id);
-    const onPop = () => setTypeFilter(typeFromUrl());
-    window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
-  }, [items]);
-
-  const open = openId ? displayItems.find(i => i._id === openId) ?? null : null;
-  const openIdx = openId ? displayItems.findIndex(i => i._id === openId) : -1;
-
-  const nav = useCallback((dir: 1 | -1) => {
-    setOpenId(prev => {
-      if (!prev) return null;
-      const idx = displayItems.findIndex(i => i._id === prev);
-      const next = (idx + dir + displayItems.length) % displayItems.length;
-      return displayItems[next]._id;
-    });
-  }, [displayItems]);
-
-  // keyboard nav (only while the lightbox is open)
-  useEffect(() => {
-    if (!openId) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpenId(null);
-      else if (e.key === 'ArrowRight') nav(1);
-      else if (e.key === 'ArrowLeft') nav(-1);
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [openId, nav]);
-
-  // lightbox: lock background scroll, move focus in, restore focus on close
-  const lightboxOpen = !!openId;
-  useEffect(() => {
-    if (!lightboxOpen) return;
-    lastFocusRef.current = document.activeElement as HTMLElement | null;
-    document.body.style.overflow = 'hidden';
-    const t = setTimeout(() => closeBtnRef.current?.focus(), 30);
-    return () => {
-      clearTimeout(t);
-      document.body.style.overflow = '';
-      lastFocusRef.current?.focus?.();
-    };
-    // depend on open/closed only — navigating between works keeps focus state
-  }, [lightboxOpen]);
+  const dense = ready && view === 'dense';
 
   return (
     <>
-      {/* quotes */}
-      <p style={{ fontSize: '13px', color: '#767676', fontStyle: 'italic', lineHeight: 1.7, marginBottom: '10px' }}>
-        &ldquo;collecting trash is always an act to make the world a better place &nbsp;—&nbsp; thu gom rác luôn là một hành vi làm đẹp cho đời&rdquo;
-        <br /><span style={{ fontSize: '11px', fontStyle: 'normal', color: '#767676' }}>— Cam Xanh</span>
-      </p>
-      <p style={{ fontSize: '13px', color: '#767676', fontStyle: 'italic', lineHeight: 1.7, marginBottom: '0' }}>
-        &ldquo;art is among few virtues of human{' '}
-        <span onClick={handleTrashClick} style={{ cursor: 'default' }}>trash</span>
-        {' '}&nbsp;—&nbsp; nghệ thuật là một trong số ít rác rưởi có đạo đức của loài người&rdquo;
-        <br /><span style={{ fontSize: '11px', fontStyle: 'normal', color: '#767676' }}>— Cam Xanh</span>
-      </p>
+      <div className="tg-quotes">
+        <Quote>
+          &ldquo;collecting trash is always an act to make the world a better place — thu gom rác luôn là một hành vi làm đẹp cho đời&rdquo; <span className="tg-quote-by">cam xanh</span>
+        </Quote>
+        <Quote>
+          &ldquo;art is among few virtues of human{' '}
+          <span onClick={onTrashWord}>trash</span>
+          {' '}— nghệ thuật là một trong số ít rác rưởi có đạo đức của loài người&rdquo; <span className="tg-quote-by">cam xanh</span>
+        </Quote>
+      </div>
 
-      {/* password modal */}
-      {showModal && (
-        <div
-          onClick={closeModal}
-          style={{
-            position: 'fixed', inset: 0, zIndex: 2000,
-            backgroundColor: 'rgba(0,0,0,0.55)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >
-          <div
-            onClick={e => e.stopPropagation()}
-            style={{ backgroundColor: '#fff', padding: '32px 36px', width: '100%', maxWidth: '300px' }}
+      <div className="tg-controls" role="toolbar" aria-label="browse works">
+        <div className="tg-switch" role="radiogroup" aria-label="show">
+          {([['available', 'available'], ['all', 'all works']] as [Availability, string][]).map(([v, label]) => (
+            <button
+              key={v}
+              type="button"
+              role="radio"
+              aria-checked={availability === v}
+              className="tg-switch-opt mot-mono"
+              onClick={() => { if (availability !== v) setAvailabilityF(v); }}
+            >
+              {label}
+            </button>
+          ))}
+          <span className={`tg-switch-thumb${availability === 'all' ? ' is-right' : ''}`} aria-hidden="true" />
+        </div>
+        <div className="tg-filter-anchor">
+          <button
+            ref={pillRef}
+            type="button"
+            className="mot-pill"
+            onClick={toggleSheet}
+            aria-haspopup="dialog"
+            aria-expanded={sheetOpen}
+            data-label="filter and order"
           >
-            <p style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>
-              enter password
-            </p>
-            <input
-              ref={inputRef}
-              type="password"
-              value={input}
-              onChange={e => { setInput(e.target.value); setError(false); }}
-              onKeyDown={e => {
-                if (e.key === 'Enter') handleSubmit();
-                if (e.key === 'Escape') closeModal();
-              }}
-              style={{
-                width: '100%', border: 'none',
-                borderBottom: `1px solid ${error ? '#cc2222' : '#dddddd'}`,
-                fontSize: '14px', padding: '4px 0', outline: 'none',
-                boxSizing: 'border-box', background: 'none',
-                transition: 'border-color 0.15s',
-              }}
-            />
-            {error && (
-              <p style={{ fontSize: '10px', color: '#cc2222', marginTop: '10px', letterSpacing: '0.06em' }}>
-                incorrect
-              </p>
-            )}
-          </div>
+            filter{activeCount > 0 && <span className="mot-pill-n">{activeCount}</span>}
+          </button>
+          {sheet('panel')}
+        </div>
+        <span className="mot-mono mot-quiet tg-count" aria-live="polite">
+          {ready ? `${matching.length} works` : `${items.length} works`}
+        </span>
+        <button
+          type="button"
+          className="mot-icon-btn"
+          onClick={toggleView}
+          aria-label={view === 'single' ? 'show a dense grid' : 'show one work per row'}
+          aria-pressed={view === 'dense'}
+          data-label={view === 'single' ? 'grid view' : 'one per row'}
+        >
+          {view === 'single' ? (
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><g fill="none" stroke="currentColor" strokeWidth="1.2"><rect x="4" y="4" width="7" height="9" /><rect x="13" y="4" width="7" height="6" /><rect x="4" y="15" width="7" height="5" /><rect x="13" y="12" width="7" height="8" /></g></svg>
+          ) : (
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><rect x="5" y="4" width="14" height="16" fill="none" stroke="currentColor" strokeWidth="1.2" /></svg>
+          )}
+        </button>
+        <button
+          type="button"
+          className="mot-icon-btn"
+          onClick={() => {
+            const next = !searchOpen;
+            setSearchOpen(next);
+            if (next) setTimeout(() => searchRef.current?.focus(), 30);
+            else if (q) setQF('');
+          }}
+          aria-label={searchOpen ? 'close search' : 'search works'}
+          aria-expanded={searchOpen}
+          aria-controls="tg-search"
+          data-label={searchOpen ? 'close search' : 'search'}
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><g fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="5.5" /><path d="M15 15l4.5 4.5" /></g></svg>
+        </button>
+      </div>
+      {unlocked && <p className="mot-mono mot-quiet tg-unlocked">prices visible</p>}
+
+      {searchOpen && (
+        <div className="tg-search" id="tg-search">
+          <input
+            ref={searchRef}
+            type="search"
+            className="mot-mono"
+            value={q}
+            onChange={e => setQF(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Escape') { setQF(''); setSearchOpen(false); } }}
+            placeholder="title, artist, medium"
+            aria-label="search by title, artist or medium"
+            enterKeyHint="search"
+            autoComplete="off"
+          />
         </div>
       )}
 
-      {/* gallery */}
-      <div style={{ borderTop: '1px solid #e5e5e5', paddingTop: '40px', marginTop: '32px' }}>
-
-        {/* availability filter + sort control */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {AVAILABILITY_FILTERS.map(f => (
-              <button
-                key={f}
-                onClick={() => setAvailabilityAnimated(f)}
-                aria-pressed={availability === f}
-                className="trash-filter-btn"
-                style={{
-                  padding: '10px 18px', fontSize: '11px', letterSpacing: '0.06em',
-                  border: '1px solid',
-                  borderColor: availability === f ? '#111111' : '#dddddd',
-                  backgroundColor: availability === f ? '#111111' : 'transparent',
-                  color: availability === f ? '#ffffff' : '#767676',
-                  cursor: 'pointer', fontFamily: 'inherit',
-                }}
-              >
-                {f}
-                <span style={{
-                  marginLeft: '7px', fontSize: '10px',
-                  color: availability === f ? 'rgba(255,255,255,0.55)' : '#bbbbbb',
-                }}>
-                  {counts[f]}
-                </span>
+      {chips.length > 0 && (
+        <ul className="tg-chips" aria-label="active filters">
+          {chips.map(c => (
+            <li key={c.key} className="mot-chip">
+              <span className="mot-mono">{c.label}</span>
+              <button type="button" onClick={c.clear} aria-label={`remove filter ${c.label}`} data-label="remove">
+                <svg aria-hidden="true" viewBox="0 0 12 12" width="10" height="10"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>
               </button>
-            ))}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            {unlocked && (
-              <span style={{ fontSize: '11px', color: '#767676', fontWeight: 300, letterSpacing: '0.06em' }}>
-                prices visible
-              </span>
-            )}
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.06em' }}>sort</span>
-              <select
-                value={sort}
-                onChange={e => setSortAnimated(e.target.value as SortOption)}
-                style={{
-                  fontSize: '11px', color: '#767676', letterSpacing: '0.06em',
-                  background: 'none', border: 'none', borderBottom: '1px solid #e8e8e8',
-                  padding: '3px 0', cursor: 'pointer', outline: 'none',
-                  appearance: 'none', WebkitAppearance: 'none',
-                  paddingRight: '14px',
-                  backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'5\' viewBox=\'0 0 8 5\'%3E%3Cpath d=\'M0 0l4 5 4-5z\' fill=\'%23cccccc\'/%3E%3C/svg%3E")',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'right 0 center',
-                }}
-              >
-                <option value="random">random</option>
-                <option value="date">date added</option>
-                <option value="artist">artist</option>
-              </select>
-            </label>
-          </div>
-        </div>
+            </li>
+          ))}
+        </ul>
+      )}
 
-        {/* type filter: ?type=… in the URL; a type with no works gets no button */}
-        {typeButtons.length > 0 && (
-          <div
-            role="group"
-            aria-label="filter by work type"
-            style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '32px' }}
-          >
-            {[{ value: 'all' as TypeFilter, label: 'all', count: undefined as number | undefined },
-              ...typeButtons].map(t => (
-              <button
-                key={t.value}
-                onClick={() => setTypeAnimated(t.value)}
-                aria-pressed={typeFilter === t.value}
-                className="trash-filter-btn"
-                style={{
-                  padding: '10px 18px', fontSize: '11px', letterSpacing: '0.06em',
-                  border: '1px solid',
-                  borderColor: typeFilter === t.value ? '#111111' : '#dddddd',
-                  backgroundColor: typeFilter === t.value ? '#111111' : 'transparent',
-                  color: typeFilter === t.value ? '#ffffff' : '#767676',
-                  cursor: 'pointer', fontFamily: 'inherit',
-                }}
-              >
-                {t.label}
-                {t.count !== undefined && (
-                  <span style={{
-                    marginLeft: '7px', fontSize: '10px',
-                    color: typeFilter === t.value ? 'rgba(255,255,255,0.55)' : '#bbbbbb',
-                  }}>
-                    {t.count}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* grid */}
-        <div
-          ref={gridRef}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '40px 24px',
-          }}
-        >
-          {displayItems.map((item) => (
-            <div
-              key={item._id}
-              className="trash-card"
-              style={{ viewTransitionName: vtName(item._id) } as React.CSSProperties}
-            >
-              <button
-                onClick={() => setOpenId(item._id)}
-                aria-label={`view ${item.title || 'untitled'} by ${item.artist}`}
-                className="trash-card-imgbtn"
-                style={{
-                  display: 'block', width: '100%', padding: 0, border: 'none',
-                  aspectRatio: '4/3', overflow: 'hidden', backgroundColor: '#f5f5f5',
-                  cursor: 'pointer', marginBottom: '12px',
-                }}
-              >
-                {item.images && item.images.length > 0 ? (
-                  <img
-                    src={item.images[item.cardImageIndex ?? 0]}
-                    alt={item.title}
-                    loading="lazy"
-                    style={{
-                      width: '100%', height: '100%',
-                      // items with a multi-image set (e.g. wide/landscape dataset stills)
-                      // show the full frame instead of cropping a random crop of it
-                      objectFit: item.images.length > 1 ? 'contain' : 'cover',
-                      display: 'block',
-                    }}
-                  />
-                ) : null}
-              </button>
-
-              <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.06em', marginBottom: '4px' }}>
-                <ArtistCreditLinks artists={item.artists} artistSlug={item.artistSlug} fallback={item.artist} />
-              </p>
-              <button
-                onClick={() => setOpenId(item._id)}
-                style={{
-                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                  textAlign: 'left', display: 'block', width: '100%',
-                  fontSize: '13px', color: '#333333', lineHeight: 1.4, marginBottom: '4px',
-                  fontFamily: 'inherit',
-                }}
-              >
-                {item.title}{item.year ? `, ${item.year}` : ''}
-              </button>
-              <p style={{ fontSize: '11px', color: '#767676', lineHeight: 1.5, marginBottom: '12px' }}>
-                {[item.medium, item.edition].filter(Boolean).join(' · ')}
-              </p>
-              {unlocked && prices[item._id] && !item.sold && (
-                <p style={{ fontSize: '11px', color: '#767676', marginBottom: '10px', letterSpacing: '0.03em' }}>
-                  {prices[item._id]}
-                </p>
-              )}
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
-                {item.museumLocationId && (
-                  <Link
-                    href={`/museum?work=${item.museumLocationId}`}
-                    style={{ fontSize: '11px', color: '#666', border: '1px solid #ddd', padding: '5px 12px', textDecoration: 'none', letterSpacing: '0.03em' }}
-                  >
-                    +1 museum by any other name
-                  </Link>
-                )}
-                {item.sold ? (
-                  <span style={{ fontSize: '13px', color: '#cc2222', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontSize: '16px', lineHeight: 1 }}>●</span> sold
-                  </span>
-                ) : (
-                  <InquiryForm
-                    type="trash"
-                    recipient={CONTACTS.sales}
-                    mailtoHref={buildTrashInquiryEmail(item)}
-                    artworkTitle={item.title}
-                    artworkId={item._id}
-                    buttonLabel="inquire"
-                    buttonStyle={{ fontSize: '11px', color: '#fff', backgroundColor: '#111', padding: '5px 12px', letterSpacing: '0.03em' }}
-                  />
-                )}
-              </div>
+      {ready && matching.length === 0 ? (
+        <p className="mot-mono tg-empty">
+          nothing matches. <button type="button" className="mot-link" onClick={clearAll}>clear filters</button>
+        </p>
+      ) : dense ? (
+        <div ref={gridRef} id={GRID_ID} className="tg-grid tg-dense" style={{ '--cols': cols } as React.CSSProperties}>
+          {toColumns(visible, cols).map((col, ci) => (
+            <div key={ci} className="tg-col">
+              {col.map(w => renderCard(w, visible.indexOf(w), true))}
             </div>
           ))}
         </div>
-        {displayItems.length === 0 && (
-          <p style={{ fontSize: '13px', color: '#767676', fontStyle: 'italic' }}>
-            no works match this filter.
-          </p>
-        )}
-
-        <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '40px', marginTop: '48px' }}>
-          <a
-            href={`mailto:${CONTACTS.sales}?subject=+1%20trash%20%E2%99%BB%20inquiry`}
-            style={{ display: 'inline-block', fontSize: '13px', color: '#ffffff', backgroundColor: '#111111', padding: '12px 28px', textDecoration: 'none' }}
-          >
-            general inquiry
-          </a>
+      ) : (
+        <div ref={gridRef} id={GRID_ID} className="tg-grid tg-single">
+          {visible.map((w, i) => renderCard(w, i, false))}
         </div>
-      </div>
+      )}
 
-      {/* lightbox */}
-      {open && (
-        <div
-          ref={overlayRef}
-          onClick={(e) => { if (e.target === overlayRef.current) setOpenId(null); }}
-          role="dialog"
-          aria-modal="true"
-          aria-label={`${open.title || 'untitled'} by ${open.artist}`}
-          className="trash-lightbox-backdrop"
-          style={{
-            position: 'fixed', inset: 0, zIndex: 1200,
-            backgroundColor: 'rgba(0,0,0,0.85)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '24px',
-          }}
-        >
-          {displayItems.length > 1 && (
-            <>
-              <button
-                onClick={e => { e.stopPropagation(); nav(-1); }}
-                aria-label="previous work"
-                style={{
-                  position: 'fixed', left: '12px', top: '50%', transform: 'translateY(-50%)',
-                  background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer',
-                  color: 'white', fontSize: '22px', padding: '12px 14px', zIndex: 1201,
-                  borderRadius: '2px', lineHeight: 1,
-                }}
-              >‹</button>
-              <button
-                onClick={e => { e.stopPropagation(); nav(1); }}
-                aria-label="next work"
-                style={{
-                  position: 'fixed', right: '12px', top: '50%', transform: 'translateY(-50%)',
-                  background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer',
-                  color: 'white', fontSize: '22px', padding: '12px 14px', zIndex: 1201,
-                  borderRadius: '2px', lineHeight: 1,
-                }}
-              >›</button>
-            </>
-          )}
+      <div ref={sentinelRef} aria-hidden="true" />
+      {ready && shown < matching.length && shown >= BATCH * 2 && (
+        <div className="tg-more">
+          <button type="button" className="mot-pill" onClick={showMore}>
+            show more · {Math.min(shown, matching.length)} of {matching.length}
+          </button>
+        </div>
+      )}
 
-          <div
-            onClick={e => e.stopPropagation()}
-            onTouchStart={e => { touchStartX.current = e.touches[0].clientX; }}
-            onTouchEnd={e => {
-              if (touchStartX.current === null) return;
-              const dx = e.changedTouches[0].clientX - touchStartX.current;
-              if (Math.abs(dx) > 50) nav(dx < 0 ? 1 : -1);
-              touchStartX.current = null;
-            }}
-            className="trash-lightbox-panel"
-            style={{
-              backgroundColor: '#fff', maxWidth: '720px', width: '100%',
-              maxHeight: '90vh', overflowY: 'auto',
-              position: 'relative',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px 0' }}>
-              {displayItems.length > 1 ? (
-                <span style={{ fontSize: '10px', color: '#767676', letterSpacing: '0.08em' }}>
-                  {openIdx + 1} / {displayItems.length}
-                </span>
-              ) : <span />}
-              <button
-                ref={closeBtnRef}
-                onClick={() => setOpenId(null)}
-                aria-label="close"
-                style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#767676', lineHeight: 1, padding: '4px 10px' }}
-              >×</button>
-            </div>
+      <p className="tg-general mot-mono">
+        <a className="mot-link" href={`mailto:${CONTACTS.sales}?subject=${encodeURIComponent('+1 trash inquiry')}`}>
+          general inquiry
+        </a>
+      </p>
 
-            {open.images && open.images.length > 0 && (
-              <div>
-                <img
-                  src={open.images[open.cardImageIndex ?? 0]}
-                  alt={open.title}
-                  style={{ width: '100%', maxHeight: '380px', objectFit: 'contain', backgroundColor: '#f5f5f5', display: 'block' }}
-                />
-              </div>
-            )}
+      {sheet('sheet')}
 
-            <div style={{ padding: '24px 32px 32px' }}>
-              <p style={{ fontSize: '11px', color: '#767676', letterSpacing: '0.07em', marginBottom: '6px', textTransform: 'uppercase' }}>
-                <ArtistCreditLinks artists={open.artists} artistSlug={open.artistSlug} fallback={open.artist} />
-              </p>
-              <p style={{ fontSize: '20px', fontWeight: 300, lineHeight: 1.2, marginBottom: '12px', color: '#111' }}>
-                {open.title}{open.year ? `, ${open.year}` : ''}
-              </p>
-              <p style={{ fontSize: '13px', color: '#888', lineHeight: 1.6, marginBottom: '16px' }}>
-                {[open.medium, open.dimensions, open.edition].filter(Boolean).join(' · ')}
-              </p>
-              {open.neighbourhood && (
-                <p style={{ fontSize: '12px', color: '#767676', marginBottom: '16px' }}>
-                  currently placed — {open.neighbourhood}
-                </p>
-              )}
-              {open.description && (
-                <p style={{ fontSize: '14px', color: '#555', lineHeight: 1.8, marginBottom: '28px' }}>
-                  {open.description}
-                </p>
-              )}
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-                {open.slug && (
-                  <Link
-                    href={`/trash/${open.slug}`}
-                    style={{ fontSize: '12px', color: '#333', border: '1px solid #ccc', padding: '8px 18px', textDecoration: 'none', letterSpacing: '0.03em' }}
-                  >
-                    more information/share →
-                  </Link>
-                )}
-                {open.museumLocationId && (
-                  <Link
-                    href={`/museum?work=${open.museumLocationId}`}
-                    onClick={() => setOpenId(null)}
-                    style={{ fontSize: '12px', color: '#333', border: '1px solid #ccc', padding: '8px 18px', textDecoration: 'none', letterSpacing: '0.03em' }}
-                  >
-                    +1 museum by any other name
-                  </Link>
-                )}
-                {open.sold ? (
-                  <span style={{ fontSize: '14px', color: '#cc2222', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '7px' }}>
-                    <span style={{ fontSize: '18px', lineHeight: 1 }}>●</span> sold
-                  </span>
-                ) : (
-                  <InquiryForm
-                    type="trash"
-                    recipient={CONTACTS.sales}
-                    mailtoHref={buildTrashInquiryEmail(open)}
-                    artworkTitle={open.title}
-                    artworkId={open._id}
-                    buttonLabel="inquire through +1 trash"
-                    buttonStyle={{ fontSize: '12px', color: '#fff', backgroundColor: '#111', padding: '8px 18px', letterSpacing: '0.03em' }}
-                  />
-                )}
-                {unlocked && prices[open._id] && !open.sold && (
-                  <span style={{ fontSize: '12px', color: '#767676', letterSpacing: '0.03em', marginLeft: 'auto' }}>
-                    {prices[open._id]}
-                  </span>
-                )}
-              </div>
-            </div>
+      {showModal && (
+        <div className="tg-pw-backdrop" onClick={() => { setShowModal(false); setPw(''); setPwError(false); }}>
+          <div className="tg-pw" role="dialog" aria-modal="true" aria-label="enter password" onClick={e => e.stopPropagation()}>
+            <label className="mot-mono mot-label" htmlFor="tg-pw-input">enter password</label>
+            <input
+              id="tg-pw-input"
+              ref={pwRef}
+              type="password"
+              value={pw}
+              onChange={e => { setPw(e.target.value); setPwError(false); }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') submitPw();
+                if (e.key === 'Escape') { setShowModal(false); setPw(''); }
+              }}
+              aria-invalid={pwError}
+            />
+            {pwError && <p className="mot-mono tg-pw-err">incorrect</p>}
           </div>
         </div>
       )}
     </>
+  );
+}
+
+/** A quote cut to two lines; tap to read it all. */
+function Quote({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <p
+      className={`tg-quote${open ? ' is-open' : ''}`}
+      role="button"
+      tabIndex={0}
+      aria-expanded={open}
+      onClick={() => setOpen(o => !o)}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(o => !o); } }}
+    >
+      {children}
+    </p>
   );
 }

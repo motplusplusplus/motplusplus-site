@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+// Header links do not prefetch (2026-11-22). In view on every page, they
+// pulled each section's RSC payload on load, and with it any image that page
+// marks high priority: on a phone over 4G, ~800 KB (the /events payload, the
+// /afarm hero photo) competing with the page's own first image. A click
+// still navigates client-side; it just fetches then.
 import Image from "next/image";
 import HeaderSearch from "./HeaderSearch";
 
@@ -72,7 +77,9 @@ export default function Header() {
           left: 0,
           right: 0,
           zIndex: 50,
-          backgroundColor: "#ffffff",
+          // the +1 trash, work and profile pages set a warm off-white page
+          // colour (components/work/WarmPage.tsx); the header follows it
+          backgroundColor: "var(--mot-page-bg, #ffffff)",
           borderBottom: "1px solid #e5e5e5",
         }}
       >
@@ -88,13 +95,17 @@ export default function Header() {
           }}
         >
           {/* logo */}
-          <Link href="/museum" style={{ display: "flex", alignItems: "center" }}>
+          <Link prefetch={false} href="/museum" style={{ display: "flex", alignItems: "center" }}>
             <Image
-              src="/motpluspluspluslogo-thin.png"
+              // 315x120 copy of motpluspluspluslogo-thin.png (1518x578, 84 KB):
+              // shown 36px tall, so 120px covers 3x screens at 10 KB.
+              src="/motpluspluspluslogo-thin-h120.png"
               alt="MoT+++"
               width={160}
               height={36}
-              style={{ objectFit: "contain", objectPosition: "left" }}
+              // the logo file has an opaque white ground: multiply drops it onto
+              // whatever the page colour is (identical on white pages)
+              style={{ objectFit: "contain", objectPosition: "left", mixBlendMode: "multiply" }}
               unoptimized
             />
           </Link>
@@ -107,7 +118,7 @@ export default function Header() {
               className="hidden-mobile"
             >
               {primaryNav.map((item) => (
-                <Link
+                <Link prefetch={false}
                   key={item.href}
                   href={item.href}
                   style={{
@@ -229,7 +240,7 @@ export default function Header() {
             right: 0,
             bottom: 0,
             zIndex: 40,
-            backgroundColor: "#ffffff",
+            backgroundColor: "var(--mot-page-bg, #ffffff)",
             overflowY: "auto",
           }}
           onClick={() => setMenuOpen(false)}
@@ -242,7 +253,7 @@ export default function Header() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Link
+            <Link prefetch={false}
               href={featuredDropdownItem.href}
               onClick={() => setMenuOpen(false)}
               style={{
@@ -283,7 +294,7 @@ export default function Header() {
                   }}
                 >
                   {section.items.map((item) => (
-                    <Link
+                    <Link prefetch={false}
                       key={item.label}
                       href={item.href}
                       onClick={() => setMenuOpen(false)}
@@ -313,7 +324,7 @@ export default function Header() {
           left: 0,
           right: 0,
           zIndex: 49,
-          backgroundColor: "#ffffff",
+          backgroundColor: "var(--mot-page-bg, #ffffff)",
           borderBottom: "1px solid #e5e5e5",
           overflowX: "auto",
           WebkitOverflowScrolling: "touch" as const,
@@ -331,7 +342,7 @@ export default function Header() {
           }}
         >
           {primaryNav.map((item) => (
-            <Link
+            <Link prefetch={false}
               key={item.href}
               href={item.href}
               style={{

@@ -3,22 +3,26 @@
 /* Inter, SELF-HOSTED (public/fonts, OFL licence alongside). Was next/font/google, which
    fetches fonts.googleapis.com at BUILD time: on 2026-11-17 a Google Fonts hiccup on the
    CI runner failed a content deploy ("next/font: Cannot read properties of null").
-   Variable font = one file per subset covers weights 300/400/500. Subsets and
-   unicode-ranges match the old config (latin + vietnamese). */
+   Variable font = one file per subset. Subsets and unicode-ranges match the old config
+   (latin + vietnamese). TRIMMED 2026-11-22 (58 KB -> 32 KB for both): the weight axis is
+   cut to 300-400, the only weights the site sets (no bold anywhere in the code or the
+   Sanity text; a <strong> would be drawn as synthetic bold), and only the kern, liga,
+   calt, ccmp, locl, mark and mkmk features are kept (no tnum/ss/case is used). Rebuild
+   from the full Inter files with fontTools varLib.instancer + subset if a weight is added. */
 @font-face {
   font-family: "Inter Variable";
   font-style: normal;
   font-display: swap;
-  font-weight: 100 900;
-  src: url("/fonts/inter-latin-wght-normal.woff2") format("woff2-variations"), url("/fonts/inter-latin-wght-normal.woff2") format("woff2");
+  font-weight: 300 400;
+  src: url("/fonts/inter-latin-300-400.woff2") format("woff2-variations"), url("/fonts/inter-latin-300-400.woff2") format("woff2");
   unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 @font-face {
   font-family: "Inter Variable";
   font-style: normal;
   font-display: swap;
-  font-weight: 100 900;
-  src: url("/fonts/inter-vietnamese-wght-normal.woff2") format("woff2-variations"), url("/fonts/inter-vietnamese-wght-normal.woff2") format("woff2");
+  font-weight: 300 400;
+  src: url("/fonts/inter-vietnamese-300-400.woff2") format("woff2-variations"), url("/fonts/inter-vietnamese-300-400.woff2") format("woff2");
   unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
 }
 
@@ -148,52 +152,6 @@ a {
   }
 }
 
-/* +1 trash gallery */
-.trash-card-imgbtn img {
-  transition: transform 0.35s ease;
-}
-@media (hover: hover) {
-  .trash-card:hover .trash-card-imgbtn img { transform: scale(1.03); }
-}
-.trash-card-imgbtn:active img { transform: scale(1.01); }
-
-.trash-filter-btn {
-  transition: background-color 0.15s ease, color 0.15s ease,
-    border-color 0.15s ease, transform 0.12s ease;
-}
-.trash-filter-btn:active { transform: scale(0.96); }
-
-/* scroll reveal — JS adds .trash-card-pending only to below-the-fold cards
-   (never above the fold, so no flash and no CLS), then .trash-card-in when
-   they scroll into view. Declared in this order so -in always wins. */
-.trash-card-pending { opacity: 0; transform: translateY(14px); }
-.trash-card-in {
-  opacity: 1;
-  transform: none;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-/* lightbox entrance — opacity/transform only, holds no layout */
-@keyframes trash-fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes trash-rise-in {
-  from { opacity: 0; transform: translateY(10px) scale(0.985); }
-  to   { opacity: 1; transform: none; }
-}
-.trash-lightbox-backdrop { animation: trash-fade-in 0.22s ease both; }
-.trash-lightbox-panel { animation: trash-rise-in 0.26s ease both; }
-
-@media (prefers-reduced-motion: reduce) {
-  .trash-card-imgbtn img,
-  .trash-filter-btn { transition: none; }
-  .trash-card:hover .trash-card-imgbtn img,
-  .trash-card-imgbtn:active img,
-  .trash-filter-btn:active { transform: none; }
-  .trash-card-pending { opacity: 1; transform: none; }
-  .trash-card-in { transition: none; }
-  .trash-lightbox-backdrop,
-  .trash-lightbox-panel { animation: none; }
-}
-
 /* profile hero — mobile keeps the original full-bleed banner-with-overlay
    treatment (already correct there, untouched). Desktop replaces it entirely
    with a framed-portrait + plain-text layout (see the two
@@ -247,4 +205,454 @@ a.tr-card:hover .tr-card-img img { transform: scale(1.04); }
 @media (prefers-reduced-motion: reduce) {
   .tr-card-img img { transition: none; }
   a.tr-card:hover .tr-card-img img { transform: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   +1 trash, work pages, profile works (2026-11-22 rework)
+   The work comes first; everything else is small, lowercase, monospace,
+   and recedes. Contrast on the off-white page (#f6f3ee), WCAG AA:
+     --mot-quiet #6e6a64  text            4.85:1
+     --mot-icon  #8c867e  icons/controls  3.26:1 (non-text minimum 3:1)
+     --mot-red   #cc2222  sold dot        4.97:1
+   (#767676, used elsewhere on the site, is only 4.10:1 here.)
+   ══════════════════════════════════════════════════════════════════════ */
+:root {
+  --mot-warm: #f6f3ee;
+  --mot-ink: #1c1a17;
+  --mot-quiet: #6e6a64;
+  --mot-icon: #8c867e;
+  --mot-line: #e4dfd6;
+  --mot-fill: #ebe6de;
+  --mot-red: #cc2222;
+  --mot-viewer: #0e0d0c;
+  --mot-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --mot-spring: cubic-bezier(0.22, 1.18, 0.36, 1);
+}
+/* page colour: components/work/WarmPage.tsx (a <style> per page; body:has() re-matched on every DOM change and cost seconds of main thread on a phone) */
+body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+
+.mot-mono {
+  font-family: var(--font-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  font-weight: 400;
+}
+/* names and titles inside mono lines keep their own capitals */
+.mot-mono .tg-meta-name, .tg-meta span, .mv-cap-text { text-transform: none; }
+.mot-quiet { color: var(--mot-quiet); }
+.mot-label { color: var(--mot-quiet); margin: 0 0 14px; font-weight: 400; }
+.mot-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.mot-dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--mot-red); margin-left: 7px; vertical-align: 1px; flex: none;
+  animation: mot-fade 0.2s ease both;
+}
+.mot-link {
+  color: var(--mot-quiet); background: none; border: 0; padding: 0; cursor: pointer;
+  text-decoration: underline; text-decoration-color: var(--mot-line);
+  text-underline-offset: 3px;
+}
+/* a link-styled <button> takes its text's font, unless it is a mono one */
+button.mot-link:not(.mot-mono) { font: inherit; letter-spacing: inherit; }
+.mot-link:hover { color: var(--mot-ink); text-decoration-color: currentColor; }
+
+/* tap targets: >= 44px even where the drawn control is smaller */
+.mot-pill, .mot-icon-btn, .mot-btn, .mot-opt, .mot-chip button, .mot-back {
+  min-height: 44px; -webkit-tap-highlight-color: transparent;
+}
+.mot-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0 18px; border-radius: 999px; border: 1px solid var(--mot-line);
+  background: transparent; color: var(--mot-quiet); cursor: pointer;
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.mot-pill:hover { border-color: var(--mot-icon); color: var(--mot-ink); }
+.mot-pill-n {
+  min-width: 16px; height: 16px; border-radius: 8px; background: var(--mot-ink); color: var(--mot-warm);
+  font-size: 10px; display: inline-flex; align-items: center; justify-content: center; letter-spacing: 0;
+  animation: mot-fade 0.2s ease both;
+}
+.mot-icon-btn {
+  min-width: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: none; border: 0; padding: 0 4px; color: var(--mot-icon); cursor: pointer;
+}
+.mot-icon-btn:hover, .mot-icon-btn[aria-pressed="true"], .mot-icon-btn[aria-expanded="true"] { color: var(--mot-ink); }
+.mot-btn {
+  display: inline-flex; align-items: center; justify-content: center; padding: 0 22px;
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em;
+  text-decoration: none; border: 1px solid var(--mot-ink); cursor: pointer;
+}
+.mot-btn-solid { background: var(--mot-ink); color: var(--mot-warm); }
+.mot-btn-solid:hover { background: #000; }
+.mot-back { display: inline-flex; align-items: center; color: var(--mot-quiet); text-decoration: none; }
+:where(.mot-warm) :focus-visible, .mot-viewer :focus-visible, .fs-root :focus-visible {
+  outline: 1px solid var(--mot-ink); outline-offset: 2px;
+}
+
+/* ── images ─────────────────────────────────────────────────────────── */
+.mot-img { position: relative; display: block; width: 100%; overflow: hidden; }
+.mot-img-empty { aspect-ratio: 4 / 3; background: var(--mot-fill); }
+.mot-img-ph {
+  /* a 24px image scaled up is already soft; no filter: blur (24 of them cost paint time on phones) */
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.mot-img img.mot-img-ph { position: absolute; height: 100%; opacity: 1 !important; transition: none; }
+.mot-img img {
+  position: relative; display: block; width: 100%; height: auto;
+  transition: opacity 0.3s ease;
+}
+html.mot-fade .mot-img img:not([data-l]):not([data-p]) { opacity: 0; }
+
+/* ── /trash ─────────────────────────────────────────────────────────── */
+.tg, .wp { max-width: 1400px; margin: 0 auto; padding: 20px 16px 24px; }
+@media (min-width: 760px) { .tg, .wp { padding: 40px 32px 32px; } }
+.tg-head { max-width: 720px; margin: 0 auto; }
+.tg-h1 { font-size: clamp(22px, 3vw, 32px); font-weight: 300; line-height: 1.1; letter-spacing: -0.01em; margin: 0 0 10px; color: var(--mot-ink); }
+.tg-quotes { max-width: 720px; margin: 0 auto 6px; }
+.tg-quote {
+  font-size: 12px; line-height: 1.55; color: var(--mot-quiet); font-style: italic; margin: 0 0 6px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer;
+}
+.tg-quote.is-open { -webkit-line-clamp: unset; display: block; }
+.tg-quote-by { font-style: normal; font-family: var(--font-mono), monospace; font-size: 10px; letter-spacing: 0.06em; white-space: nowrap; }
+.tg-quote-by::before { content: "— "; }
+.tg-controls {
+  max-width: 720px; margin: 4px auto 0; display: flex; align-items: center; gap: 2px;
+  position: sticky; top: 60px; z-index: 20; background: var(--mot-warm);
+}
+.tg-controls .mot-pill { margin: 0 6px 0 8px; }
+.tg-count { margin-left: auto; padding-right: 4px; }
+/* phones: the count makes way for the switch (the sheet's "show N works"
+   and "show more · 48 of 107" still say it); screen readers keep it */
+@media (max-width: 439px) {
+  .tg-count { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .tg-controls .tg-filter-anchor { margin-right: auto; }
+}
+.tg-unlocked { max-width: 720px; margin: 4px auto 0; }
+
+/* available / all works: a two-state switch, always visible */
+.tg-switch {
+  position: relative; display: inline-flex; flex: none; width: 172px; height: 44px; align-items: center;
+}
+.tg-switch::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 7px; bottom: 7px;
+  border: 1px solid var(--mot-line); border-radius: 999px;
+}
+.tg-switch-opt {
+  position: relative; z-index: 1; flex: 1 1 0; min-width: 0; height: 44px; padding: 0; border: 0; background: none; cursor: pointer;
+  color: var(--mot-quiet); white-space: nowrap; -webkit-tap-highlight-color: transparent;
+  transition: color 0.22s ease;
+}
+.tg-switch-opt[aria-checked="true"] { color: var(--mot-warm); }
+.tg-switch-opt[aria-checked="false"]:hover { color: var(--mot-ink); }
+.tg-switch-thumb {
+  position: absolute; top: 7px; bottom: 7px; left: 0; width: 50%; border-radius: 999px; background: var(--mot-ink);
+  transition: transform 0.26s var(--mot-spring);
+}
+.tg-switch-thumb.is-right { transform: translateX(100%); }
+
+/* dense first view waits for React (app/trash/page.tsx); shown anyway
+   after 4s if scripts never run */
+@keyframes tg-reveal { to { visibility: visible; } }
+html.tg-pre-dense #tg-grid { visibility: hidden; animation: tg-reveal 0s 4s forwards; }
+
+/* desktop filter: a small panel under the pill */
+.tg-filter-anchor { position: relative; }
+.fs-panel {
+  position: absolute; top: calc(100% + 6px); left: 8px; z-index: 40; width: 340px;
+  background: var(--mot-warm); border: 1px solid var(--mot-line); border-radius: 10px;
+  padding: 4px 16px 16px; box-shadow: 0 10px 30px rgba(14,13,12,0.10);
+  opacity: 0; transform: translateY(-4px); transition: opacity 0.16s ease, transform 0.16s var(--mot-ease);
+}
+.fs-panel.is-open { opacity: 1; transform: none; }
+.fs-panel .fs-group { margin: 6px 0 14px; }
+.fs-panel .fs-done { min-height: 40px; }
+.fs-panel :focus-visible { outline: 1px solid var(--mot-ink); outline-offset: 2px; }
+.tg-search { max-width: 720px; margin: 4px auto 0; animation: mot-fade 0.2s ease both; }
+.tg-search input {
+  width: 100%; height: 44px; border: 0; border-bottom: 1px solid var(--mot-line); background: transparent;
+  color: var(--mot-ink); outline: none; font-size: 16px; /* 16px: no iOS zoom on focus */
+}
+.tg-search input::placeholder { color: var(--mot-quiet); }
+/* no browser clear button: the "×" chip and the search icon clear it */
+.tg-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+.tg-search input:focus { border-bottom-color: var(--mot-icon); }
+.tg-chips { max-width: 720px; margin: 6px auto 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.mot-chip {
+  display: inline-flex; align-items: center; height: 28px; padding-left: 12px; border-radius: 14px;
+  background: var(--mot-fill); color: var(--mot-ink); margin: 8px 0;
+  animation: mot-fade 0.2s ease both;
+}
+.mot-chip button {
+  /* 44px hit area around a 10px × */
+  width: 36px; margin: -8px 0; background: none; border: 0; color: var(--mot-quiet); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.tg-empty { max-width: 720px; margin: 40px auto; color: var(--mot-quiet); }
+
+.tg-grid { margin: 20px auto 0; }
+.tg-single { max-width: 720px; display: flex; flex-direction: column; gap: 56px; }
+@media (min-width: 760px) { .tg-single { gap: 80px; margin-top: 32px; } }
+.tg-dense { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 0 14px; align-items: start; }
+@media (min-width: 720px) { .tg-dense { gap: 0 24px; } }
+.tg-col { display: flex; flex-direction: column; gap: 28px; min-width: 0; }
+@media (min-width: 720px) { .tg-col { gap: 40px; } }
+.tg-card { min-width: 0; will-change: auto; }
+.tg-media {
+  position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+}
+a.tg-media { cursor: pointer; }
+.tg-play {
+  position: absolute; left: 10px; bottom: 10px; width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(14, 13, 12, 0.55); color: #fff; display: flex; align-items: center; justify-content: center;
+  padding-left: 2px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.tg-cap { padding-top: 10px; }
+.tg-title {
+  display: inline-block; min-height: 24px; padding: 2px 0; font-size: 14px; line-height: 1.4;
+  color: var(--mot-ink); text-decoration: none;
+}
+a.tg-title:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--mot-line); }
+.tg-meta { margin: 2px 0 0; color: var(--mot-quiet); display: flex; align-items: center; line-height: 1.5; }
+.tg-dense .tg-title { font-size: 13px; }
+.tg-new { animation: mot-rise 0.28s var(--mot-ease) both; animation-delay: calc(min(var(--i, 0), 8) * 30ms); }
+.tg-more { display: flex; justify-content: center; margin: 56px 0 0; }
+.tg-general { max-width: 720px; margin: 64px auto 0; }
+
+.tg-pw-backdrop { position: fixed; inset: 0; z-index: 2000; background: rgba(14,13,12,0.55); display: flex; align-items: center; justify-content: center; }
+.tg-pw { background: var(--mot-warm); padding: 28px 32px; width: 100%; max-width: 300px; }
+.tg-pw input { width: 100%; border: 0; border-bottom: 1px solid var(--mot-line); background: none; font-size: 16px; padding: 6px 0; outline: none; }
+.tg-pw input[aria-invalid="true"] { border-bottom-color: var(--mot-red); }
+.tg-pw-err { color: var(--mot-red); margin-top: 10px; }
+
+/* ── filter sheet ───────────────────────────────────────────────────── */
+.fs-root { position: fixed; inset: 0; z-index: 1300; }
+.fs-backdrop { position: absolute; inset: 0; background: rgba(14,13,12,0.32); opacity: 0; transition: opacity 0.22s ease; }
+.fs-root.is-open .fs-backdrop { opacity: 1; }
+.fs-sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; max-height: 86vh; max-height: 86dvh; overflow-y: auto;
+  overscroll-behavior: contain; background: var(--mot-warm); border-radius: 14px 14px 0 0;
+  padding: 0 16px calc(16px + env(safe-area-inset-bottom));
+  transform: translateY(100%); transition: transform 0.3s var(--mot-spring);
+  box-shadow: 0 -8px 32px rgba(14,13,12,0.08);
+}
+.fs-root.is-open .fs-sheet { transform: none; }
+.fs-root:not(.is-open) .fs-sheet { transition: transform 0.22s ease-in; }
+@media (min-width: 760px) { .fs-sheet { left: 50%; right: auto; width: 520px; margin-left: -260px; } }
+.fs-handle, .fs-head { touch-action: none; }
+.fs-handle { height: 22px; display: flex; align-items: center; justify-content: center; cursor: grab; }
+.fs-handle span { width: 36px; height: 4px; border-radius: 2px; background: var(--mot-line); }
+.fs-head { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
+.fs-head .mot-label { margin: 0; }
+.fs-head .mot-link { min-height: 44px; padding: 0 4px; }
+.fs-group { border: 0; padding: 0; margin: 10px 0 18px; min-width: 0; }
+.fs-group legend { padding: 0; }
+.fs-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.mot-opt {
+  display: inline-flex; align-items: center; gap: 8px; padding: 0 16px; border-radius: 999px;
+  border: 1px solid var(--mot-line); background: transparent; color: var(--mot-ink); cursor: pointer;
+  font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.mot-opt[aria-pressed="true"] { background: var(--mot-ink); color: var(--mot-warm); border-color: var(--mot-ink); }
+.mot-opt-n { color: var(--mot-quiet); font-size: 10px; }
+.mot-opt[aria-pressed="true"] .mot-opt-n { color: #b9b3a9; }
+.fs-done { width: 100%; margin-top: 6px; min-height: 48px; }
+
+/* ── work page ──────────────────────────────────────────────────────── */
+.wp { max-width: 900px; }
+.wp-images { display: flex; flex-direction: column; gap: 12px; margin: 8px -16px 0; }
+@media (min-width: 760px) { .wp-images { margin: 16px 0 0; gap: 24px; } }
+.wp-img-btn { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.wp-body { max-width: 640px; }
+.wp-caption { margin-top: 24px; }
+.wp-artist { margin: 0 0 6px; color: var(--mot-quiet); text-transform: none; }
+.wp-artist a { color: inherit; }
+.wp-title { font-size: clamp(22px, 3vw, 34px); font-weight: 300; line-height: 1.2; margin: 0 0 14px; color: var(--mot-ink); }
+.wp-dl { margin: 0; display: grid; gap: 4px; text-transform: none; }
+.wp-dl div { display: grid; grid-template-columns: 64px 1fr; gap: 12px; }
+.wp-dl dt { color: var(--mot-quiet); text-transform: lowercase; }
+.wp-dl dd { margin: 0; color: var(--mot-ink); }
+.wp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin: 22px 0 0; }
+.wp-sold { display: inline-flex; align-items: center; flex-direction: row-reverse; gap: 0; color: var(--mot-ink); }
+.wp-sold .mot-dot { margin: 0 0 0 7px; }
+.mot-share { margin-left: auto; }
+.mot-scale { margin: 32px 0 0; }
+.mot-scale svg { display: block; height: 140px; width: auto; max-width: 100%; overflow: visible; }
+.mot-scale figcaption { margin-top: 8px; font-size: 10px; }
+.mot-scale-work { fill: var(--mot-fill); stroke: #cfc8bd; }
+.mot-scale-fig { fill: none; stroke: #b9b2a7; stroke-linejoin: round; }
+.mot-scale-ground { stroke: var(--mot-line); }
+.wp-statement, .wp-bio-text { font-size: 15px; line-height: 1.8; color: #3d3a35; margin: 32px 0 0; white-space: pre-line; }
+.wp-bio-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; margin-bottom: 8px; }
+.wp-bio .mot-link { display: inline-flex; align-items: center; min-height: 44px; }
+.wp-videos { display: flex; flex-direction: column; gap: 16px; margin: 32px 0 0; }
+.wp-video { position: relative; aspect-ratio: 16 / 9; background: var(--mot-viewer); }
+.wp-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.wp-shown { margin: 32px 0 0; }
+.wp-shown ul { list-style: none; padding: 0; margin: 0; }
+.wp-shown li a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; color: var(--mot-ink); }
+.wp-museum { display: inline-flex; align-items: center; min-height: 44px; margin-top: 16px; }
+.wp-related { margin: 64px 0 0; }
+.wp-related-row {
+  /* position: relative makes the row the containing block of the hidden
+     ", sold" text (.mot-sr, absolute), so the row's overflow clips it;
+     otherwise it sat ~1500px right of the page and a phone opened the
+     work page zoomed out */
+  position: relative;
+  list-style: none; margin: 0 -16px; padding: 0 16px 8px; display: flex; gap: 14px;
+  overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 16px; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+}
+.wp-related-row::-webkit-scrollbar { display: none; }
+.wp-related-row li { scroll-snap-align: start; flex: none; }
+.wp-related-card { display: block; width: 150px; text-decoration: none; color: inherit; }
+@media (min-width: 760px) { .wp-related-card { width: 200px; } .wp-related-row { margin: 0; padding: 0 0 8px; } }
+.wp-related-card .mot-img { height: 150px; width: auto; aspect-ratio: auto !important; background: none !important; display: flex; align-items: flex-end; }
+.wp-related-card .mot-img img { height: 100%; width: auto; max-width: 100%; object-fit: contain; object-position: left bottom; }
+.wp-related-card .mot-img-ph { display: none; }
+.wp-related-cap { display: flex; flex-direction: column; gap: 2px; padding-top: 8px; }
+.wp-related-title { font-size: 13px; line-height: 1.35; color: var(--mot-ink); }
+.wp-related-cap .mot-mono { display: flex; align-items: center; text-transform: none; }
+.wp-foot { margin: 56px 0 0; }
+
+/* ── profile works ──────────────────────────────────────────────────── */
+.pw { border-top: 1px solid var(--mot-line); padding-top: 40px; margin-bottom: 72px; }
+.pw-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 14px; align-items: end; }
+@media (min-width: 700px) { .pw-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 24px; } }
+@media (min-width: 1100px) { .pw-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.pw-noimg { display: block; padding: 12px 0 0; }
+.pw-noimg .mot-scale { margin: 0; }
+.pw-noimg .mot-scale svg { height: 110px; }
+.pw-noimg figcaption { display: none; }
+
+/* ── viewer (PhotoSwipe v5) ─────────────────────────────────────────── */
+.pswp.mot-viewer { --pswp-bg: var(--mot-viewer); --pswp-icon-color: #e9e5de; --pswp-icon-color-secondary: transparent; --pswp-icon-stroke-width: 0; }
+.mot-viewer .pswp__top-bar { opacity: 1 !important; z-index: 20 !important; } /* above the desktop caption panel: × always visible */
+.mot-viewer .pswp__button { width: 56px; height: 56px; opacity: 0.9; display: flex; align-items: center; justify-content: center; }
+.mot-viewer .pswp__button--close { margin-right: 4px; }
+.mot-viewer .pswp__button--close .pswp__icn { width: 32px; height: 32px; position: static; }
+.mot-viewer .pswp__button--share .pswp__icn { width: 26px; height: 26px; position: static; }
+.mot-viewer .pswp__button--zoom .pswp__icn { width: 28px; height: 28px; position: static; }
+.mot-viewer .pswp__button--zoom { cursor: zoom-in; }
+.mot-viewer.pswp--zoomed-in .pswp__button--zoom { cursor: zoom-out; }
+.mot-viewer .pswp__icn { fill: none; color: var(--pswp-icon-color); }
+.mot-viewer .pswp__counter {
+  font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.08em;
+  color: #a8a39b; opacity: 1; margin: 0 0 0 16px; height: 56px; line-height: 56px;
+}
+@media (pointer: coarse) { .mot-viewer .pswp__button--arrow { display: none; } }
+.mot-viewer .pswp__button--arrow { width: 64px; height: 120px; margin-top: -60px; }
+.mot-viewer .pswp__button--arrow .pswp__icn { width: 32px; height: 32px; left: 16px; top: 44px; margin: 0; }
+.mv-cap {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 9; color: #e9e5de;
+  padding: 0 16px calc(env(safe-area-inset-bottom)); pointer-events: auto;
+  background: linear-gradient(to top, rgba(14,13,12,0.92) 60%, rgba(14,13,12,0));
+}
+.mv-cap-line {
+  display: flex; align-items: center; width: 100%; min-height: 56px; padding: 8px 0; gap: 0;
+  background: none; border: 0; color: inherit; cursor: pointer; text-align: left;
+  font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.06em;
+}
+.mv-cap-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.mv-cap-chev { margin-left: auto; padding-left: 12px; color: #8f8a83; display: flex; transition: transform 0.25s var(--mot-ease); }
+.mv-cap.is-open .mv-cap-chev { transform: rotate(180deg); }
+.mv-cap-more { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.28s var(--mot-ease), opacity 0.2s ease; }
+.mv-cap-inner { min-height: 0; overflow: hidden; }
+.mv-cap.is-open .mv-cap-more { grid-template-rows: 1fr; opacity: 1; }
+.mv-cap-title, .mv-cap-artist { display: none; }
+.mv-cap-dl { margin: 0; font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.05em; display: grid; gap: 6px; }
+.mv-cap-dl div { display: grid; grid-template-columns: 64px 1fr; gap: 12px; }
+.mv-cap-dl dt { color: #8f8a83; }
+.mv-cap-dl dd { margin: 0; display: flex; align-items: center; flex-wrap: wrap; }
+.mv-cap-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 16px 0 18px; }
+.mv-cap-actions .mot-btn-solid { background: #e9e5de; color: var(--mot-viewer); border-color: #e9e5de; }
+.mv-cap-actions .mot-link { color: #cfcac2; text-decoration-color: #4a4640; display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.06em; }
+@media (min-width: 1024px) {
+  .mv-cap {
+    left: auto; top: 0; width: 320px; padding: 72px 28px 32px; overflow-y: auto;
+    background: rgba(18, 17, 16, 0.96); border-left: 1px solid #23211e;
+  }
+  .mv-cap-line { display: none; }
+  .mv-cap-more { opacity: 1; grid-template-rows: 1fr; }
+  .mv-cap-inner { overflow: visible; }
+  .mv-cap-title { display: block; font-size: 20px; font-weight: 300; line-height: 1.25; margin: 0 0 8px; color: #f3f0ea; }
+  .mv-cap-artist { display: block; font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.06em; color: #a8a39b; margin: 0 0 24px; }
+}
+.mv-hint {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 11; pointer-events: none;
+  font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.1em; color: #e9e5de;
+  background: rgba(14,13,12,0.5); padding: 10px 16px; border-radius: 999px;
+  animation: mot-fade 0.3s ease 0.35s both; transition: opacity 0.3s ease;
+}
+/* PhotoSwipe gives every custom element .pswp__hide-on-close, whose rule
+   forces opacity: 1; these two must be able to hide. */
+.pswp .mv-hint.is-gone { opacity: 0 !important; animation: none; }
+.mv-toast {
+  position: absolute; left: 50%; top: 68px; transform: translateX(-50%); z-index: 12; pointer-events: none;
+  font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.08em; color: #e9e5de;
+  background: rgba(40,38,35,0.95); padding: 8px 14px; border-radius: 999px; opacity: 0; transition: opacity 0.2s ease;
+  max-width: 90vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pswp .mv-toast:not(.is-on) { opacity: 0 !important; visibility: hidden; }
+.pswp .mv-toast.is-on { opacity: 1 !important; visibility: visible; }
+
+/* ── hover labels (desktop): every icon says what it does ─────────────── */
+@media (hover: hover) and (pointer: fine) {
+  .mot-icon-btn[data-label], .mot-pill[data-label], .mot-chip button[data-label] { position: relative; }
+  [data-label]::after {
+    content: attr(data-label); position: absolute; top: calc(100% + 2px); left: 50%; z-index: 60;
+    transform: translate(-50%, -3px); padding: 4px 7px; border-radius: 3px; white-space: nowrap; pointer-events: none;
+    font-family: var(--font-mono), ui-monospace, monospace; font-size: 10px; line-height: 1.2; letter-spacing: 0.06em;
+    font-style: normal; text-transform: none; font-weight: 400;
+    background: var(--mot-ink); color: var(--mot-warm); opacity: 0;
+    transition: opacity 0.12s ease, transform 0.12s ease; transition-delay: 0s;
+  }
+  [data-label]:hover::after { opacity: 1; transform: translate(-50%, 0); transition-delay: 0.25s; }
+  /* not while the thing it names is open (the filter panel sits there) */
+  .mot-pill[data-label][aria-expanded="true"]::after { display: none; }
+  .mot-viewer [data-label]::after { background: #e9e5de; color: var(--mot-viewer); }
+  .mot-viewer .pswp__button[data-label] { overflow: visible; } /* PhotoSwipe clips its buttons */
+  /* the viewer's top-right buttons: labels kept inside the screen */
+  .mot-viewer .pswp__top-bar [data-label]::after { left: auto; right: 6px; transform: translate(0, -3px); }
+  .mot-viewer .pswp__top-bar [data-label]:hover::after { transform: none; }
+  .mot-viewer .pswp__button--arrow[data-label]::after { top: 92px; }
+}
+
+/* ── work page: a video's still, playing in place on tap ───────────── */
+.wp-yt { position: relative; display: block; width: 100%; padding: 0; border: 0; background: var(--mot-viewer); cursor: pointer; }
+.wp-yt .mot-img img { opacity: 1; }
+.wp-yt-play {
+  position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
+  background: rgba(14,13,12,0.6); color: #fff; display: flex; align-items: center; justify-content: center;
+  padding-left: 4px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: transform 0.2s var(--mot-ease);
+}
+.wp-yt:hover .wp-yt-play { transform: scale(1.06); }
+.wp-yt-frame { position: relative; width: 100%; background: var(--mot-viewer); }
+.wp-yt-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.wp-yt-more { display: flex; justify-content: flex-end; }
+.wp-yt-more button { min-height: 44px; }
+
+/* ── motion ─────────────────────────────────────────────────────────── */
+@keyframes mot-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mot-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+::view-transition-group(mot-work-hero) { animation-duration: 380ms; animation-timing-function: var(--mot-ease); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 220ms; }
+::view-transition-old(mot-work-hero), ::view-transition-new(mot-work-hero) { height: 100%; object-fit: contain; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* only fades remain */
+  .tg-new { animation-name: mot-fade; }
+  .fs-sheet, .fs-root:not(.is-open) .fs-sheet { transition: opacity 0.2s ease; transform: none; opacity: 0; }
+  .fs-root.is-open .fs-sheet { opacity: 1; }
+  .fs-panel { transform: none; }
+  .tg-switch-thumb { transition: none; }
+  .mv-cap-chev { transition: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }

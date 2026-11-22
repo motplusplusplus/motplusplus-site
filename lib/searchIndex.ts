@@ -23,7 +23,8 @@ const API_VERSION = "2026-03-20";
 //  - artist: active == true (drafts are excluded automatically by the public API)
 //  - event:  active == true && not a bio-page stub
 //  - afarmHost: visibility == "visible"
-//  - trashItem: active == true, plus the same price-required-unless-sold rule
+//  - trashItem: active == true and not notForSale (profile-only listings stay
+//    out of +1 trash search), plus the same price-required-unless-sold rule
 //    as TRASH_ITEM_PRICED in lib/sanity.ts (duplicated as a literal here rather
 //    than imported, since lib/sanity.ts instantiates a Sanity client at module
 //    scope -- importing from it would pull the whole SDK into this client
@@ -45,7 +46,7 @@ const INDEX_QUERY = `{
   "studios": *[_type == "afarmHost" && visibility == "visible" && defined(slug.current)]{
     "slug": slug.current, name, studioName, neighbourhood
   },
-  "trash": *[_type == "trashItem" && active == true && count(images) > 0 && (sold == true || (defined(price) && price != ""))]{
+  "trash": *[_type == "trashItem" && active == true && notForSale != true && count(images) > 0 && (sold == true || (defined(price) && price != ""))]{
     title, artist, medium
   },
   "museum": *[_type == "museumLocation" && active == true]{

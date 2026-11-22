@@ -5,8 +5,10 @@
 > source of truth for how this site works.
 
 ## Site
-- **Live:** `https://motplusplusplus.com` (+ `www.`, and
-  `motplusplus-site.motplusplusplus.workers.dev` as fallback)
+- **Live:** `https://motplusplusplus.com` (+ `www.`). There is **no workers.dev
+  fallback**: `motplusplus-site.motplusplusplus.workers.dev` is switched off (404,
+  checked 2026-11-22), and so are preview URLs on the production Worker. For a preview,
+  deploy the build to a separate throwaway Worker with no routes, and delete it after review.
 - **GitHub:** `https://github.com/motplusplusplus/motplusplus-site.git`
 - **Framework:** Next.js static export (`out/`) → Cloudflare Worker
   (`worker.js` + assets binding)
@@ -24,6 +26,10 @@
      just-built BUILD_ID (catches the stale-asset-manifest bug; ISSUE-011 / §9)
      — and `verify-content`, which FAILS if the live pages of the most recently
      edited artists don't match Sanity (portrait, links, bio, photo credits).
+  5. Pre-warms Sanity's image CDN (`scripts/prewarm-images.mjs`, best effort, never
+     fails): every `/trash` grid size of every work's first image, as AVIF and WebP, so
+     the first phone visitors don't wait seconds on fresh resizes. The Action runs it too.
+     Run by hand with `npm run prewarm-images`. Its widths must match `lib/workImage.ts`.
 - **Commit and push to `origin/main` must precede every deploy, without
   exception** — `npm run deploy` enforces this. A GitHub Action
   (`.github/workflows/deploy.yml`) can be triggered at any time and
@@ -58,7 +64,8 @@
   (title, hero, gallery images, credits). A green BUILD_ID check alone does not
   prove content is live.
 - **Build resilience:** fonts are self-hosted (`public/fonts`, no Google Fonts at build
-  time); a failed build is retried once; a failed Action run emails info@ via the Gmail API
+  time; Inter is trimmed to weights 300–400 and the glyphs/features the site uses, see the
+  comment in `app/globals.css` before adding a weight); a failed build is retried once; a failed Action run emails info@ via the Gmail API
   (`GMAIL_*` Actions secrets, same as mot-outbox; setup in ARCHITECTURE.md §9.7).
 
 ## Content auto-deploy (Sanity → live, no manual deploy needed)
@@ -132,13 +139,18 @@
   old `https://motplusplus.sanity.studio` still works for login but is a stale
   fallback, not rebuilt since Studio moved to Cloudflare Workers hosting (see
   ARCHITECTURE.md §11, ISSUE-014).
-- **Studio repo (canonical schemas):** `~/Documents/motplus-sanity` →
+- **Studio repo (canonical schemas):** `~/Projects/motplus-sanity` →
   `schemaTypes/` (`event`, `artist`, `afarmHost`, `museumLocation`,
   `trashItem`, `inquiry`). See ARCHITECTURE.md §8 for a field-by-field
   reference cross-checked against `lib/sanity.ts`.
 - **Client config:** `lib/sanity.ts` (use the non-CDN `buildClient` for
   build-time queries).
 - Write tokens: not stored here — see Claude memory / sanity.io manage.
+- **Schema changes ship in two places, together with the site code that reads them:**
+  the Studio build (`npm run build` + `npx wrangler deploy` in the Studio repo, see its
+  CLAUDE.md), and the deployed schema record (`npx sanity schema deploy` there), which
+  Sanity's MCP/AI tools validate edits against. A stale record rejects valid edits (it was
+  missing `workType` and `nationalities` until 2026-11-22).
 
 ## Mapbox (+1 Museum map)
 - **NEVER run `next build` directly — always use `npm run deploy`.** Running
@@ -248,6 +260,26 @@ chunks missing).
   type filter on `/trash` (`?type=painting`, shareable; combines with available/sold; a type with
   no listed works gets no button). The list and order live in `lib/trashWorkTypes.ts` and must
   match the Studio's `lib/workTypes.ts`. Any script that creates a trashItem must set `workType`.
+- **+1 trash / work pages / profile works rework (2026-11-22).** Code: `app/trash/`,
+  `components/work/` (viewer = PhotoSwipe v5 in `viewer.ts`, with hand-built history),
+  `lib/trashWork.ts` (the one `Work` shape, exclusion guard, mailto, seeded order),
+  `lib/dimensions.ts` (cm + ft/in), `lib/workImage.ts` (Sanity URL params).
+  - **`trashItem.notForSale`**: a work listed on the artist's profile for the record. Never on
+    `/trash`, never in trash search, never priced, never an inquire link. Visibility rule is
+    `TRASH_PAGE_VISIBLE` in `lib/sanity.ts`. **Any artist can have any work listed on their
+    profile on request**: create a trashItem with `notForSale: true` (workType still required).
+  - **`trashItem.shownIn`** (event refs) renders as "shown in" on the work page.
+  - Inquire is a `mailto:` to sales@ with subject `inquiry: <title>, <artist>` (no longer the
+    `/api/inquiry` form on these pages).
+  - `/trash` order is random per visitor, frozen per session; an inline script in
+    `app/trash/page.tsx` applies it before first paint. Constants it shares with the client
+    live in `lib/trashGrid.ts`: **never export values from a `'use client'` file for server
+    use** (they arrive as client-reference stubs).
+  - Header and footer links use `prefetch={false}`: viewport prefetch pulled ~800 KB on every
+    phone page load (the /events payload, and the /afarm hero photo via its preload hint).
+  - Warm off-white pages use `components/work/WarmPage.tsx`. On `#f6f3ee`, `#767676` text
+    fails WCAG AA (4.10:1); use `var(--mot-text-quiet)` / `--mot-quiet` (#6e6a64, 4.85:1).
+    Never `body:has(...)` for page styling (it cost seconds of main thread on phones).
 - **RARE SEA (2026-11, permanent)**: Rare Sea (raresea.vn, an HCMC art space
   founded by the two excluded people above) must never be named, linked,
   credited or described anywhere on this site or in its data, beyond MoT+++'s

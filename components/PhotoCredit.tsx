@@ -20,7 +20,7 @@ export default function PhotoCredit({
         fontSize: "11px",
         letterSpacing: "0.04em",
         fontWeight: 300,
-        color: onDark ? "rgba(255,255,255,0.75)" : "#767676",
+        color: onDark ? "rgba(255,255,255,0.75)" : "var(--mot-text-quiet, #767676)",
         ...style,
       }}
     >

@@ -7,6 +7,7 @@ import { createClient } from '@sanity/client';
 import eventsDataRaw from '../events-data.json';
 import { isJunkImage } from './junk-images';
 import { profileImageFallbackFields } from './profileImageFallback';
+import { enrichWorkRow, enrichWorkRows } from './mediaProbe';
 
 export const sanityClient = createClient({
   projectId: 't5nsm79o',
@@ -56,6 +57,19 @@ export const CONSIGNMENT_CURRENT = `(
       && (!defined(endedAt) || endedAt >= string::split(now(), "T")[0] || endReason == "sold")]) > 0
 )`;
 
+/** notForSale works (2026-11-22) are listed on the artist's profile for the
+ *  record: never on /trash or its search, never priced, never inquirable. */
+export const TRASH_FOR_SALE = `notForSale != true`;
+/** Something to show in the grid: a photo, a legacy image, or a YouTube
+ *  video (its still stands in, lib/mediaProbe.ts). */
+export const TRASH_HAS_MEDIA = `(count(images) > 0 || count(legacyImageUrls) > 0 || count(youtubeUrls) > 0)`;
+
+/** A work with its own public page (/trash/[slug], profile works, related
+ *  row): a listed +1 trash work (priced-or-sold and on consignment, as
+ *  before), or a not-for-sale profile work, which has neither price nor
+ *  consignment. */
+export const TRASH_PAGE_VISIBLE = `active == true && (notForSale == true || (${TRASH_ITEM_PRICED} && ${CONSIGNMENT_CURRENT}))`;
+
 const TRASH_ITEM_FIELDS = `
   _id,
   artist,
@@ -70,7 +84,16 @@ const TRASH_ITEM_FIELDS = `
   edition,
   description,
   "directImageUrls": images[].asset->url,
+  "imgs": images[]{
+    "url": asset->url,
+    alt,
+    "w": asset->metadata.dimensions.width,
+    "h": asset->metadata.dimensions.height,
+    "bg": asset->metadata.palette.dominant.background,
+  },
   legacyImageUrls,
+  notForSale,
+  "shownIn": shownIn[@->active == true]->{ title, "slug": slug.current },
   youtubeUrls,
   "museumLocationId": museumLocationRef->._id,
   "neighbourhood": museumLocationRef->neighbourhood,
@@ -82,9 +105,11 @@ const TRASH_ITEM_FIELDS = `
 `;
 
 export async function getTrashItems() {
-  return buildClient.fetch(`
-    *[_type == "trashItem" && active == true && ${TRASH_ITEM_PRICED} && (count(images) > 0 || count(legacyImageUrls) > 0) && ${CONSIGNMENT_CURRENT}] | order(sortOrder asc, artist asc) { ${TRASH_ITEM_FIELDS} }
+  const rows = await buildClient.fetch(`
+    *[_type == "trashItem" && active == true && ${TRASH_FOR_SALE} && ${TRASH_ITEM_PRICED} && ${TRASH_HAS_MEDIA} && ${CONSIGNMENT_CURRENT}] | order(sortOrder asc, artist asc) { ${TRASH_ITEM_FIELDS} }
   `);
+  // real sizes for legacy images, YouTube stills for video-only works
+  return enrichWorkRows(rows);
 }
 
 /** All currently available (active, unsold) trash items, for the internal
@@ -98,29 +123,64 @@ export async function getTrashItems() {
  *  what changed is that `active` and a photo no longer decide inclusion. */
 export async function getPricelistItems() {
   return buildClient.fetch(`
-    *[_type == "trashItem" && ${TRASH_ITEM_PRICED} && sold != true && ${CONSIGNMENT_CURRENT}] | order(artist asc) {
+    *[_type == "trashItem" && ${TRASH_FOR_SALE} && ${TRASH_ITEM_PRICED} && sold != true && ${CONSIGNMENT_CURRENT}] | order(artist asc) {
       ${TRASH_ITEM_FIELDS}
       active,
-      "hasPhoto": count(images) > 0 || count(legacyImageUrls) > 0,
-      "onSite": active == true && (count(images) > 0 || count(legacyImageUrls) > 0),
+      "hasPhoto": ${TRASH_HAS_MEDIA},
+      "onSite": active == true && ${TRASH_HAS_MEDIA},
     }
   `);
 }
 
 /** Single trash item by slug, for the shareable /trash/[slug] page */
 export async function getTrashItemBySlug(slug: string) {
-  return buildClient.fetch(
-    `*[_type == "trashItem" && slug.current == $slug && active == true && ${TRASH_ITEM_PRICED} && ${CONSIGNMENT_CURRENT}][0] { ${TRASH_ITEM_FIELDS} }`,
+  const row = await buildClient.fetch(
+    `*[_type == "trashItem" && slug.current == $slug && ${TRASH_PAGE_VISIBLE}][0] {
+      ${TRASH_ITEM_FIELDS}
+      "imgs": images[]{
+        "url": asset->url, alt,
+        "w": asset->metadata.dimensions.width,
+        "h": asset->metadata.dimensions.height,
+        "bg": asset->metadata.palette.dominant.background,
+        "lqip": asset->metadata.lqip,
+      },
+      "artistBio": coalesce(artistRef->, artists[0]->){
+        name, "slug": slug.current,
+        "bio": select(defined(bio[0]._type) => pt::text(bio), bio),
+      },
+    }`,
     { slug }
   );
+  return enrichWorkRow(row);
 }
 
 /** All trash item slugs — for generateStaticParams */
 export async function getAllTrashItemSlugs(): Promise<string[]> {
   const results: { slug: string }[] = await buildClient.fetch(
-    `*[_type == "trashItem" && active == true && ${TRASH_ITEM_PRICED} && defined(slug.current)]{ "slug": slug.current }`
+    `*[_type == "trashItem" && ${TRASH_PAGE_VISIBLE} && defined(slug.current)]{ "slug": slug.current }`
   );
   return results.map(r => r.slug).filter(Boolean);
+}
+
+/** Every work with a public page, light fields only: feeds the related-works
+ *  row on each /trash/[slug] page. Memoised per build process so ~115 static
+ *  pages share one query. */
+let allPublicWorks: Promise<unknown[]> | null = null;
+export function getAllPublicWorks(): Promise<unknown[]> {
+  allPublicWorks ??= buildClient.fetch(`
+    *[_type == "trashItem" && ${TRASH_PAGE_VISIBLE} && defined(slug.current) && ${TRASH_HAS_MEDIA}] | order(_createdAt desc) {
+      _id, artist, "artistSlug": artistRef->slug.current, youtubeUrls, "legacyImageUrls": legacyImageUrls[0...1],
+      "artists": artists[]->{_id, name, "slug": slug.current},
+      "slug": slug.current, title, medium, workType, year, sold, notForSale,
+      "imgs": images[0...1]{
+        "url": asset->url, alt,
+        "w": asset->metadata.dimensions.width,
+        "h": asset->metadata.dimensions.height,
+        "bg": asset->metadata.palette.dominant.background,
+      },
+    }
+  `).then(enrichWorkRows);
+  return allPublicWorks;
 }
 
 
@@ -172,15 +232,11 @@ const ARTIST_FIELDS = `
     _id, name, "slug": slug.current, active, "portrait": portrait.asset->url,
     "membership": memberOf[collective._ref == ^.^._id][0]{role, since},
   },
-  "trashItems": *[_type == "trashItem" && references(^._id) && active == true && ${TRASH_ITEM_PRICED} && ${CONSIGNMENT_CURRENT}] {
-    _id,
-    title,
-    medium,
-    year,
-    sold,
-    "slug": slug.current,
-    "images": images[].asset->url,
-    "museumLocationId": museumLocationRef->._id,
+  // Every work with a public page that credits this artist: available ones
+  // (the "+1 trash" section) and sold or not-for-sale ones (the "works"
+  // section), split on the profile page. Newest first.
+  "trashItems": *[_type == "trashItem" && references(^._id) && ${TRASH_PAGE_VISIBLE}] | order(coalesce(year, 0) desc, _createdAt desc) {
+    ${TRASH_ITEM_FIELDS}
   },
   "museumItems": *[_type == "museumLocation" && references(^._id) && active == true && (!defined(locationEnd) || locationEnd >= string::split(now(), "T")[0])] {
     _id,
@@ -203,10 +259,12 @@ export async function getArtists() {
 const PROFILE_FALLBACK_FIELDS = profileImageFallbackFields(`active == true && ${TRASH_ITEM_PRICED} && ${CONSIGNMENT_CURRENT}`);
 
 export async function getArtistBySlug(slug: string) {
-  return buildClient.fetch(
+  const artist = await buildClient.fetch(
     `*[_type == "artist" && slug.current == $slug][0] { ${ARTIST_FIELDS} ${PROFILE_FALLBACK_FIELDS} }`,
     { slug }
   );
+  if (artist?.trashItems?.length) artist.trashItems = await enrichWorkRows(artist.trashItems);
+  return artist;
 }
 
 export async function getAllSanityArtistSlugs(): Promise<string[]> {

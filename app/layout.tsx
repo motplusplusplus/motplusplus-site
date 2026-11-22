@@ -1,4 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import "photoswipe/style.css";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,6 +8,43 @@ import { DEFAULT_OG_IMAGE } from "@/lib/og";
 import { CONTACTS } from "@/lib/contacts";
 
 const OG_IMAGE = DEFAULT_OG_IMAGE;
+
+// Captions, counts, chips and controls (2026-11-22). Self-hosted (no Google
+// Fonts at build time): IBM Plex Mono Regular, subset to latin + Vietnamese,
+// 22 KB. Licence: app/fonts/IBMPlexMono-LICENSE.txt (SIL OFL 1.1).
+const mono = localFont({
+  src: "./fonts/IBMPlexMono-Regular-subset.woff2",
+  weight: "400",
+  style: "normal",
+  display: "swap",
+  variable: "--font-mono",
+  // Not preloaded: captions are tiny and swap in; on a phone the first
+  // work image should get that bandwidth (largest paint) instead.
+  preload: false,
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+});
+
+// viewport-fit=cover so env(safe-area-inset-*) reports the iPhone home
+// indicator / notch; body pads left/right for landscape (globals.css), and
+// fixed bottom UI (filter sheet, viewer caption) pads its bottom.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
+// Marks every <img> as it loads (capture phase, so it also sees loads that
+// finish before React hydrates). Images fade in on data-l (globals.css).
+const IMG_FADE_SCRIPT =
+  "document.documentElement.classList.add('mot-fade');" +
+  // Also a backstop for wrong stored sizes: if a loaded work image's real
+  // shape differs from its box (.mot-img aspect-ratio), the box takes the
+  // real shape, so an image is never cropped or left in a mis-shaped frame.
+  "(function(){function m(e){var t=e.target;if(!t||t.tagName!=='IMG')return;t.setAttribute('data-l','');" +
+  "var p=t.parentNode,w=t.naturalWidth,h=t.naturalHeight;" +
+  "if(e.type==='load'&&w&&h&&p&&p.classList&&p.classList.contains('mot-img')&&!t.classList.contains('mot-img-ph')){" +
+  "var a=t.getAttribute('width')/t.getAttribute('height');if(a&&Math.abs(a-w/h)/(w/h)>0.02){p.style.aspectRatio=w+' / '+h;p.setAttribute('data-fixed','')}}}" +
+  "document.addEventListener('load',m,true);document.addEventListener('error',m,true)})();";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://motplusplusplus.com"),
@@ -115,10 +154,11 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className={mono.variable}>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: IMG_FADE_SCRIPT }} />
         {/* Self-hosted Inter (see app/globals.css). Preload the latin subset, as next/font did. */}
-        <link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/inter-latin-300-400.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body>
