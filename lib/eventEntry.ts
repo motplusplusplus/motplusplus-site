@@ -21,7 +21,7 @@ export function toEntry(e: CEvent): EventEntry {
   return {
     slug: e.slug, title: e.title, vnTitle: e.vnTitle ?? null,
     start: e.dateISO, end: e.endDateISO ?? null, displayDate: e.displayDate, year: e.year,
-    category: e.category, venue: e.venue?.name ?? e.location ?? '',
+    category: e.category, venue: e.whereLabel ?? e.venue?.name ?? e.location ?? '',
     venueAddress: e.venue ? [e.venue.address, e.venue.city].filter(Boolean).join(', ') : (e.location || null),
     mapUrl: e.venue?.mapUrl ?? null,
     line: firstLine(e.description), cover: e.cover,
@@ -31,5 +31,5 @@ export function toEntry(e: CEvent): EventEntry {
 
 /** Folded search text: titles (EN and VN), people, venue, descriptions (E6, S5). */
 export function searchText(e: CEvent): string {
-  return fold([e.title, e.vnTitle, e.credits.map(c => c.person.name).join(' '), ...e.venues.flatMap(v => [v.name, v.address]), e.location, e.category, e.description, e.vnDescription].filter(Boolean).join(' ')).replace(/\s+/g, ' ');
+  return fold([e.title, e.vnTitle, e.credits.map(c => c.person.name).join(' '), e.whereLabel, ...e.venues.flatMap(v => [v.name, v.address]), ...e.pastVenues.flatMap(p => [p.venue.name, p.venue.address]), e.location, e.category, e.description, e.vnDescription].filter(Boolean).join(' ')).replace(/\s+/g, ' ');
 }
