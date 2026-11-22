@@ -7,6 +7,7 @@ import { createClient } from '@sanity/client';
 import eventsDataRaw from '../events-data.json';
 import { isJunkImage } from './junk-images';
 import { profileImageFallbackFields } from './profileImageFallback';
+import { enrichWorkRow, enrichWorkRows } from './mediaProbe';
 
 export const sanityClient = createClient({
   projectId: 't5nsm79o',
@@ -59,6 +60,9 @@ export const CONSIGNMENT_CURRENT = `(
 /** notForSale works (2026-11-22) are listed on the artist's profile for the
  *  record: never on /trash or its search, never priced, never inquirable. */
 export const TRASH_FOR_SALE = `notForSale != true`;
+/** Something to show in the grid: a photo, a legacy image, or a YouTube
+ *  video (its still stands in, lib/mediaProbe.ts). */
+export const TRASH_HAS_MEDIA = `(count(images) > 0 || count(legacyImageUrls) > 0 || count(youtubeUrls) > 0)`;
 
 /** A work with its own public page (/trash/[slug], profile works, related
  *  row): a listed +1 trash work (priced-or-sold and on consignment, as
@@ -101,9 +105,11 @@ const TRASH_ITEM_FIELDS = `
 `;
 
 export async function getTrashItems() {
-  return buildClient.fetch(`
-    *[_type == "trashItem" && active == true && ${TRASH_FOR_SALE} && ${TRASH_ITEM_PRICED} && (count(images) > 0 || count(legacyImageUrls) > 0) && ${CONSIGNMENT_CURRENT}] | order(sortOrder asc, artist asc) { ${TRASH_ITEM_FIELDS} }
+  const rows = await buildClient.fetch(`
+    *[_type == "trashItem" && active == true && ${TRASH_FOR_SALE} && ${TRASH_ITEM_PRICED} && ${TRASH_HAS_MEDIA} && ${CONSIGNMENT_CURRENT}] | order(sortOrder asc, artist asc) { ${TRASH_ITEM_FIELDS} }
   `);
+  // real sizes for legacy images, YouTube stills for video-only works
+  return enrichWorkRows(rows);
 }
 
 /** All currently available (active, unsold) trash items, for the internal
@@ -120,15 +126,15 @@ export async function getPricelistItems() {
     *[_type == "trashItem" && ${TRASH_FOR_SALE} && ${TRASH_ITEM_PRICED} && sold != true && ${CONSIGNMENT_CURRENT}] | order(artist asc) {
       ${TRASH_ITEM_FIELDS}
       active,
-      "hasPhoto": count(images) > 0 || count(legacyImageUrls) > 0,
-      "onSite": active == true && (count(images) > 0 || count(legacyImageUrls) > 0),
+      "hasPhoto": ${TRASH_HAS_MEDIA},
+      "onSite": active == true && ${TRASH_HAS_MEDIA},
     }
   `);
 }
 
 /** Single trash item by slug, for the shareable /trash/[slug] page */
 export async function getTrashItemBySlug(slug: string) {
-  return buildClient.fetch(
+  const row = await buildClient.fetch(
     `*[_type == "trashItem" && slug.current == $slug && ${TRASH_PAGE_VISIBLE}][0] {
       ${TRASH_ITEM_FIELDS}
       "imgs": images[]{
@@ -145,6 +151,7 @@ export async function getTrashItemBySlug(slug: string) {
     }`,
     { slug }
   );
+  return enrichWorkRow(row);
 }
 
 /** All trash item slugs — for generateStaticParams */
@@ -161,8 +168,8 @@ export async function getAllTrashItemSlugs(): Promise<string[]> {
 let allPublicWorks: Promise<unknown[]> | null = null;
 export function getAllPublicWorks(): Promise<unknown[]> {
   allPublicWorks ??= buildClient.fetch(`
-    *[_type == "trashItem" && ${TRASH_PAGE_VISIBLE} && defined(slug.current) && count(images) > 0] | order(_createdAt desc) {
-      _id, artist, "artistSlug": artistRef->slug.current,
+    *[_type == "trashItem" && ${TRASH_PAGE_VISIBLE} && defined(slug.current) && ${TRASH_HAS_MEDIA}] | order(_createdAt desc) {
+      _id, artist, "artistSlug": artistRef->slug.current, youtubeUrls, "legacyImageUrls": legacyImageUrls[0...1],
       "artists": artists[]->{_id, name, "slug": slug.current},
       "slug": slug.current, title, medium, workType, year, sold, notForSale,
       "imgs": images[0...1]{
@@ -172,7 +179,7 @@ export function getAllPublicWorks(): Promise<unknown[]> {
         "bg": asset->metadata.palette.dominant.background,
       },
     }
-  `);
+  `).then(enrichWorkRows);
   return allPublicWorks;
 }
 
@@ -252,10 +259,12 @@ export async function getArtists() {
 const PROFILE_FALLBACK_FIELDS = profileImageFallbackFields(`active == true && ${TRASH_ITEM_PRICED} && ${CONSIGNMENT_CURRENT}`);
 
 export async function getArtistBySlug(slug: string) {
-  return buildClient.fetch(
+  const artist = await buildClient.fetch(
     `*[_type == "artist" && slug.current == $slug][0] { ${ARTIST_FIELDS} ${PROFILE_FALLBACK_FIELDS} }`,
     { slug }
   );
+  if (artist?.trashItems?.length) artist.trashItems = await enrichWorkRows(artist.trashItems);
+  return artist;
 }
 
 export async function getAllSanityArtistSlugs(): Promise<string[]> {

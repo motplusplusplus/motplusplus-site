@@ -1,16 +1,19 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import WorkImg from './WorkImg';
 import { openWorkViewer, preloadViewer } from './viewer';
 import { morphArrived } from './morph';
 import { GRID_SINGLE_WIDTHS } from '@/lib/workImage';
-import type { Work } from '@/lib/trashWork';
+import type { Work, WorkImage } from '@/lib/trashWork';
+import { youtubeId } from '@/lib/youtube';
 
 const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 /** The work page's images, full width; each opens the viewer at itself.
+ *  A video work's YouTube still (no photo in Sanity) plays the video in
+ *  place instead, so the page never shows a still above its own player.
  *  Arriving from outside the site (a shared link) opens the viewer at once,
  *  over the page, so the link lands on the work; closing it shows the page. */
 export default function WorkPageImages({ work }: { work: Work }) {
@@ -55,7 +58,16 @@ export default function WorkPageImages({ work }: { work: Work }) {
   if (work.images.length === 0) return null;
   return (
     <div className="wp-images">
-      {work.images.map((img, i) => (
+      {work.images.map((img, i) => img.video ? (
+        <div key={img.url + i} ref={i === 0 ? heroWrap : undefined}>
+          <VideoStill
+            img={img}
+            title={`${work.title}, ${work.artist}`}
+            priority={i === 0}
+            imgRef={el => { refs.current[i] = el; }}
+          />
+        </div>
+      ) : (
         <div key={img.url + i} ref={i === 0 ? heroWrap : undefined}>
           <button
             type="button"
@@ -79,5 +91,33 @@ export default function WorkPageImages({ work }: { work: Work }) {
         </div>
       ))}
     </div>
+  );
+}
+
+/** The still, with a play mark; a tap swaps in the YouTube player, playing. */
+function VideoStill({ img, title, priority, imgRef }: {
+  img: WorkImage; title: string; priority: boolean; imgRef: (el: HTMLImageElement | null) => void;
+}) {
+  const [playing, setPlaying] = useState(false);
+  const id = img.video ? youtubeId(img.video) : null;
+  if (playing && id) {
+    return (
+      <div className="wp-yt-frame" style={{ aspectRatio: '16 / 9' }}>
+        <iframe
+          src={`https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0`}
+          title={title}
+          allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+  return (
+    <button type="button" className="wp-yt" aria-label={`play ${title}`} onClick={() => setPlaying(true)}>
+      <WorkImg img={img} widths={GRID_SINGLE_WIDTHS} sizes="(min-width: 900px) 860px, 100vw" priority={priority} imgRef={imgRef} defaultWidth={1280} />
+      <span className="wp-yt-play" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg>
+      </span>
+    </button>
   );
 }

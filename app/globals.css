@@ -321,14 +321,62 @@ html.mot-fade .mot-img img:not([data-l]):not([data-p]) { opacity: 0; }
   max-width: 720px; margin: 4px auto 0; display: flex; align-items: center; gap: 2px;
   position: sticky; top: 60px; z-index: 20; background: var(--mot-warm);
 }
-.tg-controls .mot-pill { margin-right: 6px; }
-.tg-count { margin-left: auto; }
+.tg-controls .mot-pill { margin: 0 6px 0 8px; }
+.tg-count { margin-left: auto; padding-right: 4px; }
+/* phones: the count makes way for the switch (the sheet's "show N works"
+   and "show more · 48 of 107" still say it); screen readers keep it */
+@media (max-width: 439px) {
+  .tg-count { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .tg-controls .tg-filter-anchor { margin-right: auto; }
+}
+.tg-unlocked { max-width: 720px; margin: 4px auto 0; }
+
+/* available / all works: a two-state switch, always visible */
+.tg-switch {
+  position: relative; display: inline-flex; flex: none; width: 172px; height: 44px; align-items: center;
+}
+.tg-switch::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 7px; bottom: 7px;
+  border: 1px solid var(--mot-line); border-radius: 999px;
+}
+.tg-switch-opt {
+  position: relative; z-index: 1; flex: 1 1 0; min-width: 0; height: 44px; padding: 0; border: 0; background: none; cursor: pointer;
+  color: var(--mot-quiet); white-space: nowrap; -webkit-tap-highlight-color: transparent;
+  transition: color 0.22s ease;
+}
+.tg-switch-opt[aria-checked="true"] { color: var(--mot-warm); }
+.tg-switch-opt[aria-checked="false"]:hover { color: var(--mot-ink); }
+.tg-switch-thumb {
+  position: absolute; top: 7px; bottom: 7px; left: 0; width: 50%; border-radius: 999px; background: var(--mot-ink);
+  transition: transform 0.26s var(--mot-spring);
+}
+.tg-switch-thumb.is-right { transform: translateX(100%); }
+
+/* dense first view waits for React (app/trash/page.tsx); shown anyway
+   after 4s if scripts never run */
+@keyframes tg-reveal { to { visibility: visible; } }
+html.tg-pre-dense #tg-grid { visibility: hidden; animation: tg-reveal 0s 4s forwards; }
+
+/* desktop filter: a small panel under the pill */
+.tg-filter-anchor { position: relative; }
+.fs-panel {
+  position: absolute; top: calc(100% + 6px); left: 8px; z-index: 40; width: 340px;
+  background: var(--mot-warm); border: 1px solid var(--mot-line); border-radius: 10px;
+  padding: 4px 16px 16px; box-shadow: 0 10px 30px rgba(14,13,12,0.10);
+  opacity: 0; transform: translateY(-4px); transition: opacity 0.16s ease, transform 0.16s var(--mot-ease);
+}
+.fs-panel.is-open { opacity: 1; transform: none; }
+.fs-panel .fs-group { margin: 6px 0 14px; }
+.fs-panel .fs-done { min-height: 40px; }
+.fs-panel :focus-visible { outline: 1px solid var(--mot-ink); outline-offset: 2px; }
 .tg-search { max-width: 720px; margin: 4px auto 0; animation: mot-fade 0.2s ease both; }
 .tg-search input {
   width: 100%; height: 44px; border: 0; border-bottom: 1px solid var(--mot-line); background: transparent;
   color: var(--mot-ink); outline: none; font-size: 16px; /* 16px: no iOS zoom on focus */
 }
 .tg-search input::placeholder { color: var(--mot-quiet); }
+/* no browser clear button: the "×" chip and the search icon clear it */
+.tg-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
 .tg-search input:focus { border-bottom-color: var(--mot-icon); }
 .tg-chips { max-width: 720px; margin: 6px auto 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
 .mot-chip {
@@ -449,6 +497,11 @@ a.tg-title:hover { text-decoration: underline; text-underline-offset: 3px; text-
 .wp-museum { display: inline-flex; align-items: center; min-height: 44px; margin-top: 16px; }
 .wp-related { margin: 64px 0 0; }
 .wp-related-row {
+  /* position: relative makes the row the containing block of the hidden
+     ", sold" text (.mot-sr, absolute), so the row's overflow clips it;
+     otherwise it sat ~1500px right of the page and a phone opened the
+     work page zoomed out */
+  position: relative;
   list-style: none; margin: 0 -16px; padding: 0 16px 8px; display: flex; gap: 14px;
   overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 16px; scrollbar-width: none;
   -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
@@ -482,6 +535,9 @@ a.tg-title:hover { text-decoration: underline; text-underline-offset: 3px; text-
 .mot-viewer .pswp__button--close { margin-right: 4px; }
 .mot-viewer .pswp__button--close .pswp__icn { width: 32px; height: 32px; position: static; }
 .mot-viewer .pswp__button--share .pswp__icn { width: 26px; height: 26px; position: static; }
+.mot-viewer .pswp__button--zoom .pswp__icn { width: 28px; height: 28px; position: static; }
+.mot-viewer .pswp__button--zoom { cursor: zoom-in; }
+.mot-viewer.pswp--zoomed-in .pswp__button--zoom { cursor: zoom-out; }
 .mot-viewer .pswp__icn { fill: none; color: var(--pswp-icon-color); }
 .mot-viewer .pswp__counter {
   font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.08em;
@@ -543,6 +599,42 @@ a.tg-title:hover { text-decoration: underline; text-underline-offset: 3px; text-
 .pswp .mv-toast:not(.is-on) { opacity: 0 !important; visibility: hidden; }
 .pswp .mv-toast.is-on { opacity: 1 !important; visibility: visible; }
 
+/* ── hover labels (desktop): every icon says what it does ─────────────── */
+@media (hover: hover) and (pointer: fine) {
+  .mot-icon-btn[data-label], .mot-pill[data-label], .mot-chip button[data-label] { position: relative; }
+  [data-label]::after {
+    content: attr(data-label); position: absolute; top: calc(100% + 2px); left: 50%; z-index: 60;
+    transform: translate(-50%, -3px); padding: 4px 7px; border-radius: 3px; white-space: nowrap; pointer-events: none;
+    font-family: var(--font-mono), ui-monospace, monospace; font-size: 10px; line-height: 1.2; letter-spacing: 0.06em;
+    font-style: normal; text-transform: none; font-weight: 400;
+    background: var(--mot-ink); color: var(--mot-warm); opacity: 0;
+    transition: opacity 0.12s ease, transform 0.12s ease; transition-delay: 0s;
+  }
+  [data-label]:hover::after { opacity: 1; transform: translate(-50%, 0); transition-delay: 0.25s; }
+  /* not while the thing it names is open (the filter panel sits there) */
+  .mot-pill[data-label][aria-expanded="true"]::after { display: none; }
+  .mot-viewer [data-label]::after { background: #e9e5de; color: var(--mot-viewer); }
+  .mot-viewer .pswp__button[data-label] { overflow: visible; } /* PhotoSwipe clips its buttons */
+  /* the viewer's top-right buttons: labels kept inside the screen */
+  .mot-viewer .pswp__top-bar [data-label]::after { left: auto; right: 6px; transform: translate(0, -3px); }
+  .mot-viewer .pswp__top-bar [data-label]:hover::after { transform: none; }
+  .mot-viewer .pswp__button--arrow[data-label]::after { top: 92px; }
+}
+
+/* ── work page: a video's still, playing in place on tap ───────────── */
+.wp-yt { position: relative; display: block; width: 100%; padding: 0; border: 0; background: var(--mot-viewer); cursor: pointer; }
+.wp-yt .mot-img img { opacity: 1; }
+.wp-yt-play {
+  position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
+  background: rgba(14,13,12,0.6); color: #fff; display: flex; align-items: center; justify-content: center;
+  padding-left: 4px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: transform 0.2s var(--mot-ease);
+}
+.wp-yt:hover .wp-yt-play { transform: scale(1.06); }
+.wp-yt-frame { position: relative; width: 100%; background: var(--mot-viewer); }
+.wp-yt-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.wp-yt-more { display: flex; justify-content: flex-end; }
+.wp-yt-more button { min-height: 44px; }
+
 /* ── motion ─────────────────────────────────────────────────────────── */
 @keyframes mot-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes mot-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -555,6 +647,8 @@ a.tg-title:hover { text-decoration: underline; text-underline-offset: 3px; text-
   .tg-new { animation-name: mot-fade; }
   .fs-sheet, .fs-root:not(.is-open) .fs-sheet { transition: opacity 0.2s ease; transform: none; opacity: 0; }
   .fs-root.is-open .fs-sheet { opacity: 1; }
+  .fs-panel { transform: none; }
+  .tg-switch-thumb { transition: none; }
   .mv-cap-chev { transition: none; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }

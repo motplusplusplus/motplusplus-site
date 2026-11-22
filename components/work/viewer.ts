@@ -55,6 +55,8 @@ const esc = (s: string) =>
 const ICON = {
   close: '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 32 32" width="32" height="32"><path d="M9 9l14 14M23 9L9 23" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
   prev: '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 32 32" width="32" height="32"><path d="M19 8l-8 8 8 8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  // thin magnifier; the vertical bar hides when zoomed in (PhotoSwipe CSS: minus)
+  zoom: '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 32 32" width="32" height="32"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="14" cy="14" r="7"/><path d="M19.2 19.2l5.8 5.8"/><path class="pswp__zoom-icn-bar-h" d="M11 14h6"/><path class="pswp__zoom-icn-bar-v" d="M14 11v6"/></g></svg>',
   share: '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 32 32" width="32" height="32"><path d="M16 6v14M11 11l5-5 5 5M9 16v9h14v-9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   chevron: '<svg aria-hidden="true" viewBox="0 0 12 12" width="12" height="12"><path d="M2.5 7.5L6 4l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
@@ -123,6 +125,8 @@ export async function openWorkViewer(opts: OpenViewerOptions): Promise<void> {
   const safeBottom = safeAreaBottom();
   const idBase = `mv-${work._id.replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
+  // Sizes come from Sanity's metadata or the build-time probe
+  // (lib/mediaProbe.ts); 'loadComplete' below corrects any that are wrong.
   const dataSource = work.images.map(img => {
     const scale = Math.min(1, 2400 / Math.max(img.w, img.h));
     return {
@@ -157,7 +161,10 @@ export async function openWorkViewer(opts: OpenViewerOptions): Promise<void> {
     secondaryZoomLevel: 2,
     maxZoomLevel: 4,
     preload: [1, 2],
-    zoom: false,
+    // desktop: a zoom button (phones pinch and double-tap)
+    zoom: !isTouch(),
+    zoomTitle: 'zoom',
+    zoomSVG: ICON.zoom,
     counter: work.images.length > 1,
     arrowPrev: work.images.length > 1,
     arrowNext: work.images.length > 1,
@@ -180,6 +187,32 @@ export async function openWorkViewer(opts: OpenViewerOptions): Promise<void> {
   pswp.addFilter('placeholderSrc', (src, slide) => {
     const el = opts.thumbFor?.(slide.index);
     return el?.currentSrc || el?.src || src;
+  });
+
+  // ── never stretched ──────────────────────────────────────────────────
+  // If a loaded image's real shape differs from the size it was given, the
+  // slide takes the real shape at once (same width; true height). For
+  // single-file images (legacy URLs, YouTube stills) the real pixel size
+  // is used outright, so zoom stops at 1:1.
+  pswp.on('loadComplete', ({ content, slide }) => {
+    const img = content.element;
+    if (!(img instanceof HTMLImageElement) || !img.naturalWidth || !img.naturalHeight) return;
+    const nw = img.naturalWidth, nh = img.naturalHeight;
+    const real = nw / nh;
+    if (!content.width || !content.height) return;
+    if (Math.abs(content.width / content.height - real) / real <= 0.02) return;
+    const single = !content.data.srcset;
+    const w = single ? nw : content.width;
+    const h = single ? nh : Math.round(content.width / real);
+    content.width = w; content.height = h;
+    content.data.width = w; content.data.height = h;
+    const src = dataSource[slide.index];
+    if (src) { src.width = w; src.height = h; }
+    slide.width = w; slide.height = h;
+    slide.calculateSize();
+    slide.zoomAndPanToInitial();
+    slide.applyCurrentZoomPan();
+    slide.updateContentSize(true);
   });
 
   // ── history ──────────────────────────────────────────────────────────
@@ -303,6 +336,21 @@ export async function openWorkViewer(opts: OpenViewerOptions): Promise<void> {
 
   pswp.on('firstUpdate', () => {
     pswp.element?.setAttribute('aria-label', `${work.title}, ${work.artist}`);
+  });
+
+  // desktop hover labels in words (globals.css): the native title tooltip
+  // would double them, so the word moves to data-label / aria-label
+  pswp.on('afterInit', () => {
+    const labels: Record<string, string> = {
+      close: 'close', zoom: 'zoom', share: 'share', 'arrow--prev': 'previous', 'arrow--next': 'next',
+    };
+    for (const [k, label] of Object.entries(labels)) {
+      const b = pswp.element?.querySelector<HTMLElement>(`.pswp__button--${k}`);
+      if (!b) continue;
+      if (!b.getAttribute('aria-label')) b.setAttribute('aria-label', b.getAttribute('title') || label);
+      b.removeAttribute('title');
+      b.setAttribute('data-label', label);
+    }
   });
 
   current = pswp;

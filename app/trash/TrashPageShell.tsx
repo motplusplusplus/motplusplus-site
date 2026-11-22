@@ -24,7 +24,7 @@ import { CONTACTS } from '@/lib/contacts';
 import { compareNames } from '@/lib/sortName';
 import { TRASH_WORK_TYPES, isTrashWorkType, type TrashWorkType } from '@/lib/trashWorkTypes';
 import {
-  isTimeBased, matchesSearch, prefersReducedMotion, seededOrder, session,
+  isTimeBased, matchesSearch, prefersReducedMotion, trashOrder, session,
   RETURN_KEY, SEED_KEY, VIEW_KEY, type Work,
 } from '@/lib/trashWork';
 import { GRID_DENSE_WIDTHS, GRID_SINGLE_WIDTHS } from '@/lib/workImage';
@@ -33,10 +33,13 @@ import { openWorkViewer, preloadViewer } from '@/components/work/viewer';
 import { navigateWithMorph } from '@/components/work/morph';
 import FilterSheet from './FilterSheet';
 
-import { BATCH, GRID_ID, GRID_SINGLE_SIZES, ORDER_STYLE_ID } from '@/lib/trashGrid';
+import {
+  BATCH, DENSE_DEFAULT_QUERY, GRID_DENSE_SIZES, GRID_ID, GRID_SINGLE_SIZES, ORDER_STYLE_ID, PANEL_QUERY, PRE_DENSE_CLASS,
+} from '@/lib/trashGrid';
 const CLICKS_NEEDED = 7;
 
-export type Availability = 'all' | 'available' | 'sold';
+/** The always-visible two-state switch: "available / all works". */
+export type Availability = 'all' | 'available';
 export type SortOption = 'random' | 'date' | 'artist';
 export type TypeFilter = 'all' | TrashWorkType;
 type View = 'single' | 'dense';
@@ -114,6 +117,9 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
   const [shown, setShown] = useState(BATCH);
   const [cols, setCols] = useState(2);
   const [sheetOpen, setSheetOpen] = useState(false);
+  // desktop: a small panel under the pill; phone: the bottom sheet
+  const [sheetMode, setSheetMode] = useState<'sheet' | 'panel'>('sheet');
+  const pillRef = useRef<HTMLButtonElement>(null);
   const pendingScroll = useRef<number | null>(null);
   const prevShown = useRef(BATCH);
 
@@ -123,6 +129,7 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
   const [pw, setPw] = useState('');
   const [pwError, setPwError] = useState(false);
   const [prices, setPrices] = useState<Record<string, string>>({});
+  const [unlocked, setUnlocked] = useState(false);
   const pwRef = useRef<HTMLInputElement>(null);
 
   const gridRef = useRef<HTMLDivElement>(null);
@@ -136,14 +143,16 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
     // React now renders this visitor's order itself: drop the inline
     // script's pre-paint ordering (page.tsx)
     document.getElementById(ORDER_STYLE_ID)?.remove();
+    document.documentElement.classList.remove(PRE_DENSE_CLASS);
     setSeed(readSeed());
     const saved = readReturn();
     const urlType = typeFromUrl();
     const storedView = session.get(VIEW_KEY);
     if (storedView === 'dense' || storedView === 'single') setView(storedView);
+    else setView(window.matchMedia(DENSE_DEFAULT_QUERY).matches ? 'dense' : 'single');
     setCols(columnsFor(window.innerWidth));
     if (saved) {
-      setAvailability(saved.availability);
+      setAvailability(saved.availability === 'available' ? 'available' : 'all');
       setSort(saved.sort);
       setTypeFilter(urlType !== 'all' ? urlType : saved.type);
       setQ(saved.q);
@@ -178,7 +187,7 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
   const randomOrder = useMemo(() => {
     if (seed === null) return items;
     const byId = new Map(items.map(i => [i._id, i]));
-    return seededOrder(items.map(i => i._id), seed).map(id => byId.get(id)!);
+    return trashOrder(items.map(i => [i._id, i.sold ? 1 : 0] as [string, number]), seed).map(id => byId.get(id)!);
   }, [items, seed]);
 
   const sorted = useMemo(() => {
@@ -188,7 +197,7 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
   }, [sort, items, randomOrder]);
 
   const matching = useMemo(() => sorted.filter(w =>
-    (availability === 'all' || (availability === 'sold' ? w.sold : !w.sold)) &&
+    (availability === 'all' || !w.sold) &&
     (typeFilter === 'all' || w.workType.includes(typeFilter)) &&
     matchesSearch(w, q)
   ), [sorted, availability, typeFilter, q]);
@@ -197,23 +206,13 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
   // (the inline script orders and trims it before paint).
   const visible = !ready ? items : matching.slice(0, shown);
 
-  const counts = useMemo(() => {
-    const byType = (w: Work) => typeFilter === 'all' || w.workType.includes(typeFilter);
-    const inQ = (w: Work) => matchesSearch(w, q);
-    return {
-      all: items.filter(w => byType(w) && inQ(w)).length,
-      available: items.filter(w => !w.sold && byType(w) && inQ(w)).length,
-      sold: items.filter(w => w.sold && byType(w) && inQ(w)).length,
-    };
-  }, [items, typeFilter, q]);
-
   const typeOptions = useMemo(() => TRASH_WORK_TYPES
     .filter(t => items.some(w => w.workType.includes(t.value)))
     .map(t => ({
       ...t,
       count: items.filter(w =>
         w.workType.includes(t.value) &&
-        (availability === 'all' || (availability === 'sold' ? w.sold : !w.sold)) &&
+        (availability === 'all' || !w.sold) &&
         matchesSearch(w, q)).length,
     })), [items, availability, q]);
 
@@ -266,6 +265,8 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
     if (t === 'all') url.searchParams.delete('type'); else url.searchParams.set('type', t);
     window.history.replaceState(window.history.state, '', url);
   });
+  // "clear filters" (empty state) clears everything; the sheet's "clear"
+  // leaves the availability switch alone, since it lives outside the sheet
   const clearAll = () => change(() => {
     setAvailability('all'); setTypeFilter('all'); setQ('');
     const url = new URL(window.location.href);
@@ -336,7 +337,7 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
   // ── price gate ───────────────────────────────────────────────────────
   const onTrashWord = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (Object.keys(prices).length) return;
+    if (unlocked) return;
     const next = clicks + 1;
     if (next >= CLICKS_NEEDED) {
       setClicks(0); setShowModal(true);
@@ -351,6 +352,7 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
       if (!res.ok) throw new Error('denied');
       const data = await res.json();
       setPrices(data.prices || {});
+      setUnlocked(true);
       setShowModal(false); setPw(''); setPwError(false);
     } catch {
       setPwError(true); setPw('');
@@ -360,12 +362,37 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
 
   // ── render ───────────────────────────────────────────────────────────
   const chips: { key: string; label: string; clear: () => void }[] = [];
-  if (availability !== 'all') chips.push({ key: 'a', label: availability, clear: () => setAvailabilityF('all') });
   if (typeFilter !== 'all') {
     chips.push({ key: 't', label: TRASH_WORK_TYPES.find(t => t.value === typeFilter)?.label ?? typeFilter, clear: () => setTypeF('all') });
   }
   if (q.trim()) chips.push({ key: 'q', label: `“${q.trim()}”`, clear: () => setQF('') });
-  const activeCount = (availability !== 'all' ? 1 : 0) + (typeFilter !== 'all' ? 1 : 0) + (sort !== 'random' ? 1 : 0);
+  const activeCount = (typeFilter !== 'all' ? 1 : 0) + (sort !== 'random' ? 1 : 0);
+  const clearSheet = () => change(() => {
+    setSort('random'); setTypeFilter('all');
+    const url = new URL(window.location.href);
+    url.searchParams.delete('type');
+    window.history.replaceState(window.history.state, '', url);
+  });
+  const toggleSheet = () => {
+    if (sheetOpen) { setSheetOpen(false); return; }
+    setSheetMode(window.matchMedia(PANEL_QUERY).matches ? 'panel' : 'sheet');
+    setSheetOpen(true);
+  };
+  const sheet = (mode: 'sheet' | 'panel') => (
+    <FilterSheet
+      mode={mode}
+      open={sheetOpen && sheetMode === mode}
+      onClose={() => setSheetOpen(false)}
+      anchor={pillRef}
+      sort={sort}
+      setSort={setSortF}
+      typeFilter={typeFilter}
+      setType={setTypeF}
+      typeOptions={typeOptions}
+      resultCount={matching.length}
+      onClear={clearSheet}
+    />
+  );
 
   const renderCard = (w: Work, i: number, dense: boolean) => {
     const img = w.images[0];
@@ -375,7 +402,7 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
       <WorkImg
         img={img}
         widths={dense ? GRID_DENSE_WIDTHS : GRID_SINGLE_WIDTHS}
-        sizes={dense ? '(min-width: 1200px) 25vw, (min-width: 720px) 33vw, 50vw' : GRID_SINGLE_SIZES}
+        sizes={dense ? GRID_DENSE_SIZES : GRID_SINGLE_SIZES}
         defaultWidth={dense ? 400 : 800}
         // The first two cards in this visitor's order are the largest paint.
         // On a fresh load the inline script already preloads them (the
@@ -460,21 +487,45 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
       </div>
 
       <div className="tg-controls" role="toolbar" aria-label="browse works">
-        <button
-          type="button"
-          className="mot-pill"
-          onClick={() => setSheetOpen(true)}
-          aria-haspopup="dialog"
-          aria-expanded={sheetOpen}
-        >
-          filter{activeCount > 0 && <span className="mot-pill-n">{activeCount}</span>}
-        </button>
+        <div className="tg-switch" role="radiogroup" aria-label="show">
+          {([['available', 'available'], ['all', 'all works']] as [Availability, string][]).map(([v, label]) => (
+            <button
+              key={v}
+              type="button"
+              role="radio"
+              aria-checked={availability === v}
+              className="tg-switch-opt mot-mono"
+              onClick={() => { if (availability !== v) setAvailabilityF(v); }}
+            >
+              {label}
+            </button>
+          ))}
+          <span className={`tg-switch-thumb${availability === 'all' ? ' is-right' : ''}`} aria-hidden="true" />
+        </div>
+        <div className="tg-filter-anchor">
+          <button
+            ref={pillRef}
+            type="button"
+            className="mot-pill"
+            onClick={toggleSheet}
+            aria-haspopup="dialog"
+            aria-expanded={sheetOpen}
+            data-label="filter and order"
+          >
+            filter{activeCount > 0 && <span className="mot-pill-n">{activeCount}</span>}
+          </button>
+          {sheet('panel')}
+        </div>
+        <span className="mot-mono mot-quiet tg-count" aria-live="polite">
+          {ready ? `${matching.length} works` : `${items.length} works`}
+        </span>
         <button
           type="button"
           className="mot-icon-btn"
           onClick={toggleView}
           aria-label={view === 'single' ? 'show a dense grid' : 'show one work per row'}
           aria-pressed={view === 'dense'}
+          data-label={view === 'single' ? 'grid view' : 'one per row'}
         >
           {view === 'single' ? (
             <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><g fill="none" stroke="currentColor" strokeWidth="1.2"><rect x="4" y="4" width="7" height="9" /><rect x="13" y="4" width="7" height="6" /><rect x="4" y="15" width="7" height="5" /><rect x="13" y="12" width="7" height="8" /></g></svg>
@@ -494,13 +545,12 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
           aria-label={searchOpen ? 'close search' : 'search works'}
           aria-expanded={searchOpen}
           aria-controls="tg-search"
+          data-label={searchOpen ? 'close search' : 'search'}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><g fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="5.5" /><path d="M15 15l4.5 4.5" /></g></svg>
         </button>
-        <span className="mot-mono mot-quiet tg-count" aria-live="polite">
-          {ready ? `${matching.length} works` : `${items.length} works`}
-        </span>
       </div>
+      {unlocked && <p className="mot-mono mot-quiet tg-unlocked">prices visible</p>}
 
       {searchOpen && (
         <div className="tg-search" id="tg-search">
@@ -524,7 +574,7 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
           {chips.map(c => (
             <li key={c.key} className="mot-chip">
               <span className="mot-mono">{c.label}</span>
-              <button type="button" onClick={c.clear} aria-label={`remove filter ${c.label}`}>
+              <button type="button" onClick={c.clear} aria-label={`remove filter ${c.label}`} data-label="remove">
                 <svg aria-hidden="true" viewBox="0 0 12 12" width="10" height="10"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>
               </button>
             </li>
@@ -565,20 +615,7 @@ export default function TrashPageShell({ items }: { items: Work[] }) {
         </a>
       </p>
 
-      <FilterSheet
-        open={sheetOpen}
-        onClose={() => setSheetOpen(false)}
-        availability={availability}
-        setAvailability={setAvailabilityF}
-        counts={counts}
-        sort={sort}
-        setSort={setSortF}
-        typeFilter={typeFilter}
-        setType={setTypeF}
-        typeOptions={typeOptions}
-        resultCount={matching.length}
-        onClear={clearAll}
-      />
+      {sheet('sheet')}
 
       {showModal && (
         <div className="tg-pw-backdrop" onClick={() => { setShowModal(false); setPw(''); setPwError(false); }}>

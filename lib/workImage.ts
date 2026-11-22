@@ -17,12 +17,15 @@ export function imgUrl(url: string, w: number, q = 75): string {
 }
 
 /** srcset across the given widths, dropping widths larger than the original
- *  (fit=max would just return the original again). */
+ *  (fit=max would just return the original again).
+ *  SELF-CONTAINED ON PURPOSE (no imports, no closures): its source is also
+ *  inlined into the /trash HTML (app/trash/page.tsx) to preload the first
+ *  images, and the preload only helps if its URLs match React's exactly. */
 export function imgSrcSet(url: string, widths: number[], originalWidth?: number, q = 75): string | undefined {
-  if (!isSanityImage(url)) return undefined;
-  const ws = widths.filter(w => !originalWidth || w <= originalWidth);
+  if (!url || url.indexOf('https://cdn.sanity.io/images/') !== 0) return undefined;
+  const ws = widths.filter(function (w) { return !originalWidth || w <= originalWidth; });
   if (originalWidth && (ws.length === 0 || ws[ws.length - 1] < originalWidth)) ws.push(originalWidth);
-  return ws.map(w => `${imgUrl(url, w, q)} ${w}w`).join(', ');
+  return ws.map(function (w) { return url + '?w=' + w + '&q=' + q + '&fit=max&auto=format ' + w + 'w'; }).join(', ');
 }
 
 /** Tiny blurred stand-in shown behind an image until it loads. A ~24px
@@ -47,4 +50,5 @@ export function ogImageUrl(url: string): string {
  *  no second download when a shared link opens straight into the viewer. */
 export const VIEWER_WIDTHS = [800, 1200, 1800, 2400];
 export const GRID_SINGLE_WIDTHS = [400, 600, 800, 1200];
-export const GRID_DENSE_WIDTHS = [240, 400, 600];
+// dense: 2 columns on a phone (~180px), 3-4 on a desktop (~300-450px)
+export const GRID_DENSE_WIDTHS = [240, 400, 600, 800, 1200];

@@ -19,6 +19,7 @@ export type WorkImage = {
   alt: string;
   bg?: string;      // dominant colour, painted before anything loads
   lqip?: string;    // inline base64 blur, only where a page has few images
+  video?: string;   // set on a YouTube still: the video it stands for
 };
 
 export type ShownIn = { title: string; slug: string };
@@ -99,9 +100,23 @@ export function normalizeWork(r: any, orderIndex = 0): Work | null {
     bg: i.bg ?? undefined,
     lqip: i.lqip ?? undefined,
   }));
+  // Legacy and YouTube images carry the sizes measured at build
+  // (lib/mediaProbe.ts). Unmeasured ones fall back to 4:3 here and are
+  // corrected on load in the browser, so nothing is ever drawn stretched.
+  const legacySizes: Record<string, { w: number; h: number }> = r.legacySizes ?? {};
   const legacy: WorkImage[] = (r.legacyImageUrls ?? []).filter(Boolean).map((url: string) => ({
-    url, w: 1600, h: 1200, alt: fallbackAlt,
+    url, w: legacySizes[url]?.w ?? 1600, h: legacySizes[url]?.h ?? 1200, alt: fallbackAlt,
   }));
+  // A video work with no photo: its YouTube stills come first (the grid's
+  // still, the viewer, the social preview), then any legacy images.
+  const stills: WorkImage[] = sanityImgs.length > 0 ? [] : (r.youtubeStills ?? [])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .filter((s: any) => s?.url && s.w && s.h)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((s: any, i: number, all: unknown[]) => ({
+      url: s.url, w: s.w, h: s.h, video: s.video, bg: '#111111',
+      alt: `${fallbackAlt}, video still${all.length > 1 ? ` ${i + 1}` : ''}`,
+    }));
 
   return {
     _id: r._id,
@@ -118,7 +133,7 @@ export function normalizeWork(r: any, orderIndex = 0): Work | null {
     dims: parseDimensions(r.dimensions),
     edition: r.edition ?? '',
     description: (r.description ?? '').trim(),
-    images: [...sanityImgs, ...legacy],
+    images: [...sanityImgs, ...stills, ...legacy],
     youtubeUrls: (r.youtubeUrls ?? []).filter(Boolean),
     museumLocationId: r.museumLocationId ?? null,
     neighbourhood: r.neighbourhood ?? null,
@@ -170,12 +185,20 @@ export function matchesSearch(w: Work, q: string): boolean {
   return words.every(word => hay.includes(word));
 }
 
-/** Deterministic shuffle of `ids` from a numeric seed (mulberry32 +
- *  Fisher-Yates). SELF-CONTAINED ON PURPOSE: its source is inlined into the
- *  /trash HTML (app/trash/page.tsx) so the very first paint already shows
- *  this visitor's order, before React loads. No closures, no imports. */
-export function seededOrder(ids: string[], seed: number): string[] {
-  const a = ids.slice();
+/** This visitor's order for "all works": random-looking and frozen for the
+ *  session (same seed, same order), but weighted so the first screens are
+ *  mostly available works with a few sold ones scattered in. The chance of
+ *  a sold work rises gradually down the list until, past ~45% of it, the
+ *  rest is a plain random mix. Simulated on 107 works / 60 sold: ~2 sold
+ *  in the first 12, ~5 in the first 24, then ~72% sold, evenly mixed. Never a sold block at the end: after the
+ *  ramp, available and sold works are merged uniformly at random.
+ *
+ *  `items` is [id, sold(1/0)][]; returns ids. Deterministic: mulberry32 +
+ *  Fisher-Yates per group, then a weighted merge.
+ *  SELF-CONTAINED ON PURPOSE: its source is inlined into the /trash HTML
+ *  (app/trash/page.tsx) so the very first paint already shows this
+ *  visitor's order, before React loads. No closures, no imports. */
+export function trashOrder(items: [string, number][], seed: number): string[] {
   let t = seed >>> 0;
   const rand = function () {
     t = (t + 0x6d2b79f5) >>> 0;
@@ -184,11 +207,38 @@ export function seededOrder(ids: string[], seed: number): string[] {
     x ^= x + Math.imul(x ^ (x >>> 7), x | 61);
     return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
   };
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  const shuffle = function (a: string[]) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  };
+  const avail: string[] = [], sold: string[] = [];
+  for (let i = 0; i < items.length; i++) (items[i][1] ? sold : avail).push(items[i][0]);
+  shuffle(avail); shuffle(sold);
+  const n = items.length;
+  const ramp = Math.max(12, Math.round(n * 0.45));
+  const out: string[] = [];
+  let a = 0, s = 0;
+  for (let p = 0; p < n; p++) {
+    const remA = avail.length - a, remS = sold.length - s;
+    let takeSold: boolean;
+    if (remA === 0) takeSold = true;
+    else if (remS === 0) takeSold = false;
+    else {
+      // f: how much of the natural share of sold works is let through here
+      const f = p >= ramp ? 1 : 0.2 + 0.8 * Math.pow(p / ramp, 1.3);
+      takeSold = rand() < (remS / (remA + remS)) * f;
+    }
+    out.push(takeSold ? sold[s++] : avail[a++]);
   }
-  return a;
+  return out;
+}
+
+/** Unweighted seeded shuffle (mulberry32 + Fisher-Yates). */
+export function seededOrder(ids: string[], seed: number): string[] {
+  return trashOrder(ids.map(id => [id, 0] as [string, number]), seed);
 }
 
 /** sessionStorage that never throws (private mode, blocked storage, previews). */

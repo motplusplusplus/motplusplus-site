@@ -9,7 +9,7 @@ import ScaleDrawing from "@/components/work/ScaleDrawing";
 import RelatedRow from "@/components/work/RelatedRow";
 import WarmPage from "@/components/work/WarmPage";
 import { inquiryMailto, isAvailable, normalizeWork, type Work } from "@/lib/trashWork";
-import { ogImageUrl } from "@/lib/workImage";
+import { isSanityImage, ogImageUrl } from "@/lib/workImage";
 import { DEFAULT_OG_IMAGE } from "@/lib/og";
 
 const SITE = "https://motplusplusplus.com";
@@ -32,9 +32,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // "title, artist" + the work itself, letterboxed 1200x630 JPEG, never cropped.
   const title = `${work.title}, ${work.artist}`;
   const url = `${SITE}/trash/${slug}/`;
-  const image = work.images[0]
-    ? { url: ogImageUrl(work.images[0].url), width: 1200, height: 630, alt: work.images[0].alt, type: "image/jpeg" }
-    : { url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: "MoT+++" };
+  // Sanity photos are letterboxed to 1200x630; a YouTube still or legacy
+  // image is passed as it is, with its real size.
+  const first = work.images[0];
+  const image = !first
+    ? { url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: "MoT+++" }
+    : isSanityImage(first.url)
+      ? { url: ogImageUrl(first.url), width: 1200, height: 630, alt: first.alt, type: "image/jpeg" }
+      : { url: first.url, width: first.w, height: first.h, alt: first.alt };
   const description = [work.medium, work.year ? String(work.year) : null].filter(Boolean).join(", ");
   return {
     title: { absolute: `${title} | +1 trash | MoT+++` },
@@ -133,7 +138,9 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
           </div>
         ) : null}
 
-        {work.youtubeUrls.length > 0 && (
+        {/* players here only when the page's images are photos; a video-only
+            work plays in place of its still at the top (WorkPageImages) */}
+        {work.youtubeUrls.length > 0 && !work.images.some(i => i.video) && (
           <div className="wp-videos">
             {work.youtubeUrls.map(url => (
               <div key={url} className="wp-video">

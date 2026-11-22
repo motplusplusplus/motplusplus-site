@@ -37,7 +37,13 @@ export const viewport: Viewport = {
 // finish before React hydrates). Images fade in on data-l (globals.css).
 const IMG_FADE_SCRIPT =
   "document.documentElement.classList.add('mot-fade');" +
-  "(function(){function m(e){var t=e.target;if(t&&t.tagName==='IMG')t.setAttribute('data-l','')}" +
+  // Also a backstop for wrong stored sizes: if a loaded work image's real
+  // shape differs from its box (.mot-img aspect-ratio), the box takes the
+  // real shape, so an image is never cropped or left in a mis-shaped frame.
+  "(function(){function m(e){var t=e.target;if(!t||t.tagName!=='IMG')return;t.setAttribute('data-l','');" +
+  "var p=t.parentNode,w=t.naturalWidth,h=t.naturalHeight;" +
+  "if(e.type==='load'&&w&&h&&p&&p.classList&&p.classList.contains('mot-img')&&!t.classList.contains('mot-img-ph')){" +
+  "var a=t.getAttribute('width')/t.getAttribute('height');if(a&&Math.abs(a-w/h)/(w/h)>0.02){p.style.aspectRatio=w+' / '+h;p.setAttribute('data-fixed','')}}}" +
   "document.addEventListener('load',m,true);document.addEventListener('error',m,true)})();";
 
 export const metadata: Metadata = {
