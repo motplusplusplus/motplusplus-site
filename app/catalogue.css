@@ -316,3 +316,12 @@ a.c-year[aria-disabled] { pointer-events: none; }
 /* image-less heads: a calm band on phones, not a screen-filling card */
 .c-prof-type { cursor: default; }
 @media (max-width: 899px) { .c-prof-type .c-type { aspect-ratio: 3 / 1; } .c-ev-type .c-type { aspect-ratio: 5 / 2; } }
+
+/* /profiles index: portrait tiles in black and white (a CSS filter, the images are
+   untouched). Desktop: a tile eases to full colour on hover. Profile pages, the viewer
+   and typographic cards are unaffected. */
+.c-bw .c-tile .c-img > img { filter: grayscale(1); transition: filter .3s var(--mot-ease), opacity .25s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .c-bw .c-tile:hover .c-img > img, .c-bw .c-tile:focus-visible .c-img > img { filter: none; }
+}
+@media (prefers-reduced-motion: reduce) { .c-bw .c-tile .c-img > img { transition: none; } }

@@ -68,7 +68,7 @@ export default async function ProfilesPage() {
 
         <div id="pf-main">
           <section className="c-sec" aria-label="featured" style={{ marginTop: 14 }}>
-            <div className="c-tiles" id="pf-featured">
+            <div className="c-tiles c-bw" id="pf-featured">
               {pool.map((e, i) => (
                 <div key={e.slug} data-w={e.w} hidden={i >= SHOW} style={{ minWidth: 0 }} suppressHydrationWarning>
                   <PersonTile e={e} priority={i < 4} />

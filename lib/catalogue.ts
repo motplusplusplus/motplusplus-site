@@ -129,6 +129,15 @@ const plain = (b: unknown): string => Array.isArray(b)
 const LOGO = /(^|[^a-z])(logo|logomot|a\.?farm-?logo|motplus-?logo|wordmark|favicon)([^a-z]|$)/i;
 export const isLogoName = (s: string | null | undefined) => !!s && (LOGO.test(s) || isJunkImage(s));
 const POSTER_NAME = /poster|fb-?event|banner|flyer|invit|announce/i;
+// Legacy files the scraper copied into the wrong event folders (2026-11-22): ngo-1/lai-1 are
+// Tram Luong's portrait (her archived post: TramLuong.jpg); ngo-2/lai-2 are one identical file
+// in both folders, matching neither artist's archived post. Never shown for these events.
+const MISFILED = new Set([
+  'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/ngo-thanh-bac/ngo-1.jpg',
+  'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/ngo-thanh-bac/ngo-2.jpg',
+  'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/artist-in-residence-lai-dieu-ha/lai-1.jpg',
+  'https://pub-136b7c559e56403eb674c24e717611c6.r2.dev/motplus/events/artist-in-residence-lai-dieu-ha/lai-2.jpg',
+]);
 
 const VN_SURNAMES = new Set('nguyen tran le pham hoang huynh phan vu vo dang bui do ho ngo duong ly dinh lam luu truong mai ta chau lai dao cao ha ton thai kieu trinh quach la luong doan vuong tang au diep phung thach khuc quan tieu giang nghiem kim trieu lu mac ong hua cu lieu tong'.split(' '));
 /** Same rule as the Studio pre-fill (scripts/phase7-prefill-redesign-fields.mjs), for
@@ -251,7 +260,7 @@ async function build(): Promise<Catalogue> {
       if (img) { (img as Img & { key?: string }).key = u._key; ups.push(img); }
     }
     const legacyUrls = [...(e.legacyImageUrls ?? []), ...(jsonImagesBySlug.get(e.slug) ?? [])]
-      .filter((u: string) => u && /\.(jpe?g|png|webp|gif)(\?|$)/i.test(u) && !isJunkImage(u) && !isLogoName(u.split('/').pop()));
+      .filter((u: string) => u && !MISFILED.has(u) && /\.(jpe?g|png|webp|gif)(\?|$)/i.test(u) && !isJunkImage(u) && !isLogoName(u.split('/').pop()));
     const seenUrl = new Set(ups.map(i => i.url)), seenFile = new Set<string>();
     const legacy: Img[] = [];
     for (const u of legacyUrls) {
@@ -291,7 +300,7 @@ async function build(): Promise<Catalogue> {
   for (const j of jsonEvents) {
     if (!j.slug || seen.has(j.slug)) continue;
     seen.add(j.slug);
-    const images: Img[] = (jsonImagesBySlug.get(j.slug) ?? []).filter(u => !isLogoName(u.split('/').pop())).map(u => ({ url: u, poster: POSTER_NAME.test(u) }));
+    const images: Img[] = (jsonImagesBySlug.get(j.slug) ?? []).filter(u => !MISFILED.has(u) && !isLogoName(u.split('/').pop())).map(u => ({ url: u, poster: POSTER_NAME.test(u) }));
     const cover = images.find(i => !i.poster) ?? images[0] ?? null;
     events.push({
       _id: 'json:' + j.slug, slug: j.slug, title: j.title, vnTitle: j.vnTitle ?? null, dateISO: j.dateISO, endDateISO: j.endDateISO ?? null,

@@ -168,7 +168,7 @@ export default function ProfilesControls({ opts, total }: { opts: Opts; total: n
     <section className="c-sec" aria-label="results" style={{ marginTop: 14 }}>
       {!entries ? <p className="c-mono c-quiet">loading…</p>
         : matches.length === 0 ? <p className="c-mono c-quiet">nothing matches. <button type="button" className="mot-link" onClick={() => { clear(); setQuery(''); }}>clear</button></p>
-        : <div className="c-tiles">{matches.slice(0, shown).map(e => <PersonTile key={e.slug} e={e} terms={terms} />)}</div>}
+        : <div className="c-tiles c-bw">{matches.slice(0, shown).map(e => <PersonTile key={e.slug} e={e} terms={terms} />)}</div>}
       {entries && shown < matches.length && (
         <div className="c-more"><button type="button" className="mot-pill" onClick={() => setShown(s => s + BATCH)}>show more · {shown} of {matches.length}</button></div>
       )}
