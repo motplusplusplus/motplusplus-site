@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getTrashItemBySlug, getAllTrashItemSlugs, getAllPublicWorks } from "@/lib/sanity";
 import ArtistCreditLinks from "@/components/ArtistCreditLinks";
 import ShareButton from "@/components/work/ShareButton";
+import HeartButton from "@/components/ui/HeartButton";
 import WorkPageImages from "@/components/work/WorkPageImages";
 import ScaleDrawing from "@/components/work/ScaleDrawing";
 import RelatedRow from "@/components/work/RelatedRow";
@@ -122,6 +123,7 @@ export default async function TrashItemPage({ params }: { params: Promise<{ slug
               </>
             )}
             <ShareButton url={`${SITE}/trash/${slug}/`} title={`${work.title}, ${work.artist}`} />
+            <HeartButton id={`w:${slug}`} label={work.title} />
           </div>
         </div>
 

@@ -1,749 +1,293 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { PortableText } from "@portabletext/react";
-import { getArtist, getArtistSlugs, type Artist } from "@/lib/artists";
-import { getEventBySlug, getArtistBySlug, getAllSanityArtistSlugs, getEventsByArtistRef, getMotsoundPerformerEditions } from "@/lib/sanity";
-import { BIO_SLUGS, NON_RESIDENCY_BIO_SLUGS, residencyLabel } from "@/lib/events";
-import { computeBadges } from "@/lib/badges";
-import { isJunkImage } from "@/lib/junk-images";
-import PhotoCredit from "@/components/PhotoCredit";
-import { countryName } from "@/lib/countries";
-import { getAllStudios } from "@/lib/studios";
-import ArtistGallery from "./ArtistGallery";
-import ProfileWorks from "@/components/work/ProfileWorks";
-import WarmPage from "@/components/work/WarmPage";
-import { isAvailable, normalizeWork, type Work } from "@/lib/trashWork";
-import PartnerCredit from "@/components/PartnerCredit";
-import { extractBioFromEventDescription } from "@/lib/bioExtract";
-import type { Metadata } from "next";
-import { ogImage } from "@/lib/og";
-import { pickProfileFallbackImage, type ProfileFallbackImage } from "@/lib/profileImageFallback";
+/** /profiles/[slug] (2026-11-22 redesign). Portrait left, bio right on desktop;
+ *  stacked on phones. Bio shows ~120 words then "read more"; a fact block built
+ *  only from data we hold (empty items drop out); then available works, works,
+ *  media, events (3 cards + a timeline), links, related people, and the
+ *  correction link. Contact fields are never shown. */
+
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { getCatalogue, type CEvent, type Img, type Person } from '@/lib/catalogue';
+import { getAllStudios } from '@/lib/studios';
+import { residencyLabel, NON_RESIDENCY_BIO_SLUGS } from '@/lib/events';
+import { countryName } from '@/lib/countries';
+import { FOUNDER_SLUGS } from '@/lib/badges';
+import { DISCIPLINE_LABELS } from '@/lib/disciplines';
+import { toParas, plainOf } from '@/lib/prose';
+import { fold } from '@/lib/fold';
+import { isAvailable, type Work } from '@/lib/trashWork';
+import { ogImageUrl } from '@/lib/workImage';
+import WarmPage from '@/components/work/WarmPage';
+import ProfileWorks from '@/components/work/ProfileWorks';
+import { CImg, TypeCard, imgSrc } from '@/components/cat/Pieces';
+import Prose from '@/components/ui/Prose';
+import HeartButton from '@/components/ui/HeartButton';
+import Correction from '@/components/ui/Correction';
+import NotifyMe from '@/components/ui/NotifyMe';
+import GalleryGrid from '@/components/ui/GalleryGrid';
+import { PortraitButton, Timeline, Visited } from './ProfileIslands';
+
+const BIO_EVENT_SLUG: Record<string, string> = { 'alex-williams': 'pug-alex-williams' };
+const CONTACT = /^(mailto:|tel:|sms:)|wa\.me\/|zalo\.me\//i;
+
+export async function generateStaticParams() {
+  const c = await getCatalogue();
+  return c.people.map(p => ({ slug: p.slug }));
+}
+
+function describe(p: Person, c: Awaited<ReturnType<typeof getCatalogue>>): string {
+  const bio = plainOf(toParas(p.bio)).replace(/\s+/g, ' ').trim();
+  if (p.isLena) return `${p.name} in the MoTcyclopedia of MoT+++, Ho Chi Minh City.`;
+  if (bio.length > 60) return bio.length > 158 ? bio.slice(0, 155).replace(/\s+\S*$/, '') + '…' : bio;
+  const facts = [p.roles[0] ?? 'artist', p.programs.length ? `with MoT+++ (${p.programs.join(', ')})` : 'with MoT+++', p.eventSlugs.length ? `${p.eventSlugs.length} events` : '', p.nationalities.map(countryName).join(' / ')].filter(Boolean).join(', ');
+  return `${p.name}: ${facts}. MoTcyclopedia, MoT+++ Ho Chi Minh City.`.slice(0, 160);
+  void c;
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const artist = getArtist(slug);
-  const sanityArtist = await getArtistBySlug(slug);
-  const name = artist?.name || sanityArtist?.name || slug;
-  const altNames = (sanityArtist?.alternateNames as string[] | undefined) ?? [];
-  // Alternate names/nicknames included so search engines can match this page
-  // for either name an artist is known by, not just their primary display name.
-  const akaClause = altNames.length > 0 ? ` (also known as ${altNames.join(", ")})` : "";
-  const description = `${name}${akaClause}, artist featured in MoT+++ exhibitions and programs in Ho Chi Minh City, Vietnam.`;
-  const image = ogImage(sanityArtist?.portrait as string | undefined, name);
+  const c = await getCatalogue();
+  const p = c.peopleBySlug.get(slug);
+  if (!p) return {};
+  const tile = c.tiles.get(slug);
+  const description = describe(p, c);
+  const img = !p.isLena && tile ? { url: tile.img.url.startsWith('https://cdn.sanity.io/') ? `${tile.img.url}?w=1200&h=630&fit=crop&crop=focalpoint&fp-x=${tile.img.fx ?? 0.5}&fp-y=${tile.img.fy ?? 0.4}&fm=jpg&q=80` : tile.img.url, width: 1200, height: 630, alt: p.name } : { url: 'https://motplusplusplus.com/og-default.jpg', width: 1200, height: 630, alt: 'MoT+++' };
+  const title = p.aliases.length ? `${p.name} (${p.aliases[0]})` : p.name;
   return {
-    title: name,
+    title: `${title} · MoTcyclopedia`,
     description,
-    keywords: [name, ...altNames, "MoT+++", "Ho Chi Minh City artist", "Vietnam contemporary art"],
-    openGraph: {
-      title: `${name} | MoT+++`,
-      description,
-      url: `https://motplusplusplus.com/profiles/${slug}`,
-      images: [image],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${name} | MoT+++`,
-      description,
-      images: [image.url],
-    },
-    alternates: { canonical: `https://motplusplusplus.com/profiles/${slug}` },
+    openGraph: { title: `${title} · MoTcyclopedia · MoT+++`, description, url: `https://motplusplusplus.com/profiles/${slug}/`, images: [img], type: 'profile' },
+    twitter: { card: 'summary_large_image', title: `${title} · MoTcyclopedia`, description, images: [img.url] },
+    alternates: { canonical: `https://motplusplusplus.com/profiles/${slug}/` },
   };
 }
 
-export async function generateStaticParams() {
-  const localSlugs = getArtistSlugs();
-  const sanitySlugs = await getAllSanityArtistSlugs();
-  const all = new Set([...localSlugs, ...sanitySlugs]);
-  return Array.from(all).map(slug => ({ slug }));
-}
+const evMeta = (e: CEvent) => [e.year || '', e.category].filter(Boolean).join(' · ');
 
-/** "from: <source>" under (or over) a fallback image, so nobody reads it as a
- *  portrait. Internal link when the source has a page. */
-function FallbackCaption({ image, onDark }: { image: ProfileFallbackImage; onDark?: boolean }) {
-  const color = onDark ? "rgba(255,255,255,0.75)" : "var(--mot-text-quiet, #767676)";
-  const text = image.label;
+function EventCard({ e }: { e: CEvent }) {
   return (
-    <span style={{ fontSize: "11px", letterSpacing: "0.04em", color, fontWeight: 300 }}>
-      from:{" "}
-      {image.href ? (
-        <Link href={image.href} style={{ color, textDecoration: "underline" }}>{text}</Link>
-      ) : text}
-    </span>
+    <a className="c-card" href={`/events/${e.slug}/`}>
+      {e.cover ? <CImg img={e.cover} sizes="(min-width: 960px) 30vw, (min-width: 560px) 46vw, 92vw" alt="" /> : <TypeCard name={e.title} facts={evMeta(e)} />}
+      <span className="c-card-title">{e.title}</span>
+      <span className="c-card-meta c-mono c-quiet">{evMeta(e)}</span>
+    </a>
   );
 }
 
-export default async function ArtistPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const localArtist = getArtist(slug);
+  const c = await getCatalogue();
+  const p = c.peopleBySlug.get(slug);
+  if (!p) notFound();
+  const studios = await getAllStudios();
+  const studio = studios.find(s => s.hostSlug === slug);
+  const url = `https://motplusplusplus.com/profiles/${slug}/`;
 
-  // Always fetch Sanity artist (for _id, bio, and Sanity-ref events); fall back to local data
-  const isBioSlug = BIO_SLUGS.has(slug);
-  // Some profiles draw their documentation gallery from a differently-slugged bio
-  // event (consolidated duplicates). Map profile slug → bio-event slug.
-  const BIO_EVENT_SLUG: Record<string, string> = { "alex-williams": "pug-alex-williams" };
-  const bioEventSlug = BIO_EVENT_SLUG[slug] ?? slug;
-  const [sanityArtist, eventEntry, motsound, allStudios] = await Promise.all([
-    getArtistBySlug(slug),
-    isBioSlug ? getEventBySlug(bioEventSlug) : Promise.resolve(null),
-    getMotsoundPerformerEditions(),
-    getAllStudios(),
-  ]);
-  if (!localArtist && !sanityArtist) notFound();
+  // ── Lêna Bùi: the profile stays, noting only that she asked to be unincluded (S7) ──
+  if (p.isLena) {
+    return (
+      <>
+        <WarmPage />
+        <div className="c-wrap">
+          <div className="c-prof">
+            <div className="c-prof-portrait c-prof-type"><TypeCard name={p.name} big /></div>
+            <div>
+              <h1 className="c-prof-name">{p.name}</h1>
+              <Prose paras={toParas(p.bio)} />
+            </div>
+          </div>
+          <Correction pageTitle={p.name} />
+        </div>
+      </>
+    );
+  }
 
-  // Merge: Sanity wins per field, local fills only what Sanity doesn't have — reversed
-  // 2026-08-17 from "local wins, Sanity fills gaps". Sanity is where every piece of work
-  // this month landed; a local-JSON record existing at all used to blank out any Sanity
-  // portrait/links/images/instagram for that artist even when Sanity had them. collective/
-  // studioHost/curator/performancePlus stay local-only — no Sanity field to shadow, see
-  // the 2026-08-17 JSON-precedence report.
-  // Every Sanity link is shown (no cap). Instagram URLs in links[] join the
-  // instagram list; the instagram field may hold several handles separated by
-  // commas or spaces. 2026-11-12: profiles previously showed only links[0].
-  const sanityLinkList = ((sanityArtist?.links as { label?: string; url?: string }[] | undefined) ?? [])
-    .filter((l) => l?.url);
-  const igFromLinks = sanityLinkList
-    .map((l) => l.url!.match(/instagram\.com\/([A-Za-z0-9_.]+)/i)?.[1])
-    .filter((h): h is string => !!h);
-  const webLinks = sanityLinkList.filter((l) => !/instagram\.com\//i.test(l.url!));
-  const sanityWebsite = webLinks[0]?.url?.replace(/^https?:\/\//, "");
-  const igField = ((sanityArtist?.instagram as string | undefined) ?? "")
-    .split(/[\s,]+/).map((h) => h.replace(/^@/, "")).filter(Boolean);
-  const igAll = Array.from(new Set([...igField, ...igFromLinks]));
-  const sanityInstagram = igAll.length ? igAll : undefined;
-  const linkLabel = (l: { label?: string; url?: string }) => {
-    const generic = !l.label || /^(website|web|site|homepage|link)$/i.test(l.label.trim());
-    return generic
-      ? l.url!.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")
-      : l.label!.toLowerCase();
-  };
-  const artist: Artist = {
-    slug,
-    name:       (sanityArtist?.name as string) || localArtist?.name || slug,
-    collective: localArtist?.collective ?? false,
-    resident:   !!(sanityArtist?.isAfarmResident) || !!localArtist?.resident,
-    studioHost: localArtist?.studioHost ?? false,
-    curator:    localArtist?.curator,
-    performancePlus: localArtist?.performancePlus,
-    origin:     ([sanityArtist?.originCity, ...((sanityArtist?.nationalities as string[] | undefined) ?? []).map(countryName)] as (string | undefined)[])
-                  .filter(Boolean).join(", ") || localArtist?.origin || "",
-    website:    sanityWebsite || localArtist?.website || "",
-    instagram:  sanityInstagram ?? localArtist?.instagram,
-    bio:        localArtist?.bio ?? "", // unused for rendering — see bioText/ptBio below
-    photo:      (sanityArtist?.portrait as string) || localArtist?.photo || "",
-    workImages: (sanityArtist?.images as string[] | undefined)?.length
-                  ? (sanityArtist!.images as string[])
-                  : (localArtist?.workImages ?? []),
-  };
+  const bioEvent = c.eventsBySlug.get(BIO_EVENT_SLUG[slug] ?? slug);
+  const residency = bioEvent?.isBioPage && !NON_RESIDENCY_BIO_SLUGS.has(slug) ? bioEvent.displayDate : '';
+  const events = p.eventSlugs.map(s => c.eventsBySlug.get(s)!).filter(Boolean);
+  const works = (c.worksByPerson.get(slug) ?? []).filter(w => !!w.slug);
+  const available = works.filter(w => isAvailable(w) && w.images.length > 0);
+  const others = works.filter(w => !isAvailable(w));
+  const tile = c.tiles.get(slug) ?? null;
+  const paras = toParas(p.bio);
 
-  // Credits align by index with artist.workImages only when those came from Sanity.
-  const workImageCredits: (string | null)[] | undefined =
-    (sanityArtist?.images as string[] | undefined)?.length
-      ? ((sanityArtist!.imageCredits as (string | null)[] | null | undefined) ?? undefined)
-      : undefined;
-  const fromSanity = !!(sanityArtist?.images as string[] | undefined)?.length;
-  const workImageCaptions = fromSanity ? ((sanityArtist!.imageCaptions as (string | null)[] | null | undefined) ?? undefined) : undefined;
-  const workImageAlts = fromSanity ? ((sanityArtist!.imageAlts as (string | null)[] | null | undefined) ?? undefined) : undefined;
+  // photos for the viewer: portrait first, then their own images, then the bio event's documentation
+  const photos: Img[] = [];
+  const seen = new Set<string>();
+  for (const i of [...(p.portrait ? [p.portrait] : []), ...p.photos, ...(bioEvent?.isBioPage ? bioEvent.images.filter(i => !i.poster) : [])]) {
+    if (!seen.has(i.url)) { seen.add(i.url); photos.push(i); }
+  }
+  const lead = p.portrait ?? tile?.img ?? null;
+  const viewer = lead && !photos.some(i => i.url === lead.url) ? [lead, ...photos] : photos;
+  // the strip: every photo except the one already shown large at the top (kept in viewer order)
+  const ownPhotos = viewer.slice(viewer[0]?.url === lead?.url ? 1 : 0);
 
-  // No portrait (Sanity or local photo) → borrow an image from their events, works
-  // or a.Farm studio, captioned with its source. Display only; nothing is written
-  // back to Sanity. See lib/profileImageFallback.ts for the order and tie-breaks.
-  const fallbackImage = artist.photo ? null : pickProfileFallbackImage(sanityArtist, isJunkImage);
-  const heroImage = artist.photo || fallbackImage?.url || "";
-  // Photographer credit for the portrait: only when the portrait is the Sanity one.
-  const portraitCredit: string | null = sanityArtist?.portrait ? ((sanityArtist.portraitCredit as string | null) ?? null) : null;
-  const heroAlt = artist.photo ? artist.name : `${artist.name}, image from ${fallbackImage?.label ?? ""}`;
+  // media: videos from their events and their own links
+  const media: (Img & { video: string })[] = [];
+  const seenV = new Set<string>();
+  for (const e of events) for (const v of e.videos) if (!seenV.has(v)) { seenV.add(v); media.push({ url: '', video: v, caption: e.title }); }
+  for (const l of p.links) if (/youtu\.?be|vimeo\.com/.test(l.url) && !seenV.has(l.url)) { seenV.add(l.url); media.push({ url: '', video: l.url, caption: l.label || p.name }); }
+  const recordings = events.filter(e => e.bandcampAlbumId);
 
-  const rawSanityBio = sanityArtist?.bio;
-  const ptBio = Array.isArray(rawSanityBio) ? rawSanityBio as any[] : null;
-  // Bio-page events carry no heading to extract from — the funder-credit template
-  // paragraph is the boundary. See lib/bioExtract.ts.
-  const eventBioText = eventEntry?.description
-    ? extractBioFromEventDescription(eventEntry.description, artist.name)
-    : '';
-  // Sanity bio wins first (portable-text via usePtBio below, or plain string here), then
-  // local JSON, then the bio-page event's leftover announcement text last. Flipped
-  // 2026-08-17 alongside the rest of the artist-object merge — local no longer blocks a
-  // Sanity bio just by existing (e.g. Linh Lê's current Sanity bio now wins over her
-  // older local-JSON one).
-  const bioText = (typeof rawSanityBio === 'string' ? rawSanityBio : '') || (localArtist?.bio ?? '') || eventBioText;
-  const usePtBio = ptBio !== null;
-  const hasBio = usePtBio || bioText.length > 0;
-  // The bio event's date is shown as "residency"; not for a bio page that isn't one.
-  const displayDate = NON_RESIDENCY_BIO_SLUGS.has(slug) ? "" : eventEntry?.displayDate || "";
+  // links: never contact details; instagram handles from the field and the list
+  const igHandles = new Set<string>();
+  for (const h of (p.instagram ?? '').split(/[\s,]+/)) { const x = h.replace(/^@|https?:\/\/(www\.)?instagram\.com\//g, '').replace(/\/.*$/, ''); if (x) igHandles.add(x); }
+  const links = p.links.filter(l => !CONTACT.test(l.url) && !/instagram\.com\//i.test(l.url) && !/youtu\.?be|vimeo\.com/.test(l.url));
+  for (const l of p.links) { const m = l.url.match(/instagram\.com\/([A-Za-z0-9_.]+)/i); if (m) igHandles.add(m[1]); }
 
-  // Gallery images from the bio event entry (documentation photos), junk-filtered
-  const eventGallery = (eventEntry?.images ?? []).filter(url => !isJunkImage(url));
+  // facts (P6): only what we hold
+  const facts: React.ReactNode[] = [];
+  if (p.sinceYear || events.length) facts.push(<>{p.sinceYear ? <>with MoT+++ since <b>{p.sinceYear}</b></> : 'with MoT+++'}{events.length ? <> · <b>{events.length}</b> event{events.length === 1 ? '' : 's'}</> : null}</>);
+  if (residency) facts.push(<>residency · <b>{residencyLabel(slug, residency)}</b></>);
+  if (bioEvent?.isBioPage && bioEvent.partners.length) facts.push(<>partners · {bioEvent.partners.map((x, i) => <span key={x.name}>{i ? ', ' : ''}{x.url ? <a href={x.url} target="_blank" rel="noopener noreferrer">{x.name}</a> : x.name}</span>)}</>);
+  if (p.roles.length) facts.push(<>{p.roles.join(' · ')}</>);
+  if (p.programs.length) facts.push(<>{p.programs.join(' · ')}</>);
+  if (p.originCity || p.nationalities.length) facts.push(<>{[p.originCity ? `from ${p.originCity}` : '', p.nationalities.map(countryName).join(' · ').toLowerCase()].filter(Boolean).join(' · ')}</>);
+  if (p.basedIn) facts.push(<>based in {[p.basedIn.city, p.basedIn.country ? countryName(p.basedIn.country) : null].filter(Boolean).join(', ')}</>);
+  if (p.disciplines.length) facts.push(<>{p.disciplines.map(d => DISCIPLINE_LABELS[d]).join(' · ')}</>);
+  if (p.deathYear) facts.push(<>{p.birthYear ? `${p.birthYear}–${p.deathYear}` : `d. ${p.deathYear}`}</>);
+  if (p.pronouns) facts.push(<>{p.pronouns}</>);
+  const MEMBER: Record<string, string> = { founder: 'founding member', member: 'member', former: 'former member', associated: 'associated with' };
+  const memberLine = (role?: string | null, since?: string | null) => [role ? MEMBER[role] ?? role : 'member', since ? `since ${since}` : ''].filter(Boolean).join(', ');
+  for (const col of p.collectives) facts.push(<>{memberLine(col.role, col.since)} of <a href={`/profiles/${col.slug}/`}>{col.name}</a></>);
+  if (p.roster.length) facts.push(<>members: {p.roster.map((m, i) => <span key={m._id}>{i ? ', ' : ''}<a href={`/profiles/${m.slug}/`}>{m.name}</a> ({memberLine(m.role, m.since)})</span>)}</>);
+  // labels the old profile carried that live outside the data (lib/badges.ts)
+  if (FOUNDER_SLUGS.has(slug)) facts.unshift(<>founder / director</>);
+  if (slug === 'cam-xanh') facts.push(<>+1 direct experience</>);
+  if (studio) facts.push(<>hosting artist · <a href={`/afarm/studios/${studio.slug}/`}>view studio</a></>);
 
-  const sanityArtistId = sanityArtist?._id as string | undefined;
-  const relatedEvents = sanityArtistId ? await getEventsByArtistRef(sanityArtistId) : [];
+  // related (P8): shared disciplines → shared roles and programs; favour available works
+  const related = c.people
+    .filter(o => o.slug !== slug && !o.isLena)
+    .map(o => {
+      const d = o.disciplines.filter(x => p.disciplines.includes(x)).length * 3;
+      const r = o.roles.filter(x => p.roles.includes(x) && x !== 'artist').length + o.programs.filter(x => p.programs.includes(x)).length;
+      const coEvent = o.eventSlugs.some(s => p.eventSlugs.includes(s)) ? 1 : 0;
+      const avail = (c.worksByPerson.get(o.slug) ?? []).some(w => isAvailable(w)) ? 1.5 : 0;
+      const img = c.tiles.get(o.slug) ? 1 : 0;
+      return { o, s: d + r + coEvent + avail + img };
+    })
+    .filter(x => x.s >= 2)
+    .sort((a, b) => b.s - a.s || a.o.sortKey.localeCompare(b.o.sortKey))
+    .slice(0, 8);
 
-  // Works crediting this artist (artistRef or artists[]), newest first. Two
-  // sections: available +1 trash works, then "works": every other active work
-  // with a page, i.e. sold ones and not-for-sale profile listings (2026-11-22;
-  // any artist can have any work listed on request: a notForSale trashItem).
-  const profileWorks = ((sanityArtist?.trashItems as unknown[] | undefined) ?? [])
-    .map((r, i) => normalizeWork(r, i))
-    .filter((w): w is Work => !!w && !!w.slug);
-  const availableTrashWorks = profileWorks.filter(w => isAvailable(w) && w.images.length > 0);
-  const otherWorks = profileWorks.filter(w => !isAvailable(w));
-
-  const studio = allStudios.find(s => s.hostSlug === slug);
-  // Deceased dates come from the Sanity artist's deathYear/birthYear fields.
-  // Shows "birthYear–deathYear" when both exist, or just the death year alone.
-  const deathYear = sanityArtist?.deathYear as number | undefined;
-  const birthYear = sanityArtist?.birthYear as number | undefined;
-  const deceasedDates = deathYear
-    ? (birthYear ? `${birthYear}–${deathYear}` : `${deathYear}`)
-    : undefined;
-  const isDavidWillis = slug === "david-willis";
-  const isCamXanh = slug === "cam-xanh";
-
-  // Collective membership — see schemaTypes/artistMembership.ts. "collectives" is this
-  // artist's own writable list of groups they belong to; "collectiveRoster" is the
-  // derived (never stored) member list rendered only when THIS artist page is itself a
-  // collective with members pointing at it. Both are empty/undefined for an artist with
-  // no membership on either side, which is the common case.
-  type CollectiveMembership = {
-    role?: string; since?: string;
-    collective?: { _id: string; name: string; slug?: string; active?: boolean } | null;
-  };
-  type RosterMember = {
-    _id: string; name: string; slug?: string; active?: boolean;
-    membership?: { role?: string; since?: string } | null;
-  };
-  const collectives = ((sanityArtist?.collectives as CollectiveMembership[] | undefined) ?? [])
-    .filter(m => m.collective && m.collective.slug);
-  const collectiveRoster = ((sanityArtist?.collectiveRoster as RosterMember[] | undefined) ?? [])
-    .filter(m => m.slug);
-  const MEMBERSHIP_ROLE_LABEL: Record<string, string> = {
-    founder: "founding member",
-    member: "member",
-    former: "former member",
-    associated: "associated",
-  };
-
-  const displayName = artist.name;
-  const alternateNames = (sanityArtist?.alternateNames as string[] | undefined) ?? [];
-
-  const badges = computeBadges({
-    slug,
-    role: (sanityArtist?.role as string | undefined) ?? (artist.curator ? "curator" : null),
-    hasResidency: !!sanityArtist?.residencyStartDate || !!sanityArtist?.isAfarmResident || artist.resident,
-    isPerformancePlus: !!artist.performancePlus,
-    motsoundEditions: motsound[slug],
-  }).bioBadges;
-  if (isCamXanh) badges.push("+1 direct experience");
-
-  // Structured data (schema.org Person) so search engines can index this
-  // artist's name(s) directly against the page, not just plain meta tags.
   const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: displayName,
-    ...(alternateNames.length > 0 ? { alternateName: alternateNames } : {}),
-    url: `https://motplusplusplus.com/profiles/${slug}`,
-    ...(artist.photo ? { image: artist.photo } : {}),
-    jobTitle: "Artist",
-    memberOf: { "@type": "Organization", name: "MoT+++", url: "https://motplusplusplus.com" },
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: p.name,
+    ...(p.aliases.length ? { alternateName: p.aliases } : {}),
+    url,
+    ...(lead ? { image: imgSrc(lead, 1200) } : {}),
+    ...(paras.length ? { description: plainOf(paras).slice(0, 500) } : {}),
+    ...(p.nationalities.length ? { nationality: p.nationalities.map(n => ({ '@type': 'Country', name: countryName(n) })) } : {}),
+    ...(p.disciplines.length ? { knowsAbout: p.disciplines.map(d => DISCIPLINE_LABELS[d]) } : {}),
+    ...(p.birthYear ? { birthDate: String(p.birthYear) } : {}),
+    ...(p.deathYear ? { deathDate: String(p.deathYear) } : {}),
+    ...(links.length || igHandles.size ? { sameAs: [...links.map(l => l.url), ...[...igHandles].map(h => `https://www.instagram.com/${h}`)] } : {}),
+    affiliation: { '@type': 'Organization', name: 'MoT+++', url: 'https://motplusplusplus.com' },
+    ...(works.length ? {
+      workExample: works.slice(0, 20).map((w: Work) => ({
+        '@type': 'VisualArtwork', name: w.title, url: `https://motplusplusplus.com/trash/${w.slug}/`,
+        ...(w.year ? { dateCreated: String(w.year) } : {}), ...(w.medium ? { artMedium: w.medium } : {}),
+        ...(w.images[0] ? { image: w.images[0].url.startsWith('https://cdn.sanity.io/') ? ogImageUrl(w.images[0].url) : w.images[0].url } : {}),
+      })),
+    } : {}),
   };
 
+  const recent = events.slice(0, 3);
+  // aliases that differ only by diacritics or word order read as one name: show the first of each
+  const seenA = new Set<string>([fold(p.name).split(/\s+/).sort().join(' ')]);
+  const shownAliases = p.aliases.filter(a => { const k = fold(a).split(/\s+/).sort().join(' '); if (seenA.has(k)) return false; seenA.add(k); return true; }).slice(0, 2);
   return (
     <>
-      <script
-        type="application/ld+json"
-        // JSON.stringify doesn't escape "</script>" sequences; replacing "<"
-        // keeps this safe to inline even if a name ever contains one.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-      />
-      {/* page-colour marker: warm off-white page + header (globals.css) */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       <WarmPage />
-      {/* hero — mobile only; desktop uses the framed-portrait block below instead */}
-      <div className="profile-hero-mobile-only" style={{
-        position: "relative",
-        width: "100%", height: "55vh", minHeight: "360px",
-        overflow: "hidden", backgroundColor: "#111111",
-      }}>
-        {heroImage ? (
-          <img
-            src={heroImage}
-            alt={heroAlt}
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.72 }}
-          />
-        ) : null}
-        {fallbackImage && (
-          <div style={{ position: "absolute", top: "14px", right: "16px", left: "16px", textAlign: "right", zIndex: 1 }}>
-            <FallbackCaption image={fallbackImage} onDark />
-          </div>
-        )}
-        {!fallbackImage && portraitCredit && (
-          <div style={{ position: "absolute", top: "14px", right: "16px", left: "16px", textAlign: "right", zIndex: 1 }}>
-            <PhotoCredit name={portraitCredit} onDark />
-          </div>
-        )}
-        <div style={{
-          position: "absolute", inset: 0,
-          background: heroImage
-            ? "linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.78) 100%)"
-            : "none",
-          display: "flex", flexDirection: "column", justifyContent: "flex-end",
-          padding: "clamp(24px, 4vw, 56px)",
-        }}>
-          {/* badges */}
-          {badges.length > 0 && (
-            <div style={{ display: "flex", gap: "12px", marginBottom: "14px", flexWrap: "wrap" }}>
-              {badges.map(b => {
-                const isFounderBadge = b === "founder/director";
-                return (
-                  <span key={b} style={{
-                    fontSize: "10px", letterSpacing: "0.1em",
-                    color: isFounderBadge ? "#ff6b5e" : "rgba(255,255,255,0.5)",
-                    border: isFounderBadge ? "1px solid rgba(255,107,94,0.6)" : "1px solid rgba(255,255,255,0.2)",
-                    padding: "3px 8px",
-                  }}>
-                    {b}
-                  </span>
-                );
-              })}
-            </div>
-          )}
-          <h1 style={{
-            fontSize: "clamp(26px, 4.5vw, 56px)",
-            fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.02em",
-            color: deceasedDates ? "rgba(255,255,255,0.7)" : "#ffffff",
-            fontStyle: deceasedDates ? "italic" : "normal",
-          }}>
-            {displayName}
-          </h1>
-          {alternateNames.length > 0 && (
-            <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.45)", marginTop: "8px", fontWeight: 300 }}>
-              {alternateNames.join(", ")}
-            </p>
-          )}
-          {deceasedDates ? (
-            <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", marginTop: "8px", fontWeight: 300 }}>
-              {deceasedDates}
-            </p>
-          ) : artist.origin && (
-            <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.45)", marginTop: "10px", fontWeight: 300 }}>
-              {artist.origin}
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "52px 24px 96px" }}>
-
-        {/* breadcrumb + hosting artist badge */}
-        <div style={{ marginBottom: "52px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
-          <Link href="/profiles" style={{ fontSize: "12px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.06em" }}>
-            ← profiles
-          </Link>
-          {studio && (
-            <Link
-              href={`/afarm/studios/${studio.slug}`}
-              style={{
-                fontSize: "11px",
-                color: "#ffffff",
-                backgroundColor: "#111111",
-                letterSpacing: "0.08em",
-                padding: "6px 14px",
-                textDecoration: "none",
-              }}
-            >
-              hosting artist — view studio ↗
-            </Link>
-          )}
-        </div>
-
-        {/* framed portrait + identity — desktop only; mobile uses the full-bleed
-            hero above instead. A bio photo reads better as a contained portrait
-            beside the name than as a viewport-wide banner. */}
-        <div className="profile-hero-desktop-only" style={{
-          gridTemplateColumns: "1fr minmax(220px, 340px)",
-          gap: "48px",
-          alignItems: "start",
-          marginBottom: "56px",
-        }}>
+      <Visited item={{ id: `a:${slug}`, href: `/profiles/${slug}/`, title: p.name, thumb: tile ? imgSrc(tile.img, 96) : null }} />
+      <div className="c-wrap">
+        <div className="c-prof">
           <div>
-            {badges.length > 0 && (
-              <div style={{ display: "flex", gap: "12px", marginBottom: "14px", flexWrap: "wrap" }}>
-                {badges.map(b => {
-                  const isFounderBadge = b === "founder/director";
-                  return (
-                    <span key={b} style={{
-                      fontSize: "10px", letterSpacing: "0.1em",
-                      color: isFounderBadge ? "#ff6b5e" : "#999999",
-                      border: isFounderBadge ? "1px solid rgba(255,107,94,0.5)" : "1px solid #dddddd",
-                      padding: "3px 8px",
-                    }}>
-                      {b}
-                    </span>
-                  );
-                })}
-              </div>
-            )}
-            {/* h2, not h1 -- the mobile hero above already has the page's one
-                real h1; both blocks are always in the DOM (CSS display-toggled
-                by viewport, not conditionally rendered), so using h1 here too
-                would put two h1 elements on every profile page. */}
-            <h2 style={{
-              fontSize: "clamp(26px, 4.5vw, 56px)",
-              fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.02em",
-              color: deceasedDates ? "#999999" : "#111111",
-              fontStyle: deceasedDates ? "italic" : "normal",
-            }}>
-              {displayName}
-            </h2>
-            {alternateNames.length > 0 && (
-              <p style={{ fontSize: "13px", color: "var(--mot-text-quiet, #767676)", marginTop: "8px", fontWeight: 300 }}>
-                {alternateNames.join(", ")}
-              </p>
-            )}
-            {deceasedDates ? (
-              <p style={{ fontSize: "13px", color: "var(--mot-text-quiet, #767676)", marginTop: "8px", fontWeight: 300 }}>
-                {deceasedDates}
-              </p>
-            ) : artist.origin && (
-              <p style={{ fontSize: "13px", color: "var(--mot-text-quiet, #767676)", marginTop: "10px", fontWeight: 300 }}>
-                {artist.origin}
-              </p>
-            )}
+            {lead
+              ? <PortraitButton photos={viewer} name={p.name}><CImg img={lead} sizes="(min-width: 900px) 40vw, 92vw" alt={`${p.name}${tile?.from === 'portrait' ? '' : ', image from their work at MoT+++'}`} priority minFill={300} /></PortraitButton>
+              : <div className="c-prof-portrait c-prof-type"><TypeCard name={p.name} facts={[p.roles[0], p.sinceYear ? `since ${p.sinceYear}` : ''].filter(Boolean).join(' · ')} big /></div>}
+            {lead?.credit && <p className="c-mono c-quiet" style={{ marginTop: 6 }}>photo: {lead.credit}</p>}
           </div>
-          {heroImage && (
-            <figure style={{ margin: 0, width: "100%", maxWidth: "340px" }}>
-              <img
-                src={heroImage}
-                alt={heroAlt}
-                style={{
-                  width: "100%", maxWidth: "340px", maxHeight: "420px",
-                  objectFit: "contain", display: "block",
-                  border: "1px solid #e5e5e5", backgroundColor: "#f5f5f5",
-                }}
-              />
-              {fallbackImage && (
-                <figcaption style={{ marginTop: "8px" }}>
-                  <FallbackCaption image={fallbackImage} />
-                </figcaption>
-              )}
-              {!fallbackImage && portraitCredit && (
-                <figcaption style={{ marginTop: "8px" }}>
-                  <PhotoCredit name={portraitCredit} />
-                </figcaption>
-              )}
-            </figure>
-          )}
+          <div>
+            <h1 className="c-prof-name">{p.name}</h1>
+            {shownAliases.length > 0 && <p className="c-prof-alias c-mono c-quiet">also {shownAliases.join(' · ')}</p>}
+            <div className="c-prof-actions">
+              <HeartButton id={`a:${slug}`} label={p.name} />
+            </div>
+            {paras.length > 0 && <div style={{ marginTop: 14 }}><Prose paras={paras} limit={120} /></div>}
+            {facts.length > 0 && <ul className="c-facts" aria-label="facts">{facts.map((f, i) => <li key={i}>{f}</li>)}</ul>}
+          </div>
         </div>
 
-        {/* metadata strip */}
-        {(displayDate || artist.website || (artist.instagram && artist.instagram.length > 0) || collectives.length > 0) && (
-          <div style={{
-            display: "flex", flexWrap: "wrap", gap: "40px",
-            borderBottom: "1px solid #e5e5e5", paddingBottom: "40px", marginBottom: "56px",
-          }}>
-            {displayDate && (
-              <div>
-                <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.1em", marginBottom: "6px" }}>
-                  residency
-                </p>
-                <p style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}>{residencyLabel(slug, displayDate)}</p>
-              </div>
-            )}
-            {webLinks.length > 0 ? (
-              <div>
-                <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.1em", marginBottom: "6px" }}>
-                  {webLinks.length > 1 ? "links" : "website"}
-                </p>
-                {webLinks.map((l, i) => (
-                  <a
-                    key={`${l.url}-${i}`}
-                    href={/^https?:\/\//.test(l.url!) ? l.url : `https://${l.url}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontSize: "15px", fontWeight: 300, color: "#333333", display: "block" }}
-                  >
-                    {linkLabel(l)}
-                  </a>
-                ))}
-              </div>
-            ) : artist.website && (
-              <div>
-                <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.1em", marginBottom: "6px" }}>
-                  website
-                </p>
-                <a
-                  href={`https://${artist.website}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ fontSize: "15px", fontWeight: 300, color: "#333333" }}
-                >
-                  {artist.website}
-                </a>
-              </div>
-            )}
-            {artist.instagram && artist.instagram.length > 0 && (
-              <div>
-                <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.1em", marginBottom: "6px" }}>
-                  instagram
-                </p>
-                {artist.instagram.map((handle) => {
-                  const h = handle.replace(/^@/, "");
-                  return (
-                    <a
-                      key={h}
-                      href={`https://instagram.com/${h}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ fontSize: "15px", fontWeight: 300, color: "#333333", display: "block" }}
-                    >
-                      @{h}
-                    </a>
-                  );
-                })}
-              </div>
-            )}
-            {collectives.length > 0 && (
-              <div>
-                <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.1em", marginBottom: "6px" }}>
-                  member of
-                </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  {collectives.map(({ collective, role }) => {
-                    const label = role && MEMBERSHIP_ROLE_LABEL[role] && MEMBERSHIP_ROLE_LABEL[role] !== "member"
-                      ? `${collective!.name} (${MEMBERSHIP_ROLE_LABEL[role]})`
-                      : collective!.name;
-                    const style = { fontSize: "15px", fontWeight: 300, color: "#333333" } as const;
-                    return collective!.active ? (
-                      <Link key={collective!._id} href={`/profiles/${collective!.slug}`} style={style}>
-                        {label}
-                      </Link>
-                    ) : (
-                      <span key={collective!._id} style={style}>{label}</span>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
+        {available.length > 0 && <div className="c-sec"><ProfileWorks title="+1 trash · available" works={available} /><div style={{ marginTop: 6 }}><NotifyMe artist={p.name} /></div></div>}
+        {available.length === 0 && others.length > 0 && <div className="c-sec"><NotifyMe artist={p.name} /></div>}
+        {others.length > 0 && <div className="c-sec"><ProfileWorks title="works" works={others} /></div>}
+
+        {ownPhotos.length > 0 && (
+          <section className="c-sec" aria-labelledby="pp-h">
+            <div className="c-sec-h"><h2 id="pp-h">photos · {ownPhotos.length}</h2></div>
+            <GalleryGrid items={ownPhotos} all={viewer} offset={viewer.length - ownPhotos.length} title={`${p.name}: photos`} className="c-strip" autoOpen={false} captions />
+          </section>
         )}
 
-        {/* bio */}
-        {hasBio && (
-          <div style={{ maxWidth: "680px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.08em", marginBottom: "28px" }}>
-              practice
-            </p>
-            {usePtBio ? (
-              <PortableText
-                value={ptBio!}
-                components={{
-                  block: {
-                    normal: ({ children }) => (
-                      <p style={{ fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px" }}>
-                        {children}
-                      </p>
-                    ),
-                  },
-                  marks: {
-                    link: ({ children, value }) => (
-                      <a
-                        href={value?.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: "#444444", textDecoration: "underline" }}
-                      >
-                        {children}
-                      </a>
-                    ),
-                  },
-                }}
-              />
-            ) : (
-              bioText.split(/\n{2,}/).filter(Boolean).map((para, i) => (
-                <p key={i} style={{
-                  fontSize: "15px", lineHeight: 1.85, color: "#444444", marginBottom: "20px",
-                }}>
-                  {para.trim()}
-                </p>
-              ))
-            )}
-            {isDavidWillis && (
-              <Link
-                href="/afarm/retreat"
-                style={{
-                  display: "inline-block",
-                  fontSize: "13px",
-                  color: "#111111",
-                  borderBottom: "1px solid #111111",
-                  paddingBottom: "2px",
-                  marginTop: "8px",
-                }}
-              >
-                a.farm saigon artist intensive retreat — aug. 22–28, 2026 →
-              </Link>
-            )}
-            {isCamXanh && (
-              <Link
-                href="/directexperience"
-                style={{
-                  display: "inline-block",
-                  fontSize: "13px",
-                  color: "#111111",
-                  borderBottom: "1px solid #111111",
-                  paddingBottom: "2px",
-                  marginTop: "8px",
-                }}
-              >
-                +1 direct experience →
-              </Link>
-            )}
-          </div>
+        {(media.length > 0 || recordings.length > 0) && (
+          <section className="c-sec" aria-labelledby="pm-h">
+            <div className="c-sec-h"><h2 id="pm-h">media</h2></div>
+            {media.length > 0 && <GalleryGrid items={media} title={`${p.name}: media`} className="c-strip" autoOpen={false} />}
+            {recordings.length > 0 && <ul className="c-links" style={{ marginTop: 8 }}>{recordings.map(e => <li key={e.slug}><a className="mot-link c-mono" href={`/events/${e.slug}/`}>listen: {e.title}</a></li>)}</ul>}
+          </section>
         )}
 
-        <PartnerCredit partners={eventEntry?.partners ?? []} />
+        {events.length > 0 && (
+          <section className="c-sec" aria-labelledby="pe-h">
+            <div className="c-sec-h"><h2 id="pe-h">events · {events.length}</h2></div>
+            <div className="c-cards">{recent.map(e => <EventCard key={e.slug} e={e} />)}</div>
+            {events.length > 3 && (
+              <div style={{ marginTop: 22 }}>
+                <Timeline rows={events.slice(3).map(e => ({
+                  slug: e.slug, year: e.year, title: e.title,
+                  role: (e.credits.find(cr => cr.person._id === p._id)?.role ?? 'artist'),
+                  thumb: e.cover ? { url: e.cover.url, w: e.cover.w, h: e.cover.h, fx: e.cover.fx, fy: e.cover.fy } : null,
+                }))} />
+              </div>
+            )}
+          </section>
+        )}
 
-        {/* members — derived roster, rendered only when other artists' memberOf[] points
-            at this profile. Never stored on this document; see the ^.^ note on
-            collectiveRoster in lib/sanity.ts. */}
-        {collectiveRoster.length > 0 && (
-          <div style={{ maxWidth: "680px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.08em", marginBottom: "28px" }}>
-              members
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {collectiveRoster.map((m) => {
-                const role = m.membership?.role;
-                const since = m.membership?.since;
-                const roleLabel = role ? MEMBERSHIP_ROLE_LABEL[role] ?? role : undefined;
-                const suffix = [roleLabel, since ? `since ${since}` : null].filter(Boolean).join(", ");
-                const nameStyle = { fontSize: "15px", fontWeight: 300, color: "#333333" } as const;
+        {(links.length > 0 || igHandles.size > 0) && (
+          <section className="c-sec" aria-labelledby="pl-h">
+            <div className="c-sec-h"><h2 id="pl-h">links</h2></div>
+            <ul className="c-links">
+              {links.map(l => {
+                const domain = l.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+                const generic = !l.label || /^(website|web|site|link|homepage|portfolio)$/i.test(l.label.trim());
+                return <li key={l.url}><a className="mot-link c-mono" href={l.url} target="_blank" rel="noopener noreferrer">{generic ? domain : `${l.label.toLowerCase()} · ${domain.split('/')[0]}`}</a></li>;
+              })}
+              {[...igHandles].map(h => <li key={h}><a className="mot-link c-mono" href={`https://www.instagram.com/${h}/`} target="_blank" rel="noopener noreferrer">instagram @{h}</a></li>)}
+            </ul>
+          </section>
+        )}
+
+        {related.length > 0 && (
+          <section className="c-sec" aria-labelledby="pr-h">
+            <div className="c-sec-h"><h2 id="pr-h">related</h2></div>
+            <div className="c-row">
+              {related.map(({ o }) => {
+                const t = c.tiles.get(o.slug);
                 return (
-                  <div key={m._id}>
-                    {m.active ? (
-                      <Link href={`/profiles/${m.slug}`} style={nameStyle}>{m.name}</Link>
-                    ) : (
-                      <span style={nameStyle}>{m.name}</span>
-                    )}
-                    {suffix && (
-                      <span style={{ fontSize: "13px", color: "var(--mot-text-quiet, #767676)" }}> — {suffix}</span>
-                    )}
-                  </div>
+                  <a key={o.slug} className="c-tile" href={`/profiles/${o.slug}/`}>
+                    {t ? <CImg img={t.img} sizes="(min-width: 760px) 18vw, 42vw" alt="" /> : <TypeCard name={o.name} facts={o.roles[0] ?? ''} />}
+                    <span className="c-tile-name">{o.name}</span>
+                  </a>
                 );
               })}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* +1 trash — available works, then every other listed work */}
-        {availableTrashWorks.length > 0 && <ProfileWorks title="+1 trash · available" works={availableTrashWorks} />}
-        {otherWorks.length > 0 && <ProfileWorks title="works" works={otherWorks} />}
-
-        {/* work images (collective members) */}
-        {artist.workImages.length > 0 && (
-          <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.08em", marginBottom: "32px" }}>
-              work
-            </p>
-            <ArtistGallery images={artist.workImages} artistName={artist.name} credits={workImageCredits} captions={workImageCaptions} alts={workImageAlts} />
-          </div>
-        )}
-
-        {/* documentation gallery from bio event entry (a.Farm residents) */}
-        {eventGallery.length > 0 && (
-          <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.08em", marginBottom: "32px" }}>
-              documentation
-            </p>
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: "8px",
-            }}>
-              {eventGallery.map((img, i) => (
-                <div key={i} style={{
-                  width: "100%", aspectRatio: "4/3", overflow: "hidden", backgroundColor: "#f0f0f0",
-                }}>
-                  <img
-                    src={img}
-                    alt={`${artist.name} — ${i + 1}`}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* events at MoT+++ */}
-        {relatedEvents.length > 0 && (
-          <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "48px", marginBottom: "80px" }}>
-            <p style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.08em", marginBottom: "28px" }}>
-              at MoT+++
-            </p>
-            <div>
-              {relatedEvents.map(evt => (
-                <Link
-                  key={evt.slug}
-                  href={`/events/${evt.slug}`}
-                  style={{ textDecoration: "none", color: "inherit", display: "block" }}
-                >
-                  <div style={{
-                    display: "flex", justifyContent: "space-between", alignItems: "baseline",
-                    gap: "20px", padding: "14px 0", borderBottom: "1px solid #f2f2f2",
-                  }}>
-                    <div>
-                      <p style={{ fontSize: "10px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.06em", marginBottom: "4px" }}>
-                        {evt.category}
-                        {(evt.credits ?? []).some(c => c.role === "writer" && c.person?._id === sanityArtistId) ? " · text" : null}
-                      </p>
-                      <p style={{ fontSize: "14px", fontWeight: 300, color: "#111111", lineHeight: 1.35 }}>
-                        {evt.title}
-                      </p>
-                    </div>
-                    <p style={{ fontSize: "12px", color: "var(--mot-text-quiet, #767676)", whiteSpace: "nowrap", flexShrink: 0 }}>
-                      {evt.displayDate || evt.dateISO}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* if no bio and no events: minimal state */}
-        {!hasBio && relatedEvents.length === 0 && (
-          <div style={{ marginBottom: "80px" }}>
-            <p style={{ fontSize: "14px", color: "var(--mot-text-quiet, #767676)", fontWeight: 300 }}>
-              artist profile — more information to come.
-            </p>
-          </div>
-        )}
-
-        {/* footer nav */}
-        <div style={{
-          borderTop: "1px solid #e5e5e5", paddingTop: "40px",
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          flexWrap: "wrap", gap: "16px",
-        }}>
-          <Link href="/profiles" style={{ fontSize: "13px", color: "#666666" }}>
-            ← back to profiles
-          </Link>
-          {studio ? (
-            <Link
-              href={`/afarm/studios/${studio.slug}`}
-              style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.06em" }}
-            >
-              view studio ↗
-            </Link>
-          ) : artist.collective && (
-            <Link
-              href={`/collective#${artist.name.toLowerCase().replace(/\s+/g, "-")}`}
-              style={{ fontSize: "11px", color: "var(--mot-text-quiet, #767676)", letterSpacing: "0.06em" }}
-            >
-              view on collective page ↗
-            </Link>
-          )}
-        </div>
-
+        <Correction pageTitle={p.name} />
       </div>
     </>
   );

@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/check-bios.mjs",
     "build": "next build --webpack",
     "build:cf": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "eslint",
     "validate": "node scripts/check-no-body-truncation.mjs && node scripts/check-event-active.mjs && node scripts/validate-sanity-images.mjs",
+    "check:bios": "node scripts/check-bios.mjs",
     "check:no-truncation": "node scripts/check-no-body-truncation.mjs",
     "check:event-active": "node scripts/check-event-active.mjs",
     "verify-deploy": "node scripts/verify-deploy.js",

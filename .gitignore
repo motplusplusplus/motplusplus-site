@@ -59,3 +59,6 @@ next-env.d.ts
 
 # working data and briefs (nationality backfill etc.): local only, the repo is public
 /imports/
+
+# build-time image size probe cache (lib/catalogue.ts)
+/.cache

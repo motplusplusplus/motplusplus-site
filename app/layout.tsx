@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "photoswipe/style.css";
 import "./globals.css";
+import "./catalogue.css";
+import Shortcuts from "@/components/global/Shortcuts";
+import YourPath from "@/components/global/YourPath";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { DEFAULT_OG_IMAGE } from "@/lib/og";
@@ -165,6 +168,8 @@ export default function RootLayout({
         <Header />
         <main>{children}</main>
         <Footer />
+        <Shortcuts />
+        <YourPath />
       </body>
     </html>
   );

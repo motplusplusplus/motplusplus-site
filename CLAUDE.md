@@ -283,6 +283,12 @@ chunks missing).
   - Warm off-white pages use `components/work/WarmPage.tsx`. On `#f6f3ee`, `#767676` text
     fails WCAG AA (4.10:1); use `var(--mot-text-quiet)` / `--mot-quiet` (#6e6a64, 4.85:1).
     Never `body:has(...)` for page styling (it cost seconds of main thread on phones).
+- **MoTcyclopedia + events redesign (2026-11-22).** Read ARCHITECTURE.md §13 before touching
+  /profiles or /events. `scripts/check-bios.mjs` runs before every build and FAILS it when a bio
+  holds another artist's text, event copy, or another profile as its subject: fix the bio in the
+  Studio (keep removed text in internalNotes), never weaken the check. No trackers: players load
+  only after a tap, from youtube-nocookie.com (Vimeo dnt=1); no analytics or embed scripts.
+  The correction form and notify-me never write to Sanity (public dataset).
 - **RARE SEA (2026-11, permanent)**: Rare Sea (raresea.vn, an HCMC art space
   founded by the two excluded people above) must never be named, linked,
   credited or described anywhere on this site or in its data, beyond MoT+++'s

@@ -18,3 +18,18 @@ namespace_id = "1001"
   [ratelimits.simple]
   limit = 5
   period = 60
+
+# per-ip limit for /api/correction (worker/correction.js)
+[[ratelimits]]
+name = "CORRECTION_LIMITER"
+namespace_id = "1002"
+  [ratelimits.simple]
+  limit = 4
+  period = 60
+
+# anonymous click counts from /api/t (drift, wall saves, shares, notify-me, inquire).
+# Off until Analytics Engine is enabled for the account (one dashboard click:
+# Workers & Pages → Analytics Engine → enable). Then uncomment; /api/t no-ops without it.
+# [[analytics_engine_datasets]]
+# binding = "ANALYTICS"
+# dataset = "motplus_clicks"

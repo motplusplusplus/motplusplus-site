@@ -1016,3 +1016,40 @@ back. `tasks/04` stands.
   binding), server-side email validation. Turnstile is built in but OFF: set
   `TURNSTILE_SITE_KEY` in `lib/turnstile.ts` and `wrangler secret put TURNSTILE_SECRET`.
 - Existing rows: excluded / bounced / subscribed untouched; unsubscribed -> subscribed.
+
+---
+
+## 13. MoTcyclopedia + events redesign (2026-11-22, branch feat/profiles-events-redesign)
+
+Same design system as +1 trash (warm page, monospace captions/controls, thin icons,
+PhotoSwipe viewer). Code map:
+
+| What | Where |
+|---|---|
+| One build-time fetch of artists, events, works (memoised for the whole export); tiles, events per person, roles, programs, covers | `lib/catalogue.ts` |
+| Search folding (đ → d by hand), highlights on the original text | `lib/fold.ts`, `components/ui/Highlight.tsx` |
+| /profiles: server-rendered featured pool (72, session-seeded order applied pre-paint by an inline script) + A–Z; client = `ProfilesControls` (browse sheet, search, show more, hover tile); people list fetched on demand from `/profiles/index.json` | `app/profiles/page.tsx`, `ProfilesControls.tsx`, `lib/profileEntries.ts` |
+| /profiles/[slug] | `app/profiles/[slug]/page.tsx`, `ProfileIslands.tsx` |
+| /events: server-rendered; each archive item is both a card and a list line (CSS `is-grid`/`is-list`, chosen pre-paint); client = `EventsControls`; full-text search index `/events/search.json` loads on first search | `app/events/page.tsx`, `EventsControls.tsx`, `lib/eventEntry.ts` |
+| /events/[slug] (EN/VN, read more, gallery, related rows) | `app/events/[slug]/page.tsx`, `EventIslands.tsx` |
+| Gallery viewer (photos + video, zoom capped at the real pixels, #view-N share links, back closes) | `components/media/gallery.ts` |
+| Drift, keyboard shortcuts (?), your path, wall (localStorage), items index `/items.json` | `components/global/*`, `app/wall/`, `app/items.json/route.ts`, `lib/wall.ts`, `lib/path.ts` |
+| Suggest a correction: `POST /api/correction` emails admin@ via Gmail API as info@ (service account, scope gmail.send). Nothing stored anywhere | `components/ui/Correction.tsx`, `worker/correction.js` |
+| Notify me: `/api/subscribe` with `artist` → subscribers sheet, tag "new works: <name>"; excluded/bounced rows untouched | `components/ui/NotifyMe.tsx`, `worker/subscribe.js` |
+| Anonymous click counts `POST /api/t` → Workers Analytics Engine (binding commented out until enabled for the account) | `worker/correction.js`, `wrangler.toml` |
+
+**Rules kept in code:**
+- Bios: a profile with a Sanity record shows its Sanity bio only (no JSON / event-text
+  fallback). `scripts/check-bios.mjs` runs before every build (npm `prebuild`, and
+  `scripts/deploy.js`) and fails on shared sentences, event copy, or another profile as a
+  bio's subject (BIO-AUDIT-2026-11-22).
+- Read more collapses visually only: the full text is always in the HTML (both EN and VN).
+- No trackers: YouTube loads from youtube-nocookie.com and Vimeo with dnt=1, Bandcamp and
+  all players only after a tap (`components/ui/ClickToPlay.tsx`). No analytics/pixel/embed scripts.
+- Logos are never covers; posters are never the event-page hero (they stay in the gallery).
+- Images are never drawn larger than their real pixels (tiles: shown at native size on
+  the card tone; viewer: max zoom = 1:1). Legacy R2 sizes are probed at build and cached
+  in `.cache/probe-sizes.json`.
+- New Sanity fields: artist `disciplines` (+`disciplinesNeedReview`; the site ignores
+  unreviewed ones), `basedIn`, `sortName` (+`sortNameNeedsReview`), `portraitSource`;
+  event `venue` (→ `venue` type), `videos[]`, `coverImage` (+`coverImageNeedsReview`).

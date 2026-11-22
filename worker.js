@@ -1,4 +1,5 @@
 import { handleSubscribe, handleGeo, handleJoin, upsertSubscriber, splitName, tickByDefaultFor, rateLimited } from "./worker/subscribe.js";
+import { handleCorrection, handleTrack } from "./worker/correction.js";
 
 // Legacy event-announcement slugs (e.g. "introducing resident X") that were
 // migrated to /profiles/[slug] bio pages and excluded from /events/ static
@@ -234,6 +235,8 @@ export default {
 
     // Newsletter subscribe (site footer) and the country lookup the a.Farm
     // inquiry form uses to decide whether its newsletter box starts ticked.
+    if (path === "/api/correction") return handleCorrection(request, env);
+    if (path === "/api/t") return handleTrack(request, env);
     if (path === "/api/subscribe") {
       return handleSubscribe(request, env);
     }
@@ -277,6 +280,11 @@ export default {
       '/profiles/scobi-wan': '/profiles/alec-schachner/',
       '/profiles/writher': '/profiles/nguyen-hong-giang/',
       '/profiles/dan-nguyen-demonslayer': '/profiles/dan-nguyen/',
+      // 2026-11-22 (owner-approved): JSON-only duplicate pages → the Sanity profile
+      '/profiles/chung-nguyen': '/profiles/nguyen-chung/',
+      '/profiles/mrbambii': '/profiles/mr-bambii/',
+      '/profiles/montez-press': '/profiles/montez-press-radio/',
+      '/profiles/phuong-gio': '/profiles/nguyen-duc-phuong/',
       '/profiles/baby-reni': '/profiles/irene-ha/',
       '/profiles/vicente-arresse': '/profiles/vicente-arrese/',
       '/profiles/tran-luong': '/profiles/tram-luong/',

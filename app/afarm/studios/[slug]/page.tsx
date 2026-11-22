@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import StudioProfileContent from "@/app/studios/[slug]/StudioProfileContent";
 import StudioGallery from "@/app/studios/[slug]/StudioGallery";
 import type { Metadata } from "next";
+import ClickToPlay from "@/components/ui/ClickToPlay";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -181,14 +182,9 @@ export default async function StudioPage({
             walkthrough
           </p>
           {embedSrc ? (
-            <div style={{ position: "relative", width: "100%", maxWidth: "900px", aspectRatio: "16/9" }}>
-              <iframe
-                src={embedSrc}
-                title={`${studio.name} studio walkthrough`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
-              />
+            <div style={{ width: "100%", maxWidth: "900px" }}>
+              {/* no trackers: the player loads only after a tap (nocookie / dnt) */}
+              <ClickToPlay url={walkthroughUrl!} title={`${studio.name} studio walkthrough`} />
             </div>
           ) : (
             <video

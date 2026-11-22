@@ -27,6 +27,11 @@ export const CONSOLIDATED_BIO_SLUGS = new Set<string>([
   'pug-alex-williams',     // → alex-williams ("Alex Williams (Pug)")
   'baby-reni',             // → irene-ha ("Baby Reni", alternateNames: ["Irene Ha"])
   'dan-nguyen-demonslayer', // → dan-nguyen ("Dan Nguyen (Demonslayer)")
+  // 2026-11-22, owner-approved: artists-data.json duplicates of a Sanity profile
+  'chung-nguyen',          // → nguyen-chung
+  'mrbambii',              // → mr-bambii
+  'montez-press',          // → montez-press-radio
+  'phuong-gio',            // → nguyen-duc-phuong (Phương Giò)
 ]);
 
 // Build stub entries for residents not in artists-data.json so their pages are generated.

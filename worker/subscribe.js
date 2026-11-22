@@ -31,6 +31,14 @@ const NO_DEFAULT_TICK = new Set([
 ]);
 
 const MIN_FILL_MS = 3000;
+
+/** Production origins, plus the worker's own origin (same-origin: the preview worker). */
+export function originAllowed(request) {
+  const origin = request.headers.get("Origin");
+  if (!origin) return true;
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+  try { return origin === new URL(request.url).origin; } catch { return false; }
+}
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function corsHeaders(request) {
@@ -40,7 +48,7 @@ function corsHeaders(request) {
     "Access-Control-Allow-Headers": "Content-Type",
     "Vary": "Origin",
   };
-  if (origin && ALLOWED_ORIGINS.has(origin)) h["Access-Control-Allow-Origin"] = origin;
+  if (origin && originAllowed(request)) h["Access-Control-Allow-Origin"] = origin;
   return h;
 }
 
@@ -69,7 +77,7 @@ export function handleGeo(request) {
 
 // ---- google sheets ---------------------------------------------------------
 
-let cachedToken = null; // { token, exp } per isolate
+const cachedTokens = new Map(); // scope -> { token, exp }, per isolate
 
 function b64url(input) {
   const bytes = typeof input === "string" ? new TextEncoder().encode(input) : new Uint8Array(input);
@@ -78,8 +86,9 @@ function b64url(input) {
   return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-async function getAccessToken(env) {
+export async function getAccessToken(env, scope = SCOPE) {
   const now = Math.floor(Date.now() / 1000);
+  const cachedToken = cachedTokens.get(scope);
   if (cachedToken && cachedToken.exp - 60 > now) return cachedToken.token;
 
   const key = JSON.parse(env.GOOGLE_SA_KEY);
@@ -91,7 +100,7 @@ async function getAccessToken(env) {
   const unsigned =
     b64url(JSON.stringify({ alg: "RS256", typ: "JWT" })) + "." +
     b64url(JSON.stringify({
-      iss: key.client_email, sub: IMPERSONATE, scope: SCOPE,
+      iss: key.client_email, sub: IMPERSONATE, scope,
       aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600,
     }));
   const sig = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", cryptoKey, new TextEncoder().encode(unsigned));
@@ -105,8 +114,8 @@ async function getAccessToken(env) {
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok || !data.access_token) throw new Error("google token error " + res.status);
-  cachedToken = { token: data.access_token, exp: now + (data.expires_in || 3600) };
-  return cachedToken.token;
+  cachedTokens.set(scope, { token: data.access_token, exp: now + (data.expires_in || 3600) });
+  return data.access_token;
 }
 
 async function sheets(env, path, init = {}) {
@@ -141,9 +150,10 @@ export function splitName(full) {
  * rules: excluded / bounced / any other existing status are left untouched,
  * "unsubscribed" goes back to subscribed, unknown emails are appended.
  */
-export async function upsertSubscriber(env, { email, first = "", last = "", country = "", source, note = "" }) {
+export async function upsertSubscriber(env, { email, first = "", last = "", country = "", source, note = "", tags = "" }) {
   const addr = String(email).trim().toLowerCase();
-  const rows = (await sheets(env, `values/${TAB}!A:D`)).values || [];
+  const rows = (await sheets(env, `values/${TAB}!A:F`)).values || [];
+  const tag = cleanName(tags);
 
   let rowNum = -1;
   for (let i = 1; i < rows.length; i++) {
@@ -153,13 +163,22 @@ export async function upsertSubscriber(env, { email, first = "", last = "", coun
   const today = todayVn();
   if (rowNum !== -1) {
     const status = String(rows[rowNum - 1][3] || "").trim().toLowerCase();
-    if (status !== "unsubscribed") return "unchanged"; // subscribed, excluded, bounced, anything else
+    // excluded (the do-not-contact list), bounced and anything unknown: never touched
+    if (status !== "unsubscribed" && status !== "subscribed") return "unchanged";
+    const old = String(rows[rowNum - 1][5] || "");
+    const merged = tag && !old.split(/\s*,\s*/).includes(tag) ? (old ? `${old}, ${tag}` : tag) : old;
+    if (status === "subscribed") {
+      if (merged === old) return "unchanged";
+      await sheets(env, `values/${TAB}!F${rowNum}?valueInputOption=RAW`, { method: "PUT", body: JSON.stringify({ values: [[merged]] }) });
+      return "tagged";
+    }
     await sheets(env, "values:batchUpdate", {
       method: "POST",
       body: JSON.stringify({
         valueInputOption: "RAW",
         data: [
           { range: `${TAB}!D${rowNum}`, values: [["subscribed"]] },
+          { range: `${TAB}!F${rowNum}`, values: [[merged]] },
           { range: `${TAB}!K${rowNum}:L${rowNum}`, values: [[today, "resubscribed via website"]] },
         ],
       }),
@@ -169,7 +188,7 @@ export async function upsertSubscriber(env, { email, first = "", last = "", coun
 
   // columns: email, first name, last name, status, profile, tags, country, city,
   //          source, added, status changed, status note, last issue sent
-  const row = [addr, cleanName(first), cleanName(last), "subscribed", "", "", String(country || "").toLowerCase(), "",
+  const row = [addr, cleanName(first), cleanName(last), "subscribed", "", tag, String(country || "").toLowerCase(), "",
     source, today, today, note, ""];
   await sheets(env, `values/${TAB}!A:M:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`, {
     method: "POST",
@@ -201,7 +220,7 @@ export async function rateLimited(env, request) {
   return false;
 }
 
-async function turnstileOk(env, token, ip) {
+export async function turnstileOk(env, token, ip) {
   if (!env.TURNSTILE_SECRET) return true; // not switched on yet
   if (typeof token !== "string" || !token) return false;
   const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
@@ -219,7 +238,7 @@ export async function handleSubscribe(request, env) {
   if (request.method !== "POST") return json(request, { error: "method not allowed" }, 405);
 
   const origin = request.headers.get("Origin");
-  if (origin && !ALLOWED_ORIGINS.has(origin)) return json(request, { error: "forbidden" }, 403);
+  if (origin && !originAllowed(request)) return json(request, { error: "forbidden" }, 403);
 
   let body;
   try { body = await request.json(); } catch { return json(request, { error: "invalid json" }, 400); }
@@ -245,7 +264,11 @@ export async function handleSubscribe(request, env) {
   }
 
   try {
-    await upsertSubscriber(env, { email, country: request.cf?.country || "", source: "website footer" });
+    // notify me (profile pages, D4): the same list, tagged with the artist's name
+    const artist = typeof body?.artist === "string" ? body.artist.trim().slice(0, 120) : "";
+    await upsertSubscriber(env, artist
+      ? { email, country: request.cf?.country || "", source: "notify me (profile)", tags: `new works: ${artist}`, note: `asked to hear when new works by ${artist} arrive` }
+      : { email, country: request.cf?.country || "", source: "website footer" });
   } catch {
     return json(request, { error: "something went wrong on our side. please try again shortly." }, 502);
   }
@@ -301,7 +324,7 @@ export async function handleJoin(request, env) {
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(request) });
   if (request.method !== "POST") return json(request, { error: "method not allowed" }, 405);
   const origin = request.headers.get("Origin");
-  if (origin && !ALLOWED_ORIGINS.has(origin)) return json(request, { error: "forbidden" }, 403);
+  if (origin && !originAllowed(request)) return json(request, { error: "forbidden" }, 403);
 
   let body;
   try { body = await request.json(); } catch { return json(request, { error: "invalid" }, 400); }

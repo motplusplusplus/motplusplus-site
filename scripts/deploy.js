@@ -93,6 +93,9 @@ function main() {
   // Clean both .next AND out so a stale export can never ship — out/ is what wrangler uploads.
   rmSync(join(ROOT, '.next'), { recursive: true, force: true });
   rmSync(join(ROOT, 'out'), { recursive: true, force: true });
+  // Bio check (BIO-AUDIT-2026-11-22 A4): a bio holding another artist's text or event copy
+  // stops the deploy. npm run build runs it as "prebuild"; this path calls next build directly.
+  run('node scripts/check-bios.mjs');
   // --webpack: Next 16 defaults `next build` to Turbopack, which does not inline
   // NEXT_PUBLIC_* env vars the way webpack does — leaves process.env.NEXT_PUBLIC_MAPBOX_TOKEN
   // unresolved at runtime (resolves to "" in the browser), silently breaking the museum map.

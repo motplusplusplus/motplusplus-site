@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import DriftButton from "@/components/global/Drift";
+import { PathList } from "@/components/global/YourPath";
 import Link from "next/link";
 // Header links do not prefetch (2026-11-22). In view on every page, they
 // pulled each section's RSC payload on load, and with it any image that page
@@ -125,7 +127,7 @@ export default function Header() {
                     fontSize: "21px",
                     fontWeight: 400,
                     letterSpacing: "0.01em",
-                    color: "#767676",
+                    color: "var(--mot-text-quiet, #767676)",
                     whiteSpace: "nowrap",
                     textDecoration: pathname.startsWith(item.href) ? "underline" : "none",
                     textUnderlineOffset: "4px",
@@ -135,6 +137,9 @@ export default function Header() {
                 </Link>
               ))}
             </nav>
+
+            {/* drift (D1): on +1 trash, the MoTcyclopedia, events and the wall */}
+            {/^\/(trash|profiles|events|wall)(\/|$)/.test(pathname) && <DriftButton />}
 
             {/* search icon */}
             <button
@@ -280,7 +285,7 @@ export default function Header() {
                   style={{
                     fontSize: "11px",
                     letterSpacing: "0.08em",
-                    color: "#767676",
+                    color: "var(--mot-text-quiet, #767676)",
                     marginBottom: "16px",
                   }}
                 >
@@ -312,6 +317,8 @@ export default function Header() {
               </div>
             ))}
             </div>
+            {/* your path (D7), phones: in the menu */}
+            <div className="mobile-only-path" style={{ padding: "8px 24px 24px" }}><PathList light /></div>
           </div>
         </div>
       )}
@@ -349,7 +356,7 @@ export default function Header() {
                 display: "inline-block",
                 fontSize: "18px",
                 fontWeight: 400,
-                color: "#767676",
+                color: "var(--mot-text-quiet, #767676)",
                 padding: "11px 16px 11px 0",
                 textDecoration: pathname.startsWith(item.href) ? "underline" : "none",
                 textUnderlineOffset: "4px",

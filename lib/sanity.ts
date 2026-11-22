@@ -18,7 +18,7 @@ export const sanityClient = createClient({
 
 // Fresh (non-CDN) client for build-time event queries — avoids stale CDN cache
 // causing events to fall back to events-data.json instead of Sanity data
-const buildClient = createClient({
+export const buildClient = createClient({
   projectId: 't5nsm79o',
   dataset: 'production',
   apiVersion: '2026-03-20',
@@ -247,6 +247,14 @@ const ARTIST_FIELDS = `
     "mainImage": mainImage.asset->url,
   },
 `;
+
+/** Every work a profile can show (the same rule as an artist's trashItems: listed on
+ *  /trash, or notForSale), WITH or without a photo, so works that only have a scale
+ *  drawing still appear on profiles. Used by lib/catalogue.ts. */
+export async function getAllProfileWorks(): Promise<unknown[]> {
+  const rows = await buildClient.fetch(`*[_type == "trashItem" && ${TRASH_PAGE_VISIBLE} && defined(slug.current)] | order(coalesce(year, 0) desc, _createdAt desc) { ${TRASH_ITEM_FIELDS} }`);
+  return enrichWorkRows(rows);
+}
 
 export async function getArtists() {
   return buildClient.fetch(`*[_type == "artist" && active == true] | order(name asc) { ${ARTIST_FIELDS} }`);

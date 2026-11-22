@@ -104,7 +104,7 @@ function VideoStill({ img, title, priority, imgRef }: {
     return (
       <div className="wp-yt-frame" style={{ aspectRatio: '16 / 9' }}>
         <iframe
-          src={`https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0`}
+          src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0`}
           title={title}
           allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
           allowFullScreen
