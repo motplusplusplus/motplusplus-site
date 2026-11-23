@@ -62,3 +62,7 @@ next-env.d.ts
 
 # build-time image size probe cache (lib/catalogue.ts)
 /.cache
+
+# device tests (tests/devices)
+/tests/devices/node_modules
+/tests/devices/screens

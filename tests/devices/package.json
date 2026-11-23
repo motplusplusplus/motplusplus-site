@@ -1,0 +1,13 @@
+{
+  "name": "motplus-device-tests",
+  "private": true,
+  "type": "module",
+  "description": "Puppeteer device checks for /profiles and /events (iPhone, Pixel, tablet, desktop). Own package so the site build never installs Chrome.",
+  "scripts": {
+    "test": "node run.mjs",
+    "thirdparty": "node thirdparty.mjs"
+  },
+  "devDependencies": {
+    "puppeteer": "^23.11.1"
+  }
+}
