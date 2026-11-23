@@ -5,6 +5,9 @@
  *  A–Z hover tile. That keeps a mid-range phone's main thread free (no hydrating
  *  hundreds of tiles and names).
  *
+ *  Order (2026-11-23): title, filter/search, then the full A–Z index; the portrait
+ *  grid follows it, in small black-and-white tiles (3/4/6/8 columns).
+ *
  *  Featured (P1): the 72 strongest by weight are rendered; an inline script right
  *  after the grid applies this visitor's seeded, weighted-random order and shows
  *  the first 24, before first paint, frozen for the session. */
@@ -67,21 +70,7 @@ export default async function ProfilesPage() {
         </div>
 
         <div id="pf-main">
-          <section className="c-sec" aria-label="featured" style={{ marginTop: 14 }}>
-            <div className="c-tiles c-bw" id="pf-featured">
-              {pool.map((e, i) => (
-                <div key={e.slug} data-w={e.w} hidden={i >= SHOW} style={{ minWidth: 0 }} suppressHydrationWarning>
-                  <PersonTile e={e} priority={i < 4} />
-                </div>
-              ))}
-            </div>
-            <script dangerouslySetInnerHTML={{ __html: ORDER_SCRIPT }} />
-            <div className="c-more" id="pf-more-wrap">
-              <button type="button" className="mot-pill" id="pf-more">show more</button>
-            </div>
-          </section>
-
-          <section className="c-sec" aria-labelledby="az-h" style={{ marginTop: 56 }}>
+          <section className="c-sec" aria-labelledby="az-h" style={{ marginTop: 14 }}>
             <div className="c-sec-h"><h2 id="az-h">a–z · {entries.length}</h2></div>
             <nav className="c-az-strip" aria-label="jump to letter">
               {LETTERS.map(l => groups.has(l) ? <a key={l} href={`#az-${l}`}>{l}</a> : <span key={l} aria-hidden="true">{l}</span>)}
@@ -104,6 +93,20 @@ export default async function ProfilesPage() {
               ))}
             </div>
           </section>
+          <section className="c-sec" aria-label="portraits" style={{ marginTop: 48 }}>
+            <div className="c-tiles c-tiles-sm c-bw" id="pf-featured">
+              {pool.map((e, i) => (
+                <div key={e.slug} data-w={e.w} hidden={i >= SHOW} style={{ minWidth: 0 }} suppressHydrationWarning>
+                  <PersonTile e={e} small />
+                </div>
+              ))}
+            </div>
+            <script dangerouslySetInnerHTML={{ __html: ORDER_SCRIPT }} />
+            <div className="c-more" id="pf-more-wrap">
+              <button type="button" className="mot-pill" id="pf-more">show more</button>
+            </div>
+          </section>
+
         </div>
       </div>
     </>
