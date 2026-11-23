@@ -4,7 +4,7 @@ import type { Img } from './catalogue';
 
 export type Entry = {
   slug: string; name: string; aliases: string[]; letter: string; q: string; n: number;
-  roles: string[]; programs: string[]; countries: string[]; disciplines: string[]; based: string | null;
+  roles: string[]; labels: string[]; programs: string[]; countries: string[]; disciplines: string[]; based: string | null;
   tile: Img | null; facts: string; w: number;
 };
 
@@ -20,13 +20,14 @@ export async function getProfileEntries(): Promise<Entry[]> {
     const tile = c.tiles.get(p.slug) ?? null;
     const avail = works.some(w => !w.sold && !w.notForSale);
     const recent = !!p.lastDate && p.lastDate >= yearAgo;
-    const facts = [p.roles[0] ?? (p.programs[0] ?? ''), p.sinceYear ? `since ${p.sinceYear}` : '', p.eventSlugs.length ? `${p.eventSlugs.length} event${p.eventSlugs.length === 1 ? '' : 's'}` : '']
+    // label: confirmed disciplines, else non-"artist" credit roles, else none (never a default)
+    const facts = [p.labels.slice(0, 2).join(', '), p.sinceYear ? `since ${p.sinceYear}` : '', p.eventSlugs.length ? `${p.eventSlugs.length} event${p.eventSlugs.length === 1 ? '' : 's'}` : '']
       .filter(Boolean).join(' · ');
     const w = (avail ? 8 : 0) + (p.isResident ? 4 : 0) + Math.min(p.eventSlugs.length, 12) * 0.35 + (recent ? 2 : 0) + (tile && (tile.img.w ?? 0) >= 500 ? 3 : tile ? -1 : -4);
     return {
       slug: p.slug, name: p.name, aliases: p.aliases, letter: p.letter,
       q: fold([p.name, ...p.aliases].join(' ')), n: p.eventSlugs.length,
-      roles: p.roles, programs: p.programs, countries: p.nationalities, disciplines: p.disciplines,
+      roles: p.roles, labels: p.labels, programs: p.programs, countries: p.nationalities, disciplines: p.disciplines,
       based: p.basedIn?.country ?? null,
       tile: tile ? { url: tile.img.url, w: tile.img.w, h: tile.img.h, fx: tile.img.fx, fy: tile.img.fy } : null,
       facts, w: Math.round(w * 100) / 100,

@@ -17,7 +17,7 @@ export async function GET() {
   for (const p of c.people) {
     if (p.isLena) { rows.push([`a:${p.slug}`, `/profiles/${p.slug}/`, p.name, 'MoTcyclopedia', null, 0, 0, 0, 0]); continue; }
     const t = c.tiles.get(p.slug);
-    rows.push([`a:${p.slug}`, `/profiles/${p.slug}/`, p.name, p.roles[0] ?? 'MoTcyclopedia', t ? imgSrc(t.img, 480) : null, t?.img.w ?? 0, t?.img.h ?? 0, t && (t.img.w ?? 0) >= 500 ? 1 : 0, 0]);
+    rows.push([`a:${p.slug}`, `/profiles/${p.slug}/`, p.name, p.labels[0] ?? 'MoTcyclopedia', t ? imgSrc(t.img, 480) : null, t?.img.w ?? 0, t?.img.h ?? 0, t && (t.img.w ?? 0) >= 500 ? 1 : 0, 0]);
   }
   for (const e of c.listed) {
     rows.push([`e:${e.slug}`, `/events/${e.slug}/`, e.title, [e.year, e.category].filter(Boolean).join(' · '), e.cover ? imgSrc(e.cover, 480) : null, e.cover?.w ?? 0, e.cover?.h ?? 0, e.cover && !e.coverIsPoster && (e.cover.w ?? 0) >= 600 ? 1 : 0, 0]);

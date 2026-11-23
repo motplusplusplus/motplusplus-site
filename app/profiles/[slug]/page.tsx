@@ -6,7 +6,7 @@
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getCatalogue, type CEvent, type Img, type Person } from '@/lib/catalogue';
+import { getCatalogue, creditLabel, type CEvent, type Img, type Person } from '@/lib/catalogue';
 import { getAllStudios } from '@/lib/studios';
 import { residencyLabel, NON_RESIDENCY_BIO_SLUGS } from '@/lib/events';
 import { countryName } from '@/lib/countries';
@@ -38,7 +38,7 @@ function describe(p: Person, c: Awaited<ReturnType<typeof getCatalogue>>): strin
   const bio = plainOf(toParas(p.bio)).replace(/\s+/g, ' ').trim();
   if (p.isLena) return `${p.name} in the MoTcyclopedia of MoT+++, Ho Chi Minh City.`;
   if (bio.length > 60) return bio.length > 158 ? bio.slice(0, 155).replace(/\s+\S*$/, '') + '…' : bio;
-  const facts = [p.roles[0] ?? 'artist', p.programs.length ? `with MoT+++ (${p.programs.join(', ')})` : 'with MoT+++', p.eventSlugs.length ? `${p.eventSlugs.length} events` : '', p.nationalities.map(countryName).join(' / ')].filter(Boolean).join(', ');
+  const facts = [p.labels.slice(0, 2).join(', '), p.programs.length ? `with MoT+++ (${p.programs.join(', ')})` : 'with MoT+++', p.eventSlugs.length ? `${p.eventSlugs.length} events` : '', p.nationalities.map(countryName).join(' / ')].filter(Boolean).join(', ');
   return `${p.name}: ${facts}. MoTcyclopedia, MoT+++ Ho Chi Minh City.`.slice(0, 160);
   void c;
 }
@@ -139,11 +139,10 @@ export default async function ProfilePage({ params }: { params: Promise<{ slug: 
   if (p.sinceYear || events.length) facts.push(<>{p.sinceYear ? <>with MoT+++ since <b>{p.sinceYear}</b></> : 'with MoT+++'}{events.length ? <> · <b>{events.length}</b> event{events.length === 1 ? '' : 's'}</> : null}</>);
   if (residency) facts.push(<>residency · <b>{residencyLabel(slug, residency)}</b></>);
   if (bioEvent?.isBioPage && bioEvent.partners.length) facts.push(<>partners · {bioEvent.partners.map((x, i) => <span key={x.name}>{i ? ', ' : ''}{x.url ? <a href={x.url} target="_blank" rel="noopener noreferrer">{x.name}</a> : x.name}</span>)}</>);
-  if (p.roles.length) facts.push(<>{p.roles.join(' · ')}</>);
+  if (p.labels.length) facts.push(<>{p.labels.join(' · ')}</>);
   if (p.programs.length) facts.push(<>{p.programs.join(' · ')}</>);
   if (p.originCity || p.nationalities.length) facts.push(<>{[p.originCity ? `from ${p.originCity}` : '', p.nationalities.map(countryName).join(' · ').toLowerCase()].filter(Boolean).join(' · ')}</>);
   if (p.basedIn) facts.push(<>based in {[p.basedIn.city, p.basedIn.country ? countryName(p.basedIn.country) : null].filter(Boolean).join(', ')}</>);
-  if (p.disciplines.length) facts.push(<>{p.disciplines.map(d => DISCIPLINE_LABELS[d]).join(' · ')}</>);
   if (p.deathYear) facts.push(<>{p.birthYear ? `${p.birthYear}–${p.deathYear}` : `d. ${p.deathYear}`}</>);
   if (p.pronouns) facts.push(<>{p.pronouns}</>);
   const MEMBER: Record<string, string> = { founder: 'founding member', member: 'member', former: 'former member', associated: 'associated with' };
@@ -207,7 +206,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ slug: 
           <div>
             {lead
               ? <PortraitButton photos={viewer} name={p.name}><CImg img={lead} sizes="(min-width: 900px) 40vw, 92vw" alt={`${p.name}${tile?.from === 'portrait' ? '' : ', image from their work at MoT+++'}`} priority minFill={300} /></PortraitButton>
-              : <div className="c-prof-portrait c-prof-type"><TypeCard name={p.name} facts={[p.roles[0], p.sinceYear ? `since ${p.sinceYear}` : ''].filter(Boolean).join(' · ')} big /></div>}
+              : <div className="c-prof-portrait c-prof-type"><TypeCard name={p.name} facts={[p.labels[0], p.sinceYear ? `since ${p.sinceYear}` : ''].filter(Boolean).join(' · ')} big /></div>}
             {lead?.credit && <p className="c-mono c-quiet" style={{ marginTop: 6 }}>photo: {lead.credit}</p>}
           </div>
           <div>
@@ -248,7 +247,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ slug: 
               <div style={{ marginTop: 22 }}>
                 <Timeline rows={events.slice(3).map(e => ({
                   slug: e.slug, year: e.year, title: e.title,
-                  role: (e.credits.find(cr => cr.person._id === p._id)?.role ?? 'artist'),
+                  role: creditLabel(e.credits.find(cr => cr.person._id === p._id)?.role, p.labels),
                   thumb: e.cover ? { url: e.cover.url, w: e.cover.w, h: e.cover.h, fx: e.cover.fx, fy: e.cover.fy } : null,
                 }))} />
               </div>
@@ -278,7 +277,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ slug: 
                 const t = c.tiles.get(o.slug);
                 return (
                   <a key={o.slug} className="c-tile" href={`/profiles/${o.slug}/`}>
-                    {t ? <CImg img={t.img} sizes="(min-width: 760px) 18vw, 42vw" alt="" /> : <TypeCard name={o.name} facts={o.roles[0] ?? ''} />}
+                    {t ? <CImg img={t.img} sizes="(min-width: 760px) 18vw, 42vw" alt="" /> : <TypeCard name={o.name} facts={o.labels[0] ?? ''} />}
                     <span className="c-tile-name">{o.name}</span>
                   </a>
                 );

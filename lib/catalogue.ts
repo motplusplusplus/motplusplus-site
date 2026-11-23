@@ -102,6 +102,9 @@ export type Person = {
   /** derived */
   eventSlugs: string[];
   roles: string[];
+  /** What the site shows as this person's label (2026-11-23): confirmed disciplines; else
+   *  non-"artist" credit roles; else nothing. Never defaults to "artist". */
+  labels: string[];
   programs: string[];
   sinceYear: number | null;
   lastDate: string | null;
@@ -243,6 +246,22 @@ const jsonImagesBySlug = new Map(jsonEvents.map(e => [e.slug, (e.images ?? []).f
 // ─── build ─────────────────────────────────────────────────────────────────
 
 let memo: Promise<Catalogue> | null = null;
+/** Credit roles that may stand in as a label when a person has no confirmed disciplines. */
+const LABEL_ROLES = ['curator', 'writer', 'performer', 'moderator', 'critic', 'researcher', 'dj'];
+const ROLE_LABEL: Record<string, string> = { dj: 'DJ' };
+/** A person's label for one event credit: a specific credit role says what they did there;
+ *  "artist", "unknown" or no role fall back to the person's labels; else nothing. */
+const NO_LABEL_ROLES = new Set(['artist', 'unknown', '']);
+export function creditLabel(role: string | null | undefined, labels: string[]): string {
+  const r = (role ?? '').trim();
+  if (!NO_LABEL_ROLES.has(r)) return ROLE_LABEL[r] ?? r;
+  return labels.slice(0, 2).join(', ');
+}
+export function labelsFor(p: Pick<Person, 'disciplines' | 'roles'>): string[] {
+  if (p.disciplines.length) return p.disciplines.map(d => DISCIPLINE_LABELS[d] ?? d);
+  return LABEL_ROLES.filter(r => p.roles.includes(r)).map(r => ROLE_LABEL[r] ?? r);
+}
+
 export function getCatalogue(): Promise<Catalogue> {
   memo ??= build();
   return memo;
@@ -286,7 +305,7 @@ async function build(): Promise<Catalogue> {
     images = [...images.filter(i => !i.poster || i === cover), ...images.filter(i => i.poster && i !== cover)];
     const credits: Credit[] = [];
     const seenP = new Set<string>();
-    for (const c of e.credits ?? []) { const p = personRef(c.p); if (p && !seenP.has(p._id + c.role)) { seenP.add(p._id + c.role); credits.push({ role: c.role || 'artist', person: p }); } }
+    for (const c of e.credits ?? []) { const p = personRef(c.p); if (p && !seenP.has(p._id + c.role)) { seenP.add(p._id + c.role); credits.push({ role: c.role || '', person: p }); } }
     for (const a of e.artistRefs ?? []) { const p = personRef(a); if (p && !credits.some(c => c.person._id === p._id)) credits.push({ role: 'artist', person: p }); }
     const dateISO = e.dateISO ?? '';
     events.push({
@@ -352,7 +371,6 @@ async function build(): Promise<Catalogue> {
       ...((a.legacyImageUrls ?? []) as string[]).filter(u => !isJunkImage(u)).map(u => ({ url: u })),
     ];
     const bioText = plain(a.bio).trim();
-    const reviewed = !a.disciplinesNeedReview;
     add({
       _id: a._id, slug: a.slug, name: a.name ?? a.slug,
       aliases: [...new Set([...(a.aliases ?? []), ...(a.alternateNames ?? [])].filter(Boolean))],
@@ -365,14 +383,15 @@ async function build(): Promise<Catalogue> {
       vnBio: a.vnBio ?? '',
       pronouns: a.pronouns ?? null, birthYear: a.birthYear ?? null, deathYear: a.deathYear ?? null,
       nationalities: a.nationalities ?? [], originCity: a.originCity ?? null, basedIn: a.basedIn?.city || a.basedIn?.country ? a.basedIn : null,
-      disciplines: reviewed ? (a.disciplines ?? []).filter((d: string) => d in DISCIPLINE_LABELS) : [],
+      // artist.disciplines holds confirmed ones only (2026-11-23); weak guesses live in suggestedDisciplines, never shown
+      disciplines: (a.disciplines ?? []).filter((d: string) => d in DISCIPLINE_LABELS),
       role: a.role ?? null,
       links: (a.links ?? []).filter((l: Raw) => l?.url),
       instagram: a.instagram ?? null,
       photos,
       collectives: (a.memberOf ?? []).map((m: Raw) => { const r = personRef(m.c); return r?.linked ? { ...r, role: m.role ?? null, since: m.since ?? null } : null; }).filter(Boolean),
       roster: (a.roster ?? []).map((r: Raw) => { const x = personRef({ ...r, active: true }); return x ? { ...x, role: r.m?.role ?? null, since: r.m?.since ?? null } : null; }).filter(Boolean),
-      eventSlugs: [], roles: [], programs: [], sinceYear: null, lastDate: null,
+      eventSlugs: [], roles: [], labels: [], programs: [], sinceYear: null, lastDate: null,
       isResident: !!a.residencyStartDate || !!a.isAfarmResident || !!json?.resident,
       isLena: a.slug === 'lena-bui',
       updatedAt: a._updatedAt ?? '',
@@ -389,7 +408,7 @@ async function build(): Promise<Catalogue> {
       portrait: j?.photo ? { url: j.photo } : null, bio: j?.bio ?? '', hasBio: !!j?.bio, vnBio: '',
       nationalities: [], basedIn: null, disciplines: [], links: j?.website ? [{ label: 'website', url: j.website }] : [],
       photos: (j?.workImages ?? []).map(u => ({ url: u })), collectives: [], roster: [],
-      eventSlugs: [], roles: [], programs: [], sinceYear: null, lastDate: null,
+      eventSlugs: [], roles: [], labels: [], programs: [], sinceYear: null, lastDate: null,
       isResident: !!j?.resident, isLena: false, updatedAt: '',
     });
   }
@@ -430,7 +449,8 @@ async function build(): Promise<Catalogue> {
     if ((worksByPerson.get(p.slug) ?? []).length) addProgram(p, '+1 trash');
     const r = (p.role ?? '').toLowerCase();
     for (const k of ['researcher', 'critic', 'curator', 'writer']) if (r.includes(k) && !p.roles.includes(k)) p.roles.push(k);
-    if (!p.roles.length && p.eventSlugs.length) p.roles.push('artist');
+    p.labels = labelsFor(p);
+    if (!p.roles.length && p.eventSlugs.length) p.roles.push('artist'); // browse filter only, never a label
     if (p.isResident && !p.sinceYear) p.sinceYear = null;
     p.sortKey = `${sortKey(p.sortName)} ${sortKey(p.name)}`;
     p.letter = letterOf(p.sortName);

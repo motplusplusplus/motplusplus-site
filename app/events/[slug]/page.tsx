@@ -6,7 +6,7 @@
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getCatalogue, type CEvent, type Credit, type Img } from '@/lib/catalogue';
+import { getCatalogue, creditLabel, type CEvent, type Credit, type Img } from '@/lib/catalogue';
 import { toEntry, type EventEntry } from '@/lib/eventEntry';
 import { fromText, plainOf } from '@/lib/prose';
 import { isAvailable } from '@/lib/trashWork';
@@ -63,7 +63,7 @@ function Name({ c }: { c: Credit }) {
   return c.person.linked ? <a href={`/profiles/${c.person.slug}/`}>{c.person.name}</a> : <>{c.person.name}</>;
 }
 function names(list: Credit[], suffix?: (c: Credit) => string) {
-  return list.map((c, i) => <span key={c.person._id + c.role}>{i ? ', ' : ''}<Name c={c} />{suffix ? ` (${suffix(c)})` : ''}</span>);
+  return list.map((c, i) => { const sx = suffix?.(c); return <span key={c.person._id + c.role}>{i ? ', ' : ''}<Name c={c} />{sx ? ` (${sx})` : ''}</span>; });
 }
 
 function MiniCard({ e }: { e: EventEntry }) {
@@ -83,9 +83,12 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   if (!e || BIO_SLUGS.has(slug) || HIDDEN_SLUGS.has(slug)) notFound();
 
   const curators = e.credits.filter(x => x.role === 'curator');
-  const artists = e.credits.filter(x => x.role === 'artist' || !x.role);
+  const artists = e.credits.filter(x => x.role === 'artist');
   const writers = e.credits.filter(x => x.role === 'writer');
-  const others = e.credits.filter(x => x.role && !['curator', 'artist', 'writer'].includes(x.role));
+  // everyone else, incl. credits with no role or "unknown": labelled by what they did here, else by
+  // their own labels, else nothing (never a default "artist")
+  const others = e.credits.filter(x => !['curator', 'artist', 'writer'].includes(x.role));
+  const labelOf = (x: Credit) => creditLabel(x.role, c.peopleById.get(x.person._id)?.labels ?? []);
   const where = e.venue?.name || e.location || '';
   const address = e.venue ? [e.venue.address, e.venue.city].filter(Boolean).join(', ') : '';
   const mapUrl = e.venue?.mapUrl || (address || where ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([where, address].filter(Boolean).join(', '))}` : null);
@@ -169,7 +172,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
             {e.category && <div><dt>program</dt><dd>{e.category}</dd></div>}
             {curators.length > 0 && <div><dt>curated by</dt><dd>{names(curators)}</dd></div>}
             {artists.length > 0 && <div><dt>artists</dt><dd>{names(artists)}</dd></div>}
-            {others.length > 0 && <div><dt>with</dt><dd>{names(others, x => x.role)}</dd></div>}
+            {others.length > 0 && <div><dt>with</dt><dd>{names(others, labelOf)}</dd></div>}
             {writers.length > 0 && <div><dt>text</dt><dd>{names(writers)}</dd></div>}
             {e.wpLink && <div><dt>archive</dt><dd><a href={e.wpLink} target="_blank" rel="noopener noreferrer">original post</a></dd></div>}
             {e.partners.length > 0 && <div><dt>partners</dt><dd>{e.partners.map((p, k) => <span key={p.name}>{k ? ', ' : ''}{p.url ? <a href={p.url} target="_blank" rel="noopener noreferrer">{p.name}</a> : p.name}{p.role ? ` (${p.role})` : ''}</span>)}</dd></div>}
